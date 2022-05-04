@@ -7,19 +7,21 @@ import networkx as nx
 
 def verify_networkx_snn_spec(G: nx.Graph) -> None:
     for node in G.nodes:
-        verify_neuron_properties_are_specified(node)
+        print(f"node:{node}")
+        print(f"node:{G.nodes[node]}")
+        verify_neuron_properties_are_specified(G.nodes[node])
 
 
 def verify_neuron_properties_are_specified(node: nx.Graph.nodes) -> None:
-    assert isinstance(node["bias"], int), "Bias is not an integer."
-    assert isinstance(node["du"], int), "du is not an integer."
-    assert isinstance(node["dv"], int), "dv is not an integer."
-    assert isinstance(node["vth"], int), "vth is not an integer."
+    assert isinstance(node["bias"], float), "Bias is not a float."
+    assert isinstance(node["du"], float), "du is not a float."
+    assert isinstance(node["dv"], float), "dv is not a float."
+    assert isinstance(node["vth"], float), "vth is not a float."
 
 
 def verify_synapse_properties_are_specified(edge: nx.Graph.edges) -> None:
-    assert isinstance(edge["w"], int), f"Weight of edge {edge} is not an"
-    +" integer."
+    assert isinstance(edge["w"], float), f"Weight of edge {edge} is not a"
+    +" float."
 
 
 def assert_all_synapse_properties_are_specified(G, edge):

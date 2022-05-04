@@ -21,6 +21,22 @@ def parse_cli_args():
     # Allow user to specify an infile.
     parser.add_argument("infile", nargs="?", type=argparse.FileType("r"))
 
+    parser.add_argument(
+        "--nx",
+        dest="run_on_networkx",
+        action="store_true",
+        help="boolean flag, determines whether snn is simulated using"
+        + " networkx instead of Lava.",
+    )
+
+    parser.add_argument(
+        "--l",
+        dest="run_on_lava",
+        action="store_true",
+        help="boolean flag, determines whether snn is simulated using"
+        + " lava instead of networkx.",
+    )
+
     # Specify default argument values for the parser.
     parser.set_defaults(
         infile=None,

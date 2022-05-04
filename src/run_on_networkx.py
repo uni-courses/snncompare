@@ -7,10 +7,10 @@
 import networkx as nx
 
 # Import local project functions and classes.
-from verify_graph_is_snn import verify_networkx_snn_spec
+from .verify_graph_is_snn import verify_networkx_snn_spec
 
 
-def simulate_network_on_lava(G: nx.Graph(), t: int) -> None:
+def simulate_network_on_networkx(G: nx.Graph(), t: int) -> None:
     # Verify the graph represents a connected and valid SNN, with all required
     # neuron and synapse properties specified.
     verify_networkx_snn_spec(G)
