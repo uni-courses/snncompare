@@ -13,6 +13,12 @@ from verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def simulate_network_on_lava(G: nx.Graph(), t: int) -> None:
+    """
+
+    :param G: nx.Graph():
+    :param t: int:
+
+    """
     # Verify the graph represents a connected and valid SNN, with all required
     # neuron and synapse properties specified.
     verify_networkx_snn_spec(G)
@@ -25,8 +31,19 @@ def simulate_network_on_lava(G: nx.Graph(), t: int) -> None:
 
 
 def convert_networkx_graph_to_lava_snn(G: nx.Graph()) -> LIF:
+    """
+
+    :param G: nx.Graph():
+
+    """
     pass
 
 
 def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
+    """
+
+    :param t: int:
+    :param starter_neuron: LIF:
+
+    """
     pass

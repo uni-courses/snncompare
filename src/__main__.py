@@ -6,7 +6,7 @@
 # import networkx as nx
 
 # Import code from this project.
-from .run_on_networkx import simulate_network_on_networkx
+from .run_on_networkx import simulate_snn_on_networkx
 from .get_graph import get_networkx_graph_of_2_neurons
 from .arg_parser import parse_cli_args
 
@@ -17,4 +17,4 @@ args = parse_cli_args()
 G = get_networkx_graph_of_2_neurons()
 
 if args.run_on_networkx:
-    simulate_network_on_networkx(G, 3)
+    simulate_snn_on_networkx(G, 30)

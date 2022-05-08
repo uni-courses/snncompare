@@ -4,6 +4,7 @@ import argparse
 
 
 def parse_cli_args():
+    """ """
     # Instantiate the parser
     parser = argparse.ArgumentParser(
         description="Optional description for arg" + " parser"

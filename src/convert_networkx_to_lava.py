@@ -10,6 +10,11 @@ from src.helper import add_neuron_to_dict
 
 
 def initialise_networkx_to_snn_conversion(G):
+    """
+
+    :param G:
+
+    """
 
     # 1. Start with first incoming node.
     first_node = list(G.nodes)[0]
@@ -31,6 +36,16 @@ def initialise_networkx_to_snn_conversion(G):
 def convert_networkx_to_lava_snn(
     G, converted_nodes, neurons, lhs_node, visited_nodes, neuron_dict={}
 ):
+    """
+
+    :param G:
+    :param converted_nodes:
+    :param neurons:
+    :param lhs_node:
+    :param visited_nodes:
+    :param neuron_dict:  (Default value = {})
+
+    """
 
     visited_nodes.append(lhs_node)
 
@@ -116,11 +131,26 @@ def convert_networkx_to_lava_snn(
 
 def node_is_converted(G, converted_nodes, neurons, node):
     """Verifies that the incoming node is not converted into
-    a neuron yet."""
+    a neuron yet.
+
+    :param G:
+    :param converted_nodes:
+    :param neurons:
+    :param node:
+
+    """
     return node in converted_nodes
 
 
 def create_neuron_from_node(G, converted_nodes, neurons, node):
+    """
+
+    :param G:
+    :param converted_nodes:
+    :param neurons:
+    :param node:
+
+    """
 
     bias, du, dv, vth = get_neuron_properties(G, node)
 
@@ -145,6 +175,12 @@ def create_neuron_from_node(G, converted_nodes, neurons, node):
 
 
 def get_neuron_properties(G, node):
+    """
+
+    :param G:
+    :param node:
+
+    """
     bias = G.nodes[node]["bias"]
     du = G.nodes[node]["du"]
     dv = G.nodes[node]["dv"]
@@ -153,6 +189,12 @@ def get_neuron_properties(G, node):
 
 
 def create_recurrent_synapse(neuron, weight):
+    """
+
+    :param neuron:
+    :param weight:
+
+    """
     dense = create_weighted_synapse(weight)
 
     # Connect neuron to itself.
@@ -161,8 +203,10 @@ def create_recurrent_synapse(neuron, weight):
 
 
 def create_weighted_synapse(w):
-    """
-    Creates a weighted synapse between neuron a and neuron b.
+    """Creates a weighted synapse between neuron a and neuron b.
+
+    :param w:
+
     """
     shape = (1, 1)
     # weights = np.random.randint(100, size=shape)
@@ -182,13 +226,26 @@ def create_weighted_synapse(w):
 
 
 def connect_synapse(neuron_a, neuron_b, dense):
-    """Connects a synapse named dense from neuron a to neuron b."""
+    """Connects a synapse named dense from neuron a to neuron b.
+
+    :param neuron_a:
+    :param neuron_b:
+    :param dense:
+
+    """
     neuron_a.out_ports.s_out.connect(dense.in_ports.s_in)
     dense.out_ports.a_out.connect(neuron_b.in_ports.a_in)
     return neuron_a
 
 
 def get_neuron_belonging_to_node_from_list(neurons, node, nodes):
+    """
+
+    :param neurons:
+    :param node:
+    :param nodes:
+
+    """
     index = nodes.index(node)
     return neurons[index]
 
@@ -196,6 +253,16 @@ def get_neuron_belonging_to_node_from_list(neurons, node, nodes):
 def add_synapse_between_nodes(
     G, lhs_neuron, lhs_node, neighbour, rhs_neuron, rhs_node
 ):
+    """
+
+    :param G:
+    :param lhs_neuron:
+    :param lhs_node:
+    :param neighbour:
+    :param rhs_neuron:
+    :param rhs_node:
+
+    """
     # TODO: ensure the synapses are created in both directions.
     lhs_neuron = add_synapse_left_to_right(
         G, lhs_neuron, lhs_node, neighbour, rhs_neuron, rhs_node
@@ -209,6 +276,16 @@ def add_synapse_between_nodes(
 def add_synapse_left_to_right(
     G, lhs_neuron, lhs_node, neighbour, rhs_neuron, rhs_node
 ):
+    """
+
+    :param G:
+    :param lhs_neuron:
+    :param lhs_node:
+    :param neighbour:
+    :param rhs_neuron:
+    :param rhs_node:
+
+    """
     # 3. Get the edge between lhs and rhs nodes. They are neighbours
     # so they have an edge by definition.However it is a directed graph.
     edge = get_edge_if_exists(G, lhs_node, neighbour)
@@ -231,6 +308,16 @@ def add_synapse_left_to_right(
 def add_synapse_right_to_left(
     G, lhs_neuron, lhs_node, neighbour, rhs_neuron, rhs_node
 ):
+    """
+
+    :param G:
+    :param lhs_neuron:
+    :param lhs_node:
+    :param neighbour:
+    :param rhs_neuron:
+    :param rhs_node:
+
+    """
     # 3. Get the edge between lhs and rhs nodes. They are neighbours
     # so they have an edge by definition.However it is a directed graph.
     edge = get_edge_if_exists(G, neighbour, lhs_node)
@@ -252,7 +339,13 @@ def add_synapse_right_to_left(
 
 def get_edge_if_exists(G, lhs_node, rhs_node):
     """Returns the edge object if the graph G has an edge between the two
-    nodes. Returns None otherwise."""
+    nodes. Returns None otherwise.
+
+    :param G:
+    :param lhs_node:
+    :param rhs_node:
+
+    """
     if G.has_edge(lhs_node, rhs_node):
         for edge in G.edges:
             if edge == (lhs_node, rhs_node):
@@ -273,14 +366,26 @@ def get_edge_if_exists(G, lhs_node, rhs_node):
 
 
 def connect_synapse_left_to_right(lhs_neuron, rhs_neuron, dense):
-    """Connects a synapse named dense from lhs_neuron to rhs_neuron."""
+    """Connects a synapse named dense from lhs_neuron to rhs_neuron.
+
+    :param lhs_neuron:
+    :param rhs_neuron:
+    :param dense:
+
+    """
     lhs_neuron.out_ports.s_out.connect(dense.in_ports.s_in)
     dense.out_ports.a_out.connect(rhs_neuron.in_ports.a_in)
     return lhs_neuron
 
 
 def connect_synapse_right_to_left(lhs_neuron, rhs_neuron, dense):
-    """Connects a synapse named dense from lhs_neuron to rhs_neuron."""
+    """Connects a synapse named dense from lhs_neuron to rhs_neuron.
+
+    :param lhs_neuron:
+    :param rhs_neuron:
+    :param dense:
+
+    """
     rhs_neuron.out_ports.s_out.connect(dense.in_ports.s_in)
     dense.out_ports.a_out.connect(lhs_neuron.in_ports.a_in)
     return lhs_neuron
