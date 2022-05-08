@@ -45,6 +45,7 @@ disable=[
     "missing-module-docstring",
     "import-error",
     "invalid-name",
+    "fixme",
 ]
 
 
