@@ -1,14 +1,11 @@
-# run: conda env create --file environment.yml python=3.1
+# run: conda env create --file environment.yml
 # include new packages: conda env update --file environment.yml
 
 # For first time usage on Ubuntu (for lava-nc):
 # sudo apt upgrade
 # sudo apt full-upgrade
 # yes | sudo apt install gcc
-
-# yes | sudo apt install python3-virtualenv
-# virtualenv venv --python=python3.1
-name: try1
+name: networkx-to-lava
 channels:
   - conda-forge
   - conda
