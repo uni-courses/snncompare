@@ -1,10 +1,17 @@
-# run: conda env create --file environment.yml
-# include new packages: conda env update --file environment.yml
+# This file is to automatically configure your environment. It allows you to
+# run the code with a single command without having to install anything
+# (extra).
 
-# For first time usage on Ubuntu (for lava-nc):
+# First run:: conda env create --file environment.yml
+# If you change this file, run: conda env update --file environment.yml
+
+# Instructions for this networkx-to-lava-nc repository only. First time usage
+# On Ubuntu (this is needed for lava-nc):
 # sudo apt upgrade
 # sudo apt full-upgrade
 # yes | sudo apt install gcc
+
+# Conda configuration settings. (Specify which modules/packages are installed.)
 name: networkx-to-lava
 channels:
   - conda-forge

@@ -1,1 +1,3 @@
+# This file ensures that the pre-commit service is ran every time you commit.
+# Basically it ensures people only push files to GIT that are up to standard.
 pre-commit

@@ -1,4 +1,11 @@
+# This file specifies which checks are performed by the pre-commit service.
+# The pre-commit service prevents people from pushing code to git that is not
+# up to standards. # The reason mirrors are used instead of the actual
+# repositories for e.g. black and flake8, is because those repositories also
+# need to contain a pre-commit hook file, which they often don't by default.
+# So to resolve that, a mirror is created that includes such a file.
 repos:
+# Test if the python code is formatted according to the Black standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-black
    rev: 22.3.0
    hooks:
@@ -6,16 +13,21 @@ repos:
        args:
          - --safe
          - --target-version=py36
+# Test if the python code is formatted according to the flake8 standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-flake8
    rev: 4.0.1
    hooks:
     - id: flake8-conda
 
+# Test if the import statements are sorted correctly.
  - repo: https://github.com/PyCQA/isort
    rev: 5.10.1
    hooks:
     - id: isort
 
+# Test if the variable typing is correct. (Variable typing is when you say:
+# def is_larger(nr: int) -> bool: instead of def is_larger(nr). It makes
+# it explicit what type of input and output a function has.
 # - repo: https://github.com/python/mypy
 # - repo: https://github.com/pre-commit/mirrors-mypy
  - repo: https://github.com/a-t-0/mypy
@@ -23,11 +35,13 @@ repos:
    hooks:
     - id: mypy
 
+# Tests if there are spelling errors in the code.
  - repo: https://github.com/codespell-project/codespell
    rev: v2.1.0
    hooks:
     - id: codespell
 
+# Runs additional tests that are created by the pre-commit software itself.
  - repo: https://github.com/pre-commit/pre-commit-hooks
    rev: v4.2.0
    hooks:
