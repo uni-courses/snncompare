@@ -13,7 +13,7 @@ dependencies:
 - anaconda
 - conda:
 # Run python tests.
-  - pytest
+  - pytest-cov
 # Generate plots.
   - matplotlib
 # Run graph software quickly.
@@ -26,6 +26,8 @@ dependencies:
   - black
 # Correct code misspellings.
   - codespell
+# Verify percentage of code that has at least 1 test.
+  - coverage
 # Auto generate docstrings.
   - flake8
 # Auto sort the import statements.
@@ -34,6 +36,8 @@ dependencies:
   - mypy
 # Auto generate documentation.
   - pdoc3
+# Auto check programming style aspects.
+  - pylint
 # Auto generate docstrings.
   - pyment
 # Identify and remove dead code.

@@ -1,3 +1,6 @@
+# Exclude test coverage report from being synced.
+cov.xml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
