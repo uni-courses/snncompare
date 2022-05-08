@@ -39,8 +39,9 @@ def assert_synaptic_edgeweight_type_is_correct(edge: nx.DiGraph.edges) -> None:
     :param edge: nx.DiGraph.edges:
 
     """
-    assert isinstance(edge["w"], float), f"Weight of edge {edge} is not a"
-    +" float."
+    assert isinstance(edge["w"], float), (
+        f"Weight of edge {edge} is not a" + " float."
+    )
 
 
 def assert_all_synapse_properties_are_specified(G, edge):

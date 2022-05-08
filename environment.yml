@@ -14,26 +14,29 @@ dependencies:
 - conda:
 # Run python tests.
   - pytest
+# Generate plots.
   - matplotlib
-# Run graph software quickly
+# Run graph software quickly.
   - networkx
 - pip
 - pip:
 # Run pip install on .tar.gz file in GitHub repository.
   - https://github.com/lava-nc/lava/releases/download/v0.3.0/lava-nc-0.3.0.tar.gz
-# Auto generate docstrings
-  - pyment
-# Auto format networkx graph plots.
-#  - pygraphviz
-# Auto generate docstrings
+# Code formatting compliance.
+  - black
+# Correct code misspellings.
+  - codespell
+# Auto generate docstrings.
   - flake8
+# Auto sort the import statements.
+  - isort
+# Auto check static typing.
+  - mypy
 # Auto generate documentation.
   - pdoc3
-# Code formatting compliance
-  - black
-# Generate diagrams.
-  - plantuml
+# Auto generate docstrings.
+  - pyment
 # Identify and remove dead code.
   - vulture
 # Include GitHub pre-commit hook.
- - pip install pre-commit
+  - pre-commit

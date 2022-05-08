@@ -4,18 +4,19 @@
 # to an SNN network that can be ran by Lava, and retrieves a first/single
 # neuron. The simulation is than ran for t timesteps on a Loihi emulation.
 
+import networkx as nx
+
 # Instantiate Lava processes to build network.
 from lava.proc.lif.process import LIF
-import networkx as nx
 
 # Import local project functions and classes.
 from verify_graph_is_snn import verify_networkx_snn_spec
 
 
-def simulate_network_on_lava(G: nx.Graph(), t: int) -> None:
+def simulate_network_on_lava(G: nx.Graph, t: int) -> None:
     """
 
-    :param G: nx.Graph():
+    :param G: nx.Graph:
     :param t: int:
 
     """
@@ -30,10 +31,10 @@ def simulate_network_on_lava(G: nx.Graph(), t: int) -> None:
     run_simulation_on_lava(t, starter_neuron)
 
 
-def convert_networkx_graph_to_lava_snn(G: nx.Graph()) -> LIF:
+def convert_networkx_graph_to_lava_snn(G: nx.Graph) -> LIF:
     """
 
-    :param G: nx.Graph():
+    :param G: nx.Graph:
 
     """
     pass

@@ -1,7 +1,7 @@
 import networkx as nx
 
 
-def get_standard_graph_4_nodes() -> nx.DiGraph():
+def get_standard_graph_4_nodes() -> nx.DiGraph:
     """Y
 
     :param ) -> nx.DiGraph(:
@@ -23,7 +23,7 @@ def get_standard_graph_4_nodes() -> nx.DiGraph():
     return graph
 
 
-def get_networkx_graph_of_2_neurons() -> nx.DiGraph():
+def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
     """Y
 
     :param ) -> nx.DiGraph(:

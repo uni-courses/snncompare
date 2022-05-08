@@ -1,12 +1,12 @@
 # Converts networkx graph representing lava spiking-neural-network into SNN.
 
 # Instantiate Lava processes to build network
+import networkx as nx
 from lava.proc.dense.process import Dense
 from lava.proc.lif.process import LIF
-import networkx as nx
 
-from verify_graph_is_snn import assert_all_synapse_properties_are_specified
 from src.helper import add_neuron_to_dict
+from verify_graph_is_snn import assert_all_synapse_properties_are_specified
 
 
 def initialise_networkx_to_snn_conversion(G):

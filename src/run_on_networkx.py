@@ -5,16 +5,17 @@
 
 # Import external libraries.
 import networkx as nx
+
 from .LIF_neuron import LIF_neuron
 
 # Import local project functions and classes.
 from .verify_graph_is_snn import verify_networkx_snn_spec
 
 
-def simulate_snn_on_networkx(G: nx.DiGraph(), duration: int) -> None:
+def simulate_snn_on_networkx(G: nx.DiGraph, duration: int) -> None:
     """
 
-    :param G: nx.DiGraph():
+    :param G: nx.DiGraph:
     :param duration: int:
 
     """
@@ -36,10 +37,10 @@ def simulate_snn_on_networkx(G: nx.DiGraph(), duration: int) -> None:
         run_simulation_with_networkx(G)
 
 
-def generate_lif_neurons(G: nx.DiGraph()) -> None:
+def generate_lif_neurons(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph():
+    :param G: nx.DiGraph:
 
     """
     for node in G.nodes:
@@ -51,19 +52,19 @@ def generate_lif_neurons(G: nx.DiGraph()) -> None:
         )
 
 
-def generate_lif_synapses(G: nx.DiGraph()) -> None:
+def generate_lif_synapses(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph():
+    :param G: nx.DiGraph:
 
     """
     pass
 
 
-def run_simulation_with_networkx(G: nx.DiGraph()) -> None:
+def run_simulation_with_networkx(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph():
+    :param G: nx.DiGraph:
 
     """
 
@@ -93,10 +94,10 @@ def run_simulation_with_networkx(G: nx.DiGraph()) -> None:
         nx_lif.a_in = nx_lif.a_in_next
 
 
-def initialise_a_in_is_zero_at_t_is_1(G: nx.DiGraph()) -> None:
+def initialise_a_in_is_zero_at_t_is_1(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph():
+    :param G: nx.DiGraph:
 
     """
     for node in G.nodes:
