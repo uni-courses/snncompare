@@ -2,7 +2,7 @@ import networkx as nx
 
 
 def get_standard_graph_4_nodes() -> nx.DiGraph:
-    """Y
+    """Returns a Y-shaped graph with four nodes.
 
     :param ) -> nx.DiGraph(:
 
