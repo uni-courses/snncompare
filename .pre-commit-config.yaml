@@ -13,12 +13,12 @@ repos:
        args:
          - --safe
          - --target-version=py36
-#### Test if the python code is formatted according to the flake8 standard.
-### - repo: https://github.com/Quantco/pre-commit-mirrors-flake8
-###   rev: 4.0.1
-###   hooks:
-###    - id: flake8-conda
-###
+# Test if the python code is formatted according to the flake8 standard.
+ - repo: https://github.com/Quantco/pre-commit-mirrors-flake8
+   rev: 4.0.1
+   hooks:
+    - id: flake8-conda
+
 #### Test if the import statements are sorted correctly.
 ### - repo: https://github.com/PyCQA/isort
 ###   rev: 5.10.1
