@@ -3,8 +3,8 @@
 import argparse
 
 
-def parse_cli_args():
-    """ """
+def parse_cli_args() -> argparse.Namespace:
+    """Reads command line arguments and converts them into python arguments."""
     # Instantiate the parser
     parser = argparse.ArgumentParser(
         description="Optional description for arg" + " parser"

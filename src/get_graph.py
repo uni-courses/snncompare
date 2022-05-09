@@ -24,10 +24,10 @@ def get_standard_graph_4_nodes() -> nx.DiGraph:
 
 
 def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
-    """Y
+    """Returns graph with 2 neurons with a synapse with weight of 4 from
+    nodename 0 to nodename 1.
 
     :param ) -> nx.DiGraph(:
-
     """
     graph = nx.DiGraph()
     graph.add_nodes_from(

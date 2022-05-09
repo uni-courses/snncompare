@@ -12,7 +12,7 @@ class LIF_neuron:
 
     """
 
-    def __init__(self, bias: int, du: int, dv: int, vth: int):
+    def __init__(self, bias: int, du: int, dv: int, vth: int) -> None:
         self.bias = bias  # Amount of voltage added every timestep.
         self.du = du  # Change in current over time.
         self.dv = dv  # Change in voltage over time.
@@ -28,31 +28,34 @@ class LIF_neuron:
         self.a_in_next = 0
 
     def simulate_neuron_one_timestep(self, a_in: int) -> bool:
-        """
+        """Computes what the new current u and new voltage v will be based on
+        the default neuron properties, du,dv, bias, previous current u,
+        previous voltage v, and the incoming input signal/value of a_in. Based
+        on this new voltage it computes whether the neuron spikes or not. Then
+        returns the boolean signal indicating whether it will spike (True) or
+        not (False).
 
-        :param a_in: int:
-
+        :param a_in: int: the input current into this neuron.
         """
         self.set_compute_u(a_in)
-        self.set_compute_v(a_in)
+        self.set_compute_v()
         return self.spikes
 
     # TODO: make this function only accessible to object itself.
     def set_compute_u(self, a_in):
-        """
+        """Computes the new current u based on the previous current u, du, and
+        the incoming input signal/value of a_in. After computation overwrites
+        the previous value of the u with the new value for u.
 
-        :param a_in:
+        :param a_in: int: the input current into this neuron.
 
         """
         self.u = self.u * (1 - self.du) + a_in
 
     # TODO: make this function only accessible to object itself.
-    def set_compute_v(self, current_u) -> None:
-        """
-
-        :param current_u:
-
-        """
+    def set_compute_v(self) -> None:
+        """Computes the new voltage v based on the previous current v, the new
+        current u, the bias and the dv. Then overwarites the"""
         new_voltage = self.v * (1 - self.dv) + self.bias
         if new_voltage > self.vth:
             self.spikes = True

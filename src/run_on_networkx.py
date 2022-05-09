@@ -33,7 +33,7 @@ def simulate_snn_on_networkx(G: nx.DiGraph, duration: int) -> None:
     initialise_a_in_is_zero_at_t_is_1(G)
 
     # The simulation is ran for t timesteps on a Loihi emulation.
-    for t in range(duration):
+    for _ in range(duration):
         run_simulation_with_networkx(G)
 
 
