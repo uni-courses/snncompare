@@ -4,6 +4,11 @@
 # repositories for e.g. black and flake8, is because those repositories also
 # need to contain a pre-commit hook file, which they often don't by default.
 # So to resolve that, a mirror is created that includes such a file.
+
+default_language_version:
+    python: python3.10  # or python3
+
+
 repos:
 # Test if the python code is formatted according to the Black standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-black
@@ -25,15 +30,15 @@ repos:
    hooks:
     - id: isort
 
-#### Test if the variable typing is correct. (Variable typing is when you say:
-#### def is_larger(nr: int) -> bool: instead of def is_larger(nr). It makes
-#### it explicit what type of input and output a function has.
-#### - repo: https://github.com/python/mypy
-#### - repo: https://github.com/pre-commit/mirrors-mypy
-### - repo: https://github.com/a-t-0/mypy
-###   rev: v0.950
-###   hooks:
-###    - id: mypy
+# Test if the variable typing is correct. (Variable typing is when you say:
+# def is_larger(nr: int) -> bool: instead of def is_larger(nr). It makes
+# it explicit what type of input and output a function has.
+# - repo: https://github.com/python/mypy
+ - repo: https://github.com/pre-commit/mirrors-mypy
+# - repo: https://github.com/a-t-0/mypy
+   rev: v0.950
+   hooks:
+    - id: mypy
 ###
 #### Tests if there are spelling errors in the code.
 ### - repo: https://github.com/codespell-project/codespell
