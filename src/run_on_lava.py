@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Runs a converted networkx graph on the Lava platform. First verifies the
 # graph represents a connected and valid SNN, with all required neuron and
 # synapse properties specified. Then it converts the incoming networkx object
@@ -37,7 +38,8 @@ def convert_networkx_graph_to_lava_snn(G: nx.Graph) -> LIF:
     :param G: nx.Graph:
 
     """
-    pass
+    # TODO: Change return G to return a lif neuron.
+    return G
 
 
 def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
@@ -47,4 +49,7 @@ def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
     :param starter_neuron: LIF:
 
     """
-    pass
+    # TODO: remove this line and write function.
+    print(t)
+    # TODO: remove this line and write function.
+    print(f"starter_neuron={starter_neuron}")

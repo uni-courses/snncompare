@@ -68,4 +68,3 @@ dependencies:
   - pyupgrade
 # Another static type checker for python like mypy.
   - pyright
-

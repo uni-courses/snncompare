@@ -1,3 +1,4 @@
 # networkx-to-lava-nc
 
-Converts networkx graphs representing spiking neural networks (SNN)s of LIF neruons, into runnable Lava SNNs.
+Input: Networkx graphs specifying a spiking neural network (SNN).
+Output: Runnable Lava SNNs consisting of LIF neurons and synapses.

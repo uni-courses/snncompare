@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Runs a converted networkx graph without the Lava platform. First verifies the
 # graph represents a connected and valid SNN, with all required neuron and
 # synapse properties specified. Then loops through the network to simulate it,
@@ -58,7 +59,7 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
     :param G: nx.DiGraph:
 
     """
-    pass
+    return G
 
 
 def run_simulation_with_networkx(G: nx.DiGraph) -> None:

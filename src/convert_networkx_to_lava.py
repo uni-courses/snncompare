@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Converts networkx graph representing lava spiking-neural-network into SNN.
 
 # Instantiate Lava processes to build network
@@ -10,10 +11,9 @@ from verify_graph_is_snn import assert_all_synapse_properties_are_specified
 
 def initialise_networkx_to_snn_conversion(G):
     """Prepares a networkx graph G to be converted into a Lava-nc neural
-     network.
+    network.
 
     :param G: Networkx graph that specifies the Lava neural network.
-
     """
 
     # 1. Start with first incoming node.
@@ -34,7 +34,7 @@ def initialise_networkx_to_snn_conversion(G):
 
 
 def convert_networkx_to_lava_snn(
-    G, converted_nodes, neurons, lhs_nodename, visited_nodes, neuron_dict={}
+    G, converted_nodes, neurons, lhs_nodename, visited_nodes, neuron_dict
 ):
     """Recursively converts the networkx graph G into a Lava SNN.
 
@@ -51,11 +51,11 @@ def convert_networkx_to_lava_snn(
     :param neuron_dict: Dictionary with Lava neuron objects as keys, and the
     nodename as items. (Default value = {})
     """
-
+    # pylint: disable=too-many-arguments
     visited_nodes.append(lhs_nodename)
 
     # Incoming node, if it is not yet converted, then convert to neuron.
-    if not node_is_converted(G, converted_nodes, lhs_nodename):
+    if not node_is_converted(converted_nodes, lhs_nodename):
         (
             converted_nodes,
             lhs_neuron,
@@ -74,7 +74,7 @@ def convert_networkx_to_lava_snn(
 
             # Convert the neigbhour neurons of the lhs_nodename into a Lava
             # neuron.
-            if not node_is_converted(G, converted_nodes, neighbour):
+            if not node_is_converted(converted_nodes, neighbour):
                 (
                     converted_nodes,
                     rhs_neuron,
@@ -140,16 +140,13 @@ def convert_networkx_to_lava_snn(
     )
 
 
-def node_is_converted(G, converted_nodes, nodename):
-    """Verifies that the incoming node is not converted into
-    a neuron yet.
+def node_is_converted(converted_nodes, nodename):
+    """Verifies that the incoming node is not converted into a neuron yet.
 
-    :param G: Networkx graph that specifies the Lava neural network.
     :param converted_nodes: List of networkx nodenames that already have been
     converted to the Lava SNN.
     :param neurons: List of Lava neuron objects.
     :param nodename: Name of the node of the networkx graph.
-
     """
     return nodename in converted_nodes
 
@@ -219,7 +216,6 @@ def create_weighted_synapse(w):
     """Creates a weighted synapse between neuron a and neuron b.
 
     :param w: Synaptic weight.
-
     """
     shape = (1, 1)
     # weights = np.random.randint(100, size=shape)
@@ -244,7 +240,6 @@ def connect_synapse(neuron_a, neuron_b, dense):
     :param neuron_a: Lava neuron object for lhs neuron.
     :param neuron_b: Lava neuron object for rhs neuron.
     :param dense: Lava object representing synapse.
-
     """
     neuron_a.out_ports.s_out.connect(dense.in_ports.s_in)
     dense.out_ports.a_out.connect(neuron_b.in_ports.a_in)
@@ -383,6 +378,7 @@ def get_edge_if_exists(G, lhs_nodename, rhs_node):
             "Would expect an edge between a node and"
             + " its neighbour in the other direction."
         )
+    return None
 
 
 def connect_synapse_left_to_right(lhs_neuron, rhs_neuron, dense):
@@ -392,7 +388,6 @@ def connect_synapse_left_to_right(lhs_neuron, rhs_neuron, dense):
     :param rhs_neuron:
     :param dense:
     :param rhs_neuron:
-
     """
     lhs_neuron.out_ports.s_out.connect(dense.in_ports.s_in)
     dense.out_ports.a_out.connect(rhs_neuron.in_ports.a_in)
@@ -406,7 +401,6 @@ def connect_synapse_right_to_left(lhs_neuron, rhs_neuron, dense):
     :param rhs_neuron:
     :param dense:
     :param rhs_neuron:
-
     """
     rhs_neuron.out_ports.s_out.connect(dense.in_ports.s_in)
     dense.out_ports.a_out.connect(lhs_neuron.in_ports.a_in)

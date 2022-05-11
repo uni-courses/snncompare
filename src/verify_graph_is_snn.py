@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Verifies the graph represents a connected and valid SNN, with all required
 # neuron and synapse properties specified.
 
@@ -27,10 +28,14 @@ def verify_neuron_properties_are_specified(node: nx.DiGraph.nodes) -> None:
     :param node: nx.DiGraph.nodes:
 
     """
-    assert isinstance(node["bias"], float), "Bias is not a float."
-    assert isinstance(node["du"], float), "du is not a float."
-    assert isinstance(node["dv"], float), "dv is not a float."
-    assert isinstance(node["vth"], float), "vth is not a float."
+    if not isinstance(node["bias"], float):
+        raise Exception("Bias is not a float.")
+    if not isinstance(node["du"], float):
+        raise Exception("du is not a float.")
+    if not isinstance(node["dv"], float):
+        raise Exception("dv is not a float.")
+    if not isinstance(node["vth"], float):
+        raise Exception("vth is not a float.")
 
 
 def assert_synaptic_edgeweight_type_is_correct(edge: nx.DiGraph.edges) -> None:
@@ -39,9 +44,8 @@ def assert_synaptic_edgeweight_type_is_correct(edge: nx.DiGraph.edges) -> None:
     :param edge: nx.DiGraph.edges:
 
     """
-    assert isinstance(edge["w"], float), (
-        f"Weight of edge {edge} is not a" + " float."
-    )
+    if not isinstance(edge["w"], float):
+        raise Exception(f"Weight of edge {edge} is not a" + " float.")
 
 
 def assert_all_synapse_properties_are_specified(G, edge):
