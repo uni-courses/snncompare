@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-# Runs a converted networkx graph on the Lava platform. First verifies the
-# graph represents a connected and valid SNN, with all required neuron and
-# synapse properties specified. Then it converts the incoming networkx object
-# to an SNN network that can be ran by Lava, and retrieves a first/single
-# neuron. The simulation is than ran for t timesteps on a Loihi emulation.
+"""Runs a converted networkx graph on the Lava platform.
+
+First verifies the graph represents a connected and valid SNN, with all
+required neuron and synapse properties specified. Then it converts the
+incoming networkx object to an SNN network that can be ran by Lava, and
+retrieves a first/single neuron. The simulation is than ran for t
+timesteps on a Loihi emulation.
+"""
 
 import networkx as nx
 

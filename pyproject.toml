@@ -42,7 +42,6 @@ bad-names=[]
 [tool.pylint.messages_control]
 # Example: Disable error on needing a module-level docstring
 disable=[
-    "missing-module-docstring",
     "import-error",
     "invalid-name",
     "fixme",

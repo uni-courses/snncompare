@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""File represents LIF neuron object."""
+
+
 class LIF_neuron:
     """Creates a Leaky-Integrate-and-Fire neuron specification. Leaky-
     Integrate-and-Fire neural process with activation input and spike output

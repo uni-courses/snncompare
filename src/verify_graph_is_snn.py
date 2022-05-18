@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Verifies the graph represents a connected and valid SNN, with all required
-# neuron and synapse properties specified.
+"""Verifies the graph represents a connected and valid SNN, with all required
+neuron and synapse properties specified."""
 
 # Import the networkx module.
 import networkx as nx

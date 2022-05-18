@@ -30,6 +30,7 @@ repos:
    rev: 5.10.1
    hooks:
     - id: isort
+      args: ["--profile", "black", --line-length=79]
 
 # Test if the variable typing is correct. (Variable typing is when you say:
 # def is_larger(nr: int) -> bool: instead of def is_larger(nr). It makes

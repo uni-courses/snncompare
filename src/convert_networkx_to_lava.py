@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Converts networkx graph representing lava spiking-neural-network into SNN.
+"""Converts networkx graph representing lava spiking-neural-network into
+SNN."""
 
 # Instantiate Lava processes to build network
 import networkx as nx
