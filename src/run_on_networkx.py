@@ -9,10 +9,10 @@ network to simulate it, one neuron at a time.
 # Import external libraries.
 import networkx as nx
 
-from .LIF_neuron import LIF_neuron
-
 # Import local project functions and classes.
-from .verify_graph_is_snn import verify_networkx_snn_spec
+from src.verify_graph_is_snn import verify_networkx_snn_spec
+
+from .LIF_neuron import LIF_neuron
 
 
 def simulate_snn_on_networkx(G: nx.DiGraph, duration: int) -> None:
@@ -37,7 +37,7 @@ def simulate_snn_on_networkx(G: nx.DiGraph, duration: int) -> None:
 
     # The simulation is ran for t timesteps on a Loihi emulation.
     for _ in range(duration):
-        run_simulation_with_networkx(G)
+        run_simulation_with_networkx_for_1_timestep(G)
 
 
 def generate_lif_neurons(G: nx.DiGraph) -> None:
@@ -64,11 +64,11 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
     return G
 
 
-def run_simulation_with_networkx(G: nx.DiGraph) -> None:
-    """
+def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
+    """Runs the networkx simulation of the network for 1 timestep. The results
+    of the simulation are stored in the G.nodes network.
 
     :param G: nx.DiGraph:
-
     """
 
     # Compute for each node whether it spikes based on a_in, starting at t=1.

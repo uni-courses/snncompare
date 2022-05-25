@@ -7,7 +7,7 @@ import networkx as nx
 from lava.proc.dense.process import Dense
 from lava.proc.lif.process import LIF
 
-from verify_graph_is_snn import assert_all_synapse_properties_are_specified
+from .verify_graph_is_snn import assert_all_synapse_properties_are_specified
 
 
 def initialise_networkx_to_snn_conversion(G):
@@ -107,7 +107,6 @@ def convert_networkx_to_lava_snn(
 
         # At the first time this function is called, initialise the dictionary.
         if len(visited_nodes) == 1:
-            # print(f'ADD{lhs_nodename}')
             neuron_dict = add_neuron_to_dict(
                 lhs_nodename, neuron_dict, lhs_neuron
             )
@@ -168,18 +167,8 @@ def create_neuron_from_node(G, converted_nodes, neurons, nodename):
 
     neuron = LIF(bias=bias, du=du, dv=dv, vth=vth)
 
-    # If spike_once_neuron, create recurrent synapse
-    if nodename[0:11] == "spike_once_" or nodename[0:5] == "rand_":
-        neuron = create_recurrent_synapse(neuron, -2)
-
-    if nodename[0:16] == "degree_receiver_":
-        neuron = create_recurrent_synapse(neuron, -20)
-    # if nodename[0:6] == "count_":
-    #    neuron = create_recurrent_synapse(neuron, -1)
-    if nodename[0:6] == "delay_":
-        neuron = create_recurrent_synapse(
-            neuron, -(len(G) * 2 - 1) - 2
-        )  # TODO: or -1?
+    # TODO: allow creation of recurrent synapses.
+    # neuron = create_recurrent_synapse(neuron, -2)
 
     neurons.append(neuron)
     converted_nodes.append(nodename)
