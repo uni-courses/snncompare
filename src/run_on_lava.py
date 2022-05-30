@@ -80,16 +80,6 @@ def simulate_snn_on_lava(G: nx.Graph, t: int) -> None:
     run_simulation_on_lava(t, G.nodes[0]["lava_LIF"])
 
 
-def convert_networkx_graph_to_lava_snn(G: nx.Graph) -> LIF:
-    """
-
-    :param G: nx.Graph:
-
-    """
-    # TODO: Change return G to return a lif neuron.
-    return G
-
-
 def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
     """
 
