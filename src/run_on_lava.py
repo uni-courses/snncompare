@@ -16,8 +16,6 @@ from lava.magma.core.run_configs import Loihi1SimCfg
 from lava.proc.lif.process import LIF
 
 from src.convert_networkx_to_lava import initialise_networkx_to_snn_conversion
-
-# Import local project functions and classes.
 from src.verify_graph_is_snn import verify_networkx_snn_spec
 
 

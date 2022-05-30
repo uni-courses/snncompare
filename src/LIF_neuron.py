@@ -68,8 +68,6 @@ class LIF_neuron:
         Then overwarites the
         """
         new_voltage = self.v.get() * (1 - self.dv.get()) + self.bias.get()
-        print(f"self.name={self.name}")
-        print(f"new_voltage={new_voltage}")
         if new_voltage > self.vth.get():
             self.spikes = True
 

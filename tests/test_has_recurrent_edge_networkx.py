@@ -5,6 +5,7 @@ network."""
 import unittest
 
 from src.get_graph import get_networkx_graph_of_2_neurons
+from src.run_on_lava import simulate_network_on_lava
 from src.run_on_networkx import run_snn_on_networkx, simulate_snn_on_networkx
 
 
@@ -41,7 +42,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         # Assert the edges go from node 0 to node 1, and from 0 to 0.
         self.assertEqual(set(G.edges), {(0, 0), (0, 1)})
 
-    def skip_test_verify_recurrent_edge_without_weight_throws_error(self):
+    def test_verify_recurrent_edge_without_weight_throws_error(self):
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
         over time.
 
@@ -65,21 +66,21 @@ class Test_get_graph_on_networkx(unittest.TestCase):
             # Verify running on Networkx throws error.
             simulate_snn_on_networkx(G, 30)
 
-        self.assertTrue(
+        self.assertEqual(
             "Not all synapse properties of edge: (0, 0) are specified. It only"
-            + " contains attributes:dict_keys([])"
-            in str(context.exception)
+            + " contains attributes:dict_keys([])",
+            str(context.exception),
         )
 
         with self.assertRaises(Exception) as context:
-
             # Verify running on Lava throws error.
-            run_snn_on_networkx(G, 2)
+            simulate_network_on_lava(G, 2)
 
-        self.assertTrue(
+        print(f"str(context.exception)={str(context.exception)}")
+        self.assertEqual(
             "Not all synapse properties of edge: (0, 0) are specified. It only"
-            + " contains attributes:dict_keys([])"
-            in str(context.exception)
+            + " contains attributes:dict_keys([])",
+            str(context.exception),
         )
 
     def test_neuron_properties_after_1_sec_without_recurrent_connection(self):
