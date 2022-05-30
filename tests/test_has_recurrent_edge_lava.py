@@ -213,10 +213,9 @@ class Test_get_graph_on_lava(unittest.TestCase):
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
-        add_lava_neurons_to_networkx_graph(G)
-
         # Add the recurrent edge.
         G.add_edge(0, 0, weight=-20.0)
+        add_lava_neurons_to_networkx_graph(G)
 
         # Assert static properties of neuron 0 at t=0.
         self.assertEqual(G.nodes[0]["lava_LIF"].bias.get(), 3)
@@ -259,23 +258,34 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # spikes only the previous inhibitory spike has arrived.
         self.assertEqual(G.nodes[0]["lava_LIF"].u.get(), -20)
         self.assertEqual(
-            G.nodes[0]["lava_LIF"].v.get(), 0
+            G.nodes[0]["lava_LIF"].v.get(), -17
         )  # Spikes, reset to 0.
 
         # Assert dynamic properties of neuron 1 at t=2.
         self.assertEqual(
             G.nodes[1]["lava_LIF"].u.get(), 6
         )  # Incoming spike with weight 6.
-        self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 0)
+        # v[t] = v[t-1] * (1-dv) + u[t] + bias (bias=0)
+        # v[t] = 0 * (1-dv) + 6 + bias (bias=0)
+        self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 6)
 
         # TODO: assert dynamic properties per timestep.
         simulate_snn_on_lava(G, 1)
         # Assert dynamic properties of neuron 0 at t=3.
-        self.assertEqual(G.nodes[0]["lava_LIF"].u.get(), -40)
+        # u[t] = u[t-1] * (1-du) + a_in, a_in=0
+        # u[t] = -20 * (1-du) + a_in
+        self.assertEqual(G.nodes[0]["lava_LIF"].u.get(), -20)
+        # v[t] = v[t-1] * (1-dv) + u[t] + bias (bias=3)
+        # v[t] = -17 * (1-dv) -20 + bias (bias=3)
         self.assertEqual(
-            G.nodes[0]["lava_LIF"].v.get(), 0
+            G.nodes[0]["lava_LIF"].v.get(), -34
         )  # Spikes, reset to 0.
 
         # Assert dynamic properties of neuron 1 at t=3.
-        self.assertEqual(G.nodes[1]["lava_LIF"].u.get(), 12)
+        # u[t] = u[t-1] * (1-du) + a_in, a_in=0
+        # u[t] = 6 * (1-du) + a_in
+        self.assertEqual(G.nodes[1]["lava_LIF"].u.get(), 6)
+        # v[t] = v[t-1] * (1-dv) + u[t] + bias (bias=0)
+        # v[t] = 6 * (1-dv) 6 + bias (bias=0)
+        # v[t] = 12>vth=10, so it spikes and resets to 0.
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 0)

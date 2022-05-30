@@ -170,12 +170,22 @@ def create_neuron_from_node(G, converted_nodes, neurons, nodename):
 
     neuron = LIF(bias=bias, du=du, dv=dv, vth=vth)
 
-    # TODO: allow creation of recurrent synapses.
+    # Add recurrent synapse if it exists.
+    add_recurrent_edge(G, nodename, neuron)
     # neuron = create_recurrent_synapse(neuron, -2)
 
     neurons.append(neuron)
     converted_nodes.append(nodename)
     return converted_nodes, neuron, neurons, nodename
+
+
+def add_recurrent_edge(G, nodename, neuron):
+    """Adds a recurrent edge to the node if it exists."""
+    if G.has_edge(nodename, nodename):
+
+        # Compute synaptic weight.
+        weight = G.edges[(nodename, nodename)]["weight"]
+        create_recurrent_synapse(neuron, weight)
 
 
 def get_neuron_properties(G, nodename):
@@ -293,6 +303,7 @@ def add_synapse_left_to_right(
     # 3. Get the edge between lhs and rhs nodes. They are neighbours
     # so they have an edge by definition.However it is a directed graph.
     edge = get_edge_if_exists(G, lhs_nodename, neighbour)
+    print(f"edge={edge}")
 
     if edge is not None:
         # 3. Assert the synapses are fully specified.
