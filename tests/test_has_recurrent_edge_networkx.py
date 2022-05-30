@@ -194,5 +194,84 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         )  # Spikes, reset to 0.
 
         # Assert dynamic properties of neuron 1 at t=3.
-        self.assertEqual(G.nodes[1]["nx_LIF"].u.get(), 18)
+        # spike of t=2 has arrived at a_in, yielding: u(t=3)=u(t=2)*(1-du)+a_in
+        # u(t=3)=6*(1-0)+6=12
+        self.assertEqual(G.nodes[1]["nx_LIF"].u.get(), 12)
+        self.assertEqual(G.nodes[1]["nx_LIF"].v.get(), 0)
+
+    def test_neuron_properties_with_recurrent_connection(self):
+        """Creates an SNN consisting of 2 neurons, adds an inhibitory recurrent
+        synapse to the excitatory neuron (at node 0), and verifies the SNN
+        behaviour over time.
+
+        Then does the same again yet with a recurrent connection in the
+        first neuron.
+        """
+
+        # Get graph without edge to self.
+        G = get_networkx_graph_of_2_neurons()
+
+        # Add the recurrent edge.
+        G.add_edge(0, 0, weight=-20.0)
+
+        # Assert static properties of neuron 0 at t=0.
+        self.assertEqual(G.nodes[0]["nx_LIF"].bias.get(), 3)
+        self.assertEqual(G.nodes[0]["nx_LIF"].du.get(), 0.0)
+        self.assertEqual(G.nodes[0]["nx_LIF"].dv.get(), 0.0)
+        self.assertEqual(G.nodes[0]["nx_LIF"].vth.get(), 2.0)
+
+        # Assert static properties of neuron 1 at t=0.
+        self.assertEqual(G.nodes[1]["nx_LIF"].bias.get(), 0)
+        self.assertEqual(G.nodes[1]["nx_LIF"].du.get(), 0)
+        self.assertEqual(G.nodes[1]["nx_LIF"].dv.get(), 0)
+        self.assertEqual(G.nodes[1]["nx_LIF"].vth.get(), 10)
+
+        # Assert dynaic properties of neuron 0 at t=0.
+        self.assertEqual(G.nodes[0]["nx_LIF"].u.get(), 0)
+        self.assertEqual(G.nodes[0]["nx_LIF"].v.get(), 0)
+
+        # Assert dynaic properties of neuron 1 at t=0.
+        self.assertEqual(G.nodes[1]["nx_LIF"].u.get(), 0)
+        self.assertEqual(G.nodes[1]["nx_LIF"].v.get(), 0)
+
+        # Simulate network for 1 timestep.
+        run_snn_on_networkx(G, 1)
+
+        # Assert dynamic properties of neuron 0 at t=1 (after 1 sec of sim).
+        # spikes but recurrent inhibitory spike did not arrive yet.
+        self.assertEqual(G.nodes[0]["nx_LIF"].u.get(), 0)
+        self.assertEqual(
+            G.nodes[0]["nx_LIF"].v.get(), 0
+        )  # Spikes, reset to 0.
+
+        # Assert dynamic properties of neuron 1 at t=1 (after 1 sec of sim).
+        self.assertEqual(G.nodes[1]["nx_LIF"].u.get(), 0)
+        self.assertEqual(G.nodes[1]["nx_LIF"].v.get(), 0)
+
+        # Simulate network for 1 timestep.
+        run_snn_on_networkx(G, 1)
+
+        # Assert dynamic properties of neuron 0 at t=2.
+        # spikes only the previous inhibitory spike has arrived.
+        self.assertEqual(G.nodes[0]["nx_LIF"].u.get(), -20)
+        self.assertEqual(
+            G.nodes[0]["nx_LIF"].v.get(), 0
+        )  # Spikes, reset to 0.
+
+        # Assert dynamic properties of neuron 1 at t=2.
+        self.assertEqual(
+            G.nodes[1]["nx_LIF"].u.get(), 6
+        )  # Incoming spike with weight 6.
+        self.assertEqual(G.nodes[1]["nx_LIF"].v.get(), 0)
+
+        # TODO: assert dynamic properties per timestep.
+        run_snn_on_networkx(G, 1)
+        # Assert dynamic properties of neuron 0 at t=3.
+        self.assertEqual(G.nodes[0]["nx_LIF"].u.get(), -40)
+        self.assertEqual(
+            G.nodes[0]["nx_LIF"].v.get(), 0
+        )  # Spikes, reset to 0.
+
+        # Assert dynamic properties of neuron 1 at t=3.
+        self.assertEqual(G.nodes[1]["nx_LIF"].u.get(), 12)
         self.assertEqual(G.nodes[1]["nx_LIF"].v.get(), 0)
