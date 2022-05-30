@@ -3,6 +3,8 @@
 
 import networkx as nx
 
+from src.LIF_neuron import LIF_neuron
+
 
 def get_standard_graph_4_nodes() -> nx.DiGraph:
     """Returns a Y-shaped graph with four nodes.
@@ -40,17 +42,16 @@ def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
         [
             (0, 1),
         ],
-        weight=4,
+        weight=6,
     )
 
-    # Specify neuron 0 properties.
-    graph.nodes[0]["bias"] = 2.0
-    graph.nodes[0]["du"] = 0.5
-    graph.nodes[0]["dv"] = 0.5
-    graph.nodes[0]["vth"] = 2.0
+    # Create networkx neuron that simulates LIF neuron from lava.
+    graph.nodes[0]["nx_LIF"] = LIF_neuron(
+        name=0, bias=3.0, du=0.0, dv=0.0, vth=2.0
+    )
 
-    graph.nodes[1]["bias"] = 0.0
-    graph.nodes[1]["du"] = 0.0
-    graph.nodes[1]["dv"] = 0.0
-    graph.nodes[1]["vth"] = 10.0
+    # Create networkx neuron that simulates LIF neuron from lava.
+    graph.nodes[1]["nx_LIF"] = LIF_neuron(
+        name=1, bias=0.0, du=0.0, dv=0.0, vth=10.0
+    )
     return graph

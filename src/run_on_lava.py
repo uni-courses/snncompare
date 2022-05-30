@@ -78,9 +78,6 @@ def simulate_network_on_lava(G: nx.Graph, t: int) -> None:
     # neuron and synapse properties specified.
     verify_networkx_snn_spec(G)
 
-    # TODO: verify all nodes have a lif neuron added.
-    add_lava_neurons_to_networkx_graph(G)
-
     # The simulation is ran for t timesteps on a Loihi emulation.
     run_simulation_on_lava(t, G.nodes[0]["neuron"])
 
@@ -102,11 +99,5 @@ def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
     :param starter_neuron: LIF:
 
     """
-    for _ in range(1, t):
-        # Run the simulation for 1 timestep.
-        starter_neuron.run(
-            condition=RunSteps(num_steps=1), run_cfg=Loihi1SimCfg()
-        )
-
-    # Terminate Loihi simulation.
-    starter_neuron.stop()
+    # Run the simulation for t timesteps.
+    starter_neuron.run(condition=RunSteps(num_steps=t), run_cfg=Loihi1SimCfg())

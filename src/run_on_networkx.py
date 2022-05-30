@@ -48,10 +48,11 @@ def generate_lif_neurons(G: nx.DiGraph) -> None:
     """
     for node in G.nodes:
         G.nodes[node]["nx_LIF"] = LIF_neuron(
-            G.nodes[node]["bias"],
-            G.nodes[node]["du"],
-            G.nodes[node]["dv"],
-            G.nodes[node]["vth"],
+            name=node,
+            bias=G.nodes[node]["bias"],
+            du=G.nodes[node]["du"],
+            dv=G.nodes[node]["dv"],
+            vth=G.nodes[node]["vth"],
         )
 
 
@@ -62,6 +63,14 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
 
     """
     return G
+
+
+def run_snn_on_networkx(G: nx.DiGraph, t: int) -> None:
+    """Runs the simulation for t timesteps using networkx, not lava."""
+    for timestep in range(t):
+        print(f"Before timestep={timestep}")
+        run_simulation_with_networkx_for_1_timestep(G)
+        print(f"After timestep={timestep}")
 
 
 def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
@@ -75,7 +84,7 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
     for node in G.nodes:
         nx_lif = G.nodes[node]["nx_LIF"]
         spikes = nx_lif.simulate_neuron_one_timestep(nx_lif.a_in)
-        # print(f'node={node}, u={nx_lif.u}, v={nx_lif.v} spikes={spikes}')
+        print(f"node={node}, u={nx_lif.u}, v={nx_lif.v} spikes={spikes}")
         if spikes:
             # Propagate the output spike to the connected receiving neurons.
             for neighbour in nx.all_neighbors(G, node):
