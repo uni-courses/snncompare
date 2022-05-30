@@ -48,10 +48,11 @@ def generate_lif_neurons(G: nx.DiGraph) -> None:
     """
     for node in G.nodes:
         G.nodes[node]["nx_LIF"] = LIF_neuron(
-            G.nodes[node]["bias"],
-            G.nodes[node]["du"],
-            G.nodes[node]["dv"],
-            G.nodes[node]["vth"],
+            name=node,
+            bias=G.nodes[node]["nx_LIF"].bias.get(),
+            du=G.nodes[node]["nx_LIF"].du.get(),
+            dv=G.nodes[node]["nx_LIF"].dv.get(),
+            vth=G.nodes[node]["nx_LIF"].vth.get(),
         )
 
 
@@ -64,30 +65,44 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
     return G
 
 
+def run_snn_on_networkx(G: nx.DiGraph, t: int) -> None:
+    """Runs the simulation for t timesteps using networkx, not lava."""
+    for _ in range(t):
+        run_simulation_with_networkx_for_1_timestep(G)
+
+
 def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
     """Runs the networkx simulation of the network for 1 timestep. The results
     of the simulation are stored in the G.nodes network.
 
     :param G: nx.DiGraph:
     """
+    # Visited edges
+    visited_edges = []
+
+    # First reset all a_in_next values for a new round of simulation.
+    reset_a_in_next_for_all_neurons(G)
 
     # Compute for each node whether it spikes based on a_in, starting at t=1.
     for node in G.nodes:
         nx_lif = G.nodes[node]["nx_LIF"]
         spikes = nx_lif.simulate_neuron_one_timestep(nx_lif.a_in)
-        # print(f'node={node}, u={nx_lif.u}, v={nx_lif.v} spikes={spikes}')
+
         if spikes:
             # Propagate the output spike to the connected receiving neurons.
             for neighbour in nx.all_neighbors(G, node):
 
-                # Check if the outgoing edge is exists and is directed.
-                if G.has_edge(node, neighbour):
+                if (node, neighbour) not in visited_edges:
+                    visited_edges.append((node, neighbour))
 
-                    # Compute synaptic weight.
-                    weight = G.edges[(node, neighbour)]["weight"]
+                    # Check if the outgoing edge is exists and is directed.
+                    if G.has_edge(node, neighbour):
 
-                    # Add input signal to connected receiving neuron.
-                    G.nodes[neighbour]["nx_LIF"].a_in_next += 1 * weight
+                        # Compute synaptic weight.
+                        weight = G.edges[(node, neighbour)]["weight"]
+
+                        # Add input signal to connected receiving neuron.
+                        G.nodes[neighbour]["nx_LIF"].a_in_next += 1 * weight
 
     # After all inputs have been computed, store a_in_next values for next
     # round into a_in of the current round to prepare for the nextsimulation
@@ -95,6 +110,12 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
     for node in G.nodes:
         nx_lif = G.nodes[node]["nx_LIF"]
         nx_lif.a_in = nx_lif.a_in_next
+
+
+def reset_a_in_next_for_all_neurons(G):
+    """Resets the a_in_next for all neurons to 0."""
+    for node in G.nodes:
+        G.nodes[node]["nx_LIF"].a_in_next = 0
 
 
 def initialise_a_in_is_zero_at_t_is_1(G: nx.DiGraph) -> None:

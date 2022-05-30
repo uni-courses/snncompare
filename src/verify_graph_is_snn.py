@@ -19,7 +19,7 @@ def verify_networkx_snn_spec(G: nx.DiGraph) -> None:
 
     # TODO: verify synapse properties
     for edge in G.edges:
-        assert_all_synapse_properties_are_specified(G, edge)
+        assert_synapse_properties_are_specified(G, edge)
 
 
 def verify_neuron_properties_are_specified(node: nx.DiGraph.nodes) -> None:
@@ -28,13 +28,13 @@ def verify_neuron_properties_are_specified(node: nx.DiGraph.nodes) -> None:
     :param node: nx.DiGraph.nodes:
 
     """
-    if not isinstance(node["bias"], float):
+    if not isinstance(node["nx_LIF"].bias.get(), float):
         raise Exception("Bias is not a float.")
-    if not isinstance(node["du"], float):
+    if not isinstance(node["nx_LIF"].du.get(), float):
         raise Exception("du is not a float.")
-    if not isinstance(node["dv"], float):
+    if not isinstance(node["nx_LIF"].dv.get(), float):
         raise Exception("dv is not a float.")
-    if not isinstance(node["vth"], float):
+    if not isinstance(node["nx_LIF"].vth.get(), float):
         raise Exception("vth is not a float.")
 
 
@@ -48,14 +48,14 @@ def assert_synaptic_edgeweight_type_is_correct(edge: nx.DiGraph.edges) -> None:
         raise Exception(f"Weight of edge {edge} is not a" + " float.")
 
 
-def assert_all_synapse_properties_are_specified(G, edge):
+def assert_synapse_properties_are_specified(G, edge):
     """
 
     :param G:
     :param edge:
 
     """
-    if not all_synapse_properties_are_specified(G, edge):
+    if not check_if_synapse_properties_are_specified(G, edge):
         raise Exception(
             f"Not all synapse properties of edge: {edge} are"
             + " specified. It only contains attributes:"
@@ -63,7 +63,7 @@ def assert_all_synapse_properties_are_specified(G, edge):
         )
 
 
-def all_synapse_properties_are_specified(G, edge):
+def check_if_synapse_properties_are_specified(G, edge):
     """
 
     :param G:
@@ -75,6 +75,7 @@ def all_synapse_properties_are_specified(G, edge):
         # if 'delay' in synapse_property_names:
         # TODO: implement delay using a chain of neurons in series since this
         # is not yet supported by lava-nc.
+
         return True
     return False
 

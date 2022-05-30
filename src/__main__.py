@@ -6,7 +6,7 @@ that invokes this script."""
 # Import external libraries.
 # import networkx as nx
 
-from src.run_on_lava import simulate_network_on_lava
+from src.run_on_lava import simulate_snn_on_lava
 
 from .arg_parser import parse_cli_args
 from .get_graph import get_networkx_graph_of_2_neurons
@@ -23,4 +23,4 @@ G = get_networkx_graph_of_2_neurons()
 if args.run_on_networkx:
     simulate_snn_on_networkx(G, 30)
 elif args.run_on_lava:
-    simulate_network_on_lava(G, 2)
+    simulate_snn_on_lava(G, 2)

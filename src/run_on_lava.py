@@ -16,8 +16,6 @@ from lava.magma.core.run_configs import Loihi1SimCfg
 from lava.proc.lif.process import LIF
 
 from src.convert_networkx_to_lava import initialise_networkx_to_snn_conversion
-
-# Import local project functions and classes.
 from src.verify_graph_is_snn import verify_networkx_snn_spec
 
 
@@ -62,12 +60,12 @@ def append_neurons_to_networkx_graph(G: nx.Graph, neuron_dict: dict) -> None:
         neuron = list(neuron_dict.keys())[
             list(neuron_dict.values()).index(node)
         ]
-        G.nodes[node]["neuron"] = neuron
+        G.nodes[node]["lava_LIF"] = neuron
 
     # TODO: assert all neurons in the graph are unique.
 
 
-def simulate_network_on_lava(G: nx.Graph, t: int) -> None:
+def simulate_snn_on_lava(G: nx.Graph, t: int) -> None:
     """
 
     :param G: nx.Graph:
@@ -78,21 +76,8 @@ def simulate_network_on_lava(G: nx.Graph, t: int) -> None:
     # neuron and synapse properties specified.
     verify_networkx_snn_spec(G)
 
-    # TODO: verify all nodes have a lif neuron added.
-    add_lava_neurons_to_networkx_graph(G)
-
     # The simulation is ran for t timesteps on a Loihi emulation.
-    run_simulation_on_lava(t, G.nodes[0]["neuron"])
-
-
-def convert_networkx_graph_to_lava_snn(G: nx.Graph) -> LIF:
-    """
-
-    :param G: nx.Graph:
-
-    """
-    # TODO: Change return G to return a lif neuron.
-    return G
+    run_simulation_on_lava(t, G.nodes[0]["lava_LIF"])
 
 
 def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
@@ -102,11 +87,5 @@ def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
     :param starter_neuron: LIF:
 
     """
-    for _ in range(1, t):
-        # Run the simulation for 1 timestep.
-        starter_neuron.run(
-            condition=RunSteps(num_steps=1), run_cfg=Loihi1SimCfg()
-        )
-
-    # Terminate Loihi simulation.
-    starter_neuron.stop()
+    # Run the simulation for t timesteps.
+    starter_neuron.run(condition=RunSteps(num_steps=t), run_cfg=Loihi1SimCfg())
