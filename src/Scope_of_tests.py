@@ -7,17 +7,17 @@ class Scope_of_tests:
     testing purposes."""
 
     # pylint: disable=R0903
-
     # pylint: disable=too-many-instance-attributes
     # Eleven is considered is reasonable in this case.
+
     def __init__(self) -> None:
 
         # Specify graph size (nr. of nodes in graph).
         self.min_size = 2
-        self.max_size = 30
+        self.max_size = 8
 
         # Specify ratio of edges that are created w.r.t. fully connected.
-        self.min_edge_density = 0.2
+        self.min_edge_density = 0.6
         self.max_edge_density = 1
         self.edge_density_stepsize = 0.1
 

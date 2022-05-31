@@ -9,6 +9,11 @@ import networkx as nx
 import numpy as np
 
 from src.get_graph import gnp_random_connected_graph
+from src.run_on_lava import (
+    add_lava_neurons_to_networkx_graph,
+    simulate_snn_on_lava,
+)
+from src.run_on_networkx import simulate_snn_on_networkx
 from src.Scope_of_tests import Scope_of_tests
 from src.verify_graph_is_snn import (
     assert_no_duplicate_edges_exist,
@@ -50,7 +55,11 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     )
 
                     # Assert graph is connected.
-                    self.assertTrue(nx.is_connected(G))
+                    # self.assertTrue(nx.is_connected(G))
+                    self.assertFalse(
+                        not nx.is_strongly_connected(G)
+                        and not nx.is_weakly_connected(G)
+                    )
 
                     # Assert size of graph.
                     self.assertEqual(size, len(G))
@@ -70,9 +79,19 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     # Assert all neuron properties are specified.
                     verify_networkx_snn_spec(G)
 
+                    # Generate networkx network.
+
+                    # Generate lava network.
+                    add_lava_neurons_to_networkx_graph(G)
+
                     # Run the simulation on networkx.
+                    simulate_snn_on_networkx(G, 10)
 
                     # Run the simulation on lava.
+                    simulate_snn_on_lava(G, 10)
 
                     # Verify the simulations produce identical neuron
                     # properties.
+
+                    # Terminate Loihi simulation.
+                    G.nodes[0]["lava_LIF"].stop()

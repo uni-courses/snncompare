@@ -82,6 +82,8 @@ class Test_get_graph_on_networkx(unittest.TestCase):
             + " contains attributes:dict_keys([])",
             str(context.exception),
         )
+        # Terminate Loihi simulation.
+        G.nodes[0]["lava_LIF"].stop()
 
     def test_neuron_properties_after_1_sec_without_recurrent_connection(self):
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour

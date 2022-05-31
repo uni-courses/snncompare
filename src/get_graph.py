@@ -69,7 +69,7 @@ def gnp_random_connected_graph(
     """
     random.seed(test_scope.seed)
     edges = combinations(range(size), 2)
-    G = nx.Graph()
+    G = nx.DiGraph()
     G.add_nodes_from(range(size))
     if density <= 0:
         return G
