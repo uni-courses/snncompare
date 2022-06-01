@@ -303,7 +303,6 @@ def add_synapse_left_to_right(
     # 3. Get the edge between lhs and rhs nodes. They are neighbours
     # so they have an edge by definition.However it is a directed graph.
     edge = get_edge_if_exists(G, lhs_nodename, neighbour)
-    print(f"edge={edge}")
 
     if edge is not None:
         # 3. Assert the synapses are fully specified.

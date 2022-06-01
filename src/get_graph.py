@@ -8,6 +8,7 @@ import networkx as nx
 import numpy as np
 
 from src.LIF_neuron import LIF_neuron
+from src.plot_graphs import plot_circular_graph
 
 
 def get_standard_graph_4_nodes() -> nx.DiGraph:
@@ -92,6 +93,7 @@ def gnp_random_connected_graph(
     )
 
     set_rand_neuron_properties(G, test_scope)
+    plot_circular_graph(density, G, test_scope.seed, export=True, show=True)
     return G
 
 

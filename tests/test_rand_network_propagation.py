@@ -13,7 +13,6 @@ from src.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
-from src.run_on_networkx import simulate_snn_on_networkx
 from src.Scope_of_tests import Scope_of_tests
 from src.verify_graph_is_snn import (
     assert_no_duplicate_edges_exist,
@@ -85,7 +84,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     add_lava_neurons_to_networkx_graph(G)
 
                     # Run the simulation on networkx.
-                    simulate_snn_on_networkx(G, 10)
+                    # simulate_snn_on_networkx(G, 10)
 
                     # Run the simulation on lava.
                     simulate_snn_on_lava(G, 10)
@@ -93,5 +92,59 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     # Verify the simulations produce identical neuron
                     # properties.
 
+                    self.compare_static_snn_properties(G)
+
                     # Terminate Loihi simulation.
                     G.nodes[0]["lava_LIF"].stop()
+
+    def compare_static_snn_properties(self, G):
+        """Performs comparison of static neuron properties at each timestep.
+
+        TODO: call for every timestep.
+        """
+        for node in G.nodes:
+            print(f"In comparison node={node}")
+            lava_neuron = G.nodes[0]["lava_LIF"]
+            nx_neuron = G.nodes[0]["nx_LIF"]
+            print(f"lava_neuron.bias.get()={lava_neuron.bias.get()}")
+            print(f"lava_neuron.bias.get()={nx_neuron.bias.get()}")
+            # Assert bias is equal.
+            self.assertEqual(lava_neuron.bias.get(), nx_neuron.bias.get())
+            print(f"lava_neuron.du.get()={nx_neuron.du.get()}")
+            print(f"lava_neuron={lava_neuron}")
+            print(f"lava_neuron.__dict__={lava_neuron.__dict__}")
+            print(f"lava_neuron.du.get()={lava_neuron.du.get()}")
+            print("got")
+
+            # Assert du is equal.
+            self.assertEqual(lava_neuron.du.get(), nx_neuron.du.get())
+
+            print(f"lava_neuron.bias.get()={lava_neuron.dv.get()}")
+            print(f"lava_neuron.bias.get()={nx_neuron.dv.get()}")
+            # Assert dv is equal.
+            self.assertEqual(lava_neuron.dv.get(), nx_neuron.dv.get())
+
+            print(f"lava_neuron.bias.get()={lava_neuron.name.get()}")
+            print(f"lava_neuron.bias.get()={nx_neuron.name.get()}")
+            # Assert name is equal.
+            self.assertEqual(lava_neuron.name, nx_neuron.name)
+
+            print(f"lava_neuron.bias.get()={lava_neuron.u.get()}")
+            print(f"lava_neuron.bias.get()={nx_neuron.u.get()}")
+            # Assert u is equal.
+            self.assertEqual(lava_neuron.u.get(), nx_neuron.u.get())
+
+            # Assert v is equal.
+            self.assertEqual(lava_neuron.v.get(), nx_neuron.v.get())
+            # Assert vth is equal.
+            self.assertEqual(lava_neuron.vth.get(), nx_neuron.vth.get())
+            # Assert v_reset is equal.
+            self.assertEqual(
+                lava_neuron.v_reset.get(), nx_neuron.v_reset.get()
+            )
+        if len(G) == 7:
+            print(f"bias={lava_neuron.bias.get()},{nx_neuron.bias.get()}")
+            print(f"du={lava_neuron.du.get()},{nx_neuron.du.get()}")
+            print(f"dv={lava_neuron.dv.get()},{nx_neuron.dv.get()}")
+            print(f"u={lava_neuron.u.get()},{nx_neuron.u.get()}")
+            print(f"v={lava_neuron.v.get()},{nx_neuron.v.get()}")

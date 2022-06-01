@@ -13,8 +13,6 @@ def verify_networkx_snn_spec(G: nx.DiGraph) -> None:
 
     """
     for node in G.nodes:
-        print(f"node:{node}")
-        print(f"node:{G.nodes[node]}")
         verify_neuron_properties_are_specified(G.nodes[node])
 
     # TODO: verify synapse properties
