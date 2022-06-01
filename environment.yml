@@ -17,6 +17,7 @@ channels:
   - conda-forge
   - conda
 dependencies:
+- python=3.8
 - anaconda
 - conda:
 # Run python tests.
