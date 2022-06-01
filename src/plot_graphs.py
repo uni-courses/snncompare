@@ -43,11 +43,13 @@ def create_target_dir_if_not_exists(path, new_dir_name):
     :param path:
     :param new_dir_name:
     """
-    if os.path.exists(path):
-        if not os.path.exists(f"{path}/{new_dir_name}"):
-            os.makedirs(f"{path}/{new_dir_name}")
-    else:
+
+    if not os.path.exists(path):
+        os.makedirs(f"{path}")
+    if not os.path.exists(path):
         raise Exception(f"Error, path={path} did not exist.")
+    if not os.path.exists(f"{path}/{new_dir_name}"):
+        os.makedirs(f"{path}/{new_dir_name}")
 
 
 def get_labels(G, configuration):
