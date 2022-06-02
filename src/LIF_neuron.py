@@ -1,6 +1,9 @@
 """File represents LIF neuron object."""
 
 
+import numpy as np
+
+
 class LIF_neuron:
     """Creates a Leaky-Integrate-and-Fire neuron specification. Leaky-
     Integrate-and-Fire neural process with activation input and spike output
@@ -190,34 +193,68 @@ class Vth:
         return self.vth
 
 
-def print_neuron_properties(neurons, spikes=None, ids=None):
-    """
-
-    :param neurons:
-    :param spikes:  (Default value = None)
-    :param ids:  (Default value = None)
-
-    """
-    spacing = 4
+def print_neuron_properties(neurons, static, ids=None, spikes=None):
+    """Prints the neuron properties in human readable format."""
+    spacing = 5
     if ids is not None:
         for x in ids:
             print(f"{str(x) : <{spacing+5}}", end=" ")
 
     if spikes is not None:
+        print("")
         for x in spikes:
-            print("")
             print(f"spk={x : <{spacing+1}}", end=" ")
-    for x in neurons:
+    if static:
         print("")
-        print(f"u={str(x.u.get()) : <{spacing+3}}", end=" ")
+        for x in neurons:
+            print(f"du={str(round(x.du.get(),2)) : <{spacing+2}}", end=" ")
         print("")
-        print(f"du={str(x.du.get()) : <{spacing+2}}", end=" ")
+        for x in neurons:
+            print(f"dv={str(round(x.dv.get(),2)) : <{spacing+2}}", end=" ")
         print("")
-        print(f"v={str(x.v.get()) : <{spacing+3}}", end=" ")
+        for x in neurons:
+            print(f"bias={str(round(x.bias.get(),2)) : <{spacing}}", end=" ")
         print("")
-        print(f"dv={str(x.dv.get()) : <{spacing+2}}", end=" ")
-        print("")
-        print(f"bias={str(x.bias.get()) : <{spacing}}", end=" ")
-        print("")
-        print(f"vth={str(x.vth.get()) : <{spacing+1}}", end=" ")
+        for x in neurons:
+            print(f"vth={str(round(x.vth.get(),2)) : <{spacing+1}}", end=" ")
         print("\n")
+    else:
+        print("")
+        for x in neurons:
+            print(
+                f"u={str(round_if_array(x.u.get())) : <{spacing+3}}", end=" "
+            )
+        print("")
+        for x in neurons:
+            print(
+                f"v={str(round_if_array(x.v.get())) : <{spacing+3}}", end=" "
+            )
+
+
+def round_if_array(value):
+    """Rounds an incoming value up to 2 decimals and unpacks array if lif
+    neuron property is returns as array."""
+    if isinstance(value, np.ndarray):
+        return round(value[0], 2)
+    return round(value, 2)
+
+
+def print_neuron_properties_per_graph(G, static):
+    """Prints bias,du,dv,vth of neuron.
+
+    Supports both lava and networkx neurons.
+    """
+    lava_neurons = []
+    nx_neurons = []
+    for node in G.nodes:
+        lava_neurons.append(G.nodes[node]["lava_LIF"])
+        nx_neurons.append(G.nodes[node]["nx_LIF"])
+
+    print("Lava neuron values:")
+    print_neuron_properties(
+        lava_neurons, static=static, ids=G.nodes, spikes=None
+    )
+    print("Networkx neuron values:")
+    print_neuron_properties(
+        nx_neurons, static=static, ids=G.nodes, spikes=None
+    )
