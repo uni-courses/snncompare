@@ -178,7 +178,7 @@ def get_list_with_rand_floats_in_range(min_val, max_val, length, seed):
     :param seed:
     """
     # Specify random seed.
-    random.seed(seed)
+    np.random.seed(seed)
 
     # Get list with random edge weights.
     rand_floats = np.random.uniform(low=min_val, high=max_val, size=length)
