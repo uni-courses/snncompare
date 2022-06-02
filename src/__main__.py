@@ -29,6 +29,7 @@ elif args.run_on_lava:
     add_lava_neurons_to_networkx_graph(G)
     simulate_snn_on_lava(G, 2)
 
-    print(f'bias={G.nodes[0]["lava_LIF"].u.get()}')
+    for node in G.nodes:
+        print(f'node={node},u={G.nodes[node]["lava_LIF"].u.get()}')
     # Terminate Loihi simulation.
     G.nodes[0]["lava_LIF"].stop()
