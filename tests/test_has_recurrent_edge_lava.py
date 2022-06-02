@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Performs tests that verify the behaviour of a recurrent edge in the
 network."""
 
@@ -24,6 +23,9 @@ class Test_get_graph_on_lava(unittest.TestCase):
     def test_returns_2_nodes(self):
         """Tests whether the get_networkx_graph_of_2_neurons function returns a
         graph with two nodes."""
+        # pylint: disable=R0801
+        # Identical test is allowed cause the lava test adds the neurons which
+        # may yield different behaviour.
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
@@ -52,6 +54,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
         Then does the same again yet with a recurrent connection in the
         first neuron.
         """
+        # pylint: disable=R0801
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
@@ -83,6 +86,8 @@ class Test_get_graph_on_lava(unittest.TestCase):
             + " contains attributes:dict_keys([])",
             str(context.exception),
         )
+        # Terminate Loihi simulation.
+        G.nodes[0]["lava_LIF"].stop()
 
     def test_neuron_properties_after_1_sec_without_recurrent_connection(self):
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
@@ -129,6 +134,9 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Assert dynaic properties of neuron 1 at t=1.
         self.assertEqual(G.nodes[1]["lava_LIF"].u.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 0)
+
+        # Terminate Loihi simulation.
+        G.nodes[0]["lava_LIF"].stop()
 
     def test_neuron_properties_without_recurrent_connection(self):
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
@@ -201,6 +209,9 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # u(t=3)=6*(1-0)+6=12
         self.assertEqual(G.nodes[1]["lava_LIF"].u.get(), 12)
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 0)
+
+        # Terminate Loihi simulation.
+        G.nodes[0]["lava_LIF"].stop()
 
     def test_neuron_properties_with_recurrent_connection(self):
         """Creates an SNN consisting of 2 neurons, adds an inhibitory recurrent
@@ -289,3 +300,6 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # v[t] = 6 * (1-dv) 6 + bias (bias=0)
         # v[t] = 12>vth=10, so it spikes and resets to 0.
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 0)
+
+        # Terminate Loihi simulation.
+        G.nodes[0]["lava_LIF"].stop()

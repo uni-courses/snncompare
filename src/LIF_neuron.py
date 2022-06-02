@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """File represents LIF neuron object."""
 
 
@@ -28,8 +27,8 @@ class LIF_neuron:
 
         # Initialise default values.
         self.v_reset: float = 0.0
-        self.v: V = V(0)
-        self.u: U = U(0)
+        self.v: V = V(0.0)
+        self.u: U = U(0.0)
         self.s_out = 1
         self.spikes = False
         self.a_in: float = 0.0
@@ -80,7 +79,7 @@ class LIF_neuron:
             # Github object/code says voltage is reset to 0.
 
             # Reset voltage based on output voltage.
-            self.v = V(0)
+            self.v = V(0.0)
         else:
             self.spikes = False
             self.v = V(new_voltage)
@@ -92,7 +91,13 @@ class Bias:
     # pylint: disable=R0903
 
     def __init__(self, bias: float) -> None:
-        self.bias = bias
+        if isinstance(bias, float):
+            self.bias = bias
+        else:
+            raise Exception(
+                "Error, bias type is not float, instead, it is:"
+                + f"{type(bias)}"
+            )
 
     def get(self) -> float:
         """Returns the bias value as a float."""
@@ -104,7 +109,12 @@ class Du:
 
     # pylint: disable=R0903
     def __init__(self, du: float) -> None:
-        self.du = du
+        if isinstance(du, float):
+            self.du = du
+        else:
+            raise Exception(
+                "Error, du type is not float, instead, it is:" + f"{type(du)}"
+            )
 
     def get(self) -> float:
         """Returns the du value as a float."""
@@ -116,7 +126,12 @@ class Dv:
 
     # pylint: disable=R0903
     def __init__(self, dv: float) -> None:
-        self.dv = dv
+        if isinstance(dv, float):
+            self.dv = dv
+        else:
+            raise Exception(
+                "Error, dv type is not float, instead, it is:" + f"{type(dv)}"
+            )
 
     def get(self) -> float:
         """Returns the dv value as a float."""
@@ -128,7 +143,12 @@ class U:
 
     # pylint: disable=R0903
     def __init__(self, u: float) -> None:
-        self.u = u
+        if isinstance(u, float):
+            self.u = u
+        else:
+            raise Exception(
+                "Error, u type is not float, instead, it is:" + f"{type(u)}"
+            )
 
     def get(self) -> float:
         """Returns the u (current) value as a float."""
@@ -140,7 +160,12 @@ class V:
 
     # pylint: disable=R0903
     def __init__(self, v: float) -> None:
-        self.v = v
+        if isinstance(v, float):
+            self.v = v
+        else:
+            raise Exception(
+                "Error, v type is not float, instead, it is:" + f"{type(v)}"
+            )
 
     def get(self) -> float:
         """Returns the v (voltage) value as a float."""
@@ -152,7 +177,13 @@ class Vth:
 
     # pylint: disable=R0903
     def __init__(self, vth: float) -> None:
-        self.vth = vth
+        if isinstance(vth, float):
+            self.vth = vth
+        else:
+            raise Exception(
+                "Error, vth type is not float, instead, it is:"
+                + f"{type(vth)}"
+            )
 
     def get(self) -> float:
         """Returns the vth (threshold voltage) value as a float."""

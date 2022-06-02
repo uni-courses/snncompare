@@ -2,7 +2,7 @@
 # run the code with a single command without having to install anything
 # (extra).
 
-# First run:: conda env create --file environment.yml
+# First run: conda env create --file environment.yml
 # If you change this file, run: conda env update --file environment.yml
 
 # Instructions for this networkx-to-lava-nc repository only. First time usage
@@ -12,59 +12,58 @@
 # yes | sudo apt install gcc
 
 # Conda configuration settings. (Specify which modules/packages are installed.)
-name: networkx-to-lava
+name: nx2lava
 channels:
   - conda-forge
-  - conda
 dependencies:
-- anaconda
-- conda:
+# Specify specific python version.
+  - python=3.8
 # Run python tests.
   - pytest-cov
 # Generate plots.
   - matplotlib
 # Run graph software quickly.
   - networkx
-- pip
-- pip:
+  - pip
+  - pip:
 # Run pip install on .tar.gz file in GitHub repository (For lava-nc only).
-  - https://github.com/lava-nc/lava/releases/download/v0.3.0/lava-nc-0.3.0.tar.gz
+    - https://github.com/lava-nc/lava/releases/download/v0.3.0/lava-nc-0.3.0.tar.gz
 # Turns relative import paths into absolute import paths.
-  - absolufy-imports
+    - absolufy-imports
 # Auto format Python code to make it flake8 compliant.
-  - autoflake
+    - autoflake
 # Scan Python code for security issues.
-  - bandit
+    - bandit
 # Code formatting compliance.
-  - black
+    - black
 # Correct code misspellings.
-  - codespell
+    - codespell
 # Verify percentage of code that has at least 1 test.
-  - coverage
+    - coverage
 # Auto formats the Python documentation written in the code.
-  - docformatter
+    - docformatter
 # Auto generate docstrings.
-  - flake8
+    - flake8
 # Auto sort the import statements.
-  - isort
+    - isort
 # Auto format Markdown files.
-  - mdformat
+    - mdformat
 # Auto check static typing.
-  - mypy
+    - mypy
 # Auto generate documentation.
-  - pdoc3
+    - pdoc3
 # Auto check programming style aspects.
-  - pylint
+    - pylint
 # Auto generate docstrings.
-  - pyment
+    - pyment
 # Identify and remove dead code.
-  - vulture
+    - vulture
 # Include GitHub pre-commit hook.
-  - pre-commit
+    - pre-commit
 # TODO: identify exact function(and usage).
 # Seems to be an autoformatter like black, but installed using npm instead of pip.
-  - prettier
+    - prettier
 # Automatically upgrades Python syntax to the new Python version syntax.
-  - pyupgrade
+    - pyupgrade
 # Another static type checker for python like mypy.
-  - pyright
+    - pyright

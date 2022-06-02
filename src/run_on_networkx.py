@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Runs a converted networkx graph without the Lava platform.
 
 First verifies the graph represents a connected and valid SNN, with all
