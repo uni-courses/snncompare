@@ -53,7 +53,10 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     )
 
                     # Assert graph is connected.
-                    self.assertTrue(nx.is_connected(G))
+                    self.assertFalse(
+                        not nx.is_strongly_connected(G)
+                        and not nx.is_weakly_connected(G)
+                    )
 
                     # Assert size of graph.
                     self.assertEqual(size, len(G))
@@ -100,7 +103,11 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     )
 
                     # Assert graph is connected.
-                    self.assertTrue(nx.is_connected(G))
+                    # self.assertTrue(nx.is_connected(G))
+                    self.assertFalse(
+                        not nx.is_strongly_connected(G)
+                        and not nx.is_weakly_connected(G)
+                    )
 
                     # Assert size of graph.
                     self.assertEqual(size, len(G))
