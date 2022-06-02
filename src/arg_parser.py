@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Parses CLI arguments that specify on which platform to simulate the spiking
 neural network (SNN)."""
 import argparse

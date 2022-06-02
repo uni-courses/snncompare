@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Performs tests that verify the behaviour of a recurrent edge in the
 network."""
 
@@ -22,6 +21,9 @@ class Test_get_graph_on_networkx(unittest.TestCase):
     def test_returns_2_nodes(self):
         """Tests whether the get_networkx_graph_of_2_neurons function returns a
         graph with two nodes."""
+        # pylint: disable=R0801
+        # Identical test is allowed cause the lava test adds the neurons which
+        # may yield different behaviour.
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()

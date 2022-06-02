@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Performs tests that verify lava simulation produces the same results as the
 networkx simulation."""
 

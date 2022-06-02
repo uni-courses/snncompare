@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """File represents LIF neuron object."""
 
 

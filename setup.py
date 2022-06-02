@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This file is to allow this repository to be published as a pip module, such
 that people can install it with: `pip install networkx-to-lava-nc`.
 

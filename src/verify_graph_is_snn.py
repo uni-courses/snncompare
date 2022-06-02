@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Verifies the graph represents a connected and valid SNN, with all required
 neuron and synapse properties specified."""
 

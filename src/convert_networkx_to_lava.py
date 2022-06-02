@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Converts networkx graph representing lava spiking-neural-network into
 SNN."""
 

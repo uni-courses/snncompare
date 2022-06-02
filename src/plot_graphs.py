@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """File used to generate graph plots."""
 
 import os

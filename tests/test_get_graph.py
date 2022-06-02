@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Verifies 2 nodes are included in the networkx graph."""
 import unittest
 

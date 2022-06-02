@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """File used to generate graphs that are used for testing."""
 
 import random
