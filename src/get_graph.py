@@ -29,6 +29,32 @@ def get_standard_graph_4_nodes() -> nx.DiGraph:
     return graph
 
 
+def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
+    """Gets a cyclic graph with nodes that cannot be reached following the
+    directed edges, to test if the Lava simulation imposes some requirements on
+    the graph properties."""
+    graph = nx.DiGraph()
+    graph.add_nodes_from(
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        color="w",
+    )
+    graph.add_edges_from(
+        [
+            (1, 0),
+            (1, 2),
+            (3, 2),
+            (4, 3),
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 5),
+            (8, 7),
+        ],
+        weight=float(10),
+    )
+    return graph
+
+
 def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
     """Returns graph with 2 neurons with a synapse with weight of 4 from
     nodename 0 to nodename 1."""
