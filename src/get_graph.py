@@ -1,5 +1,6 @@
 """File used to generate graphs that are used for testing."""
 
+import math
 import random
 from itertools import combinations, groupby
 
@@ -24,6 +25,32 @@ def get_standard_graph_4_nodes() -> nx.DiGraph:
             (2, 3),
         ],
         weight=10,
+    )
+    return graph
+
+
+def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
+    """Gets a cyclic graph with nodes that cannot be reached following the
+    directed edges, to test if the Lava simulation imposes some requirements on
+    the graph properties."""
+    graph = nx.DiGraph()
+    graph.add_nodes_from(
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        color="w",
+    )
+    graph.add_edges_from(
+        [
+            (1, 0),
+            (1, 2),
+            (3, 2),
+            (4, 3),
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 5),
+            (8, 7),
+        ],
+        weight=float(10),
     )
     return graph
 
@@ -57,6 +84,7 @@ def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
 
 def gnp_random_connected_graph(
     density,
+    recurrent_density,
     size,
     test_scope,
 ):
@@ -78,6 +106,8 @@ def gnp_random_connected_graph(
     for _, node_edges in groupby(edges, key=lambda x: x[0]):
         node_edges = list(node_edges)
 
+        print(f"node_edges={node_edges}")
+
         random_edge = random.choice(node_edges)  # nosec - using a random seed.
         G.add_edge(*random_edge)
         for e in node_edges:
@@ -91,9 +121,49 @@ def gnp_random_connected_graph(
         test_scope.seed,
     )
 
+    add_random_recurrent_edges(G, recurrent_density, test_scope)
+
     set_rand_neuron_properties(G, test_scope)
-    plot_circular_graph(density, G, test_scope.seed, export=True, show=True)
+    plot_circular_graph(
+        density,
+        G,
+        recurrent_density,
+        test_scope,
+    )
     return G
+
+
+def add_random_recurrent_edges(
+    G: nx.DiGraph, recurrent_edge_density, test_scope
+):
+    """Adds random recurrent edges."""
+
+    # Use the recurrent_edge_density to get amount of True values.
+    # Use seed.
+    # Get list of random booleans to decide which recurrent edges are created.
+    rand_bools = get_list_with_rand_bools(
+        len(G), recurrent_edge_density, test_scope.seed
+    )
+
+    # Get list of random edge values (un-used weights are ignored/skipped).
+    rand_edge_weights = get_list_with_rand_ints_in_range(
+        test_scope.min_edge_weight,
+        test_scope.max_edge_weight,
+        G.number_of_edges(),
+        test_scope.seed,
+    )
+
+    for node in G.nodes:
+
+        if rand_bools[node]:
+
+            # Add the recurrent edge.
+            G.add_edge(node, node)
+
+            # TODO: verify whether attribute weight exists for the newly
+            # created edge.
+            # Create random weight in recurrent edge.
+            G.edges[(node, node)]["weight"] = float(rand_edge_weights[node])
 
 
 def set_random_edge_weights(G, min_weight, max_weight, seed):
@@ -184,3 +254,37 @@ def get_list_with_rand_floats_in_range(min_val, max_val, length, seed):
     rand_floats = np.random.uniform(low=min_val, high=max_val, size=length)
     print(f"rand_floats={rand_floats}")
     return rand_floats
+
+
+def get_list_with_rand_bools(length, recurrent_edge_density, seed):
+    """Generates and returns a list with random booleans of length length. The
+    amount of True values is determined by: recurrent_edge_density*length.
+
+    :param min_val:
+    :param max_val:
+    :param length:
+    :param seed:
+    """
+    # Specify random seed.
+    random.seed(seed)
+
+    # Compute how many True and False values are expected.
+    amount_of_true_vals = math.ceil(recurrent_edge_density * length)
+    amount_of_false_vals = length - amount_of_true_vals
+
+    # Generate the ordered true false list.
+    rand_bools = [False] * amount_of_false_vals + [True] * amount_of_true_vals
+    if len(rand_bools) != length:
+        raise Exception(
+            f"The list of random booleans has length:{len(rand_bools)}"
+            + f" whereas it should have length:{length}."
+        )
+
+    # Implement random order of True and False values.
+    # The randomness needs to be deterministic for testing purposes, so
+    # it is ok if it is not a real random number, this is not a security
+    # application, hence the # nosec.
+
+    random.shuffle(rand_bools)  # nosec # Note this shuffles in place.
+
+    return rand_bools
