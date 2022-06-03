@@ -13,7 +13,10 @@ from src.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
-from src.run_on_networkx import simulate_snn_on_networkx
+from src.run_on_networkx import (
+    add_nx_neurons_to_networkx_graph,
+    run_snn_on_networkx,
+)
 from src.Scope_of_tests import Scope_of_tests
 from src.verify_graph_is_snn import (
     assert_no_duplicate_edges_exist,
@@ -52,6 +55,8 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                         density,
                         size,
                         self.test_scope,
+                        export=True,
+                        show=True,
                     )
 
                     # Assert graph is connected.
@@ -71,6 +76,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
 
                     # Assert each edge has a weight.
                     for edge in G.edges:
+                        print(f"edge={edge}")
                         assert_synaptic_edgeweight_type_is_correct(G, edge)
 
                     # Assert no duplicate edges exist.
@@ -80,6 +86,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     verify_networkx_snn_spec(G)
 
                     # Generate networkx network.
+                    add_nx_neurons_to_networkx_graph(G)
 
                     # Generate lava network.
                     add_lava_neurons_to_networkx_graph(G)
@@ -94,7 +101,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     for t in range(20):
                         print("")
                         # Run the simulation on networkx.
-                        simulate_snn_on_networkx(G, 10)
+                        run_snn_on_networkx(G, 1)
 
                         # Run the simulation on lava.
                         simulate_snn_on_lava(G, 1)

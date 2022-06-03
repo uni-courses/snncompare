@@ -5,7 +5,10 @@ import unittest
 
 from src.get_graph import get_networkx_graph_of_2_neurons
 from src.run_on_lava import simulate_snn_on_lava
-from src.run_on_networkx import run_snn_on_networkx, simulate_snn_on_networkx
+from src.run_on_networkx import (
+    add_nx_neurons_to_networkx_graph,
+    run_snn_on_networkx,
+)
 
 
 class Test_get_graph_on_networkx(unittest.TestCase):
@@ -55,10 +58,10 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
 
-        # Verify the graph can run on Networkx.
-        simulate_snn_on_networkx(G, 30)
+        # Generate networkx network.
+        add_nx_neurons_to_networkx_graph(G)
 
-        # Verify the graph can run on Lava.
+        # Verify the graph can run on Networkx
         run_snn_on_networkx(G, 2)
 
         # Add the recurrent edge.
@@ -66,7 +69,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # Verify running on Networkx throws error.
-            simulate_snn_on_networkx(G, 30)
+            run_snn_on_networkx(G, 30)
 
         self.assertEqual(
             "Not all synapse properties of edge: (0, 0) are specified. It only"
@@ -117,7 +120,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         self.assertEqual(G.nodes[1]["nx_LIF"].v.get(), 0)
 
         # Simulate network for 1 timestep.
-        # simulate_snn_on_networkx(G, 1)
+        # add_nx_neurons_to_networkx_graph(G)
         run_snn_on_networkx(G, 1)
 
         # Assert dynaic properties of neuron 0 at t=1.

@@ -23,8 +23,6 @@ def plot_circular_graph(density, G, seed, export=True, show=True):
         scale=1,
     )
     nx.draw(G, npos, labels=the_labels, with_labels=True)
-    if show:
-        plt.show()
     if export:
 
         create_target_dir_if_not_exists("Images/", "graphs")
@@ -32,6 +30,8 @@ def plot_circular_graph(density, G, seed, export=True, show=True):
             f"Images/graphs/graph_{seed}_size{len(G)}_p{density}.png",
             dpi=200,
         )
+    if show:
+        plt.show()
     plt.clf()
     plt.close()
 

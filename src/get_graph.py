@@ -59,6 +59,8 @@ def gnp_random_connected_graph(
     density,
     size,
     test_scope,
+    export=False,
+    show=False,
 ):
     """Generates a random undirected graph, similarly to an Erdős-Rényi graph,
     but enforcing that the resulting graph is conneted.
@@ -92,7 +94,7 @@ def gnp_random_connected_graph(
     )
 
     set_rand_neuron_properties(G, test_scope)
-    plot_circular_graph(density, G, test_scope.seed, export=True, show=True)
+    plot_circular_graph(density, G, test_scope.seed, export=export, show=show)
     return G
 
 

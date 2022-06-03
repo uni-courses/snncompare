@@ -14,7 +14,7 @@ from src.verify_graph_is_snn import verify_networkx_snn_spec
 from .LIF_neuron import LIF_neuron
 
 
-def simulate_snn_on_networkx(G: nx.DiGraph, duration: int) -> None:
+def add_nx_neurons_to_networkx_graph(G: nx.DiGraph) -> None:
     """
 
     :param G: nx.DiGraph:
@@ -33,10 +33,6 @@ def simulate_snn_on_networkx(G: nx.DiGraph, duration: int) -> None:
 
     # Initialise the nodes at time t=0 (with a_in=0).
     initialise_a_in_is_zero_at_t_is_1(G)
-
-    # The simulation is ran for t timesteps on a Loihi emulation.
-    for _ in range(duration):
-        run_simulation_with_networkx_for_1_timestep(G)
 
 
 def generate_lif_neurons(G: nx.DiGraph) -> None:
