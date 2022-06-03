@@ -8,7 +8,7 @@ import networkx as nx
 import numpy as np
 
 from src.get_graph import gnp_random_connected_graph
-from src.Scope_of_tests import Scope_of_tests
+from src.Scope_of_tests import Long_scope_of_tests
 from src.verify_graph_is_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
@@ -25,7 +25,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.test_scope = Scope_of_tests()
+        self.test_scope = Long_scope_of_tests(export=True, show=False)
 
     def test_generates_valid_snn_networks_without_recursive_edges(self):
         """Tests whether the random_snn_networks that are generated are valid
@@ -44,10 +44,12 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                 self.test_scope.edge_density_stepsize,
             ):
 
+                recurrent_edge_density = 0
                 # Only generate graphs that have at least 1 edge.
                 if math.floor(size * density) > 1:
                     G = gnp_random_connected_graph(
                         density,
+                        recurrent_edge_density,
                         size,
                         self.test_scope,
                     )
@@ -94,10 +96,12 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                 self.test_scope.edge_density_stepsize,
             ):
 
+                recurrent_edge_density = 0
                 # Only generate graphs that have at least 1 edge.
                 if math.floor(size * density) > 1:
                     G = gnp_random_connected_graph(
                         density,
+                        recurrent_edge_density,
                         size,
                         self.test_scope,
                     )

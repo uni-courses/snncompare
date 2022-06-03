@@ -62,6 +62,7 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
 
 def run_snn_on_networkx(G: nx.DiGraph, t: int) -> None:
     """Runs the simulation for t timesteps using networkx, not lava."""
+    verify_networkx_snn_spec(G)
     for _ in range(t):
         run_simulation_with_networkx_for_1_timestep(G)
 
