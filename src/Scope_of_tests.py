@@ -58,7 +58,7 @@ class Long_scope_of_tests:
 
         # Specify graph size (nr. of nodes in graph).
         self.min_size = 2
-        self.max_size = 11
+        self.max_size = 6
 
         # Specify ratio of edges that are created w.r.t. fully connected.
         self.min_edge_density = 0.6

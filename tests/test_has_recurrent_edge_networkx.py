@@ -79,7 +79,8 @@ class Test_get_graph_on_networkx(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # Verify running on Lava throws error.
-            simulate_snn_on_lava(G, 2)
+            starter_neuron = 0
+            simulate_snn_on_lava(G, starter_neuron, 2)
 
         print(f"str(context.exception)={str(context.exception)}")
         self.assertEqual(

@@ -18,7 +18,7 @@ from src.convert_networkx_to_lava import initialise_networkx_to_snn_conversion
 from src.verify_graph_is_snn import verify_networkx_snn_spec
 
 
-def simulate_snn_on_lava(G: nx.Graph, t: int) -> None:
+def simulate_snn_on_lava(G: nx.Graph, starter_nodename: int, t: int) -> None:
     """
 
     :param G: nx.Graph:
@@ -30,7 +30,7 @@ def simulate_snn_on_lava(G: nx.Graph, t: int) -> None:
     verify_networkx_snn_spec(G)
 
     # The simulation is ran for t timesteps on a Loihi emulation.
-    run_simulation_on_lava(t, G.nodes[0]["lava_LIF"])
+    run_simulation_on_lava(t, G.nodes[starter_nodename]["lava_LIF"])
 
 
 def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:

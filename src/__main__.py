@@ -31,7 +31,8 @@ if args.run_on_networkx:
 elif args.run_on_lava:
     # Convert the networkx specification to lava SNN.
     add_lava_neurons_to_networkx_graph(G)
-    simulate_snn_on_lava(G, 2)
+    starter_node_name = 0
+    simulate_snn_on_lava(G, starter_node_name, 2)
 
     for node in G.nodes:
         print(f'node={node},u={G.nodes[node]["lava_LIF"].u.get()}')

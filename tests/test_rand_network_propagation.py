@@ -40,6 +40,9 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
     ):
         """Tests whether the random_snn_networks that are generated yield the
         same behaviour on lava as on networkx."""
+        # pylint: disable=R1702
+        # This test tests all combinations of properties, hence 6 nested for
+        # loops are considered acceptable in this case.
         # Get graph without edge to self.
         for size in range(self.test_scope.min_size, self.test_scope.max_size):
             for density in np.arange(
@@ -53,70 +56,73 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                     self.test_scope.max_recurrent_edge_density,
                     self.test_scope.recurrent_edge_density_stepsize,
                 ):
+                    # Ensure the simulation works for all starter neurons.
+                    for starter_neuron in range(size):
+                        # Only generate graphs that have at least 1 edge.
+                        if math.floor(size * density) > 1:
+                            G = gnp_random_connected_graph(
+                                density,
+                                recurrent_density,
+                                size,
+                                self.test_scope,
+                            )
 
-                    # Only generate graphs that have at least 1 edge.
-                    if math.floor(size * density) > 1:
-                        G = gnp_random_connected_graph(
-                            density,
-                            recurrent_density,
-                            size,
-                            self.test_scope,
-                        )
+                            # Assert graph is connected.
+                            # self.assertTrue(nx.is_connected(G))
+                            self.assertFalse(
+                                not nx.is_strongly_connected(G)
+                                and not nx.is_weakly_connected(G)
+                            )
 
-                        # Assert graph is connected.
-                        # self.assertTrue(nx.is_connected(G))
-                        self.assertFalse(
-                            not nx.is_strongly_connected(G)
-                            and not nx.is_weakly_connected(G)
-                        )
+                            # Assert size of graph.
+                            self.assertEqual(size, len(G))
 
-                        # Assert size of graph.
-                        self.assertEqual(size, len(G))
+                            # Assert number of edges without recurrent edges.
+                            print(f"size={size},density={density}")
+                            # self.assertGreaterEqual(G.number_of_edges(),math.floor(size*density))
+                            # self.assertLessEqual(G.number_of_edges(),math.ceil(size*density))
 
-                        # Assert number of edges without recurrent edges.
-                        print(f"size={size},density={density}")
-                        # self.assertGreaterEqual(G.number_of_edges(),math.floor(size*density))
-                        # self.assertLessEqual(G.number_of_edges(),math.ceil(size*density))
+                            # Assert each edge has a weight.
+                            for edge in G.edges:
+                                print(f"edge={edge}")
+                                assert_synaptic_edgeweight_type_is_correct(
+                                    G, edge
+                                )
 
-                        # Assert each edge has a weight.
-                        for edge in G.edges:
-                            print(f"edge={edge}")
-                            assert_synaptic_edgeweight_type_is_correct(G, edge)
+                            # Assert no duplicate edges exist.
+                            assert_no_duplicate_edges_exist(G)
 
-                        # Assert no duplicate edges exist.
-                        assert_no_duplicate_edges_exist(G)
+                            # Assert all neuron properties are specified.
+                            verify_networkx_snn_spec(G)
 
-                        # Assert all neuron properties are specified.
-                        verify_networkx_snn_spec(G)
+                            # Generate networkx network.
+                            add_nx_neurons_to_networkx_graph(G)
 
-                        # Generate networkx network.
-                        add_nx_neurons_to_networkx_graph(G)
+                            # Generate lava network.
+                            add_lava_neurons_to_networkx_graph(G)
 
-                        # Generate lava network.
-                        add_lava_neurons_to_networkx_graph(G)
-
-                        # Verify the simulations produce identical static
-                        # neuron properties.
-                        print("")
-                        self.compare_static_snn_properties(G)
-
-                        print_neuron_properties_per_graph(G, True)
-
-                        for t in range(20):
+                            # Verify the simulations produce identical static
+                            # neuron properties.
                             print("")
-                            # Run the simulation on networkx.
-                            run_snn_on_networkx(G, 1)
+                            self.compare_static_snn_properties(G)
 
-                            # Run the simulation on lava.
-                            simulate_snn_on_lava(G, 1)
+                            print_neuron_properties_per_graph(G, True)
 
-                            print(f"After t={t+1} simulation steps.")
-                            print_neuron_properties_per_graph(G, False)
-                            # Verify dynamic neuron properties.
-                            self.compare_dynamic_snn_properties(G)
+                            for t in range(20):
+                                print("")
+                                # Run the simulation on networkx.
+                                run_snn_on_networkx(G, 1)
 
-                        # Terminate Loihi simulation.
-                        G.nodes[0]["lava_LIF"].stop()
+                                # Run the simulation on lava.
+                                simulate_snn_on_lava(G, starter_neuron, 1)
+
+                                print(f"After t={t+1} simulation steps.")
+                                print_neuron_properties_per_graph(G, False)
+                                # Verify dynamic neuron properties.
+                                self.compare_dynamic_snn_properties(G)
+
+                            # Terminate Loihi simulation.
+                            G.nodes[0]["lava_LIF"].stop()
 
     def compare_static_snn_properties(self, G):
         """Performs comparison of static neuron properties at each timestep."""
