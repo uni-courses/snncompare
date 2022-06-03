@@ -122,7 +122,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                                 self.compare_dynamic_snn_properties(G)
 
                             # Terminate Loihi simulation.
-                            G.nodes[0]["lava_LIF"].stop()
+                            G.nodes[starter_neuron]["lava_LIF"].stop()
 
     def compare_static_snn_properties(self, G):
         """Performs comparison of static neuron properties at each timestep."""

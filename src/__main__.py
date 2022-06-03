@@ -37,4 +37,4 @@ elif args.run_on_lava:
     for node in G.nodes:
         print(f'node={node},u={G.nodes[node]["lava_LIF"].u.get()}')
     # Terminate Loihi simulation.
-    G.nodes[0]["lava_LIF"].stop()
+    G.nodes[starter_node_name]["lava_LIF"].stop()
