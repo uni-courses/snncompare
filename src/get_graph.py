@@ -101,9 +101,8 @@ def gnp_random_connected_graph(
     plot_circular_graph(
         density,
         G,
-        test_scope.seed,
-        export=test_scope.export,
-        show=test_scope.show,
+        recurrent_density,
+        test_scope,
     )
     return G
 
