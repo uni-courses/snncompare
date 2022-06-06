@@ -115,6 +115,10 @@ class Test_counter(unittest.TestCase):
                                         size,
                                         test_object,
                                     )
+                                else:
+                                    test_object.brain_adaptation_graph=None
+                                    test_object.second_rad_damage_graph=None
+                                    test_object.second_dead_neuron_names=None
 
                                 # Add spike monitors in networkx graph
                                 # representing SNN. If output_behaviour:

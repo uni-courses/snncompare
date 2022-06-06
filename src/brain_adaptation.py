@@ -22,6 +22,7 @@ def adaptation_mech_2_networkx_and_snn(
         G, test_object.get_degree, iteration, m, rad_dam, size, test_object
     )
     test_object.brain_adaptation_graph = copy.deepcopy(test_object.get_degree)
+    
 
     latest_time, latest_millis = print_time(
         f"Get adapted networkx Graph.", latest_time, latest_millis
