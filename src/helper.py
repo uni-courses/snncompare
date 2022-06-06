@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import pickle
 import random
 import shutil
@@ -107,6 +108,7 @@ def export_get_degree_graph(
     neuron_death_probability,
     run_result,
     seed,
+    sim_time,
     size,
     test_object,
     unique_run_id,
@@ -126,6 +128,7 @@ def export_get_degree_graph(
                 m,
                 run_result,
                 seed,
+                sim_time,
                 size,
                 test_object.mdsa_graph,
                 test_object.brain_adaptation_graph,
@@ -199,6 +202,7 @@ def load_pickle_and_plot(
         m,
         run_result,
         seed,
+        sim_time,
         size,
         mdsa_graph,
         brain_adaptation_graph,
@@ -477,3 +481,13 @@ def get_alipour_labels(G, configuration):
             ] = f'{node_name}, W:{G.nodes[node_name]["inhibited_weight"]}'
 
     return labels
+
+
+# checks if file exists
+def file_exists(str):
+    my_file = Path(str)
+    if my_file.is_file():
+        # file exist
+        return True
+    else:
+        return False

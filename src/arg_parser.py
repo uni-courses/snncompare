@@ -38,6 +38,14 @@ def parse_cli_args() -> argparse.Namespace:
         + " lava instead of networkx.",
     )
 
+    parser.add_argument(
+        "--old",
+        dest="run_old_graphs",
+        action="store_true",
+        help="boolean flag, determines whether snn is simulated using networkx"
+        + "on old graphs that have already been exported with pickle.",
+    )
+
     # Specify default argument values for the parser.
     parser.set_defaults(
         infile=None,

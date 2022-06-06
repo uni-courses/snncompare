@@ -33,6 +33,8 @@ class Test_counter(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.seed=42
+        random.seed(self.seed)
         self.unique_run_id = random.randrange(1, 10**6)
 
     def test_snn_algorithm(self, output_behaviour=False):
@@ -42,7 +44,7 @@ class Test_counter(unittest.TestCase):
         used_graphs = Used_graphs()
         # Specify User randomnes to prevent overwriting identical runs.
 
-        seed = 42
+        
 
         for m in range(0, 1):
             for iteration in range(0, 2, 1):
@@ -56,7 +58,7 @@ class Test_counter(unittest.TestCase):
                         0.25,
                     ]:
                         rad_dam = Radiation_damage(
-                            size, neuron_death_probability, seed, True
+                            size, neuron_death_probability, self.seed, True
                         )
                         graphs = used_graphs.get_graphs(size)
                         for G in graphs:
@@ -185,7 +187,7 @@ class Test_counter(unittest.TestCase):
                                     G,
                                     iteration,
                                     m,
-                                    seed,
+                                    self.seed,
                                     test_object,
                                 )
                                 latest_time, latest_millis = print_time(
@@ -222,7 +224,8 @@ class Test_counter(unittest.TestCase):
                                     m,
                                     neuron_death_probability,
                                     run_result,
-                                    seed,
+                                    self.seed,
+                                    sim_time,
                                     size,
                                     test_object,
                                     self.unique_run_id,
@@ -232,7 +235,7 @@ class Test_counter(unittest.TestCase):
                                 ###    iteration,
                                 ###    m,
                                 ###    neuron_death_probability,
-                                ###    seed,
+                                ###    self.seed,
                                 ###    sim_time,
                                 ###    size,
                                 ###    self.unique_run_id,
