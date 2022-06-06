@@ -491,7 +491,6 @@ def plot_neuron_behaviour_over_time(
 
 def plot_coordinated_graph(G, iteration, size, show=False):
     # Width=edge width.
-    pprint(nx.get_node_attributes(G, "pos"))
     nx.draw(
         G,
         nx.get_node_attributes(G, "pos"),
@@ -552,7 +551,8 @@ def set_node_colours(G, t):
                 color_map.append("white")
         else:
             if node_name[:11] != "connecting_":
-                raise Exception(
+                #raise Exception(
+                print(
                     f"Did not find spike dictionary for node:{node_name}"
                 )
             else:

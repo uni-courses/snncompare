@@ -162,3 +162,45 @@ G_alipour countermarks-SNN counter current
 0-[0.]
 2-[0.]
 1-[0.]
+2022-06-06 15:04:17
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-06 15:04:38
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-06 15:06:44
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+

@@ -130,31 +130,31 @@ class Test_counter(unittest.TestCase):
                                 # Run default tests on neurons and get counted
                                 # degree from neurons after inhibition time.
                                 neurons = list(test_object.neuron_dict.keys())
-                                (
-                                    latest_time,
-                                    neurons,
-                                    starter_neuron,
-                                ) = self.simulate_degree_receiver_neurons(
-                                    adaptation,
-                                    iteration,
-                                    latest_millis,
-                                    latest_time,
-                                    m,
-                                    neuron_death_probability,
-                                    neurons,
-                                    output_behaviour,
-                                    seed,
-                                    sim_time,
-                                    size,
-                                    test_object,
-                                )
-
-                                # Report performance.
-                                latest_time, latest_millis = print_time(
-                                    "Ran simulation.",
-                                    latest_time,
-                                    latest_millis,
-                                )
+                                #(
+                                #    latest_time,
+                                #    neurons,
+                                #    starter_neuron,
+                                #) = self.simulate_degree_receiver_neurons(
+                                #    adaptation,
+                                #    iteration,
+                                #    latest_millis,
+                                #    latest_time,
+                                #    m,
+                                #    neuron_death_probability,
+                                #    neurons,
+                                #    output_behaviour,
+                                #    seed,
+                                #    sim_time,
+                                #    size,
+                                #    test_object,
+                                #)
+#
+                                ## Report performance.
+                                #latest_time, latest_millis = print_time(
+                                #    "Ran simulation.",
+                                #    latest_time,
+                                #    latest_millis,
+                                #)
 
                                 # Get the counter neurons at the end of the
                                 # simulation.
@@ -189,7 +189,7 @@ class Test_counter(unittest.TestCase):
                                     latest_time,
                                     latest_millis,
                                 )
-                                starter_neuron.stop()
+                                #starter_neuron.stop()
 
                                 # Store results into Run object.
                                 run_result = Run(
