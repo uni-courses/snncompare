@@ -108,6 +108,7 @@ def export_get_degree_graph(
     run_result,
     seed,
     size,
+    test_object,
     unique_run_id,
 ):
     remove_monitors_from_get_degree(get_degree)
@@ -117,7 +118,24 @@ def export_get_degree_graph(
         + f"_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}.pkl",
         "wb",
     ) as fh:
-        pickle.dump([G, get_degree, iteration, m, run_result, seed, size], fh)
+        pickle.dump(
+            [
+                G,
+                get_degree,
+                iteration,
+                m,
+                run_result,
+                seed,
+                size,
+                test_object.msda_graph,
+                test_object.brain_adaptation_graph,
+                test_object.first_rad_damage_graph,
+                test_object.second_rad_damage_graph,
+                test_object.first_dead_neuron_names,
+                test_object.second_dead_neuron_names,
+            ],
+            fh,
+        )
 
 
 def remove_monitors_from_get_degree(get_degree):
@@ -173,9 +191,22 @@ def load_pickle_and_plot(
         + f"_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}.pkl",
         "rb",
     )
-    [G, get_degree, iteration, m, run_result, seed, size] = pickle.load(
-        pickle_off
-    )
+    # [G, get_degree, iteration, m, run_result, seed, size] = pickle.load(
+    [
+        G,
+        get_degree,
+        iteration,
+        m,
+        run_result,
+        seed,
+        size,
+        msda_graph,
+        brain_adaptation_graph,
+        first_rad_damage_graph,
+        second_rad_damage_graph,
+        first_dead_neuron_names,
+        second_dead_neuron_names,
+    ] = pickle.load(pickle_off)
 
     print(f"m={m}")
     print(f"adaptation={adaptation}")
@@ -192,7 +223,7 @@ def load_pickle_and_plot(
     print(f"has_adaptation={run_result.has_adaptation}")
 
     for t in range(sim_time - 1):
-        print(f'in helper, t={t},sim_time={sim_time}')
+        print(f"in helper, t={t},sim_time={sim_time}")
         plot_neuron_behaviour_over_time(
             adaptation,
             f"pickle_probability_{neuron_death_probability}_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}_t{t}",

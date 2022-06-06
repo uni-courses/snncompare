@@ -21,6 +21,8 @@ def adaptation_mech_2_networkx_and_snn(
     dead_neuron_names = implement_adaptation_mechanism(
         G, test_object.get_degree, iteration, m, rad_dam, size, test_object
     )
+    test_object.brain_adaptation_graph = copy.deepcopy(test_object.get_degree)
+
     latest_time, latest_millis = print_time(
         f"Get adapted networkx Graph.", latest_time, latest_millis
     )
@@ -71,6 +73,8 @@ def implement_adaptation_mechanism(
     dead_neuron_names = rad_dam.inject_simulated_radiation(
         get_degree, rad_dam.neuron_death_probability
     )
+    test_object.second_rad_damage_graph = copy.deepcopy(test_object.get_degree)
+    test_object.second_dead_neuron_names = copy.deepcopy(dead_neuron_names)
 
     # Visualise new graph.
     plot_coordinated_graph(get_degree, iteration, size, show=True)

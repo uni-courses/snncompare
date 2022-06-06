@@ -1,5 +1,6 @@
 """Creates test object."""
 
+import copy
 from lava.proc.monitor.process import Monitor
 
 from src.helper import fill_dictionary, generate_list_of_n_random_nrs
@@ -102,11 +103,14 @@ def create_test_object(
         test_object.rand_ceil * test_object.delta + 1,
         m,
     )
+    test_object.mdsa_graph = copy.deepcopy(test_object.get_degree)
 
     # Inject radiation
     dead_neuron_names = rad_dam.inject_simulated_radiation(
         test_object.get_degree, rad_dam.neuron_death_probability
     )
+    test_object.first_rad_damage_graph = copy.deepcopy(test_object.get_degree)
+    test_object.first_dead_neuron_names = copy.deepcopy(dead_neuron_names)
 
     if plot_snn_graph or export:
         plot_coordinated_graph(

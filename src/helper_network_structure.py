@@ -1,4 +1,3 @@
-from pprint import pprint
 import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 
@@ -551,10 +550,8 @@ def set_node_colours(G, t):
                 color_map.append("white")
         else:
             if node_name[:11] != "connecting_":
-                #raise Exception(
-                print(
-                    f"Did not find spike dictionary for node:{node_name}"
-                )
+                # raise Exception(
+                print(f"Did not find spike dictionary for node:{node_name}")
             else:
                 color_map.append("yellow")
                 for neighbour in nx.all_neighbors(G, node_name):

@@ -15,7 +15,6 @@ from src.helper import (
     export_get_degree_graph,
     full_alipour,
     get_counter_neurons_from_dict,
-    load_pickle_and_plot,
     print_time,
     store_spike_values_in_neurons,
     write_results_to_file,
@@ -129,12 +128,13 @@ class Test_counter(unittest.TestCase):
 
                                 # Run default tests on neurons and get counted
                                 # degree from neurons after inhibition time.
-                                neurons = list(test_object.neuron_dict.keys())
-                                #(
-                                #    latest_time,
+                                list(test_object.neuron_dict.keys())
+                                # (
+                                #    latest_ti
+                                # me,
                                 #    neurons,
                                 #    starter_neuron,
-                                #) = self.simulate_degree_receiver_neurons(
+                                # ) = self.simulate_degree_receiver_neurons(
                                 #    adaptation,
                                 #    iteration,
                                 #    latest_millis,
@@ -147,14 +147,14 @@ class Test_counter(unittest.TestCase):
                                 #    sim_time,
                                 #    size,
                                 #    test_object,
-                                #)
-#
+                                # )
+                                #
                                 ## Report performance.
-                                #latest_time, latest_millis = print_time(
+                                # latest_time, latest_millis = print_time(
                                 #    "Ran simulation.",
                                 #    latest_time,
                                 #    latest_millis,
-                                #)
+                                # )
 
                                 # Get the counter neurons at the end of the
                                 # simulation.
@@ -189,7 +189,7 @@ class Test_counter(unittest.TestCase):
                                     latest_time,
                                     latest_millis,
                                 )
-                                #starter_neuron.stop()
+                                # starter_neuron.stop()
 
                                 # Store results into Run object.
                                 run_result = Run(
@@ -220,18 +220,19 @@ class Test_counter(unittest.TestCase):
                                     run_result,
                                     seed,
                                     size,
+                                    test_object,
                                     self.unique_run_id,
                                 )
-                                load_pickle_and_plot(
-                                    adaptation,
-                                    iteration,
-                                    m,
-                                    neuron_death_probability,
-                                    seed,
-                                    sim_time,
-                                    size,
-                                    self.unique_run_id,
-                                )
+                                ###load_pickle_and_plot(
+                                ###    adaptation,
+                                ###    iteration,
+                                ###    m,
+                                ###    neuron_death_probability,
+                                ###    seed,
+                                ###    sim_time,
+                                ###    size,
+                                ###    self.unique_run_id,
+                                ###)
 
     def simulate_degree_receiver_neurons(
         self,
@@ -270,7 +271,7 @@ class Test_counter(unittest.TestCase):
             # Store spike bools in networkx graph for plotting.
             store_spike_values_in_neurons(test_object.get_degree, t)
             if output_behaviour:
-                print(f't={t}, sim_time={sim_time}')
+                print(f"t={t}, sim_time={sim_time}")
                 plot_neuron_behaviour_over_time(
                     adaptation,
                     f"probability_{neuron_death_probability}_adapt_"
