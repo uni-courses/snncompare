@@ -270,6 +270,7 @@ class Test_counter(unittest.TestCase):
             # Store spike bools in networkx graph for plotting.
             store_spike_values_in_neurons(test_object.get_degree, t)
             if output_behaviour:
+                print(f't={t}, sim_time={sim_time}')
                 plot_neuron_behaviour_over_time(
                     adaptation,
                     f"probability_{neuron_death_probability}_adapt_"

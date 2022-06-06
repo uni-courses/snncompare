@@ -192,6 +192,7 @@ def load_pickle_and_plot(
     print(f"has_adaptation={run_result.has_adaptation}")
 
     for t in range(sim_time - 1):
+        print(f'in helper, t={t},sim_time={sim_time}')
         plot_neuron_behaviour_over_time(
             adaptation,
             f"pickle_probability_{neuron_death_probability}_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}_t{t}",
