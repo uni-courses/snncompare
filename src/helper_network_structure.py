@@ -1,3 +1,4 @@
+from pprint import pprint
 import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 
@@ -336,7 +337,7 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
                         [
                             (
                                 f"degree_receiver_{circuit}_{neighbour_b}"
-                                + f"{loop}",
+                                + f"_{loop}",
                                 f"selector_{circuit}_{loop}",
                             )
                         ],
@@ -490,6 +491,7 @@ def plot_neuron_behaviour_over_time(
 
 def plot_coordinated_graph(G, iteration, size, show=False):
     # Width=edge width.
+    pprint(nx.get_node_attributes(G, "pos"))
     nx.draw(
         G,
         nx.get_node_attributes(G, "pos"),

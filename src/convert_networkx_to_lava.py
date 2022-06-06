@@ -169,6 +169,7 @@ def create_neuron_from_node(
 
     if old_code:
         bias, du, dv, vth = get_neuron_properties_old(G, nodename)
+        print(f'nodename={nodename}')
     else:
         bias, du, dv, vth = get_neuron_properties(G, nodename)
 
