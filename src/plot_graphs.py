@@ -37,6 +37,29 @@ def plot_circular_graph(density, G, recurrent_edge_density, test_scope):
     plt.close()
 
 
+def plot_uncoordinated_graph(G, export=False, show=True):
+    """Generates a circular plot of a (directed) graph.
+
+    :param density:
+    :param G:
+    :param seed:
+    :param export:  (Default value = True)
+    :param show:  (Default value = True)
+    """
+    # the_labels = get_alipour_labels(G, configuration=configuration)
+    # the_labels =
+    # nx.draw_networkx_labels(G, pos=None, labels=the_labels)
+    npos = nx.circular_layout(
+        G,
+        scale=1,
+    )
+    nx.draw(G, npos, with_labels=True)
+    if show:
+        plt.show()
+    plt.clf()
+    plt.close()
+
+
 def create_target_dir_if_not_exists(path, new_dir_name):
     """Creates an output dir for graph plots.
 

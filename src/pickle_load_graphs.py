@@ -2,7 +2,11 @@ import pickle
 import random
 
 from src.helper import file_exists
-from src.helper_network_structure import plot_neuron_behaviour_over_time
+from src.helper_network_structure import (
+    plot_coordinated_graph,
+    plot_neuron_behaviour_over_time,
+)
+from src.plot_graphs import plot_uncoordinated_graph
 
 
 def load_pickle_graphs():
@@ -52,6 +56,25 @@ def load_pickle_graphs():
                                 first_dead_neuron_names,
                                 second_dead_neuron_names,
                             ] = pickle.load(pickle_off)
+
+                            properties_original_graph(G, iteration, size)
+                            properties_mdsa_graph(mdsa_graph, iteration, size)
+                            properties_brain_adaptation_graph(
+                                brain_adaptation_graph, iteration, size
+                            )
+                            properties_first_rad_damage_graph(
+                                first_rad_damage_graph,
+                                first_dead_neuron_names,
+                                iteration,
+                                size,
+                            )
+                            properties_second_rad_damage_graph(
+                                second_rad_damage_graph,
+                                second_dead_neuron_names,
+                                iteration,
+                                size,
+                            )
+                            exit()
 
                             print(f"m={m}")
                             print(f"adaptation={adaptation}")
@@ -107,3 +130,39 @@ def plot_graph_behaviour(
             show=False,
             current=True,
         )
+
+
+def properties_original_graph(G, iteration, size):
+    """Shows the properties of the original graph."""
+    plot_uncoordinated_graph(G, export=False, show=True)
+
+
+def properties_mdsa_graph(mdsa_graph, iteration, size):
+    """Shows the properties of the MDSA graph."""
+    # plot_uncoordinated_graph(mdsa_graph,export=False,show=True)
+    plot_coordinated_graph(mdsa_graph, iteration, size, show=True)
+
+
+def properties_brain_adaptation_graph(brain_adaptation_graph, iteration, size):
+    """Shows the properties of the MDSA graph with brain adaptation."""
+    plot_coordinated_graph(brain_adaptation_graph, iteration, size, show=True)
+
+
+def properties_first_rad_damage_graph(
+    first_rad_damage_graph, first_dead_neuron_names, iteration, size, show=True
+):
+    """Shows the properties of the MDSA graph with brain adaptation and the
+    first radiation changes."""
+    plot_coordinated_graph(first_rad_damage_graph, iteration, size, show=True)
+
+
+def properties_second_rad_damage_graph(
+    second_rad_damage_graph,
+    second_dead_neuron_names,
+    iteration,
+    size,
+    show=True,
+):
+    """Shows the properties of the MDSA graph with brain adaptation and the
+    second radiation changes."""
+    plot_coordinated_graph(second_rad_damage_graph, iteration, size, show=True)
