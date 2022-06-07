@@ -1,5 +1,6 @@
 import pickle
 import random
+from src.LIF_neuron import LIF_neuron, print_neuron_properties
 
 from src.helper import file_exists
 from src.helper_network_structure import (
@@ -7,6 +8,8 @@ from src.helper_network_structure import (
     plot_neuron_behaviour_over_time,
 )
 from src.plot_graphs import plot_uncoordinated_graph
+from src.run_on_networkx import run_snn_on_networkx
+from src.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def load_pickle_graphs():
@@ -58,16 +61,22 @@ def load_pickle_graphs():
                             ] = pickle.load(pickle_off)
 
                             properties_original_graph(G, iteration, size)
-                            properties_mdsa_graph(mdsa_graph, iteration, size)
+                            print("")
+                            properties_mdsa_graph(
+                                mdsa_graph, iteration, sim_time, size
+                            )
+                            print("")
                             properties_brain_adaptation_graph(
                                 brain_adaptation_graph, iteration, size
                             )
+                            print("")
                             properties_first_rad_damage_graph(
                                 first_rad_damage_graph,
                                 first_dead_neuron_names,
                                 iteration,
                                 size,
                             )
+                            print("")
                             properties_second_rad_damage_graph(
                                 second_rad_damage_graph,
                                 second_dead_neuron_names,
@@ -134,17 +143,26 @@ def plot_graph_behaviour(
 
 def properties_original_graph(G, iteration, size):
     """Shows the properties of the original graph."""
-    plot_uncoordinated_graph(G, export=False, show=True)
+    #plot_uncoordinated_graph(G, export=False, show=True)
+    pass
+    
 
 
-def properties_mdsa_graph(mdsa_graph, iteration, size):
+def properties_mdsa_graph(mdsa_graph, iteration, sim_time, size):
     """Shows the properties of the MDSA graph."""
+    counter_neurons = print_graph_properties(mdsa_graph)
+    old_graph_to_new_graph_properties(mdsa_graph)
+    simulate_graph(counter_neurons, mdsa_graph, sim_time)
+    exit()
+
     # plot_uncoordinated_graph(mdsa_graph,export=False,show=True)
     plot_coordinated_graph(mdsa_graph, iteration, size, show=True)
 
 
 def properties_brain_adaptation_graph(brain_adaptation_graph, iteration, size):
     """Shows the properties of the MDSA graph with brain adaptation."""
+    counter_neurons = print_graph_properties(brain_adaptation_graph)
+    old_graph_to_new_graph_properties(brain_adaptation_graph)
     plot_coordinated_graph(brain_adaptation_graph, iteration, size, show=True)
 
 
@@ -165,4 +183,80 @@ def properties_second_rad_damage_graph(
 ):
     """Shows the properties of the MDSA graph with brain adaptation and the
     second radiation changes."""
+    counter_neurons = print_graph_properties(second_rad_damage_graph)
+    old_graph_to_new_graph_properties(second_rad_damage_graph)
     plot_coordinated_graph(second_rad_damage_graph, iteration, size, show=True)
+
+
+def old_graph_to_new_graph_properties(G):
+    for nodename in G.nodes:
+        G.nodes[nodename]["nx_LIF"] = LIF_neuron(
+            name=nodename,
+            bias=float(G.nodes[nodename]["bias"]),
+            du=float(G.nodes[nodename]["du"]),
+            dv=float(G.nodes[nodename]["dv"]),
+            vth=float(G.nodes[nodename]["vth"]),
+        )
+    verify_networkx_snn_spec(G)
+
+
+def print_graph_properties(G):
+    counter_neurons = []
+    # Print graph properties.
+    for nodename in G.nodes:
+        print(nodename)
+        print(f'bias={G.nodes[nodename]["bias"]}')
+        print(f'du={G.nodes[nodename]["du"]}')
+        print(f'dv={G.nodes[nodename]["dv"]}')
+        print(f'vth={G.nodes[nodename]["vth"]}')
+        if nodename[:7] == "counter":
+            counter_neurons.append(nodename)
+
+    for edge in G.edges:
+        print(f'edge={edge},weight={G.edges[edge]["weight"]}')
+    return counter_neurons
+
+
+def simulate_graph(counter_neurons, G, sim_time):
+    print(f"sim_time={sim_time}")
+    neurons, neurons_dict_per_type = get_neurons(
+        G,
+        "nx_LIF",
+        ["counter", "spike_once", "degree_receiver", "rand", "selector"],
+    )
+
+    print_neuron_properties(neurons_dict_per_type["spike_once"], True, ids=None, spikes=None)
+    for _ in range(sim_time+2):
+        run_snn_on_networkx(G, 1)
+        print_neuron_properties(neurons_dict_per_type["spike_once"], False, ids=None, spikes=None)
+
+    for nodename in counter_neurons:
+        print(f'u={G.nodes[nodename]["nx_LIF"].u.get()}')
+
+
+def get_neurons(G, sim_type, neuron_types):
+    neurons_dict_per_type = {}
+    if sim_type not in ["nx_LIF", "lava_LIF"]:
+        raise Exception(f"Unexpected simulation type demanded:{sim_type}")
+    for neuron_type in neuron_types:
+        if neuron_type not in [
+            "counter",
+            "spike_once",
+            "degree_receiver",
+            "rand",
+            "selector",
+        ]:
+            raise Exception(f"Unexpected neuron_type demanded:{neuron_type}")
+        else:
+            neurons_dict_per_type[neuron_type]=[]
+
+    neurons = list(map(lambda x: G.nodes[x][sim_type], G.nodes))
+
+    for nodename in G.nodes:
+        for neuron_type in neuron_types:
+            if nodename[: len(neuron_type)] == neuron_type:
+                neurons_dict_per_type[neuron_type].append(
+                    G.nodes[nodename][sim_type]
+                )
+
+    return neurons, neurons_dict_per_type
