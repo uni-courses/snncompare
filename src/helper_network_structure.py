@@ -491,6 +491,9 @@ def plot_neuron_behaviour_over_time(
 def plot_coordinated_graph(
     G, iteration, size, desired_properties=[], show=False, t=None
 ):
+
+    color_map, spiking_edges = set_nx_node_colours(G)
+    edge_color_map = set_edge_colours(G, spiking_edges)
     # Width=edge width.
     nx.draw(
         G,
@@ -499,6 +502,9 @@ def plot_coordinated_graph(
         node_size=10,
         font_size=6,
         width=0.2,
+        node_color=color_map,
+        edge_color=edge_color_map,
+        # **options,
     )
     node_labels = nx.get_node_attributes(G, "")
     pos = {
@@ -585,6 +591,20 @@ def plot_unstructured_graph(G, iteration, size, show=False):
     # plot_export.export_plot(plt, f"G_{size}_{iteration}")
     plt.clf()
     plt.close()
+
+
+def set_nx_node_colours(G):
+    color_map = []
+    spiking_edges = []
+
+    for node_name in G.nodes:
+        if G.nodes[node_name]["nx_LIF"].spikes:
+            color_map.append("green")
+            for neighbour in nx.all_neighbors(G, node_name):
+                spiking_edges.append((node_name, neighbour))
+        else:
+            color_map.append("white")
+    return color_map, spiking_edges
 
 
 def set_node_colours(G, t):
