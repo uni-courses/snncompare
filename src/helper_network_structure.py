@@ -488,14 +488,16 @@ def plot_neuron_behaviour_over_time(
     plt.close()
 
 
-def plot_coordinated_graph(G, iteration, size, show=False):
+def plot_coordinated_graph(
+    G, iteration, size, desired_properties=[], show=False, t=None
+):
     # Width=edge width.
     nx.draw(
         G,
         nx.get_node_attributes(G, "pos"),
         with_labels=True,
-        node_size=8,
-        font_size=5,
+        node_size=10,
+        font_size=6,
         width=0.2,
     )
     node_labels = nx.get_node_attributes(G, "")
@@ -507,10 +509,15 @@ def plot_coordinated_graph(G, iteration, size, show=False):
     edge_labels = nx.get_edge_attributes(G, "weight")
     nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
 
+    # fig, axis = plt.subplots(figsize = (10,10)) # This is your answer to resize the figure
     plt.axis("off")
+    # plt.rcParams["figure.figsize"] = (100,100)
     axis = plt.gca()
     axis.set_xlim([1.2 * x for x in axis.get_xlim()])
     axis.set_ylim([1.2 * y for y in axis.get_ylim()])
+
+    add_neuron_properties_to_plot(axis, desired_properties, G, G.nodes, pos)
+
     # f = plt.figure()
     # f.set_figwidth(10)
     # f.set_figheight(10)
@@ -519,10 +526,55 @@ def plot_coordinated_graph(G, iteration, size, show=False):
         plt.show()
 
     plot_export = Plot_to_tex()
-    plot_export.export_plot(plt, f"snn_{size}_{iteration}")
+    plot_export.export_plot(plt, f"snn_size{size}_iter{iteration}_t={t}")
     # plt.savefig()
     plt.clf()
     plt.close()
+
+
+def add_neuron_properties_to_plot(axis, desired_properties, G, nodenames, pos):
+    """Adds a text (annotation) to each neuron with the desired neuron properties"""
+    for nodename in nodenames:
+        annotation_text = get_annotation_text(desired_properties, G, nodename)
+        # Include text in plot.
+        axis.text(
+            pos[nodename][0],
+            pos[nodename][1],
+            annotation_text,
+            transform=axis.transData,
+            fontsize=4,
+        )
+
+
+def get_annotation_text(desired_properties, G, nodename):
+    """Returns a string with the annotation text."""
+    annotation = ""
+    if "bias" in desired_properties:
+        annotation = (
+            annotation + f'bias={G.nodes[nodename]["nx_LIF"].bias.get()}\n'
+        )
+    if "du" in desired_properties:
+        annotation = (
+            annotation + f'du={G.nodes[nodename]["nx_LIF"].du.get()}\n'
+        )
+    if "dv" in desired_properties:
+        annotation = (
+            annotation + f'dv={G.nodes[nodename]["nx_LIF"].dv.get()}\n'
+        )
+    if "u" in desired_properties:
+        annotation = annotation + f'u={G.nodes[nodename]["nx_LIF"].u.get()}\n'
+    if "v" in desired_properties:
+        annotation = annotation + f'v={G.nodes[nodename]["nx_LIF"].v.get()}\n'
+    if "vth" in desired_properties:
+        annotation = (
+            annotation + f'vth={G.nodes[nodename]["nx_LIF"].vth.get()}\n'
+        )
+    if "a_in_next" in desired_properties:
+        annotation = (
+            annotation + f'a_in_next={G.nodes[nodename]["nx_LIF"].a_in_next}\n'
+        )
+
+    return annotation
 
 
 def plot_unstructured_graph(G, iteration, size, show=False):

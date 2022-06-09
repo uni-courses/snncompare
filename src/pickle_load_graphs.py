@@ -143,20 +143,36 @@ def plot_graph_behaviour(
 
 def properties_original_graph(G, iteration, size):
     """Shows the properties of the original graph."""
-    #plot_uncoordinated_graph(G, export=False, show=True)
+    # plot_uncoordinated_graph(G, export=False, show=True)
     pass
-    
 
 
 def properties_mdsa_graph(mdsa_graph, iteration, sim_time, size):
     """Shows the properties of the MDSA graph."""
     counter_neurons = print_graph_properties(mdsa_graph)
     old_graph_to_new_graph_properties(mdsa_graph)
-    simulate_graph(counter_neurons, mdsa_graph, sim_time)
-    exit()
+    G_behaviour = simulate_graph(counter_neurons, mdsa_graph, sim_time)
 
     # plot_uncoordinated_graph(mdsa_graph,export=False,show=True)
-    plot_coordinated_graph(mdsa_graph, iteration, size, show=True)
+    desired_properties = [
+        "bias",
+        "du",
+        "dv",
+        "u",
+        "v",
+        "vth",
+        "a_in_next",
+    ]
+    for t in range(len(G_behaviour)):
+        plot_coordinated_graph(
+            G_behaviour[t],
+            iteration,
+            size,
+            desired_properties=desired_properties,
+            show=False,
+            t=t,
+        )
+    exit()
 
 
 def properties_brain_adaptation_graph(brain_adaptation_graph, iteration, size):
@@ -218,20 +234,11 @@ def print_graph_properties(G):
 
 
 def simulate_graph(counter_neurons, G, sim_time):
-    print(f"sim_time={sim_time}")
-    neurons, neurons_dict_per_type = get_neurons(
-        G,
-        "nx_LIF",
-        ["counter", "spike_once", "degree_receiver", "rand", "selector"],
-    )
 
-    print_neuron_properties(neurons_dict_per_type["spike_once"], True, ids=None, spikes=None)
-    for _ in range(sim_time+2):
-        run_snn_on_networkx(G, 1)
-        print_neuron_properties(neurons_dict_per_type["spike_once"], False, ids=None, spikes=None)
-
-    for nodename in counter_neurons:
-        print(f'u={G.nodes[nodename]["nx_LIF"].u.get()}')
+    G_behaviour = []
+    for t in range(sim_time + 2):
+        G_behaviour.extend(run_snn_on_networkx(G, 1))
+    return G_behaviour
 
 
 def get_neurons(G, sim_type, neuron_types):
@@ -248,7 +255,7 @@ def get_neurons(G, sim_type, neuron_types):
         ]:
             raise Exception(f"Unexpected neuron_type demanded:{neuron_type}")
         else:
-            neurons_dict_per_type[neuron_type]=[]
+            neurons_dict_per_type[neuron_type] = []
 
     neurons = list(map(lambda x: G.nodes[x][sim_type], G.nodes))
 

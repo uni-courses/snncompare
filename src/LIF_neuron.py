@@ -229,6 +229,7 @@ def print_neuron_properties(neurons, static, ids=None, spikes=None):
             print(
                 f"v={str(round_if_array(x.v.get())) : <{spacing+3}}", end=" "
             )
+    print("")
 
 
 def round_if_array(value):
