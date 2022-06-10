@@ -18,6 +18,7 @@ def load_pickle_graphs():
     seed = 42
     random.seed(seed)
     unique_run_id = random.randrange(1, 10**6)
+    print(f'unique_run_id={unique_run_id}')
 
     for m in range(0, 1):
         for iteration in range(0, 2, 1):
@@ -36,7 +37,9 @@ def load_pickle_graphs():
                             + f"y_{neuron_death_probability}_adapt_{adaptation}_"
                             + f"{seed}_size{size}_m{m}_iter{iteration}.pkl"
                         )
+                        print(f'pickle_filename={pickle_filename}')
                         if file_exists(pickle_filename):
+
                             pickle_off = open(
                                 pickle_filename,
                                 "rb",
@@ -65,6 +68,7 @@ def load_pickle_graphs():
                             properties_mdsa_graph(
                                 mdsa_graph, iteration, sim_time, size
                             )
+
                             print("")
                             properties_brain_adaptation_graph(
                                 brain_adaptation_graph, iteration, size
@@ -83,7 +87,6 @@ def load_pickle_graphs():
                                 iteration,
                                 size,
                             )
-                            exit()
 
                             print(f"m={m}")
                             print(f"adaptation={adaptation}")
@@ -172,7 +175,6 @@ def properties_mdsa_graph(mdsa_graph, iteration, sim_time, size):
             show=False,
             t=t,
         )
-    exit()
 
 
 def properties_brain_adaptation_graph(brain_adaptation_graph, iteration, size):

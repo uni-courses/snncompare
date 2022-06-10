@@ -8,6 +8,8 @@ from src.Plot_to_tex import Plot_to_tex
 def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
     m = m + 1
     d = 0.25 * m  # specify grid distance size
+    # Specify edge weight for recurrent inhibitory synapse.
+    inhib_recur_weight=-10 
     """Returns a networkx graph that represents the snn that computes the
     spiking degree in the degree_receiver neurons.
     One node in the graph represents one neuron.
@@ -48,6 +50,7 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
             bias=2,
             vth=1,
             pos=(float(0), float(node * 4 * d)),
+            recur=inhib_recur_weight,
         )
 
         for neighbour in nx.all_neighbors(G, node):
@@ -75,6 +78,7 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
                             float(4 * d + loop * 9 * d),
                             get_y_position(G, node, neighbour, d),
                         ),
+                        recur=inhib_recur_weight,
                     )
 
         # One neuron per node named: rand
@@ -93,6 +97,7 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
                 bias=2,
                 vth=1,
                 pos=(float(d + loop * 9 * d), float(node * 4 * d) + d),
+                recur=inhib_recur_weight,
             )
 
         # Add winner selector node
@@ -129,16 +134,7 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
             vth=0,
             pos=(float(9 * d + loop * 9 * d), float(node * 4 * d)),
         )
-        # for loop in range(0, m):
-        #    get_degree.add_node(
-        #        f"depleter_{node}_{loop}",
-        #        id=node,
-        #        du=1,
-        #        dv=1,
-        #        bias=0,
-        #        vth=0,
-        #        pos=(float(9 * d + loop * 9 * d), float(node * 4 * d) - d),
-        #    )
+        
 
         # Create next round connector neurons.
         for loop in range(1, m):
@@ -289,36 +285,6 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
                             weight=1,
                         )
 
-        # for loop in range(0, m):
-        #    get_degree.add_edges_from(
-        #        [
-        #            (
-        #                f"next_round_{loop}",
-        #                f"depleter_{circuit}_{loop}",
-        #            )
-        #        ],
-        #        weight=+1,
-        #    )
-        # for loop in range(0, m):
-        #    get_degree.add_edges_from(
-        #        [
-        #            (
-        #                f"counter_{circuit}_{loop}",
-        #                f"depleter_{circuit}_{loop}",
-        #            )
-        #        ],
-        #        weight=+1,
-        #    )
-        #    get_degree.add_edges_from(
-        #        [
-        #            (
-        #                f"depleter_{circuit}_{loop}",
-        #                f"counter_{circuit}_{loop}",
-        #            )
-        #        ],
-        #        weight=+len(G),
-        #    )
-
         # Add synapse from degree_selector to selector node.
         for neighbour_b in nx.all_neighbors(G, circuit):
             if circuit != neighbour_b:
@@ -355,7 +321,6 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
                         f"degree_receiver_{circuit}_{neighbour_b}_{loop}"
                     ].append(f"counter_{neighbour_b}_{loop}")
 
-        # TODO:
         # Add synapse from selector node back into degree selector.
         for neighbour_b in nx.all_neighbors(G, circuit):
             if circuit != neighbour_b:
@@ -370,6 +335,9 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
                         ],
                         weight=1,  # To increase u(t) at every timestep.
                     )
+
+    # TODO: add recurrent synapses (as edges).
+    add_recursive_edges_to_graph(get_degree)
 
     # Create replacement synapses.
     if m <= 1:
@@ -665,3 +633,19 @@ def get_labels(G, current=True):
     if reset_labels:
         node_labels = nx.get_node_attributes(G, "")
     return node_labels
+
+def add_recursive_edges_to_graph(G):
+    """Adds recursive edges to graph for nodes that have the recur attribute."""
+    for nodename in G.nodes:
+        from pprint import pprint
+        pprint(G.nodes[nodename])
+        if "recur" in G.nodes[nodename].keys():
+            G.add_edges_from(
+            [
+                (
+                    nodename,
+                    nodename,
+                )
+            ],
+            weight=G.nodes[nodename]['recur'],
+        )

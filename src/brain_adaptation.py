@@ -36,7 +36,7 @@ def adaptation_mech_2_networkx_and_snn(
 
 
 def implement_adaptation_mechanism(
-    G, get_degree, iteration, m, rad_dam, size, test_object
+    G, get_degree, iteration, m, rad_dam, size, test_object,plot_graph=False
 ):
     d = 0.25 * (
         m + 1
@@ -77,7 +77,8 @@ def implement_adaptation_mechanism(
     test_object.second_dead_neuron_names = copy.deepcopy(dead_neuron_names)
 
     # Visualise new graph.
-    plot_coordinated_graph(get_degree, iteration, size, show=False)
+    if plot_graph:
+        plot_coordinated_graph(get_degree, iteration, size, show=False)
     return dead_neuron_names
 
 

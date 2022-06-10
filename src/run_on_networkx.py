@@ -99,11 +99,7 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
 
                     # Check if the outgoing edge is exists and is directed.
                     if G.has_edge(node, neighbour):
-                        if node == neighbour:
-                            print(
-                                f"node{node}=neighbour={neighbour} is recursive edge.!"
-                            )
-                            exit()
+                        
 
                         # Compute synaptic weight.
                         weight = G.edges[(node, neighbour)]["weight"]

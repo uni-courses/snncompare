@@ -38,7 +38,7 @@ def create_test_object(
     # TODO: Specify per synapse group. (except for the random synapses)
     test_object.incoming_selector_weight = -5
 
-    # Copy the graph on which the algorithm is ran.
+    # Move the graph on which the algorithm is ran.
     test_object.G = G
 
     if plot_input_graph or export:

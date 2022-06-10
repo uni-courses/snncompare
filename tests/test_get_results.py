@@ -82,8 +82,9 @@ class Test_counter(unittest.TestCase):
                                     iteration,
                                     m,
                                     rad_dam,
-                                    False,
-                                    False,
+                                    plot_input_graph=False,
+                                    plot_snn_graph=False,
+                                    export=False,
                                 )
 
                                 # Specify simulation duration.
