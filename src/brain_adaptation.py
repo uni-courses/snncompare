@@ -36,7 +36,7 @@ def adaptation_mech_2_networkx_and_snn(
 
 
 def implement_adaptation_mechanism(
-    G, get_degree, iteration, m, rad_dam, size, test_object,plot_graph=False
+    G, get_degree, iteration, m, rad_dam, size, test_object, plot_graph=False
 ):
     d = 0.25 * (
         m + 1
@@ -66,7 +66,8 @@ def implement_adaptation_mechanism(
         # TODO: set edge weight
         add_inhibitory_synapse(get_degree, node_name)
 
-        # Add recurrent self inhibitory synapse for some redundant nodes.
+        # TODO: Add recurrent self inhibitory synapse for some redundant nodes.
+        add_recurrent_inhibitiory_synapses(get_degree, node_name)
 
     # Inject radiation by setting arbitrary neuron thresholds to 1000
     # before converting the networkx to snn.
@@ -166,6 +167,19 @@ def add_inhibitory_synapse(get_degree, node_name):
     # prevent all neurons from spiking.
     get_degree.add_edges_from([(node_name, f"red_{node_name}")], weight=-100)
     # TODO: set edge weight
+
+
+def add_recurrent_inhibitiory_synapses(get_degree, nodename):
+    if "recur" in get_degree.nodes[nodename].keys():
+        get_degree.add_edges_from(
+            [
+                (
+                    f"red_{nodename}",
+                    f"red_{nodename}",
+                )
+            ],
+            weight=get_degree.nodes[nodename]["recur"],
+        )
 
 
 def convert_new_graph_to_snn(test_object, sim_time):

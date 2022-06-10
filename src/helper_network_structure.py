@@ -9,7 +9,7 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
     m = m + 1
     d = 0.25 * m  # specify grid distance size
     # Specify edge weight for recurrent inhibitory synapse.
-    inhib_recur_weight=-10 
+    inhib_recur_weight = -10
     """Returns a networkx graph that represents the snn that computes the
     spiking degree in the degree_receiver neurons.
     One node in the graph represents one neuron.
@@ -134,7 +134,6 @@ def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):
             vth=0,
             pos=(float(9 * d + loop * 9 * d), float(node * 4 * d)),
         )
-        
 
         # Create next round connector neurons.
         for loop in range(1, m):
@@ -566,12 +565,15 @@ def set_nx_node_colours(G):
     spiking_edges = []
 
     for node_name in G.nodes:
-        if G.nodes[node_name]["nx_LIF"].spikes:
-            color_map.append("green")
-            for neighbour in nx.all_neighbors(G, node_name):
-                spiking_edges.append((node_name, neighbour))
+        if "nx_LIF" in G.nodes[node_name].keys():
+            if G.nodes[node_name]["nx_LIF"].spikes:
+                color_map.append("green")
+                for neighbour in nx.all_neighbors(G, node_name):
+                    spiking_edges.append((node_name, neighbour))
+            else:
+                color_map.append("white")
         else:
-            color_map.append("white")
+            color_map.append("yellow")
     return color_map, spiking_edges
 
 
@@ -634,18 +636,17 @@ def get_labels(G, current=True):
         node_labels = nx.get_node_attributes(G, "")
     return node_labels
 
+
 def add_recursive_edges_to_graph(G):
     """Adds recursive edges to graph for nodes that have the recur attribute."""
     for nodename in G.nodes:
-        from pprint import pprint
-        pprint(G.nodes[nodename])
         if "recur" in G.nodes[nodename].keys():
             G.add_edges_from(
-            [
-                (
-                    nodename,
-                    nodename,
-                )
-            ],
-            weight=G.nodes[nodename]['recur'],
-        )
+                [
+                    (
+                        nodename,
+                        nodename,
+                    )
+                ],
+                weight=G.nodes[nodename]["recur"],
+            )

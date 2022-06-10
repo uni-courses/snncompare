@@ -18,7 +18,7 @@ def load_pickle_graphs():
     seed = 42
     random.seed(seed)
     unique_run_id = random.randrange(1, 10**6)
-    print(f'unique_run_id={unique_run_id}')
+    print(f"unique_run_id={unique_run_id}")
 
     for m in range(0, 1):
         for iteration in range(0, 2, 1):
@@ -37,7 +37,7 @@ def load_pickle_graphs():
                             + f"y_{neuron_death_probability}_adapt_{adaptation}_"
                             + f"{seed}_size{size}_m{m}_iter{iteration}.pkl"
                         )
-                        print(f'pickle_filename={pickle_filename}')
+                        print(f"pickle_filename={pickle_filename}")
                         if file_exists(pickle_filename):
 
                             pickle_off = open(
