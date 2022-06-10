@@ -456,7 +456,12 @@ def plot_neuron_behaviour_over_time(
 
 
 def plot_coordinated_graph(
-    G, iteration, size, desired_properties=[], show=False, t=None
+    G,
+    iteration,
+    size,
+    desired_properties=[],
+    show=False,
+    filename="no_filename",
 ):
 
     color_map, spiking_edges = set_nx_node_colours(G)
@@ -499,7 +504,8 @@ def plot_coordinated_graph(
         plt.show()
 
     plot_export = Plot_to_tex()
-    plot_export.export_plot(plt, f"snn_size{size}_iter{iteration}_t={t}")
+    print(f"export to:{filename}")
+    plot_export.export_plot(plt, filename)
     # plt.savefig()
     plt.clf()
     plt.close()
@@ -508,10 +514,17 @@ def plot_coordinated_graph(
 def add_neuron_properties_to_plot(axis, desired_properties, G, nodenames, pos):
     """Adds a text (annotation) to each neuron with the desired neuron properties"""
     for nodename in nodenames:
+
+        # Shift the x-coordinates of the redundant neurons to right for readability.
+        if nodename[:3] == "red":
+            shift_right = 0.15
+        else:
+            shift_right = 0
+
         annotation_text = get_annotation_text(desired_properties, G, nodename)
         # Include text in plot.
         axis.text(
-            pos[nodename][0],
+            pos[nodename][0] + shift_right,
             pos[nodename][1],
             annotation_text,
             transform=axis.transData,
@@ -561,19 +574,28 @@ def plot_unstructured_graph(G, iteration, size, show=False):
 
 
 def set_nx_node_colours(G):
+    """Returns a list of node colours in order of G.nodes."""
     color_map = []
     spiking_edges = []
 
+    colour_dict = {}
     for node_name in G.nodes:
         if "nx_LIF" in G.nodes[node_name].keys():
+            if "rad_death" in G.nodes[node_name].keys():
+                if G.nodes[node_name]["rad_death"]:
+                    colour_dict[node_name] = "red"
+                    if G.nodes[node_name]["nx_LIF"].spikes:
+                        raise Exception("Dead neuron can't spike.")
             if G.nodes[node_name]["nx_LIF"].spikes:
-                color_map.append("green")
+                colour_dict[node_name] = "green"
                 for neighbour in nx.all_neighbors(G, node_name):
                     spiking_edges.append((node_name, neighbour))
-            else:
-                color_map.append("white")
+            if node_name not in colour_dict.keys():
+                colour_dict[node_name] = "white"
         else:
-            color_map.append("yellow")
+            colour_dict[node_name] = "yellow"
+    for node_name in G.nodes:
+        color_map.append(colour_dict[node_name])
     return color_map, spiking_edges
 
 

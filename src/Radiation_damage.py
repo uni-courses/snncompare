@@ -88,3 +88,13 @@ class Radiation_damage:
         for node_name in dead_node_names:
             if node_name in dead_node_names:
                 get_degree.nodes[node_name]["vth"] = 9999
+
+
+def store_dead_neuron_names_in_graph(G, dead_neuron_names):
+
+    for nodename in G.nodes:
+        if nodename in dead_neuron_names:
+            G.nodes[nodename]["rad_death"] = True
+            print(G.nodes[nodename]["rad_death"])
+        else:
+            G.nodes[nodename]["rad_death"] = False

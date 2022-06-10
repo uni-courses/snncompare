@@ -12,6 +12,19 @@ from src.run_on_networkx import run_snn_on_networkx
 from src.verify_graph_is_snn import verify_networkx_snn_spec
 
 
+def get_desired_properties_for_graph_printing():
+    desired_properties = [
+        "bias",
+        # "du",
+        # "dv",
+        "u",
+        "v",
+        "vth",
+        "a_in_next",
+    ]
+    return desired_properties
+
+
 def load_pickle_graphs():
     """Loads graphs from pickle files if they exist."""
 
@@ -19,6 +32,7 @@ def load_pickle_graphs():
     random.seed(seed)
     unique_run_id = random.randrange(1, 10**6)
     print(f"unique_run_id={unique_run_id}")
+    desired_properties = get_desired_properties_for_graph_printing()
 
     for m in range(0, 1):
         for iteration in range(0, 2, 1):
@@ -32,11 +46,12 @@ def load_pickle_graphs():
                     0.25,
                 ]:
                     for adaptation in [True, False]:
-                        pickle_filename = (
-                            f"pickles/id{unique_run_id}_probabilit"
+                        configuration = (
+                            f"id{unique_run_id}_probabilit"
                             + f"y_{neuron_death_probability}_adapt_{adaptation}_"
-                            + f"{seed}_size{size}_m{m}_iter{iteration}.pkl"
+                            + f"{seed}_size{size}_m{m}_iter{iteration}"
                         )
+                        pickle_filename = f"pickles/{configuration}.pkl"
                         print(f"pickle_filename={pickle_filename}")
                         if file_exists(pickle_filename):
 
@@ -63,57 +78,42 @@ def load_pickle_graphs():
                                 second_dead_neuron_names,
                             ] = pickle.load(pickle_off)
 
-                            properties_original_graph(G, iteration, size)
-                            print("")
-                            properties_mdsa_graph(
-                                mdsa_graph, iteration, sim_time, size
-                            )
+                            ###properties_original_graph(
+                            ###    configuration, G, iteration, size
+                            ###)
+                            ###print("")
+                            ###properties_mdsa_graph(
+                            ###    configuration,
+                            ###    desired_properties,
+                            ###    mdsa_graph,
+                            ###    iteration,
+                            ###    sim_time,
+                            ###    size,
+                            ###)
 
                             print("")
-                            properties_brain_adaptation_graph(
-                                brain_adaptation_graph, iteration, size
-                            )
-                            print("")
-                            properties_first_rad_damage_graph(
-                                first_rad_damage_graph,
-                                first_dead_neuron_names,
-                                iteration,
-                                size,
-                            )
-                            print("")
-                            properties_second_rad_damage_graph(
-                                second_rad_damage_graph,
-                                second_dead_neuron_names,
-                                iteration,
-                                size,
-                            )
-
-                            print(f"m={m}")
-                            print(f"adaptation={adaptation}")
-                            print(f"seed={seed}")
-                            print(f"size={size}")
-                            print(f"m={m}")
-                            print(f"iteration={iteration}")
-                            print(
-                                f"neuron_death_probability={neuron_death_probability}"
-                            )
-
-                            print(
-                                f"dead_neuron_names={run_result.dead_neuron_names}"
-                            )
-                            print(f"has_passed={run_result.has_passed}")
-                            print(
-                                f"amount_of_neurons={run_result.amount_of_neurons}"
-                            )
-                            print(
-                                f"amount_synapses={run_result.amount_synapses}"
-                            )
-                            print(
-                                f"has_adaptation={run_result.has_adaptation}"
-                            )
-
-                            # plot_graph_behaviour(adaptation,get_degree,iteration,m,neuron_death_probability,seed,sim_time,size)
-
+                            if adaptation:
+                                ###properties_brain_adaptation_graph(
+                                ###    configuration,
+                                ###    desired_properties,
+                                ###    brain_adaptation_graph,
+                                ###    iteration,
+                                ###    sim_time,
+                                ###    size,
+                                ###)
+                                ###print("")
+                                if neuron_death_probability > 0.05:
+                                    # Assume if no adaptation is implemented, that also no radiation
+                                    # is implemented.
+                                    properties_second_rad_damage_graph(
+                                        configuration,
+                                        desired_properties,
+                                        second_rad_damage_graph,
+                                        second_dead_neuron_names,
+                                        iteration,
+                                        sim_time,
+                                        size,
+                                    )
                         else:
                             print(f"Did not find:{pickle_filename}")
 
@@ -144,28 +144,21 @@ def plot_graph_behaviour(
         )
 
 
-def properties_original_graph(G, iteration, size):
+def properties_original_graph(configuration, G, iteration, size):
     """Shows the properties of the original graph."""
     # plot_uncoordinated_graph(G, export=False, show=True)
     pass
 
 
-def properties_mdsa_graph(mdsa_graph, iteration, sim_time, size):
+def properties_mdsa_graph(
+    configuration, desired_properties, mdsa_graph, iteration, sim_time, size
+):
     """Shows the properties of the MDSA graph."""
-    counter_neurons = print_graph_properties(mdsa_graph)
+    counter_neurons = get_counter_neurons(mdsa_graph)
     old_graph_to_new_graph_properties(mdsa_graph)
     G_behaviour = simulate_graph(counter_neurons, mdsa_graph, sim_time)
 
     # plot_uncoordinated_graph(mdsa_graph,export=False,show=True)
-    desired_properties = [
-        "bias",
-        "du",
-        "dv",
-        "u",
-        "v",
-        "vth",
-        "a_in_next",
-    ]
     for t in range(len(G_behaviour)):
         plot_coordinated_graph(
             G_behaviour[t],
@@ -173,37 +166,97 @@ def properties_mdsa_graph(mdsa_graph, iteration, sim_time, size):
             size,
             desired_properties=desired_properties,
             show=False,
-            t=t,
+            filename=f"mdsa_{configuration}_t={t}",
         )
 
 
-def properties_brain_adaptation_graph(brain_adaptation_graph, iteration, size):
+def properties_brain_adaptation_graph(
+    configuration,
+    desired_properties,
+    brain_adaptation_graph,
+    iteration,
+    sim_time,
+    size,
+):
     """Shows the properties of the MDSA graph with brain adaptation."""
-    counter_neurons = print_graph_properties(brain_adaptation_graph)
+    print(f"brain_adaptation_graph={brain_adaptation_graph}")
+    counter_neurons = get_counter_neurons(brain_adaptation_graph)
+
     old_graph_to_new_graph_properties(brain_adaptation_graph)
-    plot_coordinated_graph(brain_adaptation_graph, iteration, size, show=True)
+    G_behaviour = simulate_graph(
+        counter_neurons, brain_adaptation_graph, sim_time
+    )
+    for t in range(len(G_behaviour)):
+        plot_coordinated_graph(
+            G_behaviour[t],
+            iteration,
+            size,
+            desired_properties=desired_properties,
+            show=False,
+            filename=f"brain_adaptation_{configuration}_t={t}",
+        )
 
 
 def properties_first_rad_damage_graph(
-    first_rad_damage_graph, first_dead_neuron_names, iteration, size, show=True
+    configuration,
+    desired_properties,
+    first_rad_damage_graph,
+    first_dead_neuron_names,
+    iteration,
+    sim_time,
+    size,
+    show=True,
 ):
     """Shows the properties of the MDSA graph with brain adaptation and the
     first radiation changes."""
-    plot_coordinated_graph(first_rad_damage_graph, iteration, size, show=True)
+    print(f"first_rad_damage_graph={first_rad_damage_graph}")
+    counter_neurons = get_counter_neurons(first_rad_damage_graph)
+
+    old_graph_to_new_graph_properties(first_rad_damage_graph)
+    G_behaviour = simulate_graph(
+        counter_neurons, first_rad_damage_graph, sim_time
+    )
+
+    for t in range(len(G_behaviour)):
+        plot_coordinated_graph(
+            G_behaviour[t],
+            iteration,
+            size,
+            desired_properties=desired_properties,
+            show=False,
+            filename=f"first_rad_{configuration}_t={t}",
+        )
 
 
 def properties_second_rad_damage_graph(
+    configuration,
+    desired_properties,
     second_rad_damage_graph,
     second_dead_neuron_names,
     iteration,
+    sim_time,
     size,
     show=True,
 ):
     """Shows the properties of the MDSA graph with brain adaptation and the
     second radiation changes."""
-    counter_neurons = print_graph_properties(second_rad_damage_graph)
+    print(f"second_rad_damage_graph={second_rad_damage_graph}")
+    counter_neurons = get_counter_neurons(second_rad_damage_graph)
     old_graph_to_new_graph_properties(second_rad_damage_graph)
-    plot_coordinated_graph(second_rad_damage_graph, iteration, size, show=True)
+
+    G_behaviour = simulate_graph(
+        counter_neurons, second_rad_damage_graph, sim_time
+    )
+    print(f"len(G_behaviour)={len(G_behaviour)}")
+    for t in range(len(G_behaviour)):
+        plot_coordinated_graph(
+            G_behaviour[t],
+            iteration,
+            size,
+            desired_properties=desired_properties,
+            show=False,
+            filename=f"second_rad_{configuration}_t={t}",
+        )
 
 
 def old_graph_to_new_graph_properties(G):
@@ -219,7 +272,7 @@ def old_graph_to_new_graph_properties(G):
 
 
 def print_graph_properties(G):
-    counter_neurons = []
+
     # Print graph properties.
     for nodename in G.nodes:
         print(nodename)
@@ -227,11 +280,16 @@ def print_graph_properties(G):
         print(f'du={G.nodes[nodename]["du"]}')
         print(f'dv={G.nodes[nodename]["dv"]}')
         print(f'vth={G.nodes[nodename]["vth"]}')
-        if nodename[:7] == "counter":
-            counter_neurons.append(nodename)
 
     for edge in G.edges:
         print(f'edge={edge},weight={G.edges[edge]["weight"]}')
+
+
+def get_counter_neurons(G):
+    counter_neurons = []
+    for nodename in G.nodes:
+        if nodename[:7] == "counter":
+            counter_neurons.append(nodename)
     return counter_neurons
 
 

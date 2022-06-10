@@ -11,6 +11,7 @@ import pylab as plt
 from lava.proc.monitor.process import Monitor
 
 from src import Plot_to_tex
+from src.Radiation_damage import store_dead_neuron_names_in_graph
 from src.plot_graphs import create_root_dir_if_not_exists
 
 
@@ -114,6 +115,12 @@ def export_get_degree_graph(
     unique_run_id,
 ):
     remove_monitors_from_get_degree(get_degree)
+    if test_object.second_rad_damage_graph is not None:
+        store_dead_neuron_names_in_graph(
+            test_object.second_rad_damage_graph,
+            test_object.second_dead_neuron_names,
+        )
+        print(f"added_dead_neurons.")
     create_root_dir_if_not_exists("pickles")
     with open(
         f"pickles/id{unique_run_id}_probability_{neuron_death_probability}"
