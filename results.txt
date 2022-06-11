@@ -5172,3 +5172,577 @@ G_alipour countermarks-SNN counter current
 1-0
 
 
+2022-06-11 11:05:18
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:57
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:57
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:57
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:57
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:57
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:58
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:59
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:59
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:59
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:59
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:05:59
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=0
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:00
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:00
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:00
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:00
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:00
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:01
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:01
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:01
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:01
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:02
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:03
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:03
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+
+2022-06-11 11:06:03
+m=0
+len(G)=3
+has_passed=(False,)
+edges
+(0, 1)
+(1, 2)
+iteration=1
+G_alipour countermarks-SNN counter current
+0-0
+2-0
+1-0
+
+

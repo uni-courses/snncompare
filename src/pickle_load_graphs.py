@@ -72,9 +72,7 @@ def load_pickle_graphs():
                                 size,
                                 mdsa_graph,
                                 brain_adaptation_graph,
-                                first_rad_damage_graph,
                                 second_rad_damage_graph,
-                                first_dead_neuron_names,
                                 second_dead_neuron_names,
                             ] = pickle.load(pickle_off)
 
@@ -194,37 +192,6 @@ def properties_brain_adaptation_graph(
             desired_properties=desired_properties,
             show=False,
             filename=f"brain_adaptation_{configuration}_t={t}",
-        )
-
-
-def properties_first_rad_damage_graph(
-    configuration,
-    desired_properties,
-    first_rad_damage_graph,
-    first_dead_neuron_names,
-    iteration,
-    sim_time,
-    size,
-    show=True,
-):
-    """Shows the properties of the MDSA graph with brain adaptation and the
-    first radiation changes."""
-    print(f"first_rad_damage_graph={first_rad_damage_graph}")
-    counter_neurons = get_counter_neurons(first_rad_damage_graph)
-
-    old_graph_to_new_graph_properties(first_rad_damage_graph)
-    G_behaviour = simulate_graph(
-        counter_neurons, first_rad_damage_graph, sim_time
-    )
-
-    for t in range(len(G_behaviour)):
-        plot_coordinated_graph(
-            G_behaviour[t],
-            iteration,
-            size,
-            desired_properties=desired_properties,
-            show=False,
-            filename=f"first_rad_{configuration}_t={t}",
         )
 
 

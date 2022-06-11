@@ -63,185 +63,156 @@ class Test_counter(unittest.TestCase):
                         graphs = used_graphs.get_graphs(size)
                         for G in graphs:
                             for adaptation in [True, False]:
+                                for has_radiation in [True,False]:
 
-                                # Start performance report.
-                                latest_millis = int(round(time() * 1000))
-                                latest_time, latest_millis = print_time(
-                                    "Create object.",
-                                    datetime.now(),
-                                    latest_millis,
-                                )
-
-                                # Initialise paramers used for testing.
-                                (
-                                    test_object,
-                                    dead_neuron_names,
-                                ) = create_test_object(
-                                    adaptation,
-                                    G,
-                                    iteration,
-                                    m,
-                                    rad_dam,
-                                    plot_input_graph=False,
-                                    plot_snn_graph=False,
-                                    export=False,
-                                )
-
-                                # Specify simulation duration.
-                                sim_time = (
-                                    test_object.inhibition * (m + 1) + 10
-                                )
-                                # sim_time = 3
-
-                                # Report performance.
-                                latest_time, latest_millis = print_time(
-                                    "Created object.",
-                                    latest_time,
-                                    latest_millis,
-                                )
-
-                                # Apply simulated brain adaptation to networkx
-                                # graph and SNN, if desired.
-                                if adaptation:
-                                    (
-                                        dead_neuron_names,
-                                        latest_time,
+                                    # Start performance report.
+                                    latest_millis = int(round(time() * 1000))
+                                    latest_time, latest_millis = print_time(
+                                        "Create object.",
+                                        datetime.now(),
                                         latest_millis,
-                                    ) = adaptation_mech_2_networkx_and_snn(
+                                    )
+
+                                    # Initialise paramers used for testing.
+                                    (
+                                        test_object,
+                                        ##dead_neuron_names,
+                                    ) = create_test_object(
+                                        adaptation,
                                         G,
                                         iteration,
-                                        latest_millis,
-                                        latest_time,
                                         m,
                                         rad_dam,
+                                        plot_input_graph=False,
+                                        plot_snn_graph=False,
+                                        export=False,
+                                    )
+
+                                    # Specify simulation duration.
+                                    sim_time = (
+                                        test_object.inhibition * (m + 1) + 10
+                                    )
+                                    # sim_time = 3
+
+                                    # Report performance.
+                                    latest_time, latest_millis = print_time(
+                                        "Created object.",
+                                        latest_time,
+                                        latest_millis,
+                                    )
+
+                                    # Apply simulated brain adaptation to networkx
+                                    # graph and SNN, if desired.
+                                    if adaptation:
+                                        (
+                                            dead_neuron_names,
+                                            latest_time,
+                                            latest_millis,
+                                        ) = adaptation_mech_2_networkx_and_snn(
+                                            G,
+                                            iteration,
+                                            latest_millis,
+                                            latest_time,
+                                            m,
+                                            rad_dam,
+                                            sim_time,
+                                            size,
+                                            test_object,
+                                        )
+                                    else:
+                                        test_object.brain_adaptation_graph=None
+                                        test_object.second_rad_damage_graph=None
+                                        test_object.second_dead_neuron_names=None
+
+                                    # Add spike monitors in networkx graph
+                                    # representing SNN. If output_behaviour:
+                                    create_neuron_monitors(test_object, sim_time)
+                                    # Report performance.
+                                    latest_time, latest_millis = print_time(
+                                        "Got neuron monitors.",
+                                        latest_time,
+                                        latest_millis,
+                                    )
+
+                                    # Get the counter neurons at the end of the
+                                    # simulation.
+                                    counter_neurons = (
+                                        get_counter_neurons_from_dict(
+                                            len(test_object.G),
+                                            test_object.neuron_dict,
+                                            m,
+                                        )
+                                    )
+                                    latest_time, latest_millis = print_time(
+                                        "Got counter neurons.",
+                                        latest_time,
+                                        latest_millis,
+                                    )
+
+                                    # Check if expected counter nodes are selected.
+                                    (
+                                        alipour_count,
+                                        has_passed,
+                                        snn_count,
+                                    ) = self.integration_test_on_end_result(
+                                        counter_neurons,
+                                        G,
+                                        iteration,
+                                        m,
+                                        self.seed,
+                                        test_object,
+                                    )
+                                    latest_time, latest_millis = print_time(
+                                        "Performed integration test.",
+                                        latest_time,
+                                        latest_millis,
+                                    )
+                                    # starter_neuron.stop()
+
+                                    # Store results into Run object.
+                                    run_result = Run(
+                                        dead_neuron_names,
+                                        G,
+                                        test_object.get_degree,
+                                        adaptation,
+                                        iteration,
+                                        neuron_death_probability,
+                                        m,
+                                        has_passed,
+                                        test_object.rand_ceil,
+                                        test_object.rand_nrs,
+                                        alipour_count,
+                                        snn_count,
+                                        sim_time,
+                                        size,
+                                    )
+
+                                    # Export run object results.
+                                    # Terminate loihi simulation for this run.
+                                    export_get_degree_graph(
+                                        adaptation,
+                                        test_object.G,
+                                        test_object.get_degree,
+                                        iteration,
+                                        m,
+                                        neuron_death_probability,
+                                        run_result,
+                                        self.seed,
                                         sim_time,
                                         size,
                                         test_object,
+                                        self.unique_run_id,
                                     )
-                                else:
-                                    test_object.brain_adaptation_graph=None
-                                    test_object.second_rad_damage_graph=None
-                                    test_object.second_dead_neuron_names=None
-
-                                # Add spike monitors in networkx graph
-                                # representing SNN. If output_behaviour:
-                                create_neuron_monitors(test_object, sim_time)
-                                # Report performance.
-                                latest_time, latest_millis = print_time(
-                                    "Got neuron monitors.",
-                                    latest_time,
-                                    latest_millis,
-                                )
-
-                                # Run default tests on neurons and get counted
-                                # degree from neurons after inhibition time.
-                                list(test_object.neuron_dict.keys())
-                                # (
-                                #    latest_ti
-                                # me,
-                                #    neurons,
-                                #    starter_neuron,
-                                # ) = self.simulate_degree_receiver_neurons(
-                                #    adaptation,
-                                #    iteration,
-                                #    latest_millis,
-                                #    latest_time,
-                                #    m,
-                                #    neuron_death_probability,
-                                #    neurons,
-                                #    output_behaviour,
-                                #    seed,
-                                #    sim_time,
-                                #    size,
-                                #    test_object,
-                                # )
-                                #
-                                ## Report performance.
-                                # latest_time, latest_millis = print_time(
-                                #    "Ran simulation.",
-                                #    latest_time,
-                                #    latest_millis,
-                                # )
-
-                                # Get the counter neurons at the end of the
-                                # simulation.
-                                counter_neurons = (
-                                    get_counter_neurons_from_dict(
-                                        len(test_object.G),
-                                        test_object.neuron_dict,
-                                        m,
-                                    )
-                                )
-                                latest_time, latest_millis = print_time(
-                                    "Got counter neurons.",
-                                    latest_time,
-                                    latest_millis,
-                                )
-
-                                # Check if expected counter nodes are selected.
-                                (
-                                    alipour_count,
-                                    has_passed,
-                                    snn_count,
-                                ) = self.integration_test_on_end_result(
-                                    counter_neurons,
-                                    G,
-                                    iteration,
-                                    m,
-                                    self.seed,
-                                    test_object,
-                                )
-                                latest_time, latest_millis = print_time(
-                                    "Performed integration test.",
-                                    latest_time,
-                                    latest_millis,
-                                )
-                                # starter_neuron.stop()
-
-                                # Store results into Run object.
-                                run_result = Run(
-                                    dead_neuron_names,
-                                    G,
-                                    test_object.get_degree,
-                                    adaptation,
-                                    iteration,
-                                    neuron_death_probability,
-                                    m,
-                                    has_passed,
-                                    test_object.rand_ceil,
-                                    test_object.rand_nrs,
-                                    alipour_count,
-                                    snn_count,
-                                    sim_time,
-                                    size,
-                                )
-
-                                # Export run object results.
-                                # Terminate loihi simulation for this run.
-                                export_get_degree_graph(
-                                    adaptation,
-                                    test_object.G,
-                                    test_object.get_degree,
-                                    iteration,
-                                    m,
-                                    neuron_death_probability,
-                                    run_result,
-                                    self.seed,
-                                    sim_time,
-                                    size,
-                                    test_object,
-                                    self.unique_run_id,
-                                )
-                                ###load_pickle_and_plot(
-                                ###    adaptation,
-                                ###    iteration,
-                                ###    m,
-                                ###    neuron_death_probability,
-                                ###    self.seed,
-                                ###    sim_time,
-                                ###    size,
-                                ###    self.unique_run_id,
-                                ###)
+                                    ###load_pickle_and_plot(
+                                    ###    adaptation,
+                                    ###    iteration,
+                                    ###    m,
+                                    ###    neuron_death_probability,
+                                    ###    self.seed,
+                                    ###    sim_time,
+                                    ###    size,
+                                    ###    self.unique_run_id,
+                                    ###)
 
     def simulate_degree_receiver_neurons(
         self,
