@@ -6,6 +6,7 @@ network to simulate it, one neuron at a time.
 """
 
 # Import external libraries.
+import copy
 import networkx as nx
 
 # Import local project functions and classes.
@@ -63,8 +64,12 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
 def run_snn_on_networkx(G: nx.DiGraph, t: int) -> None:
     """Runs the simulation for t timesteps using networkx, not lava."""
     verify_networkx_snn_spec(G)
+
+    G_behaviour = []
     for _ in range(t):
         run_simulation_with_networkx_for_1_timestep(G)
+        G_behaviour.append(copy.deepcopy(G))
+    return G_behaviour
 
 
 def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
@@ -85,6 +90,7 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
         spikes = nx_lif.simulate_neuron_one_timestep(nx_lif.a_in)
 
         if spikes:
+
             # Propagate the output spike to the connected receiving neurons.
             for neighbour in nx.all_neighbors(G, node):
 

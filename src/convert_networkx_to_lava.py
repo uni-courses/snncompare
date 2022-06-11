@@ -153,7 +153,9 @@ def node_is_converted(converted_nodes, nodename):
     return nodename in converted_nodes
 
 
-def create_neuron_from_node(G, converted_nodes, neurons, nodename):
+def create_neuron_from_node(
+    G, converted_nodes, neurons, nodename, old_code=False
+):
     """
 
     :param G: Networkx graph that specifies the Lava neural network.
@@ -165,7 +167,10 @@ def create_neuron_from_node(G, converted_nodes, neurons, nodename):
 
     """
 
-    bias, du, dv, vth = get_neuron_properties(G, nodename)
+    if old_code:
+        bias, du, dv, vth = get_neuron_properties_old(G, nodename)
+    else:
+        bias, du, dv, vth = get_neuron_properties(G, nodename)
 
     neuron = LIF(bias=bias, du=du, dv=dv, vth=vth)
 
@@ -198,6 +203,14 @@ def get_neuron_properties(G, nodename):
     du = G.nodes[nodename]["nx_LIF"].du.get()
     dv = G.nodes[nodename]["nx_LIF"].dv.get()
     vth = G.nodes[nodename]["nx_LIF"].vth.get()
+    return bias, du, dv, vth
+
+
+def get_neuron_properties_old(G, node):
+    bias = G.nodes[node]["bias"]
+    du = G.nodes[node]["du"]
+    dv = G.nodes[node]["dv"]
+    vth = G.nodes[node]["vth"]
     return bias, du, dv, vth
 
 

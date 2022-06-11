@@ -5,6 +5,7 @@ that invokes this script."""
 # Import external libraries.
 # import networkx as nx
 
+from src.pickle_load_graphs import load_pickle_graphs
 from src.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
@@ -38,3 +39,5 @@ elif args.run_on_lava:
         print(f'node={node},u={G.nodes[node]["lava_LIF"].u.get()}')
     # Terminate Loihi simulation.
     G.nodes[starter_node_name]["lava_LIF"].stop()
+elif args.run_old_graphs:
+    load_pickle_graphs()
