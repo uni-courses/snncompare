@@ -20,6 +20,7 @@ def create_test_object(
     iteration,
     m,
     rad_dam,
+    seed,
     plot_input_graph=False,
     plot_snn_graph=False,
     export=True,
@@ -46,51 +47,13 @@ def create_test_object(
             test_object.G, iteration, len(G), plot_input_graph
         )
 
-    # Generate the maximum random ceiling
-    # +2 to allow selecting a larger range of numbers than the number of
-    # nodes in the graph.
-    test_object.rand_ceil = len(test_object.G) + 0
-    # Get the list of random numbers.
-    test_object.rand_nrs = generate_list_of_n_random_nrs(
-        test_object.G, max=test_object.rand_ceil, seed=42
-    )
-    print(f"before delta={test_object.rand_nrs}")
-
-    # Make the random numbers differ with at least delta>=2. This is to
-    # prevent multiple degree_receiver_x_y neurons (that differ less than
-    # delta) in a single WTA circuit to spike before they are inhibited by
-    # the first winner. This inhibition goes via the selector neuron and
-    # has a delay of 2. So a winner should have a difference of at least 2.
-    test_object.delta = 2
-    # Spread the random numbers with delta to ensure 1 winner in WTA
-    # circuit.
-    test_object.rand_nrs = [
-        x * test_object.delta for x in test_object.rand_nrs
-    ]
-    print(f"after_delta={test_object.rand_nrs}")
-    print(f"test_object.rand_ceil={test_object.rand_ceil}")
-    # Add inhibition to rand_nrs to ensure the degree_receiver current u[1]
-    # always starts negative. The a_in of the degree_receiver_x_y neuron is
-    # : the incoming spike_once_x weights+rand_x neurons+selector_excitation
-    # - There are at most n incoming spike signals.
-    # - Each spike_once should have a weight of at least random_ceiling+1.
-    # That is because the random value should map to 0<rand<1 with respect
-    # to the difference of 1 spike_once more or less.
-    # - The random_ceiling is specified.
-    # - The excitatory neuron comes in at +1, a buffer of 1 yields+2.
-    # Hence, the inhibition is computed as:
-    test_object.inhibition = (
-        len(test_object.G) * (test_object.rand_ceil * test_object.delta + 1)
-        + (test_object.rand_ceil) * test_object.delta
-        + 1
-    )
-    test_object.rand_nrs = [
-        x - test_object.inhibition for x in test_object.rand_nrs
-    ]
-    print(
-        f"After inhibition of:{test_object.inhibition}, rand_nrs="
-        + f"{test_object.rand_nrs}"
-    )
+    test_object.rand_props = Alipour_properties(G, seed)
+    # TODO: Rename all rand_nrs usages.
+    test_object.rand_nrs = test_object.rand_props.spread_rand_nrs
+    # TODO: Rename all rand_nrs usages.
+    test_object.rand_ceil = test_object.rand_props.rand_ceil
+    test_object.delta = test_object.rand_props.delta
+    test_object.inhibition = test_object.rand_props.inhibition
 
     # Convert the fully connected graph into a networkx graph that
     # stores the snn properties.
@@ -257,3 +220,69 @@ class Test_properties:
 
     def __init__(self):
         pass
+
+
+class Alipour_properties:
+    """Contains the properties required to compute Alipour algorithm results."""
+
+    def __init__(self, G, seed):
+
+        # Initialise properties for Alipour algorithm
+        rand_ceil = self.get_random_ceiling(G)
+        rand_nrs = generate_list_of_n_random_nrs(G, max=rand_ceil, seed=seed)
+        delta = self.get_delta()
+        spread_rand_nrs = self.spread_rand_nrs_with_delta(delta, rand_nrs)
+        inhibition = self.get_inhibition(delta, G, rand_ceil)
+        initial_rand_current = self.get_initial_random_current(
+            inhibition, rand_nrs
+        )
+
+        # Store properties in object.
+        self.rand_ceil = rand_ceil
+        self.rand_nrs = rand_nrs
+        self.delta = delta
+        self.spread_rand_nrs = spread_rand_nrs
+        self.inhibition = inhibition
+        self.initial_rand_current = initial_rand_current
+
+    def get_random_ceiling(self, G):
+        """Generate the maximum random ceiling.
+        +2 to allow selecting a larger range of numbers than the number of
+        # nodes in the graph."""
+        rand_ceil = len(G) + 0
+        return rand_ceil
+
+    def get_delta(self):
+        """Make the random numbers differ with at least delta>=2. This is to
+        prevent multiple degree_receiver_x_y neurons (that differ less than
+        delta) in a single WTA circuit to spike before they are inhibited by
+        the first winner. This inhibition goes via the selector neuron and
+        has a delay of 2. So a winner should have a difference of at least 2."""
+        delta = 2
+        return delta
+
+    def spread_rand_nrs_with_delta(self, delta, rand_nrs):
+        """Spread the random numbers with delta to ensure 1 winner in WTA
+        circuit."""
+        spread_rand_nrs = [x * delta for x in rand_nrs]
+        print(f"spread_rand_nrs={spread_rand_nrs}")
+        return spread_rand_nrs
+
+    def get_inhibition(self, delta, G, rand_ceil):
+        """Add inhibition to rand_nrs to ensure the degree_receiver current u[1]
+        always starts negative. The a_in of the degree_receiver_x_y neuron is
+        : the incoming spike_once_x weights+rand_x neurons+selector_excitation
+        - There are at most n incoming spike signals.
+        - Each spike_once should have a weight of at least random_ceiling+1.
+        That is because the random value should map to 0<rand<1 with respect
+        to the difference of 1 spike_once more or less.
+        - The random_ceiling is specified.
+        - The excitatory neuron comes in at +1, a buffer of 1 yields+2.
+        Hence, the inhibition is computed as:"""
+        inhibition = len(G) * (rand_ceil * delta + 1) + (rand_ceil) * delta + 1
+        return inhibition
+
+    def get_initial_random_current(self, inhibition, rand_nrs):
+        """Returns the list with random inital currents for the rand_ neurons."""
+        initial_rand_current = [x - inhibition for x in rand_nrs]
+        return initial_rand_current

@@ -8,7 +8,7 @@ from src.export_json_results import (
     get_unique_hash,
 )
 
-from src.helper import delete_files_in_folder, file_exists
+from src.helper import delete_files_in_folder, file_exists, full_alipour
 from src.helper_network_structure import (
     plot_coordinated_graph,
     plot_neuron_behaviour_over_time,
@@ -60,6 +60,19 @@ def load_pickle_graphs():
             dead_neuron_names,
             unique_hash,
         ] = pickle.load(pickle_off)
+
+        G_alipour = full_alipour(
+            delta,
+            inhibition,
+            iteration,
+            G,
+            rand_ceil,
+            rand_nrs,
+            m,
+            seed,
+            len(G),
+            export=False,
+        )
 
         # TODO: verify unique_hash equals output of: get_unique_hash().
         output_name = f"_death_prob{neuron_death_probability}_adapt_{has_adaptation}_raddam{has_radiation}__seed{seed}_size{len(G)}_m{m}_iter{iteration}_hash{unique_hash}"

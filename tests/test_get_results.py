@@ -84,6 +84,7 @@ class Test_counter(unittest.TestCase):
                                         iteration,
                                         m,
                                         rad_dam,
+                                        self.seed,
                                         plot_input_graph=False,
                                         plot_snn_graph=False,
                                         export=False,
