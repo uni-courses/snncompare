@@ -105,13 +105,6 @@ def create_test_object(
     )
     test_object.mdsa_graph = copy.deepcopy(test_object.get_degree)
 
-    ######################## Inject radiation
-    #######################dead_neuron_names = rad_dam.inject_simulated_radiation(
-    #######################    test_object.get_degree, rad_dam.neuron_death_probability
-    #######################)
-    #######################test_object.first_rad_damage_graph = copy.deepcopy(test_object.get_degree)
-    #######################test_object.first_dead_neuron_names = copy.deepcopy(dead_neuron_names)
-
     if plot_snn_graph or export:
         plot_coordinated_graph(
             test_object.get_degree, iteration, len(G), plot_snn_graph
@@ -130,7 +123,7 @@ def create_test_object(
             test_object.get_degree
         )
 
-    return test_object, ##########dead_neuron_names
+    return (test_object,)  ##########dead_neuron_names
 
 
 def get_degree_receiver_previous_property_dicts(

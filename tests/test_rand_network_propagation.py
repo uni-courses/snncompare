@@ -78,7 +78,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             self.assertEqual(size, len(G))
 
                             # Assert number of edges without recurrent edges.
-                            #print(f"size={size},density={density}")
+                            # print(f"size={size},density={density}")
                             # self.assertGreaterEqual(G.number_of_edges(),math.floor(size*density))
                             # self.assertLessEqual(G.number_of_edges(),math.ceil(size*density))
 

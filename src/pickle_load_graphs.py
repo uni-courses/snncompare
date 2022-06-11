@@ -1,6 +1,12 @@
 import pickle
 import random
+import glob
 from src.LIF_neuron import LIF_neuron, print_neuron_properties
+from src.export_json_results import (
+    export_end_results,
+    export_results_as_json,
+    get_unique_hash,
+)
 
 from src.helper import file_exists
 from src.helper_network_structure import (
@@ -28,92 +34,92 @@ def get_desired_properties_for_graph_printing():
 def load_pickle_graphs():
     """Loads graphs from pickle files if they exist."""
 
-    seed = 42
-    random.seed(seed)
-    unique_run_id = random.randrange(1, 10**6)
-    print(f"unique_run_id={unique_run_id}")
     desired_properties = get_desired_properties_for_graph_printing()
 
-    for m in range(0, 1):
-        for iteration in range(0, 2, 1):
-            for size in range(3, 4, 1):
-                # for neuron_death_probability in [0.1, 0.25, 0.50]:
-                for neuron_death_probability in [
-                    0.01,
-                    0.05,
-                    0.1,
-                    0.2,
-                    0.25,
-                ]:
-                    for adaptation in [True, False]:
-                        configuration = (
-                            f"id{unique_run_id}_probabilit"
-                            + f"y_{neuron_death_probability}_adapt_{adaptation}_"
-                            + f"{seed}_size{size}_m{m}_iter{iteration}"
+    for pickle_filename in glob.iglob("pickles/*.pkl"):
+
+        if file_exists(pickle_filename):
+
+            pickle_off = open(
+                pickle_filename,
+                "rb",
+            )
+
+            [
+                has_adaptation,
+                G,
+                has_radiation,
+                iteration,
+                m,
+                neuron_death_probability,
+                seed,
+                sim_time,
+                mdsa_graph,
+                brain_adaptation_graph,
+                rad_damaged_graph,
+                dead_neuron_names,
+                unique_hash,
+            ] = pickle.load(pickle_off)
+
+            # TODO: verify unique_hash equals output of: get_unique_hash().
+            output_name = f"_death_prob{neuron_death_probability}_adapt_{has_adaptation}_raddam{has_radiation}__seed{seed}_size{len(G)}_m{m}_iter{iteration}_hash{unique_hash}"
+
+            properties_original_graph(output_name, G, iteration, len(G))
+
+            print("")
+            properties_mdsa_graph(
+                output_name,
+                desired_properties,
+                mdsa_graph,
+                iteration,
+                sim_time,
+                len(G),
+            )
+
+            print("")
+            if has_adaptation:
+                if not has_radiation:
+                    properties_brain_adaptation_graph(
+                        output_name,
+                        desired_properties,
+                        brain_adaptation_graph,
+                        iteration,
+                        sim_time,
+                        len(G),
+                    )
+                    print("")
+                if has_radiation:
+
+                    if neuron_death_probability > 0.05:
+                        # Assume if no adaptation is implemented, that also no radiation
+                        # is implemented.
+                        properties_rad_damaged_graph(
+                            output_name,
+                            desired_properties,
+                            rad_damaged_graph,
+                            dead_neuron_names,
+                            iteration,
+                            sim_time,
+                            len(G),
                         )
-                        pickle_filename = f"pickles/{configuration}.pkl"
-                        print(f"pickle_filename={pickle_filename}")
-                        if file_exists(pickle_filename):
-
-                            pickle_off = open(
-                                pickle_filename,
-                                "rb",
-                            )
-
-                            # [G, get_degree, iteration, m, run_result, seed, size] = pickle.load(
-                            [
-                                G,
-                                get_degree,
-                                iteration,
-                                m,
-                                run_result,
-                                seed,
-                                sim_time,
-                                size,
-                                mdsa_graph,
-                                brain_adaptation_graph,
-                                second_rad_damage_graph,
-                                second_dead_neuron_names,
-                            ] = pickle.load(pickle_off)
-
-                            ###properties_original_graph(
-                            ###    configuration, G, iteration, size
-                            ###)
-                            ###print("")
-                            ###properties_mdsa_graph(
-                            ###    configuration,
-                            ###    desired_properties,
-                            ###    mdsa_graph,
-                            ###    iteration,
-                            ###    sim_time,
-                            ###    size,
-                            ###)
-
-                            print("")
-                            if adaptation:
-                                ###properties_brain_adaptation_graph(
-                                ###    configuration,
-                                ###    desired_properties,
-                                ###    brain_adaptation_graph,
-                                ###    iteration,
-                                ###    sim_time,
-                                ###    size,
-                                ###)
-                                ###print("")
-                                if neuron_death_probability > 0.05:
-                                    # Assume if no adaptation is implemented, that also no radiation
-                                    # is implemented.
-                                    properties_second_rad_damage_graph(
-                                        configuration,
-                                        desired_properties,
-                                        second_rad_damage_graph,
-                                        second_dead_neuron_names,
-                                        iteration,
-                                        sim_time,
-                                        size,
-                                    )
-                        else:
-                            print(f"Did not find:{pickle_filename}")
+            print(f"pickle_filename={pickle_filename}")
+            export_end_results(
+                G,
+                dead_neuron_names,
+                has_adaptation,
+                has_radiation,
+                iteration,
+                m,
+                neuron_death_probability,
+                seed,
+                sim_time,
+                mdsa_graph,
+                brain_adaptation_graph,
+                rad_damaged_graph,
+                unique_hash,
+            )
+        else:
+            print(f"Did not find:{pickle_filename}")
 
 
 def plot_graph_behaviour(
@@ -195,11 +201,11 @@ def properties_brain_adaptation_graph(
         )
 
 
-def properties_second_rad_damage_graph(
+def properties_rad_damaged_graph(
     configuration,
     desired_properties,
-    second_rad_damage_graph,
-    second_dead_neuron_names,
+    rad_damaged_graph,
+    dead_neuron_names,
     iteration,
     sim_time,
     size,
@@ -207,13 +213,11 @@ def properties_second_rad_damage_graph(
 ):
     """Shows the properties of the MDSA graph with brain adaptation and the
     second radiation changes."""
-    print(f"second_rad_damage_graph={second_rad_damage_graph}")
-    counter_neurons = get_counter_neurons(second_rad_damage_graph)
-    old_graph_to_new_graph_properties(second_rad_damage_graph)
+    print(f"rad_damaged_graph={rad_damaged_graph}")
+    counter_neurons = get_counter_neurons(rad_damaged_graph)
+    old_graph_to_new_graph_properties(rad_damaged_graph)
 
-    G_behaviour = simulate_graph(
-        counter_neurons, second_rad_damage_graph, sim_time
-    )
+    G_behaviour = simulate_graph(counter_neurons, rad_damaged_graph, sim_time)
     print(f"len(G_behaviour)={len(G_behaviour)}")
     for t in range(len(G_behaviour)):
         plot_coordinated_graph(

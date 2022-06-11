@@ -12,6 +12,7 @@ from lava.proc.monitor.process import Monitor
 
 from src import Plot_to_tex
 from src.Radiation_damage import store_dead_neuron_names_in_graph
+from src.export_json_results import get_unique_hash
 from src.plot_graphs import create_root_dir_if_not_exists
 
 
@@ -101,7 +102,8 @@ def delete_files_in_folder(folder):
 
 
 def export_get_degree_graph(
-    adaptation,
+    has_adaptation,
+    has_radiation,
     G,
     get_degree,
     iteration,
@@ -112,35 +114,46 @@ def export_get_degree_graph(
     sim_time,
     size,
     test_object,
-    unique_run_id,
 ):
     remove_monitors_from_get_degree(get_degree)
-    if test_object.second_rad_damage_graph is not None:
+    unique_hash = get_unique_hash(
+        test_object.final_dead_neuron_names,
+        has_adaptation,
+        has_radiation,
+        iteration,
+        m,
+        neuron_death_probability,
+        seed,
+        sim_time,
+    )
+
+    if test_object.rad_damaged_graph is not None:
         store_dead_neuron_names_in_graph(
-            test_object.second_rad_damage_graph,
-            test_object.second_dead_neuron_names,
+            test_object.rad_damaged_graph,
+            test_object.final_dead_neuron_names,
         )
         print(f"added_dead_neurons.")
     create_root_dir_if_not_exists("pickles")
     with open(
-        f"pickles/id{unique_run_id}_probability_{neuron_death_probability}"
-        + f"_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}.pkl",
+        f"pickles/probability_{neuron_death_probability}"
+        + f"adapt_{has_adaptation}_{seed}_size{size}_m{m}_iter{iteration}_{unique_hash}.pkl",
         "wb",
     ) as fh:
         pickle.dump(
             [
+                has_adaptation,
                 G,
-                get_degree,
+                has_radiation,
                 iteration,
                 m,
-                run_result,
+                neuron_death_probability,
                 seed,
                 sim_time,
-                size,
                 test_object.mdsa_graph,
                 test_object.brain_adaptation_graph,
-                test_object.second_rad_damage_graph,
-                test_object.second_dead_neuron_names,
+                test_object.rad_damaged_graph,
+                test_object.final_dead_neuron_names,
+                unique_hash,
             ],
             fh,
         )
@@ -180,71 +193,6 @@ def get_neuron_from_dict(neuron_dict, neurons, neuron_name):
         if neuron_dict[neuron] == neuron_name:
             return neuron
     raise Exception("Did not find neuron:{neuron_name} in dict:{neuron_dict}")
-
-
-def load_pickle_and_plot(
-    adaptation,
-    iteration,
-    m,
-    neuron_death_probability,
-    seed,
-    sim_time,
-    size,
-    unique_run_id,
-):
-    from src.helper_network_structure import plot_neuron_behaviour_over_time
-
-    pickle_off = open(
-        f"pickles/id{unique_run_id}_probability_{neuron_death_probability}"
-        + f"_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}.pkl",
-        "rb",
-    )
-    # [G, get_degree, iteration, m, run_result, seed, size] = pickle.load(
-    [
-        G,
-        get_degree,
-        iteration,
-        m,
-        run_result,
-        seed,
-        sim_time,
-        size,
-        mdsa_graph,
-        brain_adaptation_graph,
-        first_rad_damage_graph,
-        second_rad_damage_graph,
-        first_dead_neuron_names,
-        second_dead_neuron_names,
-    ] = pickle.load(pickle_off)
-
-    print(f"m={m}")
-    print(f"adaptation={adaptation}")
-    print(f"seed={seed}")
-    print(f"size={size}")
-    print(f"m={m}")
-    print(f"iteration={iteration}")
-    print(f"neuron_death_probability={neuron_death_probability}")
-
-    print(f"dead_neuron_names={run_result.dead_neuron_names}")
-    print(f"has_passed={run_result.has_passed}")
-    print(f"amount_of_neurons={run_result.amount_of_neurons}")
-    print(f"amount_synapses={run_result.amount_synapses}")
-    print(f"has_adaptation={run_result.has_adaptation}")
-
-    for t in range(sim_time - 1):
-        print(f"in helper, t={t},sim_time={sim_time}")
-        plot_neuron_behaviour_over_time(
-            adaptation,
-            f"pickle_probability_{neuron_death_probability}_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}_t{t}",
-            get_degree,
-            iteration,
-            seed,
-            size,
-            m,
-            t + 1,
-            show=False,
-            current=True,
-        )
 
 
 def print_time(status, previous_time, previous_millis):

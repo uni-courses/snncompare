@@ -8,6 +8,7 @@ from tests.create_testobject import add_monitor_to_dict
 
 def adaptation_mech_2_networkx_and_snn(
     G,
+    has_radiation,
     iteration,
     latest_millis,
     latest_time,
@@ -19,7 +20,14 @@ def adaptation_mech_2_networkx_and_snn(
 ):
     # Implement brain adaptation on networkx graph.
     dead_neuron_names = implement_adaptation_mechanism(
-        G, test_object.get_degree, iteration, m, rad_dam, size, test_object
+        G,
+        test_object.get_degree,
+        has_radiation,
+        iteration,
+        m,
+        rad_dam,
+        size,
+        test_object,
     )
     test_object.brain_adaptation_graph = copy.deepcopy(test_object.get_degree)
 
@@ -36,7 +44,15 @@ def adaptation_mech_2_networkx_and_snn(
 
 
 def implement_adaptation_mechanism(
-    G, get_degree, iteration, m, rad_dam, size, test_object, plot_graph=False
+    G,
+    get_degree,
+    has_radiation,
+    iteration,
+    m,
+    rad_dam,
+    size,
+    test_object,
+    plot_graph=False,
 ):
     d = 0.25 * (
         m + 1
@@ -69,13 +85,18 @@ def implement_adaptation_mechanism(
         # TODO: Add recurrent self inhibitory synapse for some redundant nodes.
         add_recurrent_inhibitiory_synapses(get_degree, node_name)
 
-    # Inject radiation by setting arbitrary neuron thresholds to 1000
-    # before converting the networkx to snn.
-    dead_neuron_names = rad_dam.inject_simulated_radiation(
-        get_degree, rad_dam.neuron_death_probability
-    )
-    test_object.second_rad_damage_graph = copy.deepcopy(test_object.get_degree)
-    test_object.second_dead_neuron_names = copy.deepcopy(dead_neuron_names)
+    if has_radiation:
+        # Inject radiation by setting arbitrary neuron thresholds to 1000
+        # before converting the networkx to snn.
+        dead_neuron_names = rad_dam.inject_simulated_radiation(
+            get_degree, rad_dam.neuron_death_probability
+        )
+        test_object.rad_damaged_graph = copy.deepcopy(test_object.get_degree)
+        test_object.final_dead_neuron_names = copy.deepcopy(dead_neuron_names)
+    else:
+        dead_neuron_names = None
+        test_object.rad_damaged_graph = None
+        test_object.final_dead_neuron_names = None
 
     # Visualise new graph.
     if plot_graph:

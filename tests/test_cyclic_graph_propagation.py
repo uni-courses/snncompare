@@ -73,7 +73,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
 
                 # Assert each edge has a weight.
                 for edge in G.edges:
-                    
+
                     assert_synaptic_edgeweight_type_is_correct(G, edge)
 
                 # Assert no duplicate edges exist.
