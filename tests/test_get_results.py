@@ -91,10 +91,12 @@ class Test_counter(unittest.TestCase):
                                     )
 
                                     # Specify simulation duration.
+                                    # TODO: determine why 10 is needed and hardcode it.
                                     sim_time = (
-                                        test_object.inhibition * (m + 1) + 10
+                                        test_object.rand_props.inhibition
+                                        * (m + 1)
+                                        + 10
                                     )
-                                    # sim_time = 3
 
                                     # Report performance.
                                     latest_time, latest_millis = print_time(
@@ -206,6 +208,7 @@ class Test_counter(unittest.TestCase):
                                         iteration,
                                         m,
                                         neuron_death_probability,
+                                        test_object.rand_props,
                                         run_result,
                                         self.seed,
                                         sim_time,
@@ -280,13 +283,10 @@ class Test_counter(unittest.TestCase):
 
         # Compute the Alipour graph
         G_alipour = full_alipour(
-            test_object.delta,
-            test_object.inhibition,
             iteration,
             G,
-            test_object.rand_ceil,
-            test_object.rand_nrs,
             test_object.m,
+            test_object.rand_props,
             seed,
             len(test_object.G),
             export=False,

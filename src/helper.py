@@ -109,6 +109,7 @@ def export_get_degree_graph(
     iteration,
     m,
     neuron_death_probability,
+    rand_props,
     run_result,
     seed,
     sim_time,
@@ -147,6 +148,7 @@ def export_get_degree_graph(
                 iteration,
                 m,
                 neuron_death_probability,
+                rand_props,
                 seed,
                 sim_time,
                 test_object.mdsa_graph,
@@ -297,18 +299,20 @@ def store_spike_values_in_neurons(get_degree, t):
 
 
 def full_alipour(
-    delta,
-    inhibition,
     iteration,
     G,
-    rand_ceil,
-    rand_nrs,
     m,
+    rand_props,
     seed,
     size,
     show=False,
     export=False,
 ):
+    delta = rand_props.delta
+    inhibition = rand_props.inhibition
+    rand_ceil = rand_props.rand_ceil
+    rand_nrs = rand_props.rand_nrs
+
     # Reverse engineer actual rand nrs:
     uninhibited_rand_nrs = [(x + inhibition) for x in rand_nrs]
     print(f"uninhibited_rand_nrs={uninhibited_rand_nrs}")

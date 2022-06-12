@@ -7,18 +7,22 @@ from src.plot_graphs import create_root_dir_if_not_exists
 
 
 def export_end_results(
-    G: nx.DiGraph,
     dead_neuron_names,
+    G: nx.DiGraph,
+    G_behaviour_mdsa,
+    G_behaviour_brain_adaptation,
+    G_behaviour_rad_damage,
+    brain_adaptation_graph: nx.DiGraph,
     has_adaptation: bool,
     has_radiation,
     iteration,
     m,
+    mdsa_graph: nx.DiGraph,
     neuron_death_probability,
+    rad_damaged_graph: nx.DiGraph,
+    rand_props,
     seed,
     sim_time,
-    mdsa_graph: nx.DiGraph,
-    brain_adaptation_graph: nx.DiGraph,
-    rad_damaged_graph: nx.DiGraph,
     unique_hash,
 ):
 
@@ -42,9 +46,13 @@ def export_end_results(
     export_graphs_as_pickle(
         brain_adaptation_graph,
         G,
+        G_behaviour_mdsa,
+        G_behaviour_brain_adaptation,
+        G_behaviour_rad_damage,
         mdsa_graph,
         output_name,
         rad_damaged_graph,
+        rand_props,
     )
 
 
@@ -81,9 +89,13 @@ def export_results_as_json(
 def export_graphs_as_pickle(
     brain_adaptation_graph: nx.DiGraph,
     G: nx.DiGraph,
+    G_behaviour_mdsa,
+    G_behaviour_brain_adaptation,
+    G_behaviour_rad_damage,
     mdsa_graph: nx.DiGraph,
     output_name,
     rad_damaged_graph: nx.DiGraph,
+    rand_props,
 ):
     with open(
         f"results/{output_name}.pkl",
@@ -92,9 +104,13 @@ def export_graphs_as_pickle(
         pickle.dump(
             [
                 G,
+                G_behaviour_mdsa,
+                G_behaviour_brain_adaptation,
+                G_behaviour_rad_damage,
                 mdsa_graph,
                 brain_adaptation_graph,
                 rad_damaged_graph,
+                rand_props,
             ],
             fh,
         )

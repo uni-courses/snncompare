@@ -53,7 +53,6 @@ def create_test_object(
     # TODO: Rename all rand_nrs usages.
     test_object.rand_ceil = test_object.rand_props.rand_ceil
     test_object.delta = test_object.rand_props.delta
-    test_object.inhibition = test_object.rand_props.inhibition
 
     # Convert the fully connected graph into a networkx graph that
     # stores the snn properties.

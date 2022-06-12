@@ -14,6 +14,7 @@ from src.helper_network_structure import (
     plot_neuron_behaviour_over_time,
 )
 from src.plot_graphs import plot_uncoordinated_graph
+from src.process_results import get_run_results
 from src.run_on_networkx import run_snn_on_networkx
 from src.verify_graph_is_snn import verify_networkx_snn_spec
 
@@ -40,6 +41,9 @@ def load_pickle_graphs():
 
     # Loop through the pickles that contain the graphs that will be simulated.
     for pickle_filename in glob.iglob("pickles/*.pkl"):
+        last_G_brain_adaptation = None
+        last_G_rad_dam = None
+
         pickle_off = open(
             pickle_filename,
             "rb",
@@ -52,6 +56,7 @@ def load_pickle_graphs():
             iteration,
             m,
             neuron_death_probability,
+            rand_props,
             seed,
             sim_time,
             mdsa_graph,
@@ -61,32 +66,23 @@ def load_pickle_graphs():
             unique_hash,
         ] = pickle.load(pickle_off)
 
-        G_alipour = full_alipour(
-            delta,
-            inhibition,
-            iteration,
-            G,
-            rand_ceil,
-            rand_nrs,
-            m,
-            seed,
-            len(G),
-            export=False,
-        )
-
         # TODO: verify unique_hash equals output of: get_unique_hash().
         output_name = f"_death_prob{neuron_death_probability}_adapt_{has_adaptation}_raddam{has_radiation}__seed{seed}_size{len(G)}_m{m}_iter{iteration}_hash{unique_hash}"
+        if (
+            has_adaptation
+            and has_radiation
+            and neuron_death_probability > 0.05
+        ):
+            G_behaviour_mdsa = get_graph_behaviour(mdsa_graph, sim_time)
+            plot_graph_behaviour(
+                G_behaviour_mdsa,
+                iteration,
+                len(G),
+                desired_properties,
+                f"mdsa_{output_name}",
+            )
+            if has_adaptation:
 
-        G_behaviour_mdsa = get_graph_behaviour(mdsa_graph, sim_time)
-        plot_graph_behaviour(
-            G_behaviour_mdsa,
-            iteration,
-            len(G),
-            desired_properties,
-            f"mdsa_{output_name}",
-        )
-        if has_adaptation:
-            if not has_radiation:
                 G_behaviour_brain_adaptation = get_graph_behaviour(
                     brain_adaptation_graph, sim_time
                 )
@@ -97,7 +93,7 @@ def load_pickle_graphs():
                     desired_properties,
                     f"brain_{output_name}",
                 )
-            if has_radiation:
+                last_G_brain_adaptation = G_behaviour_brain_adaptation[-1]
 
                 if neuron_death_probability > 0.05:
                     # Assume if no adaptation is implemented, that also no radiation
@@ -112,23 +108,38 @@ def load_pickle_graphs():
                         desired_properties,
                         f"rad_dam_{output_name}",
                     )
+                    last_G_rad_dam = G_behaviour_rad_damage[-1]
 
-        print(f"pickle_filename={pickle_filename}")
-        export_end_results(
-            G,
-            dead_neuron_names,
-            has_adaptation,
-            has_radiation,
-            iteration,
-            m,
-            neuron_death_probability,
-            seed,
-            sim_time,
-            mdsa_graph,
-            brain_adaptation_graph,
-            rad_damaged_graph,
-            unique_hash,
-        )
+            print(f"pickle_filename={pickle_filename}")
+
+            export_end_results(
+                dead_neuron_names,
+                G,
+                G_behaviour_mdsa,
+                G_behaviour_brain_adaptation,
+                G_behaviour_rad_damage,
+                brain_adaptation_graph,
+                has_adaptation,
+                has_radiation,
+                iteration,
+                m,
+                mdsa_graph,
+                neuron_death_probability,
+                rad_damaged_graph,
+                rand_props,
+                seed,
+                sim_time,
+                unique_hash,
+            )
+
+            get_run_results(
+                G,
+                G_behaviour_mdsa[-1],
+                last_G_brain_adaptation,
+                last_G_rad_dam,
+                m,
+                rand_props,
+            )
 
 
 def get_graph_behaviour(G, sim_time):
@@ -141,15 +152,16 @@ def get_graph_behaviour(G, sim_time):
 def plot_graph_behaviour(
     G_behaviour, iteration, size, desired_properties, output_name
 ):
-    for t in range(len(G_behaviour)):
-        plot_coordinated_graph(
-            G_behaviour[t],
-            iteration,
-            size,
-            desired_properties=desired_properties,
-            show=False,
-            filename=f"{output_name}_t={t}",
-        )
+    if False:
+        for t in range(len(G_behaviour)):
+            plot_coordinated_graph(
+                G_behaviour[t],
+                iteration,
+                size,
+                desired_properties=desired_properties,
+                show=False,
+                filename=f"{output_name}_t={t}",
+            )
 
 
 def old_graph_to_new_graph_properties(G):
