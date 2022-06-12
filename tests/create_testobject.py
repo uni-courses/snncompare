@@ -43,7 +43,8 @@ def create_test_object(
 
     test_object.rand_props = Alipour_properties(G, seed)
     # TODO: Rename all rand_nrs usages.
-    test_object.rand_nrs = test_object.rand_props.spread_rand_nrs
+    test_object.rand_nrs = test_object.rand_props.initial_rand_current
+    print(f"test_object.rand_nrs={test_object.rand_nrs}")
     # TODO: Rename all rand_nrs usages.
     test_object.rand_ceil = test_object.rand_props.rand_ceil
     test_object.delta = test_object.rand_props.delta

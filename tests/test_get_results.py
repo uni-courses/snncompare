@@ -39,7 +39,7 @@ class Test_counter(unittest.TestCase):
     def test_snn_algorithm(self, output_behaviour=False):
 
         # delete_dir_if_exists("latex/Images/graphs")
-        delete_files_in_folder("latex/Images/graphs")
+        # delete_files_in_folder("latex/Images/graphs")
         delete_files_in_folder("pickles")
         used_graphs = Used_graphs()
         # Specify User randomnes to prevent overwriting identical runs.

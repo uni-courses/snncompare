@@ -9,7 +9,8 @@ def get_alipour_nodes(
     delta = rand_props.delta
     inhibition = rand_props.inhibition
     rand_ceil = rand_props.rand_ceil
-    rand_nrs = rand_props.rand_nrs
+    # TODO: resolve this naming discrepancy.
+    rand_nrs = rand_props.initial_rand_current
 
     # Reverse engineer uninhibited spread rand nrs:
     # TODO: read out from rand_props object.

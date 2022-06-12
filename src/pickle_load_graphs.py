@@ -25,7 +25,7 @@ def get_desired_properties_for_graph_printing():
 
 def load_pickle_graphs():
     """Loads graphs from pickle files if they exist."""
-    delete_files_in_folder("latex/Images/graphs")
+    # delete_files_in_folder("latex/Images/graphs")
     delete_files_in_folder("results")
 
     desired_properties = get_desired_properties_for_graph_printing()

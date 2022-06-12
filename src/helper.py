@@ -311,7 +311,8 @@ def full_alipour(
     delta = rand_props.delta
     inhibition = rand_props.inhibition
     rand_ceil = rand_props.rand_ceil
-    rand_nrs = rand_props.rand_nrs
+    # TODO: resolve this naming discrepancy
+    rand_nrs = rand_props.initial_rand_current
 
     # Reverse engineer actual rand nrs:
     uninhibited_rand_nrs = [(x + inhibition) for x in rand_nrs]
