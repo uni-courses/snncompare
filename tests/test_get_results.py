@@ -20,10 +20,7 @@ from src.helper import (
     write_results_to_file,
 )
 from src.helper_network_structure import plot_neuron_behaviour_over_time
-from src.Radiation_damage import (
-    Radiation_damage,
-    store_dead_neuron_names_in_graph,
-)
+from src.Radiation_damage import Radiation_damage
 from src.Used_graphs import Run, Used_graphs
 from tests.create_testobject import create_test_object
 

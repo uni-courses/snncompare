@@ -1,19 +1,10 @@
-import pickle
-import random
 import glob
-from src.LIF_neuron import LIF_neuron, print_neuron_properties
-from src.export_json_results import (
-    export_end_results,
-    export_results_as_json,
-    get_unique_hash,
-)
+import pickle
 
-from src.helper import delete_files_in_folder, file_exists, full_alipour
-from src.helper_network_structure import (
-    plot_coordinated_graph,
-    plot_neuron_behaviour_over_time,
-)
-from src.plot_graphs import plot_uncoordinated_graph
+from src.export_json_results import export_end_results
+from src.helper import delete_files_in_folder, get_counter_neurons
+from src.helper_network_structure import plot_coordinated_graph
+from src.LIF_neuron import LIF_neuron
 from src.process_results import get_run_results
 from src.run_on_networkx import run_snn_on_networkx
 from src.verify_graph_is_snn import verify_networkx_snn_spec
@@ -174,14 +165,6 @@ def old_graph_to_new_graph_properties(G):
             vth=float(G.nodes[nodename]["vth"]),
         )
     verify_networkx_snn_spec(G)
-
-
-def get_counter_neurons(G):
-    counter_neurons = []
-    for nodename in G.nodes:
-        if nodename[:7] == "counter":
-            counter_neurons.append(nodename)
-    return counter_neurons
 
 
 def simulate_graph(counter_neurons, G, sim_time):

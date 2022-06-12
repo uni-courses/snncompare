@@ -3,7 +3,6 @@ import json
 import pickle
 import unittest
 
-from src.get_graph import get_networkx_graph_of_2_neurons
 from src.process_results import get_run_results
 
 

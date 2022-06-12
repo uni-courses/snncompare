@@ -7,6 +7,7 @@ network to simulate it, one neuron at a time.
 
 # Import external libraries.
 import copy
+
 import networkx as nx
 
 # Import local project functions and classes.

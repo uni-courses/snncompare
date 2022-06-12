@@ -1,5 +1,4 @@
 """Verifies 2 nodes are included in the networkx graph."""
-import pickle
 import unittest
 
 from src.get_graph import get_networkx_graph_of_2_neurons

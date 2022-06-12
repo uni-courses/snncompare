@@ -1,13 +1,12 @@
 """Creates test object."""
 
 import copy
+
 from lava.proc.monitor.process import Monitor
 
 from src.helper import fill_dictionary, generate_list_of_n_random_nrs
 from src.helper_network_structure import (
     get_degree_graph_with_separate_wta_circuits,
-    plot_coordinated_graph,
-    plot_unstructured_graph,
 )
 from src.old_conversion import convert_networkx_graph_to_snn_with_one_neuron
 
@@ -42,11 +41,6 @@ def create_test_object(
     # Move the graph on which the algorithm is ran.
     test_object.G = G
 
-    if plot_input_graph or export:
-        plot_unstructured_graph(
-            test_object.G, iteration, len(G), plot_input_graph
-        )
-
     test_object.rand_props = Alipour_properties(G, seed)
     # TODO: Rename all rand_nrs usages.
     test_object.rand_nrs = test_object.rand_props.spread_rand_nrs
@@ -66,11 +60,6 @@ def create_test_object(
         m,
     )
     test_object.mdsa_graph = copy.deepcopy(test_object.get_degree)
-
-    if plot_snn_graph or export:
-        plot_coordinated_graph(
-            test_object.get_degree, iteration, len(G), plot_snn_graph
-        )
 
     # Convert the snn networkx graph into a Loihi SNN if no adapted
     # version is generated.
@@ -222,7 +211,8 @@ class Test_properties:
 
 
 class Alipour_properties:
-    """Contains the properties required to compute Alipour algorithm results."""
+    """Contains the properties required to compute Alipour algorithm
+    results."""
 
     def __init__(self, G, seed):
 
@@ -246,17 +236,22 @@ class Alipour_properties:
 
     def get_random_ceiling(self, G):
         """Generate the maximum random ceiling.
-        +2 to allow selecting a larger range of numbers than the number of
-        # nodes in the graph."""
+
+        +2 to allow selecting a larger range of numbers than the number
+        of # nodes in the graph.
+        """
         rand_ceil = len(G) + 0
         return rand_ceil
 
     def get_delta(self):
-        """Make the random numbers differ with at least delta>=2. This is to
-        prevent multiple degree_receiver_x_y neurons (that differ less than
-        delta) in a single WTA circuit to spike before they are inhibited by
-        the first winner. This inhibition goes via the selector neuron and
-        has a delay of 2. So a winner should have a difference of at least 2."""
+        """Make the random numbers differ with at least delta>=2.
+
+        This is to prevent multiple degree_receiver_x_y neurons (that
+        differ less than delta) in a single WTA circuit to spike before
+        they are inhibited by the first winner. This inhibition goes via
+        the selector neuron and has a delay of 2. So a winner should
+        have a difference of at least 2.
+        """
         delta = 2
         return delta
 
@@ -268,8 +263,10 @@ class Alipour_properties:
         return spread_rand_nrs
 
     def get_inhibition(self, delta, G, rand_ceil):
-        """Add inhibition to rand_nrs to ensure the degree_receiver current u[1]
-        always starts negative. The a_in of the degree_receiver_x_y neuron is
+        """Add inhibition to rand_nrs to ensure the degree_receiver current
+        u[1] always starts negative. The a_in of the degree_receiver_x_y neuron
+        is.
+
         : the incoming spike_once_x weights+rand_x neurons+selector_excitation
         - There are at most n incoming spike signals.
         - Each spike_once should have a weight of at least random_ceiling+1.
@@ -277,11 +274,13 @@ class Alipour_properties:
         to the difference of 1 spike_once more or less.
         - The random_ceiling is specified.
         - The excitatory neuron comes in at +1, a buffer of 1 yields+2.
-        Hence, the inhibition is computed as:"""
+        Hence, the inhibition is computed as:
+        """
         inhibition = len(G) * (rand_ceil * delta + 1) + (rand_ceil) * delta + 1
         return inhibition
 
     def get_initial_random_current(self, inhibition, rand_nrs):
-        """Returns the list with random inital currents for the rand_ neurons."""
+        """Returns the list with random inital currents for the rand_
+        neurons."""
         initial_rand_current = [x - inhibition for x in rand_nrs]
         return initial_rand_current

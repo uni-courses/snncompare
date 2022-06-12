@@ -1,19 +1,19 @@
 import os
-from pathlib import Path
 import pickle
 import random
 import shutil
 import traceback
 from datetime import datetime
+from pathlib import Path
 
 import networkx as nx
 import pylab as plt
 from lava.proc.monitor.process import Monitor
 
 from src import Plot_to_tex
-from src.Radiation_damage import store_dead_neuron_names_in_graph
 from src.export_json_results import get_unique_hash
 from src.plot_graphs import create_root_dir_if_not_exists
+from src.Radiation_damage import store_dead_neuron_names_in_graph
 
 
 def fill_dictionary(
@@ -448,3 +448,12 @@ def file_exists(str):
         return True
     else:
         return False
+
+
+def get_counter_neurons(G):
+    """Returns a list with the counter neuron node names."""
+    counter_neurons = []
+    for nodename in G.nodes:
+        if nodename[:7] == "counter":
+            counter_neurons.append(nodename)
+    return counter_neurons

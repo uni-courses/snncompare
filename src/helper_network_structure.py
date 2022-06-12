@@ -512,7 +512,8 @@ def plot_coordinated_graph(
 
 
 def add_neuron_properties_to_plot(axis, desired_properties, G, nodenames, pos):
-    """Adds a text (annotation) to each neuron with the desired neuron properties"""
+    """Adds a text (annotation) to each neuron with the desired neuron
+    properties."""
     for nodename in nodenames:
 
         # Shift the x-coordinates of the redundant neurons to right for readability.
@@ -660,7 +661,8 @@ def get_labels(G, current=True):
 
 
 def add_recursive_edges_to_graph(G):
-    """Adds recursive edges to graph for nodes that have the recur attribute."""
+    """Adds recursive edges to graph for nodes that have the recur
+    attribute."""
     for nodename in G.nodes:
         if "recur" in G.nodes[nodename].keys():
             G.add_edges_from(
