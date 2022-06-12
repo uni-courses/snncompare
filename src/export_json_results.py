@@ -22,7 +22,9 @@ def export_end_results(
     neuron_death_probability,
     rad_damaged_graph: nx.DiGraph,
     rand_props,
+    scores,
     seed,
+    selected_nodes,
     sim_time,
     unique_hash,
 ):
@@ -40,7 +42,9 @@ def export_end_results(
         m,
         neuron_death_probability,
         output_name,
+        scores,
         seed,
+        selected_nodes,
         sim_time,
     )
 
@@ -66,7 +70,9 @@ def export_results_as_json(
     m,
     neuron_death_probability,
     output_name,
+    scores,
     seed,
+    selected_nodes,
     sim_time,
 ):
 
@@ -80,6 +86,8 @@ def export_results_as_json(
         "sim_time": sim_time,
         "G": digraph_to_json(G),
         "dead_neuron_names": dead_neuron_names,
+        "scores": scores,
+        "selected_nodes": selected_nodes,
     }
 
     with open(f"results/{output_name}.json", "w") as fp:
