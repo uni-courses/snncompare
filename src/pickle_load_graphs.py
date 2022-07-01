@@ -1,8 +1,9 @@
+"""Loads pickle test result files ."""
 import glob
-import pickle
+import pickle  # nosec - User is trusted not to load malicious pickle files.
 
 from src.export_json_results import export_end_results
-from src.helper import delete_files_in_folder, get_counter_neurons
+from src.helper import delete_files_in_folder
 from src.helper_network_structure import plot_coordinated_graph
 from src.LIF_neuron import LIF_neuron
 from src.process_results import get_run_results
@@ -11,6 +12,7 @@ from src.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def get_desired_properties_for_graph_printing():
+    """Returns the properties that are to be printed to CLI."""
     desired_properties = [
         "bias",
         # "du",
@@ -25,6 +27,9 @@ def get_desired_properties_for_graph_printing():
 
 def load_pickle_graphs():
     """Loads graphs from pickle files if they exist."""
+    # pylint: disable=R0801
+    # pylint: disable=R0914
+    # TODO: reduce the amount of local variables from 27/15 to at most 15/15.
 
     # Remove files at start of run.
     # delete_files_in_folder("latex/Images/graphs")
@@ -43,13 +48,7 @@ def load_pickle_graphs():
         last_G_brain_adaptation = None
         last_G_rad_dam = None
 
-        # Load graphs with encoded SNNs from pickle file.
-        pickle_off = open(
-            pickle_filename,
-            "rb",
-        )
-
-        [
+        (
             has_adaptation,
             G,
             has_radiation,
@@ -64,12 +63,16 @@ def load_pickle_graphs():
             rad_damaged_graph,
             dead_neuron_names,
             unique_hash,
-        ] = pickle.load(pickle_off)
+        ) = load_pickle(pickle_filename)
 
         # Specify the output filename for the output graphs, and result pickles
         # and result jsons.
         # TODO: verify unique_hash equals output of: get_unique_hash().
-        output_name = f"death_prob{neuron_death_probability}_adapt_{has_adaptation}_raddam{has_radiation}__seed{seed}_size{len(G)}_m{m}_iter{iteration}_hash{unique_hash}"
+        output_name = (
+            f"death_prob{neuron_death_probability}_adapt_{has_adaptation}"
+            + f"_raddam{has_radiation}__seed{seed}_size{len(G)}_m{m}_iter"
+            + f"{iteration}_hash{unique_hash}"
+        )
 
         # Run the networkx SNN simulation on the respective graphs.
         G_behaviour_mdsa = get_graph_behaviour(mdsa_graph, sim_time)
@@ -81,9 +84,12 @@ def load_pickle_graphs():
             )
             last_G_brain_adaptation = G_behaviour_brain_adaptation[-1]
         if has_radiation:
-            # TODO: determine why: death_prob0.01_adapt_False_raddamTrue__seed42_size3_m0_iter0_hash-2230525022878144772
-            # Does not have a radiation damage graph. (Most likely no nodes dead cause prob=0.01.)
-            if not rad_damaged_graph is None:
+            # TODO: determine why:
+            # death_prob0.01_adapt_False_raddamTrue__
+            # seed42_size3_m0_iter0_hash-2230525022878144772
+            # Does not have a radiation damage graph. (Most likely no nodes
+            # dead cause prob=0.01.)
+            if rad_damaged_graph is not None:
                 # raise Exception(output_name)
                 G_behaviour_rad_damage = get_graph_behaviour(
                     rad_damaged_graph, sim_time
@@ -126,54 +132,74 @@ def load_pickle_graphs():
         # Plot SNN graph behaviour over time.
         if generate_graphs:
             generate_output_graphs(
-                G,
                 [
                     G_behaviour_mdsa,
                     G_behaviour_brain_adaptation,
                     G_behaviour_rad_damage,
                 ],
                 ["mdsa", "brain", "rad_dam"],
-                iteration,
                 desired_properties,
                 output_name,
             )
 
 
 def generate_output_graphs(
-    G, graphs, identifiers, iteration, desired_properties, output_name
+    graphs, identifiers, desired_properties, output_name
 ):
-    for i in range(len(graphs)):
+    """
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param graphs:
+    :param identifiers:
+    :param desired_properties:
+    :param output_name:
+
+    """
+    # pylint: disable=R0913
+    # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+    for i in enumerate(graphs):
         plot_graph_behaviour(
             graphs[i],
-            iteration,
-            len(G),
             desired_properties,
             f"{identifiers[i]}_{output_name}",
         )
 
 
 def get_graph_behaviour(G, sim_time):
-    counter_neurons = get_counter_neurons(G)
+    """
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param sim_time: Nr. of timesteps for which the experiment is ran.
+
+    """
     old_graph_to_new_graph_properties(G)
-    G_behaviour = simulate_graph(counter_neurons, G, sim_time)
+    G_behaviour = simulate_graph(G, sim_time)
     return G_behaviour
 
 
-def plot_graph_behaviour(
-    G_behaviour, iteration, size, desired_properties, output_name
-):
-    for t in range(len(G_behaviour)):
+def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
+    """
+
+    :param G_behaviour:
+    :param desired_properties:
+    :param output_name:
+
+    """
+    for t in enumerate(G_behaviour):
         plot_coordinated_graph(
             G_behaviour[t],
-            iteration,
-            size,
-            desired_properties=desired_properties,
-            show=False,
+            desired_properties,
+            False,
             filename=f"{output_name}_t={t}",
         )
 
 
 def old_graph_to_new_graph_properties(G):
+    """
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+
+    """
     for nodename in G.nodes:
         G.nodes[nodename]["nx_LIF"] = LIF_neuron(
             name=nodename,
@@ -185,15 +211,30 @@ def old_graph_to_new_graph_properties(G):
     verify_networkx_snn_spec(G)
 
 
-def simulate_graph(counter_neurons, G, sim_time):
+def simulate_graph(G, sim_time):
+    """
+
+    :param counter_neurons: Neuron objects at the counter position.
+    Type unknown.
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param sim_time: Nr. of timesteps for which the experiment is ran.
+
+    """
 
     G_behaviour = []
-    for t in range(sim_time + 2):
+    for _ in range(sim_time + 2):
         G_behaviour.extend(run_snn_on_networkx(G, 1))
     return G_behaviour
 
 
 def get_neurons(G, sim_type, neuron_types):
+    """
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param sim_type:
+    :param neuron_types:
+
+    """
     neurons_dict_per_type = {}
     if sim_type not in ["nx_LIF", "lava_LIF"]:
         raise Exception(f"Unexpected simulation type demanded:{sim_type}")
@@ -206,8 +247,7 @@ def get_neurons(G, sim_type, neuron_types):
             "selector",
         ]:
             raise Exception(f"Unexpected neuron_type demanded:{neuron_type}")
-        else:
-            neurons_dict_per_type[neuron_type] = []
+        neurons_dict_per_type[neuron_type] = []
 
     neurons = list(map(lambda x: G.nodes[x][sim_type], G.nodes))
 
@@ -219,3 +259,52 @@ def get_neurons(G, sim_type, neuron_types):
                 )
 
     return neurons, neurons_dict_per_type
+
+
+def load_pickle(pickle_filename):
+    """TODO: change to load hierarchic objects instead of parameter list."""
+    # pylint: disable=R0914
+    # TODO: reduce the amount of local variables from 27/15 to at most 15/15.
+
+    # Load graphs with encoded SNNs from pickle file.
+    with open(
+        pickle_filename,
+        "rb",
+    ) as pickle_off:
+        # pylint: disable=R0801
+        [
+            has_adaptation,
+            G,
+            has_radiation,
+            iteration,
+            m,
+            neuron_death_probability,
+            rand_props,
+            seed,
+            sim_time,
+            mdsa_graph,
+            brain_adaptation_graph,
+            rad_damaged_graph,
+            dead_neuron_names,
+            unique_hash,
+        ] = pickle.load(  # nosec - User is trusted not to load malicious
+            # pickle files.
+            pickle_off
+        )
+    # pylint: disable=R0801
+    return (
+        has_adaptation,
+        G,
+        has_radiation,
+        iteration,
+        m,
+        neuron_death_probability,
+        rand_props,
+        seed,
+        sim_time,
+        mdsa_graph,
+        brain_adaptation_graph,
+        rad_damaged_graph,
+        dead_neuron_names,
+        unique_hash,
+    )

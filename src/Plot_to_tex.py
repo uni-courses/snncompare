@@ -1,13 +1,16 @@
-### Call this from another file, for project 11, question 3b:
-### from Plot_to_tex import Plot_to_tex as plt_tex
-### multiple_y_series = np.zeros((nrOfDataSeries,nrOfDataPoints), dtype=int); # actually fill with data
-### lineLabels = [] # add a label for each dataseries
-### plt_tex.plotMultipleLines(plt_tex,single_x_series,multiple_y_series,"x-axis label [units]","y-axis label [units]",lineLabels,"3b",4,11)
-### 4b=filename
-### 4 = position of legend, e.g. top right.
-###
-### For a single line, use:
-### plt_tex.plotSingleLine(plt_tex,range(0, len(dataseries)),dataseries,"x-axis label [units]","y-axis label [units]",lineLabel,"3b",4,11)
+"""File used to export plots to a latex directory.
+Call this from another file, for project 11, question 3b:
+from Plot_to_tex import Plot_to_tex as plt_tex
+multiple_y_series = np.zeros((nrOfDataSeries,nrOfDataPoints), dtype=int);
+# actually fill with data
+lineLabels = [] # add a label for each dataseries
+plt_tex.plotMultipleLines(plt_tex,single_x_series,multiple_y_series,"x-axis
+ label [units]","y-axis label [units]",lineLabels,"3b",4,11)
+4b=filename
+4 = position of legend, e.g. top right.
+For a single line, use:
+plt_tex.plotSingleLine(plt_tex,range(0, len(dataseries)),dataseries,"x-axis
+label [units]","y-axis label [units]",lineLabel,"3b",4,11)"""
 
 import os
 
@@ -15,21 +18,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import lines
 
-### You can also plot a table directly into latex, see example_create_a_table(..)
-###
-### Then put it in latex with for example:
-###\begin{table}[H]
-###    \centering
-###    \caption{Results some computation.}\label{tab:some_computation}
-###    \begin{tabular}{|c|c|} % remember to update this to show all columns of table
-###        \hline
-###        \input{latex/project3/tables/q2.txt}
-###    \end{tabular}
-###\end{table}
+# You can also plot a table directly into latex, see example_create_a_table(..)
+# Then put it in latex with for example:
+# \begin{table}[H]
+#    \centering
+#    \caption{Results some computation.}\label{tab:some_computation}
+#    \begin{tabular}{|c|c|} % remember to update this
+# % to show all columns of table
+#        \hline
+#        \input{latex/project3/tables/q2.txt}
+#    \end{tabular}
+# \end{table}
 
 
 class Plot_to_tex:
-    """"""
+    """Object used to output plots to latex directory of project."""
 
     def __init__(self):
         self.script_dir = self.get_script_dir()
@@ -58,6 +61,8 @@ class Plot_to_tex:
         :param project_name:
 
         """
+        # pylint: disable=R0913
+        # TODO: reduce 9/5 arguments to at most 5/5 arguments.
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.plot(x_path, y_series, c="b", ls="-", label=label, fillstyle="none")
@@ -98,6 +103,8 @@ class Plot_to_tex:
         :param project_name:
 
         """
+        # pylint: disable=R0913
+        # TODO: reduce 9/5 arguments to at most 5/5 arguments.
         fig = plt.figure()
         ax = fig.add_subplot(111)
 
@@ -132,11 +139,10 @@ class Plot_to_tex:
             + ".png"
         )
 
-        print(f"plotted lines")
-
     # Generate random line colours
-    # Source: https://stackoverflow.com/questions/14720331/how-to-generate-random-colors-in-matplotlib
-    def get_cmap(n, name="hsv"):
+    # Source: https://stackoverflow.com/questions/14720331/
+    # how-to-generate-random-colors-in-matplotlib
+    def get_cmap(self, n, name="hsv"):
         """Returns a function that maps each index in 0, 1, ..., n-1 to a
         distinct RGB color; the keyword argument name must be a standard mpl
         colormap name.
@@ -146,7 +152,7 @@ class Plot_to_tex:
         """
         return plt.cm.get_cmap(name, n)
 
-    def generateLineTypes(y_series):
+    def generateLineTypes(self, y_series):
         """
 
         :param y_series:
@@ -168,7 +174,8 @@ class Plot_to_tex:
                 typeOfLines[i] = "--"
         return typeOfLines
 
-    # Create a table with: table_matrix = np.zeros((4,4),dtype=object) and pass it to this object
+    # Create a table with: table_matrix = np.zeros((4,4),dtype=object) and pass
+    # it to this object
     def put_table_in_tex(self, table_matrix, filename, project_name):
         """
 
@@ -178,11 +185,12 @@ class Plot_to_tex:
 
         """
         cols = np.shape(table_matrix)[1]
-        format = "%s"
-        for col in range(1, cols):
-            format = format + " & %s"
-        format = format + ""
-        plt.savetxt(
+        some_format = "%s"
+        for _ in range(1, cols):
+            some_format = some_format + " & %s"
+        some_format = some_format + ""
+        # TODO: Change to something else to save as txt.
+        np.savetxt(
             os.path.dirname(__file__)
             + f"/../../../latex/{project_name}"
             + "/tables/"
@@ -194,9 +202,10 @@ class Plot_to_tex:
             newline="  \\\\ \\hline \n",
         )
 
-    # replace this with your own table creation and then pass it to put_table_in_tex(..)
+    # replace this with your own table creation and then pass it to
+    # put_table_in_tex(..)
     def example_create_a_table(self):
-        """"""
+        """Example on how to create a latex table from Python."""
         project_name = "1"
         table_name = "example_table_name"
         rows = 2
@@ -217,11 +226,25 @@ class Plot_to_tex:
         the code is executed."""
         return os.path.dirname(__file__)
 
-    def export_plot(self, plt, filename):
-        self.create_target_dir_if_not_exists(f"latex/Images/", "graphs")
-        plt.savefig(f"latex/Images/" + "graphs/" + filename + ".png", dpi=200)
+    def export_plot(self, some_plt, filename):
+        """
+
+        :param plt:
+        :param filename:
+
+        """
+        self.create_target_dir_if_not_exists("latex/Images/", "graphs")
+        some_plt.savefig(
+            "latex/Images/" + "graphs/" + filename + ".png", dpi=200
+        )
 
     def create_target_dir_if_not_exists(self, path, new_dir_name):
+        """
+
+        :param path:
+        :param new_dir_name:
+
+        """
         if os.path.exists(path):
             if not os.path.exists(f"{path}/{new_dir_name}"):
                 os.makedirs(f"{path}/{new_dir_name}")

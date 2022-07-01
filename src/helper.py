@@ -1,7 +1,9 @@
+"""Contains helper functions that are used throughout this repository."""
 import os
-import pickle
+import pickle  # nosec - User is trusted not to load malicious pickle files.
 import random
 import shutil
+import time
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -10,9 +12,9 @@ import networkx as nx
 import pylab as plt
 from lava.proc.monitor.process import Monitor
 
-from src import Plot_to_tex
 from src.export_json_results import get_unique_hash
 from src.plot_graphs import create_root_dir_if_not_exists
+from src.Plot_to_tex import Plot_to_tex
 from src.Radiation_damage import store_dead_neuron_names_in_graph
 
 
@@ -24,6 +26,18 @@ def fill_dictionary(
     previous_selector=None,
     previous_has_spiked=None,
 ):
+    """
+
+    :param neuron_dict:
+    :param neurons:
+    :param previous_us:
+    :param previous_vs:
+    :param previous_selector:  (Default value = None)
+    :param previous_has_spiked:  (Default value = None)
+
+    """
+    # pylint: disable=R0913
+    # TODO: reduce 6/5 arguments to at most 5/5.
     sorted_neurons = sort_neurons(neurons, neuron_dict)
     for neuron in sorted_neurons:
         neuron_name = neuron_dict[neuron]
@@ -42,41 +56,51 @@ def fill_dictionary(
                 previous_selector,
                 previous_has_spiked,
             )
-        else:
-            return previous_us, previous_vs, previous_selector
-    else:
-        if previous_has_spiked is not None:
-            return previous_us, previous_vs, previous_has_spiked
-        else:
-            return previous_us, previous_vs
-    raise Exception("Expected to have returned the correct set.")
+        return previous_us, previous_vs, previous_selector, None
+    if previous_has_spiked is not None:
+        return previous_us, previous_vs, previous_has_spiked, None
+    return previous_us, previous_vs, None, None
 
 
 def sort_neurons(neurons, neuron_dict):
+    """
+
+    :param neurons:
+    :param neuron_dict:
+
+    """
     sorted_neurons = []
     # Sort by value.
     sorted_dict = dict(sorted(neuron_dict.items(), key=lambda item: item[1]))
-    for neuron, neuron_name in sorted_dict.items():
+    for neuron, _ in sorted_dict.items():
         if neuron in neurons:
             sorted_neurons.append(neuron)
     return sorted_neurons
 
 
-def generate_list_of_n_random_nrs(G, max=None, seed=None):
+def generate_list_of_n_random_nrs(G, max_val=None, seed=None):
     """Generates list of numbers in range of 1 to (and including) len(G), or:
 
     Generates list of numbers in range of 1 to (and including) max, or:
     TODO: Verify list does not contain duplicates, throw error if it does.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param max_val:  (Default value = None)
+    :param seed: The value of the random seed used for this test.  (Default
+    value = None)
     """
-    if max is None:
+    if max_val is None:
         return list(range(1, len(G) + 1))
-    elif max == len(G):
+    if max_val == len(G):
         return list(range(1, len(G) + 1))
-    elif max > len(G):
-        large_list = list(range(1, max + 1))
+    if max_val > len(G):
+        large_list = list(range(1, max_val + 1))
         if seed is not None:
             random.seed(seed)
         return random.sample(large_list, len(G))
+    raise Exception(
+        "The max_val={max_val} is smaller than the graph size:{len(G)}."
+    )
 
 
 def get_y_position(G, node, neighbour, d):
@@ -85,18 +109,28 @@ def get_y_position(G, node, neighbour, d):
 
     for example for node 1, the positions 0,2,3 are mapped to positions:
     0,1,2 by subtracting 1.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param node:
+    :param neighbour:
+    :param d: Unit length of the spacing used in the positions of the nodes for
+    plotting.
     """
     if neighbour > node:
         return float((node + (neighbour - 1) / len(G)) * 4 * d)
-    else:
-        return float((node + neighbour / len(G)) * 4 * d)
+    return float((node + neighbour / len(G)) * 4 * d)
 
 
 def delete_files_in_folder(folder):
+    """
+
+    :param folder:
+
+    """
     os.makedirs(folder, exist_ok=True)
     try:
         shutil.rmtree(folder)
-    except Exception:
+    except OSError:
         print(traceback.format_exc())
     os.makedirs(folder, exist_ok=False)
 
@@ -110,13 +144,35 @@ def export_get_degree_graph(
     m,
     neuron_death_probability,
     rand_props,
-    run_result,
     seed,
     sim_time,
     size,
     test_object,
 ):
+    """
+
+    :param has_adaptation:
+    :param has_radiation: Indicates whether the experiment simulates
+    radiation or not.
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param iteration: The initialisation iteration that is used.
+    :param m: The amount of approximation iterations used in the MDSA
+    approximation.
+    :param neuron_death_probability:
+    :param rand_props:
+    :param run_result:
+    :param seed: The value of the random seed used for this test.
+    :param sim_time: Nr. of timesteps for which the experiment is ran.
+    :param size: Nr of nodes in the original graph on which test is ran.
+    :param test_object: Object containing test settings.
+
+    """
+    # pylint: disable=R0913
+    # TODO: reduce 12/5 arguments.
+    # TODO: remove unused function.
     remove_monitors_from_get_degree(get_degree)
+    # pylint: disable=R0801
     unique_hash = get_unique_hash(
         test_object.final_dead_neuron_names,
         has_adaptation,
@@ -133,11 +189,11 @@ def export_get_degree_graph(
             test_object.rad_damaged_graph,
             test_object.final_dead_neuron_names,
         )
-        print(f"added_dead_neurons.")
     create_root_dir_if_not_exists("pickles")
     with open(
         f"pickles/probability_{neuron_death_probability}"
-        + f"adapt_{has_adaptation}_{seed}_size{size}_m{m}_iter{iteration}_{unique_hash}.pkl",
+        + f"adapt_{has_adaptation}_{seed}_size{size}_m{m}_iter"
+        + f"{iteration}_{unique_hash}.pkl",
         "wb",
     ) as fh:
         pickle.dump(
@@ -162,6 +218,11 @@ def export_get_degree_graph(
 
 
 def remove_monitors_from_get_degree(get_degree):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+
+    """
     for node_name in get_degree.nodes:
         get_degree.nodes[node_name]["neuron"] = None
         get_degree.nodes[node_name]["spike_monitor"] = None
@@ -169,9 +230,18 @@ def remove_monitors_from_get_degree(get_degree):
 
 
 def get_counter_neurons_from_dict(expected_nr_of_neurons, neuron_dict, m):
+    """
+
+        :param expected_nr_of_neurons:
+        :param neuron_dict:
+        :param m: The amount of approximation iterations used in the MDSA
+    approximation.
+
+    """
     counter_neurons = []
     neurons = list(neuron_dict.keys())
     neuron_names = list(neuron_dict.values())
+
     # Get sorted counter neurons.
     for node_index in range(expected_nr_of_neurons):
         for neuron_name in neuron_names:
@@ -191,23 +261,35 @@ def get_counter_neurons_from_dict(expected_nr_of_neurons, neuron_dict, m):
 
 
 def get_neuron_from_dict(neuron_dict, neurons, neuron_name):
+    """
+
+    :param neuron_dict:
+    :param neurons:
+    :param neuron_name:
+
+    """
     for neuron in neurons:
         if neuron_dict[neuron] == neuron_name:
             return neuron
     raise Exception("Did not find neuron:{neuron_name} in dict:{neuron_dict}")
 
 
-def print_time(status, previous_time, previous_millis):
-    now = datetime.now()
-    # durationTime = (now - previous_time).total_seconds()
-    now - previous_time
-    import time
+def print_time(status, previous_millis):
+    """
 
+    :param status:
+
+    :param previous_millis:
+
+    """
+    # TODO: remove unused function.
+    now = datetime.now()
     now_millis = int(round(time.time() * 1000))
 
     duration_millis = now_millis - previous_millis
     print(
-        f"{str(now.time())[:8]}, Duration:{duration_millis} [ms], status:{status}"
+        f"{str(now.time())[:8]}, Duration:{duration_millis} [ms], "
+        + f"status:{status}"
     )
     return now, now_millis
 
@@ -215,27 +297,50 @@ def print_time(status, previous_time, previous_millis):
 def write_results_to_file(
     has_passed, m, G, iteration, G_alipour, counter_neurons
 ):
+    """
+
+        :param has_passed:
+        :param m: The amount of approximation iterations used in the MDSA
+    approximation.
+        :param G: The original graph on which the MDSA algorithm is ran.
+        param iteration: The initialisation iteration that is used.
+        :param G_alipour:
+        :param counter_neurons: Neuron objects at the counter position. Type
+        unknown.
+
+    """
+    # pylint: disable=R0913
+    # TODO: reduce 6/5 arguments to at most 5/5.
+
     # Append-adds at last
-    file1 = open("results.txt", "a")  # append mode
-    now = datetime.now()
-    file1.write(now.strftime("%Y-%m-%d %H:%M:%S\n"))
-    file1.write(f"m={m}\n")
-    file1.write(f"len(G)={len(G)}\n")
-    file1.write(f"has_passed={has_passed,}\n")
-    file1.write("edges\n")
-    for edge in G.edges:
-        file1.write(f"{str(edge)}\n")
-    file1.write(f"iteration={iteration}\n")
-    file1.write("G_alipour countermarks-SNN counter current\n")
-    for node in G.nodes:
-        file1.write(
-            f'{G_alipour.nodes[node]["countermarks"]}-{counter_neurons[node].u.get()}\n'
-        )
-    file1.write("\n\n")
-    file1.close()
+    with open("results.txt", "a", encoding="utf-8") as file1:  # append mode
+
+        now = datetime.now()
+        file1.write(now.strftime("%Y-%m-%d %H:%M:%S\n"))
+        file1.write(f"m={m}\n")
+        file1.write(f"len(G)={len(G)}\n")
+        file1.write(f"has_passed={has_passed,}\n")
+        file1.write("edges\n")
+        for edge in G.edges:
+            file1.write(f"{str(edge)}\n")
+        file1.write(f"iteration={iteration}\n")
+        file1.write("G_alipour countermarks-SNN counter current\n")
+        for node in G.nodes:
+            file1.write(
+                f'{G_alipour.nodes[node]["countermarks"]}-"'
+                + f"{counter_neurons[node].u.get()}\n"
+            )
+        file1.write("\n\n")
+        file1.close()
 
 
 def create_neuron_monitors(test_object, sim_time):
+    """
+
+    :param test_object: Object containing test settings.
+    :param sim_time: Nr. of timesteps for which the experiment is ran.
+
+    """
     get_degree = test_object.get_degree
     for node_name in get_degree.nodes:
         # The connecting node does not interact with the snn, it serves merely
@@ -247,7 +352,8 @@ def create_neuron_monitors(test_object, sim_time):
 
             if neuron is None:
                 raise Exception(
-                    "Error, was not able to find the neuron for node:{node_name}"
+                    "Error, was not able to find the neuron for "
+                    + f"node:{node_name}"
                 )
 
             # Create monitor
@@ -259,7 +365,8 @@ def create_neuron_monitors(test_object, sim_time):
             # Get monitor process id
             monitor_process_id = list(monitor.get_data())[0]
 
-            # Read out the boolean spike (at time t, with 1=1 being after 1 second of running.) or no spike with:
+            # Read out the boolean spike (at time t, with 1=1 being after 1
+            # second of running.) or no spike with:
             # s_out=monitor.get_data()[monitor_process_id]["s_out"][t]
             # You need to call this again after every timestep.
 
@@ -272,6 +379,12 @@ def create_neuron_monitors(test_object, sim_time):
 
 
 def store_spike_values_in_neurons(get_degree, t):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param t:
+
+    """
     for node_name in get_degree.nodes:
         if node_name != "connecting_node":
             # Add neuron as attribute of node.
@@ -282,11 +395,11 @@ def store_spike_values_in_neurons(get_degree, t):
             ]
 
             # TODO: doubt, or t=1?
-            # simulation starts at time t=1, then 1 timestep is simulated, after
-            # that time step, this monitoring function is called, which has the
-            # first spike value stored in list index 0, hence t-1. Spike value
-            # for t=2 is then stored in list index 1. (The first 0 is because
-            #  it is a list of lists.)
+            # simulation starts at time t=1, then 1 timestep is simulated,
+            # after that time step, this monitoring function is called, which
+            # has the first spike value stored in list index 0, hence t-1.
+            # Spike value for t=2 is then stored in list index 1. (The first 0
+            # is because it is a list of lists.)
             s_out = monitor.get_data()[monitor_process_id]["s_out"][t - 1][0]
             if s_out == 1:
                 get_degree.nodes[node_name]["spike"][t] = True
@@ -294,7 +407,7 @@ def store_spike_values_in_neurons(get_degree, t):
                 get_degree.nodes[node_name]["spike"][t] = False
             else:
                 raise Exception(
-                    f"Was not able to compute spike or not for node:{node_name}"
+                    f"Was not able to if node:{node_name} spikes or not."
                 )
 
 
@@ -308,6 +421,24 @@ def full_alipour(
     show=False,
     export=False,
 ):
+    """param iteration: The initialisation iteration that is used.
+
+        :param G: The original graph on which the MDSA algorithm is ran.
+        :param m: The amount of approximation iterations used in the MDSA
+    approximation.
+        :param rand_props:
+        :param seed: The value of the random seed used for this test.
+        :param size: Nr of nodes in the original graph on which test is ran.
+        :param show:  (Default value = False)
+        :param export:  (Default value = False)
+    """
+    # pylint: disable=R0913
+    # TODO: reduce 8/5 input arguments to at most 5/5.
+    # pylint: disable=R0914
+    # TODO: reduce 18/15 local variables to at most 15/15.
+    # pylint: disable=R0912
+    # TODO: reduce 8/5 input branches to at most 5/5.
+
     delta = rand_props.delta
     inhibition = rand_props.inhibition
     rand_ceil = rand_props.rand_ceil
@@ -320,17 +451,8 @@ def full_alipour(
     print(f"m={m}")
 
     for node in G.nodes:
-        # Initialise values.
-        # G.nodes[node]["marks"] = 0
-        G.nodes[node]["marks"] = G.degree(node) * (rand_ceil + 1) * delta
-        G.nodes[node]["countermarks"] = 0
-        G.nodes[node]["random_number"] = 1 * uninhibited_rand_nrs[node]
-        G.nodes[node]["weight"] = (
-            G.degree(node) * (rand_ceil + 1) * delta
-            + G.nodes[node]["random_number"]
-        )
-        G.nodes[node]["inhibited_weight"] = (
-            G.nodes[node]["weight"] - inhibition
+        set_node_default_values(
+            delta, G, inhibition, node, rand_ceil, uninhibited_rand_nrs
         )
 
     if show or export:
@@ -338,6 +460,29 @@ def full_alipour(
         plot_alipour("1weight", iteration, seed, size, 0, G, show=show)
         plot_alipour("2inhib_weight", iteration, seed, size, 0, G, show=show)
 
+    compute_mark(delta, G, rand_ceil)
+
+    compute_marks_for_m_larger_than_one(
+        delta,
+        G,
+        inhibition,
+        iteration,
+        m,
+        seed,
+        size,
+        rand_ceil,
+        export=False,
+        show=False,
+    )
+
+    for node in G.nodes:
+        print(f'node:{node}, ali-mark:{G.nodes[node]["countermarks"]}')
+    return G
+
+
+def compute_mark(delta, G, rand_ceil):
+    """Computes the mark at the counter neurons after the simulation is
+    completed."""
     # Compute the mark based on degree+randomness=weight
     for node in G.nodes:
         max_weight = max(
@@ -350,7 +495,8 @@ def full_alipour(
                 G.nodes[n]["weight"] == max_weight
             ):  # should all max weight neurons be marked or only one of them?
 
-                # Always raise mark always by (rand_ceil + 1) * delta (not by 1).
+                # Always raise mark always by (rand_ceil + 1) * delta
+                # (not by 1).
                 # Read of the score from countermarks, not marks.
                 G.nodes[n]["marks"] += (rand_ceil + 1) * delta
                 G.nodes[n]["countermarks"] += 1
@@ -360,46 +506,25 @@ def full_alipour(
                 if nr_of_max_weights > 1:
                     raise Exception("Two numbers with identical max weight.")
 
-    # Don't compute for m=0
-    for loop in range(1, m + 1):
-        for node in G.nodes:
-            G.nodes[node]["weight"] = (
-                G.nodes[node]["marks"] + G.nodes[node]["random_number"]
-            )
-            G.nodes[node]["inhibited_weight"] = (
-                G.nodes[node]["weight"] - inhibition
-            )
-            # Reset marks.
-            G.nodes[node]["marks"] = 0
-            G.nodes[node]["countermarks"] = 0
-
-        for node in G.nodes:
-            max_weight = max(
-                G.nodes[n]["weight"] for n in nx.all_neighbors(G, node)
-            )
-            for n in nx.all_neighbors(G, node):
-                if G.nodes[n]["weight"] == max_weight:
-
-                    # Always raise mark always by (rand_ceil + 1) * delta (not by 1).
-                    G.nodes[n]["marks"] += (rand_ceil + 1) * delta
-                    G.nodes[n]["countermarks"] += 1
-
-        if show or export:
-            plot_alipour(
-                "0rand_mark", iteration, seed, size, loop, G, show=show
-            )
-            plot_alipour("1weight", iteration, seed, size, loop, G, show=show)
-            plot_alipour(
-                "2inhib_weight", iteration, seed, size, loop, G, show=show
-            )
-        for node in G.nodes:
-            print(f'node:{node}, ali-mark:{G.nodes[node]["countermarks"]}')
-    return G
-
 
 def plot_alipour(
     configuration, iteration, seed, size, m, G, export=True, show=False
 ):
+    """
+
+    :param configuration:
+    param iteration: The initialisation iteration that is used.
+    :param seed: The value of the random seed used for this test.
+    :param size: Nr of nodes in the original graph on which test is ran.
+    :param m: The amount of approximation iterations used in the MDSA
+    approximation.
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param export:  (Default value = True)
+    :param show:  (Default value = False)
+
+    """
+    # pylint: disable=R0913
+    # TODO: reduce 8/5 input arguments to at most 5/5.
     the_labels = get_alipour_labels(G, configuration=configuration)
     # nx.draw_networkx_labels(G, pos=None, labels=the_labels)
     npos = nx.circular_layout(
@@ -422,13 +547,19 @@ def plot_alipour(
 
 
 def get_alipour_labels(G, configuration):
+    """
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param configuration:
+
+    """
     labels = {}
     for node_name in G.nodes:
         if configuration == "0rand_mark":
-            labels[
-                node_name
-            ] = f'{node_name},R:{G.nodes[node_name]["random_number"]}, M:'
-            +f'{G.nodes[node_name]["marks"]}'
+            labels[node_name] = (
+                f'{node_name},R:{G.nodes[node_name]["random_number"]}, M:'
+                + f'{G.nodes[node_name]["marks"]}'
+            )
         elif configuration == "1weight":
             labels[
                 node_name
@@ -442,19 +573,93 @@ def get_alipour_labels(G, configuration):
 
 
 # checks if file exists
-def file_exists(str):
-    my_file = Path(str)
-    if my_file.is_file():
-        # file exist
-        return True
-    else:
-        return False
+def file_exists(string):
+    """
+
+    :param string:
+
+    """
+    # TODO: Execute Path(string).is_file() directly instead of calling this
+    # function.
+    my_file = Path(string)
+    return my_file.is_file()
 
 
 def get_counter_neurons(G):
-    """Returns a list with the counter neuron node names."""
+    """Returns a list with the counter neuron node names.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    """
     counter_neurons = []
     for nodename in G.nodes:
         if nodename[:7] == "counter":
             counter_neurons.append(nodename)
     return counter_neurons
+
+
+def compute_marks_for_m_larger_than_one(
+    delta,
+    G,
+    inhibition,
+    iteration,
+    m,
+    seed,
+    size,
+    rand_ceil,
+    export=False,
+    show=False,
+):
+    """Returns a list with the counter neuron node names."""
+    # pylint: disable=R0913
+    # TODO: reduce 10/5 arguments to at most 5/5.
+    # Don't compute for m=0
+    for loop in range(1, m + 1):
+        for node in G.nodes:
+            G.nodes[node]["weight"] = (
+                G.nodes[node]["marks"] + G.nodes[node]["random_number"]
+            )
+            G.nodes[node]["inhibited_weight"] = (
+                G.nodes[node]["weight"] - inhibition
+            )
+            # Reset marks.
+            G.nodes[node]["marks"] = 0
+            G.nodes[node]["countermarks"] = 0
+
+        for node in G.nodes:
+            max_weight = max(
+                G.nodes[n]["weight"] for n in nx.all_neighbors(G, node)
+            )
+            for n in nx.all_neighbors(G, node):
+                if G.nodes[n]["weight"] == max_weight:
+
+                    # Always raise mark always by (rand_ceil + 1) * delta
+                    # (not by 1).
+                    G.nodes[n]["marks"] += (rand_ceil + 1) * delta
+                    G.nodes[n]["countermarks"] += 1
+
+        if show or export:
+            plot_alipour(
+                "0rand_mark", iteration, seed, size, loop, G, show=show
+            )
+            plot_alipour("1weight", iteration, seed, size, loop, G, show=show)
+            plot_alipour(
+                "2inhib_weight", iteration, seed, size, loop, G, show=show
+            )
+
+
+def set_node_default_values(
+    delta, G, inhibition, node, rand_ceil, uninhibited_spread_rand_nrs
+):
+    """Initialises the starting values of the node attributes."""
+    # pylint: disable=R0913
+    # TODO: reduce 6/5 arguments to at most 5/5.
+    # Initialise values.
+    # G.nodes[node]["marks"] = 0
+    G.nodes[node]["marks"] = G.degree(node) * (rand_ceil + 1) * delta
+    G.nodes[node]["countermarks"] = 0
+    G.nodes[node]["random_number"] = 1 * uninhibited_spread_rand_nrs[node]
+    G.nodes[node]["weight"] = (
+        G.degree(node) * (rand_ceil + 1) * delta
+        + G.nodes[node]["random_number"]
+    )
+    G.nodes[node]["inhibited_weight"] = G.nodes[node]["weight"] - inhibition

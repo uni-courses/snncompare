@@ -21,7 +21,10 @@ from src.verify_graph_is_snn import verify_networkx_snn_spec
 def simulate_snn_on_lava(G: nx.Graph, starter_nodename: int, t: int) -> None:
     """
 
-    :param G: nx.Graph:
+    :param G: The original graph on which the MDSA algorithm is ran. nx.Graph:
+    :param t: int:
+    :param G: The original graph on which the MDSA algorithm is ran. nx.Graph:
+    :param starter_nodename: int:
     :param t: int:
 
     """
@@ -38,6 +41,8 @@ def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
 
     :param t: int:
     :param starter_neuron: LIF:
+    :param t: int:
+    :param starter_neuron: LIF:
 
     """
     # Run the simulation for t timesteps.
@@ -45,14 +50,19 @@ def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
 
 
 def add_lava_neurons_to_networkx_graph(G: nx.Graph) -> None:
-    """Generates a lava SNN and adds the neurons to the networkx Graph
-    nodes."""
+    """Generates a lava SNN and adds the neurons to the networkx Graph nodes.
+
+    :param G: The original graph on which the MDSA algorithm is ran. nx.Graph:
+    """
     # Verify the graph represents a connected and valid SNN, with all required
     # neuron and synapse properties specified.
     verify_networkx_snn_spec(G)
 
     # Convert networkx graph to an SNN network that can be ran by Lava.
     # starter_neuron = convert_networkx_graph_to_lava_snn(G)
+    # pylint: disable=R0801
+    # TODO: remove old_conversion and then remove the necessitiy for this
+    # pylint disable command.
     (
         converted_nodes,
         _,
@@ -80,7 +90,11 @@ def add_lava_neurons_to_networkx_graph(G: nx.Graph) -> None:
 
 
 def append_neurons_to_networkx_graph(G: nx.Graph, neuron_dict: dict) -> None:
-    """Appends lava neuron objects as keys to the networkx graph nodes."""
+    """Appends lava neuron objects as keys to the networkx graph nodes.
+
+    :param G: The original graph on which the MDSA algorithm is ran. nx.Graph:
+    :param neuron_dict: dict:
+    """
     for node in G.nodes:
         neuron = list(neuron_dict.keys())[
             list(neuron_dict.values()).index(node)

@@ -8,7 +8,8 @@ import networkx as nx
 def verify_networkx_snn_spec(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph:
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param G: The original graph on which the MDSA algorithm is ran.
 
     """
     for node in G.nodes:
@@ -22,6 +23,7 @@ def verify_networkx_snn_spec(G: nx.DiGraph) -> None:
 def verify_neuron_properties_are_specified(node: nx.DiGraph.nodes) -> None:
     """
 
+    :param node: nx.DiGraph.nodes:
     :param node: nx.DiGraph.nodes:
 
     """
@@ -40,6 +42,8 @@ def assert_synaptic_edgeweight_type_is_correct(
 ) -> None:
     """
 
+    :param edge: nx.DiGraph.edges:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param edge: nx.DiGraph.edges:
 
     """
@@ -61,7 +65,7 @@ def assert_synaptic_edgeweight_type_is_correct(
 def assert_synapse_properties_are_specified(G, edge):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param edge:
 
     """
@@ -76,7 +80,7 @@ def assert_synapse_properties_are_specified(G, edge):
 def check_if_synapse_properties_are_specified(G, edge):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param edge:
 
     """
@@ -93,7 +97,7 @@ def check_if_synapse_properties_are_specified(G, edge):
 def get_synapse_property_names(G, edge):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param edge:
 
     """
@@ -101,7 +105,10 @@ def get_synapse_property_names(G, edge):
 
 
 def assert_no_duplicate_edges_exist(G):
-    """Asserts no duplicate edges exist, throws error otherwise."""
+    """Asserts no duplicate edges exist, throws error otherwise.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    """
     visited_edges = []
     for edge in G.edges:
         if edge not in visited_edges:

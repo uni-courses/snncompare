@@ -13,10 +13,14 @@ def initialise_networkx_to_snn_conversion(G):
     """Prepares a networkx graph G to be converted into a Lava-nc neural
     network.
 
-    :param G: Networkx graph that specifies the Lava neural network.
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+    graph that specifies the Lava neural network.
     """
 
     # 1. Start with first incoming node.
+    # pylint: disable=R0801
+    # TODO: remove old_conversion and then remove the necessitiy for this
+    # pylint disable command.
     first_node = list(G.nodes)[0]
 
     # Create dictionary with Lava LIF neurons as keys, neuron names as values.
@@ -38,7 +42,8 @@ def convert_networkx_to_lava_snn(
 ):
     """Recursively converts the networkx graph G into a Lava SNN.
 
-    :param G: Networkx graph that specifies the Lava neural network.
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+     graph that specifies the Lava neural network.
     :param converted_nodes: List of networkx nodenames that already have been
     converted to the Lava SNN.
     :param neurons: List of Lava neuron objects.
@@ -69,6 +74,8 @@ def convert_networkx_to_lava_snn(
 
     # For all edges of node, if synapse does not yet exists:
     # Is a set  because bi-directional edges create neighbour duplicates.
+    # pylint: disable=R0801
+    # Duplicate code is temporary until old code is deleted.
     for neighbour in set(nx.all_neighbors(G, lhs_nodename)):
         if neighbour not in visited_nodes:
 
@@ -84,6 +91,8 @@ def convert_networkx_to_lava_snn(
                     G, converted_nodes, neurons, neighbour
                 )
             else:
+                # pylint: disable=R0801
+                # Duplicate code is temporary until old code is deleted.
                 # Even if the neighbour is already converted, the lhs and rhs
                 # neurons are still retrieved to create a synapse between them.
                 lhs_neuron = get_neuron_belonging_to_node_from_list(
@@ -148,7 +157,8 @@ def node_is_converted(converted_nodes, nodename):
     :param converted_nodes: List of networkx nodenames that already have been
     converted to the Lava SNN.
     :param neurons: List of Lava neuron objects.
-    :param nodename: Name of the node of the networkx graph.
+    :param nodename: Node of the name of a networkx graph. Name of the node of
+     the networkx graph.
     """
     return nodename in converted_nodes
 
@@ -156,17 +166,26 @@ def node_is_converted(converted_nodes, nodename):
 def create_neuron_from_node(
     G, converted_nodes, neurons, nodename, old_code=False
 ):
-    """
+    """Creates a lava LIF neuron object based on the settings of a node
+    specified in the SNN graph setting.
 
-    :param G: Networkx graph that specifies the Lava neural network.
+    # TODO: change G to indicate what the type/level of the graph is. E.g.
+    # original graph
+    # MDSA SNN implementation graph etc.
 
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+     graph that specifies the Lava neural network.
     :param converted_nodes: List of networkx nodenames that already have been
     converted to the Lava SNN.
     :param neurons: List of Lava neuron objects.
-    :param nodename: Name of the node of the networkx graph.
-
+    :param nodename: Node of the name of a networkx graph. Name of the node of
+    the networkx graph.
+    :param old_code:  (Default value = False)
     """
 
+    # TODO: Remove this if statement by eliminating the difference between the
+    # two code versions.
+    # See: def get_neuron_properties_old(
     if old_code:
         bias, du, dv, vth = get_neuron_properties_old(G, nodename)
     else:
@@ -184,7 +203,12 @@ def create_neuron_from_node(
 
 
 def add_recurrent_edge(G, nodename, neuron):
-    """Adds a recurrent edge to the node if it exists."""
+    """Adds a recurrent edge to the node if it exists.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param nodename: Node of the name of a networkx graph.
+    :param neuron: Lava neuron object.
+    """
     if G.has_edge(nodename, nodename):
 
         # Compute synaptic weight.
@@ -193,11 +217,12 @@ def add_recurrent_edge(G, nodename, neuron):
 
 
 def get_neuron_properties(G, nodename):
-    """
+    """Returns the bias,du,dv and vth of a node of the MDSA SNN graph.
 
-    :param G: Networkx graph that specifies the Lava neural network.
-    :param nodename: Name of the node of the networkx graph.
-
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+    graph that specifies the Lava neural network.
+    :param nodename: Node of the name of a networkx graph. Name of the node of
+     the networkx graph.
     """
     bias = G.nodes[nodename]["nx_LIF"].bias.get()
     du = G.nodes[nodename]["nx_LIF"].du.get()
@@ -207,6 +232,14 @@ def get_neuron_properties(G, nodename):
 
 
 def get_neuron_properties_old(G, node):
+    """Returns the neuron properties for the old implementation of the graph.
+
+    # TODO: remove the necesity for this method by only generating networkx
+    graphs according to the new attribute style (du.get())
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param node:
+    """
     bias = G.nodes[node]["bias"]
     du = G.nodes[node]["du"]
     dv = G.nodes[node]["dv"]
@@ -215,7 +248,7 @@ def get_neuron_properties_old(G, node):
 
 
 def create_recurrent_synapse(neuron, weight):
-    """
+    """Creates a synapse from a neuron back into itself.
 
     :param neuron: Lava neuron object.
     :param weight: Synaptic weight.
@@ -262,12 +295,13 @@ def connect_synapse(neuron_a, neuron_b, dense):
 
 
 def get_neuron_belonging_to_node_from_list(neurons, nodename, nodes):
-    """
+    """Returns the lava LIF neuron object that is represented by the node
+    nodename of a certain graph.
 
     :param neurons: List of Lava neuron objects.
-    :param nodename: Name of the node of the networkx graph.
+    :param nodename: Node of the name of a networkx graph. Name of the node of
+    the networkx graph.
     :param nodes: List of nodenames of networkx graph.
-
     """
     index = nodes.index(nodename)
     return neurons[index]
@@ -276,15 +310,22 @@ def get_neuron_belonging_to_node_from_list(neurons, nodename, nodes):
 def add_synapse_between_nodes(
     G, lhs_neuron, lhs_nodename, neighbour, rhs_neuron
 ):
-    """
+    """Adds a synapse from left the left neuron to the right neuron and from
+    the right neuron to the left neuron, if the respective edge exists between
+    the two nodes in the graph G.
 
-    :param G: Networkx graph that specifies the Lava neural network.
-    :param lhs_neuron:
-    :param lhs_nodename: The left-hand-side nodename that is taken as a
+    # TODO: change name of G to indicate level/type of graph (e.g. original
+    #  graph of MDSA SNN graph).
+
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+     graph that specifies the Lava neural network.
+    :param lhs_neuron: param lhs_nodename: The left-hand-side nodename that is
+     taken as a
     start point per recursive evaluation. All the neighbours are the
     right-hand-side neurons.
     :param neighbour: Name of the rhs node of the networkx graph.
     :param rhs_neuron:
+    :param lhs_nodename:
     """
     # TODO: ensure the synapses are created in both directions.
     lhs_neuron = add_synapse_left_to_right(
@@ -299,18 +340,17 @@ def add_synapse_between_nodes(
 def add_synapse_left_to_right(
     G, lhs_neuron, lhs_nodename, neighbour, rhs_neuron
 ):
-    """
+    """Adds a synapse from left to right between two neurons if a directed edge
+    exists from the left node to the right node.
 
-    :param G: Networkx graph that specifies the Lava neural network.
-    :param lhs_neuron:
-    :param lhs_nodename: The left-hand-side nodename that is taken as a
-    start point per recursive evaluation. All the neighbours are the
-    right-hand-side neurons.
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+    graph that specifies the Lava neural network.
+    :param lhs_neuron: param lhs_nodename: The left-hand-side nodename that is
+    taken as a start point per recursive evaluation. All the neighbours are the
+    right-hand-side neurons.mdsa
     :param neighbour: Name of the rhs node of the networkx graph.
-    :param rhs_neuron:
-    :param lhs_neuron:
-
-
+    :param rhs_neuron: param lhs_neuron:
+    :param lhs_nodename:
     """
     # 3. Get the edge between lhs and rhs nodes. They are neighbours
     # so they have an edge by definition.However it is a directed graph.
@@ -336,15 +376,15 @@ def add_synapse_right_to_left(
 ):
     """
 
-    :param G: Networkx graph that specifies the Lava neural network.
-    :param lhs_neuron:
-    :param lhs_nodename: The left-hand-side nodename that is taken as a
-    start point per recursive evaluation. All the neighbours are the
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+     graph that specifies the Lava neural network.
+    :param lhs_neuron: param lhs_nodename: The left-hand-side nodename that is
+    taken as a start point per recursive evaluation. All the neighbours are the
     right-hand-side neurons.
     :param neighbour: Name of the rhs node of the networkx graph.
-    :param rhs_neuron:
-    :param rhs_node:
+    :param rhs_neuron: param rhs_node:
     :param lhs_neuron:
+    :param lhs_nodename:
 
     """
     # 3. Get the edge between lhs and rhs nodes. They are neighbours
@@ -370,7 +410,8 @@ def get_edge_if_exists(G, lhs_nodename, rhs_node):
     """Returns the edge object if the graph G has an edge between the two
     nodes. Returns None otherwise.
 
-    :param G: Networkx graph that specifies the Lava neural network.
+    :param G: The original graph on which the MDSA algorithm is ran. Networkx
+    graph that specifies the Lava neural network.
     :param lhs_nodename: The left-hand-side nodename that is taken as a
     start point per recursive evaluation. All the neighbours are the
     right-hand-side neurons.
@@ -399,9 +440,8 @@ def get_edge_if_exists(G, lhs_nodename, rhs_node):
 def connect_synapse_left_to_right(lhs_neuron, rhs_neuron, dense):
     """Connects a synapse named dense from lhs_neuron to rhs_neuron.
 
-    :param lhs_neuron:
-    :param rhs_neuron:
-    :param dense:
+    :param lhs_neuron: param rhs_neuron:
+    :param dense: param rhs_neuron:
     :param rhs_neuron:
     """
     lhs_neuron.out_ports.s_out.connect(dense.in_ports.s_in)
@@ -412,9 +452,8 @@ def connect_synapse_left_to_right(lhs_neuron, rhs_neuron, dense):
 def connect_synapse_right_to_left(lhs_neuron, rhs_neuron, dense):
     """Connects a synapse named dense from lhs_neuron to rhs_neuron.
 
-    :param lhs_neuron:
-    :param rhs_neuron:
-    :param dense:
+    :param lhs_neuron: param rhs_neuron:
+    :param dense: param rhs_neuron:
     :param rhs_neuron:
     """
     rhs_neuron.out_ports.s_out.connect(dense.in_ports.s_in)
