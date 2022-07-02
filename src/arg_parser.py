@@ -39,11 +39,12 @@ def parse_cli_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--old",
-        dest="run_old_graphs",
+        "--pkl",
+        dest="run_on_pickles",
         action="store_true",
         help="boolean flag, determines whether snn is simulated using networkx"
-        + "on old graphs that have already been exported with pickle.",
+        + "on experiment configurations with graphs that have already been"
+        + " exported with pickle.",
     )
 
     # Specify default argument values for the parser.

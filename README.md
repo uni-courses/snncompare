@@ -40,10 +40,11 @@ Then you can run the experiment by simulating the respective graphs.
 This can be done with command:
 
 ```
-python -m pytest --capture=tee-sys tests/test_process_results.py
+python -m src --pkl
 ```
 
-(Note this should not be a test.)
+This should simulate the graphs that are loaded from the `.pkl` file(s) in
+`/pickles/` and export the experiment results to `/results/...json`.
 
 ## Usage
 
