@@ -39,7 +39,7 @@ class Test_process_results(unittest.TestCase):
         with open(
             pickle_filepath,
             "rb",
-            encoding="utf-8",
+            # encoding="utf-8",
         ) as pickle_off:
             [
                 self.G,
