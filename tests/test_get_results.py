@@ -47,12 +47,12 @@ class Test_counter(unittest.TestCase):
         # TODO: reduce nested blocks from 8/5 to at most 5/5.
 
         # delete_dir_if_exists("latex/Images/graphs")
-        # delete_files_in_folder("latex/Images/graphs")
+        delete_files_in_folder("latex/Images/graphs")
         delete_files_in_folder("pickles")
         used_graphs = Used_graphs()
         # Specify User randomnes to prevent overwriting identical runs.
 
-        for m in range(0, 5):
+        for m in range(0, 1):
             for iteration in range(0, 2, 1):
                 for size in range(3, 4, 1):
                     # for neuron_death_probability in [0.1, 0.25, 0.50]:
