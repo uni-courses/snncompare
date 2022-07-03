@@ -97,6 +97,7 @@ class Test_m_settings(unittest.TestCase):
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of m in copy.
         config_settings["m"] = [50]
+        print(f"config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -123,8 +124,9 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected contain at least 1 integer."
-            + f" Instead, it has length:{0}",
+            # "Error, m was expected contain at least 1 integer."
+            # + f" Instead, it has length:{0}",
+            f"Error, obj={[]}, its type is:[]," + f" expected type:{[int]}",
             str(context.exception),
         )
 

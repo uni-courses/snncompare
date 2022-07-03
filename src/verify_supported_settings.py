@@ -20,6 +20,8 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
             + " type dict."
         )
 
+    print(f"experiment_config={experiment_config}")
+    print(f'experiment_config["m"]={experiment_config["m"]}')
     verify_m_setting(supp_sets, experiment_config["m"])
     if has_unique_id:
         print("TODO: test unique id type.")
@@ -32,12 +34,7 @@ def verify_m_setting(supp_sets, m_setting):
 
     :param m_setting:
     """
-    if not isinstance(m_setting, list):
-        # TODO: verify subtypes.
-        raise Exception(
-            "Error, m was expected to be a list of integers."
-            + f" Instead, it was:{type(m_setting)}"
-        )
+    verify_object_type(m_setting, list, element_types=[int])
     if len(m_setting) < 1:
         raise Exception(
             "Error, m was expected contain at least 1 integer."
@@ -51,15 +48,12 @@ def verify_m_setting(supp_sets, m_setting):
             )
 
 
-def verify_object_type(obj, expected_type, tuple_types=None):
+def verify_object_type(obj, expected_type, element_types=None):
     """Verifies an object type, and if the object is a tuple, it also verifies
-    the types within the tuple.
-
-    # TODO: generalise to also allow for the elements in the list to be
-    verified.
+    the types within the tuple or list.
 
     :param obj: param expected_type:
-    :param tuple_types: Default value = None)
+    :param element_types: Default value = None)
     :param expected_type:
     """
 
@@ -70,22 +64,18 @@ def verify_object_type(obj, expected_type, tuple_types=None):
             + f" for:{obj}"
         )
 
-    # If object is of type float, verify the tuple element types.
-    if isinstance(obj, tuple):
+    # If object is of type list or tuple, verify the element types.
+    if isinstance(obj, (list, tuple)):
 
-        # Verify user passed the expected tuple element types.
-        if tuple_types is None:
-            raise Exception(
-                "Expected two types in a list to check tuple contents."
-            )
+        # Verify user passed the expected element types.
+        if element_types is None:
+            raise Exception("Expected a type to check list element types.")
 
-        # Verify the tuple element types.
-        if not (
-            isinstance(obj, tuple) and list(map(type, obj)) == tuple_types
-        ):
+        # Verify the element types.
+        if list(map(type, obj)) != element_types:
             raise Exception(
                 f"Error, obj={obj}, its type is:{list(map(type, obj))},"
-                + f" expected type:{tuple_types}"
+                + f" expected type:{element_types}"
             )
 
 
