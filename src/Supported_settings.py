@@ -1,12 +1,17 @@
 """Contains the supported experiment settings.
 
-(The values of the settings may vary, yet the types should be the same.)
+(The values of the settings may vary, yet the values of an experiment
+setting should be within the ranges specified in this file, and the
+setting types should be identical.)
 """
 
 
 # pylint: disable=R0902
 # The settings object contains all the settings as a dictionary, hence no
 # hierarchy is used, leading to 10/7 instance attributes.
+from src.verify_supported_settings import verify_configuration_settings
+
+
 class Supported_settings:
     """Stores examples of the supported experiment settings, such as radiation
     and adaptation settings.
@@ -120,3 +125,28 @@ class Supported_settings:
             # factor with which it changes due to radiation).
             "delta_vth": self.delta_vth,
         }
+
+    def append_unique_config_id(self, experiment_config: dict) -> dict:
+        """Checks if an experiment configuration dictionary already has a
+        unique identifier, and if not it computes and appends it.
+
+        If it does, throws an error.
+
+        :param experiment_config: dict:
+        """
+        if "unique_id" in experiment_config.keys():
+            raise Exception(
+                f"Error, the experiment_config:{experiment_config}\n"
+                + "already contains a unique identifier."
+            )
+
+        verify_configuration_settings(
+            self, experiment_config, has_unique_id=False
+        )
+        hash_set = frozenset(experiment_config.values())
+        unique_id = hash(hash_set)
+        experiment_config["unique_id"] = unique_id
+        verify_configuration_settings(
+            self, experiment_config, has_unique_id=True
+        )
+        return experiment_config
