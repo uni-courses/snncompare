@@ -13,6 +13,8 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     :param has_unique_id:
 
     """
+    if not isinstance(has_unique_id, bool):
+        raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
     if not isinstance(experiment_config, dict):
         raise Exception(
             "Error, the experiment_config is of type:"
@@ -21,9 +23,36 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
         )
 
     verify_m_setting(supp_sets, experiment_config["m"])
+    verify_iterations_setting(supp_sets, experiment_config["iterations"])
     if has_unique_id:
         print("TODO: test unique id type.")
     return experiment_config
+
+
+def verify_list_setting(list_setting, element_types):
+    """Verifies the types and length of configuration settings that are stored
+    with a value of type list."""
+    verify_object_type(list_setting, list, element_types=element_types)
+    if len(list_setting) < 1:
+        raise Exception(
+            "Error, list was expected contain at least 1 integer."
+            + f" Instead, it has length:{len(list_setting)}"
+        )
+
+
+def verify_iterations_setting(supp_sets, iterations_setting):
+    """Verifies the type of m setting is valid, and that its values are within
+    the supported range.
+
+    :param iterations_setting:
+    """
+    verify_list_setting(iterations_setting, int)
+    for iteration in iterations_setting:
+        if iteration not in supp_sets.iterations:
+            raise Exception(
+                "Error, iterations was expected to be in range:"
+                + f"{supp_sets.iterations}. Instead, it contains:{iteration}."
+            )
 
 
 def verify_m_setting(supp_sets, m_setting):
@@ -32,12 +61,7 @@ def verify_m_setting(supp_sets, m_setting):
 
     :param m_setting:
     """
-    verify_object_type(m_setting, list, element_types=[int])
-    if len(m_setting) < 1:
-        raise Exception(
-            "Error, m was expected contain at least 1 integer."
-            + f" Instead, it has length:{len(m_setting)}"
-        )
+    verify_list_setting(m_setting, int)
     for m in m_setting:
         if m not in supp_sets.m:
             raise Exception(
@@ -70,7 +94,10 @@ def verify_object_type(obj, expected_type, element_types=None):
             raise Exception("Expected a type to check list element types.")
 
         # Verify the element types.
-        if list(map(type, obj)) != element_types:
+        print(f"element_types={element_types}")
+        if not all(isinstance(n, element_types) for n in obj):
+
+            # if list(map(type, obj)) != element_types:
             raise Exception(
                 f"Error, obj={obj}, its type is:{list(map(type, obj))},"
                 + f" expected type:{element_types}"
@@ -176,7 +203,7 @@ def verify_radiation_values(supp_sets, radiation: dict, key: str) -> None:
             elif isinstance(setting, tuple):
                 # Verify the radiation setting tuple is of type float,
                 # float.
-                verify_object_type(setting, tuple, [float, float])
+                verify_object_type(setting, tuple, (float, float))
             else:
                 # Throw error if the radiation setting is something other
                 # than a float or tuple of floats.

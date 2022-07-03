@@ -1,4 +1,5 @@
-"""Verifies the Supported_settings object catches invalid m specifications."""
+"""Verifies the Supported_settings object catches invalid iterations
+specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
@@ -14,18 +15,18 @@ from src.experiment_settings.verify_supported_settings import (
 )
 
 
-class Test_m_settings(unittest.TestCase):
+class Test_iterations_settings(unittest.TestCase):
     """Tests whether the verify_configuration_settings_types function catches
-    invalid m settings.."""
+    invalid iterations settings.."""
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.supp_sets = Supported_settings()
-        self.valid_m = self.supp_sets.m
+        self.valid_iterations = self.supp_sets.iterations
 
-        self.invalid_m_value = {
-            "m": "invalid value of type string iso list of floats",
+        self.invalid_iterations_value = {
+            "iterations": "invalid value of type string iso list of floats",
         }
 
         self.supp_sets = Supported_settings()
@@ -45,7 +46,7 @@ class Test_m_settings(unittest.TestCase):
             "simulators": ["nx"],
         }
 
-    def test_m_is_none(self):
+    def test_iterations_is_none(self):
         """Verifies an error is thrown if configuration settings do not contain
         m."""
 
@@ -62,11 +63,11 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_type(self):
+    def test_catch_invalid_iterations_type(self):
         """."""
 
         with self.assertRaises(Exception) as context:
-            # m dictionary of type None throws error.
+            # iterations dictionary of type None throws error.
             verify_configuration_settings(
                 self.supp_sets, "string_instead_of_dict", has_unique_id=False
             )
@@ -77,12 +78,12 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_value_type_too_low(self):
+    def test_catch_invalid_iterations_value_type_too_low(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = [-2]
+        # Set negative value of iterations in copy.
+        config_settings["iterations"] = [-2]
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -90,18 +91,18 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
+            "Error, iterations was expected to be in range:"
+            + f'{self.with_adaptation_with_radiation["iterations"]}.'
             + f" Instead, it contains:{-2}.",
             str(context.exception),
         )
 
-    def test_catch_invalid_m_value_type_too_high(self):
+    def test_catch_invalid_iterations_value_type_too_high(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = [50]
+        # Set negative value of iterations in copy.
+        config_settings["iterations"] = [50]
         print(f"config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
@@ -110,18 +111,18 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
+            "Error, iterations was expected to be in range:"
+            + f'{self.with_adaptation_with_radiation["iterations"]}.'
             + f" Instead, it contains:{50}.",
             str(context.exception),
         )
 
-    def test_catch_empty_m_value_list(self):
+    def test_catch_empty_iterations_value_list(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = []
+        # Set negative value of iterations in copy.
+        config_settings["iterations"] = []
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -135,7 +136,7 @@ class Test_m_settings(unittest.TestCase):
         )
 
     def test_returns_valid_m(self):
-        """Verifies a valid m is returned."""
+        """Verifies a valid iterations is returned."""
         returned_dict = verify_configuration_settings(
             self.supp_sets,
             self.with_adaptation_with_radiation,
@@ -143,14 +144,15 @@ class Test_m_settings(unittest.TestCase):
         )
         self.assertIsInstance(returned_dict, dict)
 
-    def test_empty_m(self):
-        """Verifies an exception is thrown if an empty m dict is thrown."""
+    def test_empty_iteration(self):
+        """Verifies an exception is thrown if an empty iterations dict is
+        thrown."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
         print(f"Before config_settings={config_settings}")
-        config_settings.pop("m")
+        config_settings.pop("iterations")
         print(f"After config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
@@ -159,6 +161,6 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'m'",
+            "'iterations'",
             str(context.exception),
         )
