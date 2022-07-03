@@ -3,8 +3,10 @@ specifications."""
 # pylint: disable=R0801
 import unittest
 
-from src.Supported_settings import Supported_settings
-from src.verify_supported_settings import verify_adap_and_rad_settings
+from src.experiment_settings.Supported_settings import Supported_settings
+from src.experiment_settings.verify_supported_settings import (
+    verify_adap_and_rad_settings,
+)
 
 
 class Test_radiation_settings(unittest.TestCase):

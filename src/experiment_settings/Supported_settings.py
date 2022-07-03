@@ -9,7 +9,9 @@ setting types should be identical.)
 # pylint: disable=R0902
 # The settings object contains all the settings as a dictionary, hence no
 # hierarchy is used, leading to 10/7 instance attributes.
-from src.verify_supported_settings import verify_configuration_settings
+from src.experiment_settings.verify_supported_settings import (
+    verify_configuration_settings,
+)
 
 
 class Supported_settings:

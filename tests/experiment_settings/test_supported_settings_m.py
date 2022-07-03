@@ -3,9 +3,12 @@
 import copy
 import unittest
 
-from src.experiment_settings import Adaptation_settings, Radiation_settings
-from src.Supported_settings import Supported_settings
-from src.verify_supported_settings import (
+from src.experiment_settings.experiment_settings import (
+    Adaptation_settings,
+    Radiation_settings,
+)
+from src.experiment_settings.Supported_settings import Supported_settings
+from src.experiment_settings.verify_supported_settings import (
     verify_adap_and_rad_settings,
     verify_configuration_settings,
 )
