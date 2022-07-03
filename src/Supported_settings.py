@@ -311,9 +311,17 @@ class Supported_settings:
         :param has_unique_id:
 
         """
+        if not isinstance(experiment_config, dict):
+            raise Exception(
+                "Error, the experiment_config is of type:"
+                + f"{type(experiment_config)}, yet it was expected to be of"
+                + " type dict."
+            )
+
         self.verify_m_setting(experiment_config["m"])
         if has_unique_id:
             print("TODO: test unique id type.")
+        return experiment_config
 
     def verify_m_setting(self, m_setting):
         """Verifies the type of m setting is valid, and that its values are
@@ -335,6 +343,6 @@ class Supported_settings:
         for m in m_setting:
             if m not in self.m:
                 raise Exception(
-                    "Error, m was expected to be in range:{self.m}."
-                    + f" Instead, it contains:{len(m)}"
+                    f"Error, m was expected to be in range:{self.m}."
+                    + f" Instead, it contains:{m}."
                 )
