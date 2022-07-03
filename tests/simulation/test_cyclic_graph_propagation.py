@@ -6,22 +6,22 @@ import unittest
 import networkx as nx
 import numpy as np
 
-from src.get_graph import (
+from src.experiment_settings.Scope_of_tests import Long_scope_of_tests
+from src.export_results.plot_graphs import plot_circular_graph
+from src.graph_generation.get_graph import (
     get_cyclic_graph_without_directed_path,
     set_rand_neuron_properties,
 )
-from src.LIF_neuron import print_neuron_properties_per_graph
-from src.plot_graphs import plot_circular_graph
-from src.run_on_lava import (
+from src.simulation.LIF_neuron import print_neuron_properties_per_graph
+from src.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
-from src.run_on_networkx import (
+from src.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
 )
-from src.Scope_of_tests import Long_scope_of_tests
-from src.verify_graph_is_snn import (
+from src.simulation.verify_graph_is_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
     verify_networkx_snn_spec,

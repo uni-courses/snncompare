@@ -7,8 +7,15 @@ from time import time
 from lava.magma.core.run_conditions import RunSteps
 from lava.magma.core.run_configs import Loihi1SimCfg
 
-from src.brain_adaptation import adaptation_mech_2_networkx_and_snn
-from src.create_testobject import create_test_object
+from src.experiment_settings.create_testobject import create_test_object
+from src.graph_generation.brain_adaptation import (
+    adaptation_mech_2_networkx_and_snn,
+)
+from src.graph_generation.helper_network_structure import (
+    plot_neuron_behaviour_over_time,
+)
+from src.graph_generation.Radiation_damage import Radiation_damage
+from src.graph_generation.Used_graphs import Used_graphs
 from src.helper import (
     create_neuron_monitors,
     delete_files_in_folder,
@@ -19,9 +26,6 @@ from src.helper import (
     store_spike_values_in_neurons,
     write_results_to_file,
 )
-from src.helper_network_structure import plot_neuron_behaviour_over_time
-from src.Radiation_damage import Radiation_damage
-from src.Used_graphs import Used_graphs
 
 
 class Test_counter(unittest.TestCase):

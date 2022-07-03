@@ -4,10 +4,10 @@ import copy
 
 from lava.proc.monitor.process import Monitor
 
-from src.helper import fill_dictionary, generate_list_of_n_random_nrs
-from src.helper_network_structure import (
+from src.graph_generation.helper_network_structure import (
     get_degree_graph_with_separate_wta_circuits,
 )
+from src.helper import fill_dictionary, generate_list_of_n_random_nrs
 from src.old_conversion import convert_networkx_graph_to_snn_with_one_neuron
 
 # from src.networkx_to_snn import convert_networkx_graph_to_snn_with_one_neuron

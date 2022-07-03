@@ -12,10 +12,12 @@ import networkx as nx
 import pylab as plt
 from lava.proc.monitor.process import Monitor
 
-from src.export_json_results import get_unique_hash
-from src.plot_graphs import create_root_dir_if_not_exists
-from src.Plot_to_tex import Plot_to_tex
-from src.Radiation_damage import store_dead_neuron_names_in_graph
+from src.export_results.export_json_results import get_unique_hash
+from src.export_results.plot_graphs import create_root_dir_if_not_exists
+from src.export_results.Plot_to_tex import Plot_to_tex
+from src.graph_generation.Radiation_damage import (
+    store_dead_neuron_names_in_graph,
+)
 
 
 def fill_dictionary(

@@ -5,8 +5,10 @@ that invokes this script."""
 # Import external libraries.
 # import networkx as nx
 
-from src.load_pickles_get_results import run_experiment_on_pickles
-from src.run_on_lava import (
+from src.export_results.load_pickles_get_results import (
+    run_experiment_on_pickles,
+)
+from src.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )

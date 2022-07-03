@@ -1,7 +1,7 @@
 """Gets the run results from the MDSA SNN algorithm and from the default
 Alipour algorithm."""
-from src.get_alipour_nodes import get_alipour_nodes
 from src.helper import get_counter_neurons
+from src.process_results.get_alipour_nodes import get_alipour_nodes
 
 
 def get_run_results(G, G_mdsa, G_brain_adap, G_rad_dam, m, rand_props):

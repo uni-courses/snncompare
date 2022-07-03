@@ -7,8 +7,8 @@ from itertools import combinations, groupby
 import networkx as nx
 import numpy as np
 
-from src.LIF_neuron import LIF_neuron
-from src.plot_graphs import plot_circular_graph
+from src.export_results.plot_graphs import plot_circular_graph
+from src.simulation.LIF_neuron import LIF_neuron
 
 
 def get_cyclic_graph_without_directed_path() -> nx.DiGraph:

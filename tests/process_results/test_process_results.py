@@ -3,7 +3,7 @@ import json
 import pickle  # nosec - User is trusted not to load malicious pickle files.
 import unittest
 
-from src.process_results import get_run_results
+from src.process_results.process_results import get_run_results
 
 
 class Test_process_results(unittest.TestCase):
@@ -16,8 +16,9 @@ class Test_process_results(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         filename = (
-            "_death_prob0.25_adapt_True_raddamTrue__seed42_size3_m0_"
-            + "iter1_hash-5432048059257968152"
+            # "_death_prob0.25_adapt_True_raddamTrue__seed42_size3_m0_"
+            # + "iter1_hash-5432048059257968152"
+            "probability_0.25adapt_True_42_size3_m0_iter1_-2339717364940446461"
         )
         pickle_filepath = f"tests/{filename}.pkl"
         json_filepath = f"tests/{filename}.json"

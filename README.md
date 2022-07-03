@@ -94,14 +94,14 @@ tests/test_rand_network_propagation.py .                                 [100%]
 ---------- coverage: platform linux, python 3.8.13-final-0 -----------
 Name                              Stmts   Miss  Cover
 -----------------------------------------------------
-src/LIF_neuron.py                   113      9    92%
+src.simulation.LIF_neuron.py                   113      9    92%
 src/Scope_of_tests.py                39     17    56%
 src/__init__.py                       0      0   100%
 src/__main__.py                      16     16     0%
 src/arg_parser.py                    10     10     0%
 src/convert_networkx_to_lava.py     105      3    97%
-src/get_graph.py                     83      7    92%
-src/plot_graphs.py                   27      2    93%
+src.graph_generation.get_graph.py                     83      7    92%
+src.export_results.plot_graphs.py                   27      2    93%
 src/run_on_lava.py                   23      2    91%
 src/run_on_networkx.py               39      0   100%
 src/verify_graph_is_snn.py           36      7    81%
