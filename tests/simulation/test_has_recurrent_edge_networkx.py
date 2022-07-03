@@ -3,9 +3,9 @@ network."""
 
 import unittest
 
-from src.get_graph import get_networkx_graph_of_2_neurons
-from src.run_on_lava import simulate_snn_on_lava
-from src.run_on_networkx import (
+from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
+from src.simulation.run_on_lava import simulate_snn_on_lava
+from src.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
 )

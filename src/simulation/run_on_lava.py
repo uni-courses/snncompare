@@ -14,8 +14,10 @@ from lava.magma.core.run_configs import Loihi1SimCfg
 # Instantiate Lava processes to build network.
 from lava.proc.lif.process import LIF
 
-from src.convert_networkx_to_lava import initialise_networkx_to_snn_conversion
-from src.verify_graph_is_snn import verify_networkx_snn_spec
+from src.graph_generation.convert_networkx_to_lava import (
+    initialise_networkx_to_snn_conversion,
+)
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def simulate_snn_on_lava(G: nx.Graph, starter_nodename: int, t: int) -> None:

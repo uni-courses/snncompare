@@ -10,10 +10,10 @@ import copy
 
 import networkx as nx
 
-# Import local project functions and classes.
-from src.verify_graph_is_snn import verify_networkx_snn_spec
+from src.simulation.LIF_neuron import LIF_neuron
 
-from .LIF_neuron import LIF_neuron
+# Import local project functions and classes.
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def add_nx_neurons_to_networkx_graph(G: nx.DiGraph) -> None:

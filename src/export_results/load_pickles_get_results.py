@@ -2,13 +2,15 @@
 import glob
 import pickle  # nosec - User is trusted not to load malicious pickle files.
 
-from src.export_json_results import export_end_results
+from src.export_results.export_json_results import export_end_results
+from src.graph_generation.helper_network_structure import (
+    plot_coordinated_graph,
+)
 from src.helper import delete_files_in_folder
-from src.helper_network_structure import plot_coordinated_graph
-from src.LIF_neuron import LIF_neuron
-from src.process_results import get_run_results
-from src.run_on_networkx import run_snn_on_networkx
-from src.verify_graph_is_snn import verify_networkx_snn_spec
+from src.process_results.process_results import get_run_results
+from src.simulation.LIF_neuron import LIF_neuron
+from src.simulation.run_on_networkx import run_snn_on_networkx
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def get_desired_properties_for_graph_printing():

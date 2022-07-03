@@ -3,8 +3,8 @@ the MDSA approximation."""
 import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 
+from src.export_results.Plot_to_tex import Plot_to_tex
 from src.helper import get_y_position
-from src.Plot_to_tex import Plot_to_tex
 
 
 def get_degree_graph_with_separate_wta_circuits(G, rand_nrs, rand_ceil, m):

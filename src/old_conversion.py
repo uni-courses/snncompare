@@ -1,7 +1,7 @@
 """Old code used to convert the networkx graph to an MDSA SNN algorithm."""
 import networkx as nx
 
-from src.convert_networkx_to_lava import (
+from src.graph_generation.convert_networkx_to_lava import (
     add_neuron_to_dict,
     add_synapse_between_nodes,
     create_neuron_from_node,

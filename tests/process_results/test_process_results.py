@@ -3,7 +3,7 @@ import json
 import pickle  # nosec - User is trusted not to load malicious pickle files.
 import unittest
 
-from src.process_results import get_run_results
+from src.process_results.process_results import get_run_results
 
 
 class Test_process_results(unittest.TestCase):

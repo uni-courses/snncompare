@@ -5,7 +5,7 @@ import pickle  # nosec - User is trusted not to load malicious pickle files.
 import networkx as nx
 from networkx.readwrite import json_graph
 
-from src.plot_graphs import create_root_dir_if_not_exists
+from src.export_results.plot_graphs import create_root_dir_if_not_exists
 
 
 def export_end_results(
