@@ -3,6 +3,7 @@ specifications."""
 import unittest
 
 from src.Supported_settings import Supported_settings
+from src.verify_supported_settings import verify_adap_and_rad_settings
 
 
 class Test_adaptation_settings(unittest.TestCase):
@@ -12,7 +13,7 @@ class Test_adaptation_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supported_settings = Supported_settings()
+        self.supp_sets = Supported_settings()
         self.valid_adaptation = {
             "redundancy": [1.0, 2.0],  # Create 1 and 2 redundant neuron(s) per
             # neuron.
@@ -37,9 +38,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_adap_and_rad_settings(
-                None, "adaptation"
-            )
+            verify_adap_and_rad_settings(self.supp_sets, None, "adaptation")
 
         self.assertEqual(
             "Error, property is expected to be a dict, yet"
@@ -51,7 +50,8 @@ class Test_adaptation_settings(unittest.TestCase):
         """."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_adap_and_rad_settings(
+            verify_adap_and_rad_settings(
+                self.supp_sets,
                 "string_instead_of_dict",
                 "adaptation",
             )
@@ -67,13 +67,13 @@ class Test_adaptation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_adap_and_rad_settings(
-                self.invalid_adaptation_key, "adaptation"
+            verify_adap_and_rad_settings(
+                self.supp_sets, self.invalid_adaptation_key, "adaptation"
             )
 
         self.assertEqual(
             "Error, property.key:non-existing-key is not in the supported "
-            + f"property keys:{self.supported_settings.adaptation.keys()}.",
+            + f"property keys:{self.supp_sets.adaptation.keys()}.",
             str(context.exception),
         )
 
@@ -81,8 +81,8 @@ class Test_adaptation_settings(unittest.TestCase):
         """."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_adap_and_rad_settings(
-                self.invalid_adaptation_value, "adaptation"
+            verify_adap_and_rad_settings(
+                self.supp_sets, self.invalid_adaptation_value, "adaptation"
             )
 
         self.assertEqual(
@@ -95,8 +95,8 @@ class Test_adaptation_settings(unittest.TestCase):
 
     def test_returns_valid_adaptation(self):
         """TODO: verify dict is returned for valid adaptation."""
-        returned_dict = self.supported_settings.verify_adap_and_rad_settings(
-            self.valid_adaptation, "adaptation"
+        returned_dict = verify_adap_and_rad_settings(
+            self.supp_sets, self.valid_adaptation, "adaptation"
         )
         self.assertIsInstance(returned_dict, dict)
 
@@ -105,9 +105,7 @@ class Test_adaptation_settings(unittest.TestCase):
         thrown."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_adap_and_rad_settings(
-                {}, "adaptation"
-            )
+            verify_adap_and_rad_settings(self.supp_sets, {}, "adaptation")
 
         self.assertEqual(
             "Error, property dict: adaptation was empty.",

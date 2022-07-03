@@ -5,6 +5,10 @@ import unittest
 
 from src.experiment_settings import Adaptation_settings, Radiation_settings
 from src.Supported_settings import Supported_settings
+from src.verify_supported_settings import (
+    verify_adap_and_rad_settings,
+    verify_configuration_settings,
+)
 
 
 class Test_m_settings(unittest.TestCase):
@@ -22,17 +26,17 @@ class Test_m_settings(unittest.TestCase):
         }
 
         self.supp_sets = Supported_settings()
-        self.adaptation_settings = Adaptation_settings()
-        self.radiation_settings = Radiation_settings()
+        self.adap_sets = Adaptation_settings()
+        self.rad_sets = Radiation_settings()
         self.with_adaptation_with_radiation = {
             "m": list(range(0, 1, 1)),
             "iterations": list(range(0, 3, 1)),
             "size,max_graphs": [(3, 15), (4, 15)],
-            "adaptation": self.supp_sets.verify_adap_and_rad_settings(
-                self.adaptation_settings.with_adaptation, "adaptation"
+            "adaptation": verify_adap_and_rad_settings(
+                self.supp_sets, self.adap_sets.with_adaptation, "adaptation"
             ),
-            "radiation": self.supp_sets.verify_adap_and_rad_settings(
-                self.radiation_settings.with_radiation, "radiation"
+            "radiation": verify_adap_and_rad_settings(
+                self.supp_sets, self.rad_sets.with_radiation, "radiation"
             ),
             "overwrite": True,
             "simulators": ["nx"],
@@ -44,7 +48,7 @@ class Test_m_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
-            self.supp_sets.verify_configuration_settings(None, "radiation")
+            verify_configuration_settings(self.supp_sets, None, "radiation")
 
         self.assertEqual(
             "Error, the experiment_config is of type:"
@@ -58,8 +62,8 @@ class Test_m_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # m dictionary of type None throws error.
-            self.supp_sets.verify_configuration_settings(
-                "string_instead_of_dict", False
+            verify_configuration_settings(
+                self.supp_sets, "string_instead_of_dict", False
             )
         self.assertEqual(
             "Error, the experiment_config is of type:"
@@ -76,8 +80,8 @@ class Test_m_settings(unittest.TestCase):
         config_settings["m"] = [-2]
 
         with self.assertRaises(Exception) as context:
-            self.supp_sets.verify_configuration_settings(
-                config_settings, False
+            verify_configuration_settings(
+                self.supp_sets, config_settings, False
             )
 
         self.assertEqual(
@@ -95,8 +99,8 @@ class Test_m_settings(unittest.TestCase):
         config_settings["m"] = [50]
 
         with self.assertRaises(Exception) as context:
-            self.supp_sets.verify_configuration_settings(
-                config_settings, False
+            verify_configuration_settings(
+                self.supp_sets, config_settings, False
             )
 
         self.assertEqual(
@@ -114,8 +118,8 @@ class Test_m_settings(unittest.TestCase):
         config_settings["m"] = []
 
         with self.assertRaises(Exception) as context:
-            self.supp_sets.verify_configuration_settings(
-                config_settings, False
+            verify_configuration_settings(
+                self.supp_sets, config_settings, False
             )
 
         self.assertEqual(
@@ -126,8 +130,8 @@ class Test_m_settings(unittest.TestCase):
 
     def test_returns_valid_m(self):
         """Verifies a valid m is returned."""
-        returned_dict = self.supp_sets.verify_configuration_settings(
-            self.with_adaptation_with_radiation, "m"
+        returned_dict = verify_configuration_settings(
+            self.supp_sets, self.with_adaptation_with_radiation, "m"
         )
         self.assertIsInstance(returned_dict, dict)
 
@@ -142,8 +146,8 @@ class Test_m_settings(unittest.TestCase):
         print(f"After config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
-            self.supp_sets.verify_configuration_settings(
-                config_settings, False
+            verify_configuration_settings(
+                self.supp_sets, config_settings, False
             )
 
         self.assertEqual(
