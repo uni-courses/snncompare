@@ -70,10 +70,10 @@ with_and_without_adaptation_and_radiation = {
     "m": list(range(0, 1, 1)),
     "iterations": list(range(0, 3, 1)),
     "size,max_graphs": [(3, 15), (4, 15)],
-    "adaptation": supported_settings.verify_config_setting(
+    "adaptation": supported_settings.verify_adap_and_rad_settings(
         adaptation_settings.with_and_without_adaptation, "adaptation"
     ),
-    "radiation": supported_settings.verify_config_setting(
+    "radiation": supported_settings.verify_adap_and_rad_settings(
         radiation_settings.with_and_without_radiation, "radiation"
     ),
     "overwrite": True,

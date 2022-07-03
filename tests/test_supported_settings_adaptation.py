@@ -37,7 +37,9 @@ class Test_adaptation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(None, "adaptation")
+            self.supported_settings.verify_adap_and_rad_settings(
+                None, "adaptation"
+            )
 
         self.assertEqual(
             "Error, property is expected to be a dict, yet"
@@ -49,7 +51,7 @@ class Test_adaptation_settings(unittest.TestCase):
         """."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(
+            self.supported_settings.verify_adap_and_rad_settings(
                 "string_instead_of_dict",
                 "adaptation",
             )
@@ -65,7 +67,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(
+            self.supported_settings.verify_adap_and_rad_settings(
                 self.invalid_adaptation_key, "adaptation"
             )
 
@@ -79,7 +81,7 @@ class Test_adaptation_settings(unittest.TestCase):
         """."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(
+            self.supported_settings.verify_adap_and_rad_settings(
                 self.invalid_adaptation_value, "adaptation"
             )
 
@@ -93,7 +95,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
     def test_returns_valid_adaptation(self):
         """TODO: verify dict is returned for valid adaptation."""
-        returned_dict = self.supported_settings.verify_config_setting(
+        returned_dict = self.supported_settings.verify_adap_and_rad_settings(
             self.valid_adaptation, "adaptation"
         )
         self.assertIsInstance(returned_dict, dict)
@@ -103,7 +105,9 @@ class Test_adaptation_settings(unittest.TestCase):
         thrown."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting({}, "adaptation")
+            self.supported_settings.verify_adap_and_rad_settings(
+                {}, "adaptation"
+            )
 
         self.assertEqual(
             "Error, property dict: adaptation was empty.",

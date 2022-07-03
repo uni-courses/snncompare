@@ -27,7 +27,9 @@ class Test_radiation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(None, "radiation")
+            self.supported_settings.verify_adap_and_rad_settings(
+                None, "radiation"
+            )
 
         self.assertEqual(
             "Error, property is expected to be a dict, yet"
@@ -39,7 +41,7 @@ class Test_radiation_settings(unittest.TestCase):
         """."""
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(
+            self.supported_settings.verify_adap_and_rad_settings(
                 "string_instead_of_dict", "radiation"
             )
 
@@ -54,7 +56,7 @@ class Test_radiation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(
+            self.supported_settings.verify_adap_and_rad_settings(
                 self.invalid_radiation_key, "radiation"
             )
 
@@ -68,7 +70,7 @@ class Test_radiation_settings(unittest.TestCase):
         """."""
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting(
+            self.supported_settings.verify_adap_and_rad_settings(
                 self.invalid_radiation_value, "radiation"
             )
 
@@ -81,7 +83,7 @@ class Test_radiation_settings(unittest.TestCase):
 
     def test_returns_valid_radiation(self):
         """Verifies a valid radiation is returned."""
-        returned_dict = self.supported_settings.verify_config_setting(
+        returned_dict = self.supported_settings.verify_adap_and_rad_settings(
             self.valid_radiation, "radiation"
         )
         self.assertIsInstance(returned_dict, dict)
@@ -91,7 +93,9 @@ class Test_radiation_settings(unittest.TestCase):
         thrown."""
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
-            self.supported_settings.verify_config_setting({}, "radiation")
+            self.supported_settings.verify_adap_and_rad_settings(
+                {}, "radiation"
+            )
 
         self.assertEqual(
             "Error, property dict: radiation was empty.",

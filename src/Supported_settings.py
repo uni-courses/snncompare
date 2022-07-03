@@ -122,7 +122,7 @@ class Supported_settings:
             "delta_vth": self.delta_vth,
         }
 
-    def verify_config_setting(self, some_dict, check_type) -> dict:
+    def verify_adap_and_rad_settings(self, some_dict, check_type) -> dict:
         """Verifies the settings of adaptation or radiation property are valid.
 
         :param some_dict: param check_type:
@@ -163,14 +163,6 @@ class Supported_settings:
     def verify_adaptation_values(self, adaptation: dict, key: str) -> None:
         """
 
-        :param adaptation: dict:
-        :param key: str:
-        :param adaptation: dict:
-        :param key: str:
-        :param adaptation: dict:
-        :param key: str:
-        :param adaptation: dict:
-        :param key: str:
         :param adaptation: dict:
         :param key: str:
 
@@ -278,12 +270,6 @@ class Supported_settings:
 
         If it does, throws an error.
 
-        :param experiment_config: dict:
-        :param experiment_config: dict:
-        :param experiment_config: dict:
-        :param experiment_config: dict:
-        :param experiment_config: dict:
-        :param experiment_config: dict:
         :param experiment_config: dict:
         """
         if "unique_id" in experiment_config.keys():
