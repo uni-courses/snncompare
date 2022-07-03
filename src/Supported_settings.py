@@ -112,6 +112,8 @@ class Supported_settings:
         :param key: str:
         :param adaptation: dict:
         :param key: str:
+        :param adaptation: dict:
+        :param key: str:
 
         """
 
@@ -127,10 +129,49 @@ class Supported_settings:
             )
         # TODO: verify the elements in the list are of type float, if the value
         # is a list.
+        if isinstance(adaptation[key], list):
+            for setting in adaptation[key]:
+                self.verify_object_type(setting, float, None)
+
+    def verify_object_type(self, obj, expected_type, tuple_types=None):
+        """
+
+        :param obj:
+        :param expected_type:
+        :param tuple_types:  (Default value = None)
+
+        """
+
+        # Verify the object type is as expected.
+        if not isinstance(obj, expected_type):
+            raise Exception(
+                f"Error, expected type:{expected_type}, yet it was:{type(obj)}"
+                + f" for:{obj}"
+            )
+
+        # If object is of type float, verify the tuple element types.
+        if isinstance(obj, tuple):
+
+            # Verify user passed the expected tuple element types.
+            if tuple_types is None:
+                raise Exception(
+                    "Expected two types in a list to check tuple contents."
+                )
+
+            # Verify the tuple element types.
+            if not (
+                isinstance(obj, tuple) and list(map(type, obj)) == tuple_types
+            ):
+                raise Exception(
+                    f"Error, obj={obj}, its type is:{list(map(type, obj))},"
+                    + f" expected type:{tuple_types}"
+                )
 
     def verify_radiation_values(self, radiation: dict, key: str) -> None:
         """
 
+        :param radiation: dict:
+        :param key: str:
         :param radiation: dict:
         :param key: str:
         :param radiation: dict:
@@ -146,8 +187,27 @@ class Supported_settings:
                 + f"{type(radiation[key])}, yet it was expected to be"
                 + " float or dict."
             )
-        # TODO: verify the elements in the list are of type float, or tuples of
-        # (float,float), if the value is a list.
+
+        # Verify radiation setting types.
+        if isinstance(radiation[key], list):
+            for setting in radiation[key]:
+
+                # Verify radiation setting can be of type float.
+                if isinstance(setting, float):
+                    # TODO: superfluous check.
+                    self.verify_object_type(setting, float, None)
+                # Verify radiation setting can be of type tuple.
+                elif isinstance(setting, tuple):
+                    # Verify the radiation setting tuple is of type float,
+                    # float.
+                    self.verify_object_type(setting, tuple, [float, float])
+                else:
+                    # Throw error if the radiation setting is something other
+                    # than a float or tuple of floats.
+                    raise Exception(
+                        f"Unexpected setting type:{type(setting)} for:"
+                        + f" {setting}."
+                    )
 
     def append_unique_config_id(self, experiment_config: dict) -> dict:
         """Checks if an experiment configuration dictionary already has a
@@ -155,6 +215,7 @@ class Supported_settings:
 
         If it does, throws an error.
 
+        :param experiment_config: dict:
         :param experiment_config: dict:
         :param experiment_config: dict:
         :param experiment_config: dict:
@@ -183,6 +244,7 @@ class Supported_settings:
 
         :param experiment_config: param has_unique_id:
         :param has_unique_id:
+
         """
 
     # pylint: disable=W0613
@@ -194,4 +256,5 @@ class Supported_settings:
 
         :param experiment_config: param has_unique_id:
         :param has_unique_id:
+
         """
