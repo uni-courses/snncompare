@@ -5,15 +5,51 @@
 from typing import Any, Dict
 
 
+# pylint: disable=R0902
+# The settings object contains all the settings as a dictionary, hence no
+# hierarchy is used, leading to 10/7 instance attributes.
 class Supported_settings:
-    """Stores the supported radiation and adaptation settings."""
+    """Stores examples of the supported experiment settings, such as radiation
+    and adaptation settings.
+
+    Also verifies the settings that are created.
+    """
 
     def __init__(
         self,
     ) -> None:
+        # The number of iterations for which the Alipour approximation is ran.
+        self.m = list(range(0, 1, 1))
+        # The number of times the experiment is repeated.
+        self.iterations = list(range(0, 3, 1))
+
+        # Specify the maximum number of: (maximum number of graphs per run
+        # size).
+        self.max_max_graphs = 15
+        # The size of the graph and the maximum number of used graphs of that
+        # size.
+        self.size_and_max_graphs = [
+            (3, self.max_max_graphs),
+            (4, self.max_max_graphs),
+        ]
+        # Overwrite the simulation results or not.
+        self.overwrite_sim_results = True
+        # Overwrite the visualisation of the SNN behaviour or not.
+        self.overwrite_visualisation = True
+        # The backend/type of simulator that is used.
+        self.simulators = ["nx"]
+
+        # Generate the supported adaptation settings.
+        self.specify_supported_adaptation_settings()
+        # Generate the supported radiation settings.
+        self.specify_supported_radiation_settings()
+
+    def specify_supported_adaptation_settings(self):
+        """Specifies all the supported types of adaptation settings."""
+
         # Specify the (to be) supported adaptation types.
         self.adaptation = {
-            "none": [],
+            "None": [],
             "redundancy": [
                 1.0,
             ],  # Create 1 redundant neuron per neuron.
@@ -27,6 +63,14 @@ class Supported_settings:
             # impact.
         }
 
+    def specify_supported_radiation_settings(self):
+        """Specifies types of supported radiation settings. Some settings
+        consist of a list of tuples, with the probability of a change
+        occurring, followed by the average magnitude of the change.
+
+        Others only contain a list of floats which represent the
+        probability of radiation induced change occurring.
+        """
         # List of tuples with x=probabiltity of change, y=average value change
         # in synaptic weights.
         self.delta_synaptic_w = [
@@ -47,8 +91,14 @@ class Supported_settings:
             (0.25, 0.1),
         ]
 
+        # Create a supported radiation setting example.
         self.radiation = {
-            "none": [],
+            # No radiation
+            "None": [],
+            # Radiation effects are transient, they last for 1 or 10 simulation
+            # steps. If transient is 0., the changes are permanent.
+            "transient": [0.0, 1.0, 10.0],
+            # List of probabilities of a neuron dying due to radiation.
             "neuron_death": [
                 0.01,
                 0.05,
@@ -56,6 +106,7 @@ class Supported_settings:
                 0.2,
                 0.25,
             ],
+            # List of probabilities of a synapse dying due to radiation.
             "synaptic_death": [
                 0.01,
                 0.05,
@@ -63,7 +114,11 @@ class Supported_settings:
                 0.2,
                 0.25,
             ],
+            # List of: (probability of synaptic weight change, and the average
+            # factor with which it changes due to radiation).
             "delta_synaptic_w": self.delta_synaptic_w,
+            # List of: (probability of neuron threshold change, and the average
+            # factor with which it changes due to radiation).
             "delta_vth": self.delta_vth,
         }
 
@@ -114,6 +169,10 @@ class Supported_settings:
         :param key: str:
         :param adaptation: dict:
         :param key: str:
+        :param adaptation: dict:
+        :param key: str:
+        :param adaptation: dict:
+        :param key: str:
 
         """
 
@@ -136,9 +195,9 @@ class Supported_settings:
     def verify_object_type(self, obj, expected_type, tuple_types=None):
         """
 
-        :param obj:
+        :param obj: param expected_type:
+        :param tuple_types: Default value = None)
         :param expected_type:
-        :param tuple_types:  (Default value = None)
 
         """
 
@@ -170,6 +229,10 @@ class Supported_settings:
     def verify_radiation_values(self, radiation: dict, key: str) -> None:
         """
 
+        :param radiation: dict:
+        :param key: str:
+        :param radiation: dict:
+        :param key: str:
         :param radiation: dict:
         :param key: str:
         :param radiation: dict:
@@ -220,6 +283,8 @@ class Supported_settings:
         :param experiment_config: dict:
         :param experiment_config: dict:
         :param experiment_config: dict:
+        :param experiment_config: dict:
+        :param experiment_config: dict:
         """
         if "unique_id" in experiment_config.keys():
             raise Exception(
@@ -246,15 +311,30 @@ class Supported_settings:
         :param has_unique_id:
 
         """
+        self.verify_m_setting(experiment_config["m"])
+        if has_unique_id:
+            print("TODO: test unique id type.")
 
-    # pylint: disable=W0613
-    def verify_configuration_settings_types(
-        self, experiment_config, has_unique_id
-    ):
-        """TODO: Verifies the experiment configuration settings are of the
-        correct type.
+    def verify_m_setting(self, m_setting):
+        """Verifies the type of m setting is valid, and that its values are
+        within the supported range.
 
-        :param experiment_config: param has_unique_id:
-        :param has_unique_id:
-
+        :param m_setting:
         """
+        if not isinstance(m_setting, list):
+            # TODO: verify subtypes.
+            raise Exception(
+                "Error, m was expected to be a list of integers."
+                + f" Instead, it was:{type(m_setting)}"
+            )
+        if len(m_setting) < 1:
+            raise Exception(
+                "Error, m was expected contain at least 1 integer."
+                + f" Instead, it has length:{len(m_setting)}"
+            )
+        for m in m_setting:
+            if m not in self.m:
+                raise Exception(
+                    "Error, m was expected to be in range:{self.m}."
+                    + f" Instead, it contains:{len(m)}"
+                )
