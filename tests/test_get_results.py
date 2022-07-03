@@ -56,6 +56,7 @@ class Test_counter(unittest.TestCase):
             for iteration in range(0, 2, 1):
                 for size in range(3, 4, 1):
                     # for neuron_death_probability in [0.1, 0.25, 0.50]:
+                    # pylint: disable=R0801
                     for neuron_death_probability in [
                         0.01,
                         0.05,
