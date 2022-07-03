@@ -11,24 +11,6 @@ from src.LIF_neuron import LIF_neuron
 from src.plot_graphs import plot_circular_graph
 
 
-def get_standard_graph_4_nodes() -> nx.DiGraph:
-    """Returns a Y-shaped graph with four nodes."""
-    graph = nx.DiGraph()
-    graph.add_nodes_from(
-        [0, 1, 2, 3],
-        color="w",
-    )
-    graph.add_edges_from(
-        [
-            (0, 2),
-            (1, 2),
-            (2, 3),
-        ],
-        weight=10,
-    )
-    return graph
-
-
 def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
     """Gets a cyclic graph with nodes that cannot be reached following the
     directed edges, to test if the Lava simulation imposes some requirements on
@@ -91,9 +73,10 @@ def gnp_random_connected_graph(
     """Generates a random undirected graph, similarly to an Erdős-Rényi graph,
     but enforcing that the resulting graph is conneted.
 
-    :param density:
-    :param size:
+    :param density: param size:
     :param test_scope:
+    :param recurrent_density:
+    :param size: Nr of nodes in the original graph on which test is ran.
     """
     random.seed(test_scope.seed)
     edges = combinations(range(size), 2)
@@ -136,7 +119,12 @@ def gnp_random_connected_graph(
 def add_random_recurrent_edges(
     G: nx.DiGraph, recurrent_edge_density, test_scope
 ):
-    """Adds random recurrent edges."""
+    """Adds random recurrent edges.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param recurrent_edge_density:
+    :param test_scope:
+    """
 
     # Use the recurrent_edge_density to get amount of True values.
     # Use seed.
@@ -170,10 +158,12 @@ def set_random_edge_weights(G, min_weight, max_weight, seed):
     """Creates random edge weights and assigns them to the edge objects in the
     graph.
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param min_weight:
     :param max_weight:
     :param seed:
+    :param min_weight:
+    :param seed: The value of the random seed used for this test.
     """
 
     # Create filler for edge attributes.
@@ -195,7 +185,7 @@ def set_rand_neuron_properties(
     """Sets name: int, bias: float, du: float, dv: float, vth: float for each
     neuron with random value within predetermined ranges.
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param test_scope:
     """
     biases = get_list_with_rand_floats_in_range(
@@ -222,10 +212,10 @@ def get_list_with_rand_ints_in_range(min_val, max_val, length, seed):
     """Generates and returns a list with random integers in range [min,max] of
     length length.
 
-    :param min_val:
+    :param min_val: param max_val:
+    :param length: param seed:
     :param max_val:
-    :param length:
-    :param seed:
+    :param seed: The value of the random seed used for this test.
     """
     # Specify random seed.
     random.seed(seed)
@@ -242,10 +232,10 @@ def get_list_with_rand_floats_in_range(min_val, max_val, length, seed):
     """Generates and returns a list with random integers in range [min,max] of
     length length.
 
-    :param min_val:
+    :param min_val: param max_val:
+    :param length: param seed:
     :param max_val:
-    :param length:
-    :param seed:
+    :param seed: The value of the random seed used for this test.
     """
     # Specify random seed.
     np.random.seed(seed)
@@ -260,10 +250,10 @@ def get_list_with_rand_bools(length, recurrent_edge_density, seed):
     """Generates and returns a list with random booleans of length length. The
     amount of True values is determined by: recurrent_edge_density*length.
 
-    :param min_val:
-    :param max_val:
-    :param length:
-    :param seed:
+    :param min_val: param max_val:
+    :param length: param seed:
+    :param recurrent_edge_density:
+    :param seed: The value of the random seed used for this test.
     """
     # Specify random seed.
     random.seed(seed)

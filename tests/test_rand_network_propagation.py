@@ -9,19 +9,17 @@ import numpy as np
 
 from src.get_graph import gnp_random_connected_graph
 from src.LIF_neuron import print_neuron_properties_per_graph
-from src.run_on_lava import (
-    add_lava_neurons_to_networkx_graph,
-    simulate_snn_on_lava,
-)
-from src.run_on_networkx import (
-    add_nx_neurons_to_networkx_graph,
-    run_snn_on_networkx,
-)
+from src.run_on_lava import add_lava_neurons_to_networkx_graph
+from src.run_on_networkx import add_nx_neurons_to_networkx_graph
 from src.Scope_of_tests import Long_scope_of_tests
 from src.verify_graph_is_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
     verify_networkx_snn_spec,
+)
+from tests.test_cyclic_graph_propagation import (
+    compare_static_snn_properties,
+    run_simulation_for_t_steps,
 )
 
 
@@ -35,6 +33,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
+    # pylint: disable=R0801
     def test_random_networks_are_propagated_the_same_on_networkx_and_lava(
         self,
     ):
@@ -66,7 +65,9 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                                 size,
                                 self.test_scope,
                             )
-
+                            # pylint: disable=R0801
+                            # For clarity of what is tested is is considered
+                            # better to include the tests here.
                             # Assert graph is connected.
                             # self.assertTrue(nx.is_connected(G))
                             self.assertFalse(
@@ -78,7 +79,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             self.assertEqual(size, len(G))
 
                             # Assert number of edges without recurrent edges.
-                            #print(f"size={size},density={density}")
+                            # print(f"size={size},density={density}")
                             # self.assertGreaterEqual(G.number_of_edges(),math.floor(size*density))
                             # self.assertLessEqual(G.number_of_edges(),math.ceil(size*density))
 
@@ -103,61 +104,19 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             # Verify the simulations produce identical static
                             # neuron properties.
                             print("")
-                            self.compare_static_snn_properties(G)
+                            compare_static_snn_properties(self, G)
 
                             print_neuron_properties_per_graph(G, True)
 
-                            for t in range(20):
-                                print("")
-                                # Run the simulation on networkx.
-                                run_snn_on_networkx(G, 1)
-
-                                # Run the simulation on lava.
-                                simulate_snn_on_lava(G, starter_neuron, 1)
-
-                                print(f"After t={t+1} simulation steps.")
-                                print_neuron_properties_per_graph(G, False)
-                                # Verify dynamic neuron properties.
-                                self.compare_dynamic_snn_properties(G)
-
-                            # Terminate Loihi simulation.
-                            G.nodes[starter_neuron]["lava_LIF"].stop()
-
-    def compare_static_snn_properties(self, G):
-        """Performs comparison of static neuron properties at each timestep."""
-        for node in G.nodes:
-            lava_neuron = G.nodes[node]["lava_LIF"]
-            nx_neuron = G.nodes[node]["nx_LIF"]
-
-            # Assert bias is equal.
-            self.assertEqual(lava_neuron.bias.get(), nx_neuron.bias.get())
-
-            # dicts
-            # print(f"lava_neuron.__dict__={lava_neuron.__dict__}")
-            # print(f"lava_neuron.__dict__={nx_neuron.__dict__}")
-
-            # Assert du is equal.
-            self.assertEqual(lava_neuron.du.get(), nx_neuron.du.get())
-            #
-
-            # Assert dv is equal.
-            self.assertEqual(lava_neuron.dv.get(), nx_neuron.dv.get())
-
-            # print(f"lava_neuron.name.get()={lava_neuron.name.get()}")
-            # print(f"lava_neuron.name.get()={nx_neuron.name.get()}")
-            # Assert name is equal.
-            # self.assertEqual(lava_neuron.name, nx_neuron.name)
-
-            # Assert vth is equal.
-            self.assertEqual(lava_neuron.vth.get(), nx_neuron.vth.get())
-
-            # Assert v_reset is equal. (Not yet implemented in Lava.)
-            # self.assertEqual(
-            #    lava_neuron.v_reset.get(), nx_neuron.v_reset.get()
-            # )
+                            run_simulation_for_t_steps(
+                                self, G, starter_neuron, sim_duration=20
+                            )
 
     def compare_dynamic_snn_properties(self, G):
-        """Performs comparison of static neuron properties at each timestep."""
+        """Performs comparison of static neuron properties at each timestep.
+
+        :param G: The original graph on which the MDSA algorithm is ran.
+        """
         for node in G.nodes:
             lava_neuron = G.nodes[node]["lava_LIF"]
             nx_neuron = G.nodes[node]["nx_LIF"]

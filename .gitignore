@@ -4,6 +4,8 @@
 latex/Images/graphs/*
 Images/*
 pickles/*
+results/*
+results.txt
 
 # Exclude test coverage report from being synced.
 cov.xml

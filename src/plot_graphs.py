@@ -9,11 +9,13 @@ import networkx as nx
 def plot_circular_graph(density, G, recurrent_edge_density, test_scope):
     """Generates a circular plot of a (directed) graph.
 
-    :param density:
-    :param G:
-    :param seed:
+    :param density: param G:
+    :param seed: The value of the random seed used for this test.
     :param export:  (Default value = True)
-    :param show:  (Default value = True)
+    :param show: Default value = True)
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param recurrent_edge_density:
+    :param test_scope:
     """
     # the_labels = get_alipour_labels(G, configuration=configuration)
     the_labels = get_labels(G, "du")
@@ -37,15 +39,16 @@ def plot_circular_graph(density, G, recurrent_edge_density, test_scope):
     plt.close()
 
 
-def plot_uncoordinated_graph(G, export=False, show=True):
+def plot_uncoordinated_graph(G, show=True):
     """Generates a circular plot of a (directed) graph.
 
-    :param density:
-    :param G:
-    :param seed:
-    :param export:  (Default value = True)
-    :param show:  (Default value = True)
+    :param density: param G:
+    :param seed: The value of the random seed used for this test.
+    :param show: Default value = True)
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param export:  (Default value = False)
     """
+    # TODO: Remove unused method.
     # the_labels = get_alipour_labels(G, configuration=configuration)
     # the_labels =
     # nx.draw_networkx_labels(G, pos=None, labels=the_labels)
@@ -63,7 +66,7 @@ def plot_uncoordinated_graph(G, export=False, show=True):
 def create_target_dir_if_not_exists(path, new_dir_name):
     """Creates an output dir for graph plots.
 
-    :param path:
+    :param path: param new_dir_name:
     :param new_dir_name:
     """
 
@@ -73,6 +76,11 @@ def create_target_dir_if_not_exists(path, new_dir_name):
 
 
 def create_root_dir_if_not_exists(root_dir_name):
+    """
+
+    :param root_dir_name:
+
+    """
     if not os.path.exists(root_dir_name):
         os.makedirs(f"{root_dir_name}")
     if not os.path.exists(root_dir_name):
@@ -82,7 +90,7 @@ def create_root_dir_if_not_exists(root_dir_name):
 def get_labels(G, configuration):
     """Returns the labels for the plot nodes.
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param configuration:
     """
     labels = {}

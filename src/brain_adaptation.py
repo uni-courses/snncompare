@@ -1,53 +1,97 @@
+"""Applies brain adaptation to a MDSA SNN graph."""
 import copy
 
+from src.create_testobject import add_monitor_to_dict
 from src.helper import print_time
 from src.helper_network_structure import plot_coordinated_graph
 from src.old_conversion import convert_networkx_graph_to_snn_with_one_neuron
-from tests.create_testobject import add_monitor_to_dict
 
 
 def adaptation_mech_2_networkx_and_snn(
-    G,
-    iteration,
+    has_radiation,
     latest_millis,
     latest_time,
     m,
     rad_dam,
     sim_time,
-    size,
     test_object,
 ):
+    """TODO: delete this method as it is not used.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param has_radiation: Indicates whether the experiment simulates radiation
+     or not.
+    :param iteration: The initialisation iteration that is used.
+    :param latest_millis: Timestamp with millisecond accuracy. Format unknown.
+    :param latest_time: Previously measured time in milliseconds. Format
+    unknown.
+    :param m: The amount of approximation iterations used in the MDSA
+    approximation.
+    :param rad_dam: Indicates whether radiation damage is simulated or not.
+    :param sim_time: Nr. of timesteps for which the experiment is ran.
+    :param size: Nr of nodes in the original graph on which test is ran.
+    :param test_object: Object containing test settings.
+
+    """
+    # pylint: disable=R0913
+    # 9 arguments is considered acceptable here as it requires quite some
+    # information to apply the adaptation mechanism.
+
     # Implement brain adaptation on networkx graph.
     dead_neuron_names = implement_adaptation_mechanism(
-        G, test_object.get_degree, iteration, m, rad_dam, size, test_object
+        test_object.get_degree,
+        has_radiation,
+        m,
+        rad_dam,
+        test_object,
     )
     test_object.brain_adaptation_graph = copy.deepcopy(test_object.get_degree)
 
     latest_time, latest_millis = print_time(
-        f"Get adapted networkx Graph.", latest_time, latest_millis
+        "Get adapted networkx Graph.", latest_millis
     )
 
     # Convert the graph with brain adaptation to an SNN.
     test_object = convert_new_graph_to_snn(test_object, sim_time)
-    latest_time, latest_millis = print_time(
-        f"Got adapted SNN.", latest_time, latest_millis
-    )
+    latest_time, latest_millis = print_time("Got adapted SNN.", latest_millis)
     return dead_neuron_names, latest_time, latest_millis
 
 
 def implement_adaptation_mechanism(
-    G, get_degree, iteration, m, rad_dam, size, test_object, plot_graph=False
+    get_degree,
+    has_radiation,
+    m,
+    rad_dam,
+    test_object,
+    plot_graph=False,
 ):
-    d = 0.25 * (
-        m + 1
-    )  # Hardcoded duplicate of d in get_degree_graph_with_separate_wta_circuits.
+    """
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param has_radiation: Indicates whether the experiment simulates radiation
+     or not.
+    param iteration: The initialisation iteration that is used.
+    :param m: The amount of approximation iterations used in the MDSA
+    approximation.
+    :param rad_dam: Indicates whether radiation damage is simulated or not.
+    :param size: Nr of nodes in the original graph on which test is ran.
+    :param test_object: Object containing test settings.
+    :param plot_graph:  (Default value = False)
+
+    """
+    # pylint: disable=R0913
+    # 8 arguments is considered acceptable here as it requires quite some
+    # information to apply the adaptation mechanism.
+
+    d = 0.25 * (m + 1)  # Hardcoded duplicate of d in get_degree_graph.
     original_nodes = copy.deepcopy(get_degree.nodes)
 
     for node_name in original_nodes:
-        # Get input synapses as dictionaries, one per node, store as node attribute.
+        # Get input synapses as dictionaries, one per node, store as node
+        # attribute.
         store_input_synapses(get_degree, node_name)
 
-        # Get output synapses as dictionaries, one per node, store as node attribute.
+        # Get output synapses as dictionaries, one per node, store as node
+        # attribute.
         store_output_synapses(get_degree, node_name)
 
         # Create redundant neurons.
@@ -69,21 +113,32 @@ def implement_adaptation_mechanism(
         # TODO: Add recurrent self inhibitory synapse for some redundant nodes.
         add_recurrent_inhibitiory_synapses(get_degree, node_name)
 
-    # Inject radiation by setting arbitrary neuron thresholds to 1000
-    # before converting the networkx to snn.
-    dead_neuron_names = rad_dam.inject_simulated_radiation(
-        get_degree, rad_dam.neuron_death_probability
-    )
-    test_object.second_rad_damage_graph = copy.deepcopy(test_object.get_degree)
-    test_object.second_dead_neuron_names = copy.deepcopy(dead_neuron_names)
+    if has_radiation:
+        # Inject radiation by setting arbitrary neuron thresholds to 1000
+        # before converting the networkx to snn.
+        dead_neuron_names = rad_dam.inject_simulated_radiation(
+            get_degree, rad_dam.neuron_death_probability
+        )
+        test_object.rad_damaged_graph = copy.deepcopy(test_object.get_degree)
+        test_object.final_dead_neuron_names = copy.deepcopy(dead_neuron_names)
+    else:
+        dead_neuron_names = None
+        test_object.rad_damaged_graph = None
+        test_object.final_dead_neuron_names = None
 
     # Visualise new graph.
     if plot_graph:
-        plot_coordinated_graph(get_degree, iteration, size, show=False)
+        plot_coordinated_graph(get_degree, None, show=False)
     return dead_neuron_names
 
 
 def store_input_synapses(get_degree, node_name):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param node_name: Node of the name of a networkx graph.
+
+    """
     input_edges = []
     for edge in get_degree.edges:
         if edge[1] == node_name:
@@ -92,6 +147,12 @@ def store_input_synapses(get_degree, node_name):
 
 
 def store_output_synapses(get_degree, node_name):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param node_name: Node of the name of a networkx graph.
+
+    """
     output_edges = []
     for edge in get_degree.edges:
         if edge[0] == node_name:
@@ -100,7 +161,13 @@ def store_output_synapses(get_degree, node_name):
 
 
 def create_redundant_node(d, get_degree, node_name):
-    """Create neuron and set coordinate position."""
+    """Create neuron and set coordinate position.
+
+    :param d: Unit length of the spacing used in the positions of the nodes for
+    plotting.
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param node_name: Node of the name of a networkx graph.
+    """
     vth = compute_vth_for_delay(get_degree, node_name)
     get_degree.add_node(
         f"red_{node_name}",
@@ -122,6 +189,9 @@ def compute_vth_for_delay(get_degree, node_name):
     spike_once neurons, rand neurons and selector neurons.
 
     Returns dv of default node otherwise.
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param node_name: Node of the name of a networkx graph.
     """
     if (
         node_name[:11] == "spike_once_"
@@ -136,6 +206,12 @@ def compute_vth_for_delay(get_degree, node_name):
 
 
 def add_input_synapses(get_degree, node_name):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param node_name: Node of the name of a networkx graph.
+
+    """
     for edge in get_degree.nodes[node_name]["input_edges"]:
         # Compute set edge weight
         left_node = edge[0]
@@ -149,6 +225,12 @@ def add_input_synapses(get_degree, node_name):
 
 
 def add_output_synapses(get_degree, node_name):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param node_name: Node of the name of a networkx graph.
+
+    """
     get_degree.add_edges_from(get_degree.nodes[node_name]["output_edges"])
     for edge in get_degree.nodes[node_name]["output_edges"]:
         # Compute set edge weight
@@ -163,6 +245,12 @@ def add_output_synapses(get_degree, node_name):
 
 
 def add_inhibitory_synapse(get_degree, node_name):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param node_name: Node of the name of a networkx graph.
+
+    """
     # TODO: compute what minimum inhibitory weight should be in network to
     # prevent all neurons from spiking.
     get_degree.add_edges_from([(node_name, f"red_{node_name}")], weight=-100)
@@ -170,6 +258,12 @@ def add_inhibitory_synapse(get_degree, node_name):
 
 
 def add_recurrent_inhibitiory_synapses(get_degree, nodename):
+    """
+
+    :param get_degree: Graph with the MDSA SNN approximation solution.
+    :param nodename: Node of the name of a networkx graph.
+
+    """
     if "recur" in get_degree.nodes[nodename].keys():
         get_degree.add_edges_from(
             [
@@ -183,7 +277,13 @@ def add_recurrent_inhibitiory_synapses(get_degree, nodename):
 
 
 def convert_new_graph_to_snn(test_object, sim_time):
-    ## Convert the snn networkx graph into a Loihi implementation.
+    """
+
+    :param test_object: Object containing test settings.
+    :param sim_time: Nr. of timesteps for which the experiment is ran.
+
+    """
+    # Convert the snn networkx graph into a Loihi implementation.
     (
         test_object.converted_nodes,
         test_object.lhs_neuron,

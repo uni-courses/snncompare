@@ -47,6 +47,7 @@ class LIF_neuron:
 
         :param a_in: int: the input current into this neuron.
         :param a_in: int:
+        :param a_in: int:
         """
         self.set_compute_u(a_in)
         self.set_compute_v()
@@ -194,7 +195,13 @@ class Vth:
 
 
 def print_neuron_properties(neurons, static, ids=None, spikes=None):
-    """Prints the neuron properties in human readable format."""
+    """Prints the neuron properties in human readable format.
+
+    :param neurons:
+    :param static:
+    :param ids:  (Default value = None)
+    :param spikes:  (Default value = None)
+    """
     spacing = 5
     if ids is not None:
         for x in ids:
@@ -234,7 +241,10 @@ def print_neuron_properties(neurons, static, ids=None, spikes=None):
 
 def round_if_array(value):
     """Rounds an incoming value up to 2 decimals and unpacks array if lif
-    neuron property is returns as array."""
+    neuron property is returns as array.
+
+    :param value:
+    """
     if isinstance(value, np.ndarray):
         return round(value[0], 2)
     return round(value, 2)
@@ -244,6 +254,9 @@ def print_neuron_properties_per_graph(G, static):
     """Prints bias,du,dv,vth of neuron.
 
     Supports both lava and networkx neurons.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param static:
     """
     lava_neurons = []
     nx_neurons = []

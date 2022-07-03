@@ -7,6 +7,7 @@ network to simulate it, one neuron at a time.
 
 # Import external libraries.
 import copy
+
 import networkx as nx
 
 # Import local project functions and classes.
@@ -18,7 +19,7 @@ from .LIF_neuron import LIF_neuron
 def add_nx_neurons_to_networkx_graph(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param duration: int:
 
     """
@@ -39,7 +40,8 @@ def add_nx_neurons_to_networkx_graph(G: nx.DiGraph) -> None:
 def generate_lif_neurons(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph:
+    :param G: The original graph on which the MDSA algorithm is ran.
+
 
     """
     for node in G.nodes:
@@ -55,14 +57,18 @@ def generate_lif_neurons(G: nx.DiGraph) -> None:
 def generate_lif_synapses(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph:
+    :param G: The original graph on which the MDSA algorithm is ran.
 
     """
     return G
 
 
-def run_snn_on_networkx(G: nx.DiGraph, t: int) -> None:
-    """Runs the simulation for t timesteps using networkx, not lava."""
+def run_snn_on_networkx(G: nx.DiGraph, t: int) -> nx.DiGraph:
+    """Runs the simulation for t timesteps using networkx, not lava.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    :param t: int:
+    """
     verify_networkx_snn_spec(G)
 
     G_behaviour = []
@@ -76,7 +82,7 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
     """Runs the networkx simulation of the network for 1 timestep. The results
     of the simulation are stored in the G.nodes network.
 
-    :param G: nx.DiGraph:
+    :param G: The original graph on which the MDSA algorithm is ran.
     """
     # Visited edges
     visited_edges = []
@@ -115,7 +121,10 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph) -> None:
 
 
 def reset_a_in_next_for_all_neurons(G):
-    """Resets the a_in_next for all neurons to 0."""
+    """Resets the a_in_next for all neurons to 0.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    """
     for node in G.nodes:
         G.nodes[node]["nx_LIF"].a_in_next = 0
 
@@ -123,7 +132,7 @@ def reset_a_in_next_for_all_neurons(G):
 def initialise_a_in_is_zero_at_t_is_1(G: nx.DiGraph) -> None:
     """
 
-    :param G: nx.DiGraph:
+    :param G: The original graph on which the MDSA algorithm is ran.
 
     """
     for node in G.nodes:

@@ -1,3 +1,4 @@
+"""Old code used to convert the networkx graph to an MDSA SNN algorithm."""
 import networkx as nx
 
 from src.convert_networkx_to_lava import (
@@ -11,7 +12,7 @@ from src.convert_networkx_to_lava import (
 def convert_networkx_graph_to_snn_with_one_neuron(G):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
 
     """
     # TODO: rewrite function to:
@@ -28,24 +29,30 @@ def convert_networkx_graph_to_snn_with_one_neuron(G):
         neurons,
         lhs_node,
         neuron_dict,
-        visited_nodes,
+        _,
     ) = retry_build_snn(G, [], [], first_node, [], neuron_dict)
     return converted_nodes, lhs_neuron, neurons, lhs_node, neuron_dict
 
 
 def retry_build_snn(
-    G, converted_nodes, neurons, lhs_node, visited_nodes, neuron_dict={}
+    G, converted_nodes, neurons, lhs_node, visited_nodes, neuron_dict=None
 ):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param converted_nodes:
     :param neurons:
     :param lhs_node:
-    :param visited_nodes:
+    :param visited_nodes: param neuron_dict:  (Default value = {})
+    :param converted_nodes:
+    :param lhs_node:
     :param neuron_dict:  (Default value = {})
 
     """
+    # pylint: disable=R0913
+    # TODO: reduce input arguments from 6/5 to at most 5/5.
+    if neuron_dict is None:
+        neuron_dict = {}
     # Verify prerequisites
     # print_node_properties(G, lhs_node)
     assert_all_neuron_properties_are_specified(G, lhs_node)
@@ -80,7 +87,7 @@ def retry_build_snn(
                     converted_nodes,
                     rhs_neuron,
                     neurons,
-                    rhs_node,
+                    _,
                 ) = create_neuron_from_node(
                     G, converted_nodes, neurons, neighbour, old_code=True
                 )
@@ -117,9 +124,9 @@ def retry_build_snn(
             if neighbour not in visited_nodes:
                 (
                     converted_nodes,
-                    discarded_neuron,
+                    _,
                     neurons,
-                    discarded_node,
+                    _,
                     neuron_dict,
                     visited_nodes,
                 ) = retry_build_snn(
@@ -143,9 +150,9 @@ def retry_build_snn(
 def get_neuron_belonging_to_node_from_list(neurons, node, nodes):
     """
 
-    :param neurons:
-    :param node:
+    :param neurons: param node:
     :param nodes:
+    :param node:
 
     """
     index = nodes.index(node)
@@ -155,9 +162,9 @@ def get_neuron_belonging_to_node_from_list(neurons, node, nodes):
 def get_node_belonging_to_neuron_from_list(neuron, neurons, nodes):
     """
 
-    :param neuron:
-    :param neurons:
+    :param neuron: Lava neuron object. param neurons:
     :param nodes:
+    :param neurons:
 
     """
     index = neurons.index(neuron)
@@ -170,9 +177,9 @@ def get_edge_if_exists(G, lhs_node, rhs_node):
 
     Returns None otherwise.
 
-    :param G:
-    :param lhs_node:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param rhs_node:
+    :param lhs_node:
     """
     if G.has_edge(lhs_node, rhs_node):
         for edge in G.edges:
@@ -191,12 +198,13 @@ def get_edge_if_exists(G, lhs_node, rhs_node):
             "Would expect an edge between a node and its neighbour in the"
             + " other direction."
         )
+    return None
 
 
 def assert_all_neuron_properties_are_specified(G, node):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param node:
 
     """
@@ -210,7 +218,7 @@ def assert_all_neuron_properties_are_specified(G, node):
 def all_neuron_properties_are_specified(G, node):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param node:
 
     """
@@ -227,7 +235,7 @@ def all_neuron_properties_are_specified(G, node):
 def get_neuron_property_names(G, node):
     """
 
-    :param G:
+    :param G: The original graph on which the MDSA algorithm is ran.
     :param node:
 
     """
