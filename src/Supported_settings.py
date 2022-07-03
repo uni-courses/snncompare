@@ -22,10 +22,11 @@ class Supported_settings:
     def __init__(
         self,
     ) -> None:
-        # The number of iterations for which the Alipour approximation is ran.
-        self.m = list(range(0, 1, 1))
         # The number of times the experiment is repeated.
         self.iterations = list(range(0, 3, 1))
+
+        # The number of iterations for which the Alipour approximation is ran.
+        self.m = list(range(0, 1, 1))
 
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
@@ -36,15 +37,18 @@ class Supported_settings:
             (3, self.max_max_graphs),
             (4, self.max_max_graphs),
         ]
+
         # Overwrite the simulation results or not.
         self.overwrite_sim_results = True
         # Overwrite the visualisation of the SNN behaviour or not.
         self.overwrite_visualisation = True
+
         # The backend/type of simulator that is used.
-        self.simulators = ["nx"]
+        self.simulators = ["nx", "lava"]
 
         # Generate the supported adaptation settings.
         self.specify_supported_adaptation_settings()
+
         # Generate the supported radiation settings.
         self.specify_supported_radiation_settings()
 

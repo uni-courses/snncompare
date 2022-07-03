@@ -20,8 +20,6 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
             + " type dict."
         )
 
-    print(f"experiment_config={experiment_config}")
-    print(f'experiment_config["m"]={experiment_config["m"]}')
     verify_m_setting(supp_sets, experiment_config["m"])
     if has_unique_id:
         print("TODO: test unique id type.")
