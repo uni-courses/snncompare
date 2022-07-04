@@ -25,8 +25,14 @@ class Test_radiation_settings(unittest.TestCase):
 
         self.invalid_radiation_key = {"non-existing-key": 5}
 
+    # TODO: write test that verifies an error is thrown if the radiation key
+    # is not set.
     def test_catch_radiation_is_none(self):
-        """."""
+        """Verifies if an error is thrown if the value belonging to the
+        radiation key in the configuration settings has value: None.
+
+        (The value should be a dict.)
+        """
 
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
@@ -39,7 +45,12 @@ class Test_radiation_settings(unittest.TestCase):
         )
 
     def test_catch_invalid_radiation_type(self):
-        """."""
+        """Verifies if an error is thrown if the value belonging to the
+        adaptation key in the configuration settings has a value of type
+        string.
+
+        (The value should be a dict.)
+        """
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
             verify_adap_and_rad_settings(
