@@ -27,9 +27,10 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     verify_max_max_graphs_setting(
         supp_sets, experiment_config["max_max_graphs"]
     )
-    verify_overwrite_sim_results_setting(
-        experiment_config["overwrite_sim_results"]
-    )
+
+    verify_bool_setting(experiment_config["overwrite_sim_results"])
+
+    verify_bool_setting(experiment_config["overwrite_visualisation"])
 
     if has_unique_id:
         print("TODO: test unique id type.")
@@ -101,15 +102,12 @@ def verify_max_max_graphs_setting(supp_sets, max_max_graphs_setting):
         )
 
 
-def verify_overwrite_sim_results_setting(overwrite_sim_results_setting):
-    """Verifies the overwrite_sim_results_setting value is a boolean.
-
-    :param max_max_graphs_setting:
-    """
-    if not isinstance(overwrite_sim_results_setting, bool):
+def verify_bool_setting(bool_setting):
+    """Verifies the bool_setting value is a boolean."""
+    if not isinstance(bool_setting, bool):
         raise Exception(
             f"Error, expected type:{bool}, yet it was:"
-            + f"{type(overwrite_sim_results_setting)}"
+            + f"{type(bool_setting)}"
         )
 
 
