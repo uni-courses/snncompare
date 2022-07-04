@@ -7,7 +7,7 @@ import unittest
 from src.experiment_settings.verify_supported_settings import (
     verify_configuration_settings,
 )
-from tests.experiment_settings.test_supported_settings_iteration import (
+from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
     supp_sets,
@@ -37,7 +37,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
 
     def test_size_and_max_graphs_is_none(self):
         """Verifies an error is thrown if configuration settings do not contain
-        m."""
+        this setting.."""
 
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
