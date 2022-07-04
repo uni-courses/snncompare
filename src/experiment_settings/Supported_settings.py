@@ -17,10 +17,7 @@ from src.experiment_settings.verify_supported_settings import (
 
 class Supported_settings:
     """Stores examples of the supported experiment settings, such as radiation
-    and adaptation settings.
-
-    Also verifies the settings that are created.
-    """
+    and adaptation settings."""
 
     def __init__(
         self,

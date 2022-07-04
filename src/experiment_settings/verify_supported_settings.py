@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 # pylint: disable=W0613
 def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
-    """Verifies the experiment configuration settings are valid.
+    """Verifies the selected experiment configuration settings are valid.
 
     :param experiment_config: param has_unique_id:
     :param has_unique_id: param supp_sets:
@@ -56,6 +56,7 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
         supp_sets.max_graph_size,
     )
 
+    # Verify a lower bound/min is not larger than a upper bound/max value.
     verify_min_max(
         experiment_config["min_graph_size"],
         experiment_config["max_graph_size"],
@@ -75,8 +76,8 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
 
 
 def verify_list_element_types_and_list_len(list_setting, element_type):
-    """Verifies the types and length of configuration settings that are stored
-    with a value of type list.
+    """Verifies the types and minimum length of configuration settings that are
+    stored with a value of type list.
 
     :param list_setting: param element_type:
     :param element_type:
@@ -90,8 +91,9 @@ def verify_list_element_types_and_list_len(list_setting, element_type):
 
 
 def verify_list_setting(supp_sets, setting, element_type, setting_name):
-    """Verifies the type of m setting is valid, and that its values are within
-    the supported range.
+    """Verifies the configuration settings that have values of type list, that
+    the list has at least 1 element in it, and that its values are within the
+    supported range.
 
     :param setting: param supp_sets:
     :param element_type: param setting_name:
@@ -99,7 +101,11 @@ def verify_list_setting(supp_sets, setting, element_type, setting_name):
     :param setting_name:
     """
 
+    # Check if the configuration setting is a list with length at least 1.
     verify_list_element_types_and_list_len(setting, element_type)
+
+    # Verify the configuration setting list elements are all within the
+    # supported range.
     expected_range = get_expected_range(setting_name, supp_sets)
     for element in setting:
         if element not in expected_range:
@@ -111,11 +117,11 @@ def verify_list_setting(supp_sets, setting, element_type, setting_name):
 
 
 def get_expected_range(setting_name, supp_sets):
-    """
+    """Returns the ranges as specified in the Supported_settings object for the
+    asked setting.
 
     :param setting_name: param supp_sets:
     :param supp_sets:
-
     """
     if setting_name == "iterations":
         return supp_sets.iterations
@@ -131,16 +137,17 @@ def get_expected_range(setting_name, supp_sets):
 def verify_size_and_max_graphs_settings(
     supp_sets, size_and_max_graphs_setting
 ):
-    """Verifies the type of m setting is valid, and that its values are within
+    """Verifies the configuration setting size_and_max_graphs_setting values
+    are a list of tuples with at least 1 tuple, and that its values are within
     the supported range.
 
     :param supp_sets:
     :param size_and_max_graphs_setting:
     :param supp_sets:
     """
-    print(f"size_and_max_graphs_setting={size_and_max_graphs_setting}")
     verify_list_element_types_and_list_len(size_and_max_graphs_setting, tuple)
 
+    # Verify the tuples contain valid values for size and max_graphs.
     for size_and_max_graphs in size_and_max_graphs_setting:
         size = size_and_max_graphs[0]
         max_graphs = size_and_max_graphs[1]
@@ -158,35 +165,34 @@ def verify_size_and_max_graphs_settings(
         )
 
 
-def verify_integer_settings(max_max_graphs_setting, min_val, max_val):
-    """Verifies the maximum value that the max_graphs per size can have is a
-    positive integer.
+def verify_integer_settings(integer_setting, min_val, max_val):
+    """Verifies an integer setting is of type integer and that it is within the
+    supported minimum and maximum value range..
 
-    :param max_max_graphs_setting: param supp_sets:
-    :param min_val: param max_val:
-    :param supp_sets:
+    :param integer_setting:
+    :param min_val:
     :param max_val:
     """
-    if not isinstance(max_max_graphs_setting, int):
+    if not isinstance(integer_setting, int):
         raise Exception(
             f"Error, expected type:{int}, yet it was:"
-            + f"{type(max_max_graphs_setting)} for:{max_max_graphs_setting}"
+            + f"{type(integer_setting)} for:{integer_setting}"
         )
-    if max_max_graphs_setting < min_val:
+    if integer_setting < min_val:
         raise Exception(
             f"Error, setting expected to be at least {min_val}. "
-            + f"Instead, it is:{max_max_graphs_setting}"
+            + f"Instead, it is:{integer_setting}"
         )
-    if max_max_graphs_setting > max_val:
+    if integer_setting > max_val:
         raise Exception(
             "Error, setting expected to be at most"
             + f" {max_val}. Instead, it is:"
-            + f"{max_max_graphs_setting}"
+            + f"{integer_setting}"
         )
 
 
 def verify_min_max(min_val, max_val):
-    """Checks whether a lower bound/minimum value is indeed smaller than an
+    """Verifies a lower bound/minimum value is indeed smaller than an
     upperbound/maximum value.
 
     Also verifies the values are either of type integer or float.
@@ -202,7 +208,7 @@ def verify_min_max(min_val, max_val):
 
 
 def verify_bool_setting(bool_setting):
-    """Verifies the bool_setting value is a boolean.
+    """Verifies the bool_setting value is of type: boolean.
 
     :param bool_setting:
     """
@@ -214,8 +220,9 @@ def verify_bool_setting(bool_setting):
 
 
 def verify_object_type(obj, expected_type, element_type=None):
-    """Verifies an object type, and if the object is a tuple, it also verifies
-    the types within the tuple or list.
+    """Verifies an incoming object has the expected type, and if the object is
+    a tuple or list, it also verifies the types of the elements in the tuple or
+    list.
 
     :param obj: param expected_type:
     :param element_type: Default value = None)
@@ -249,11 +256,14 @@ def verify_object_type(obj, expected_type, element_type=None):
 
 def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
     """Verifies the settings of adaptation or radiation property are valid.
+    Returns a dictionary with the adaptation setting if the settngs are valid.
 
     :param some_dict: param check_type:
     :param check_type: param supp_sets:
     :param supp_sets:
     """
+
+    # Load the example settings from the Supported_settings object.
     if check_type == "adaptation":
         reference_object: Dict[str, Any] = supp_sets.adaptation
     elif check_type == "radiation":
@@ -262,19 +272,18 @@ def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
         raise Exception(f"Check type:{check_type} not supported.")
 
     # Verify object is a dictionary.
-    print(f"some_dict={some_dict}")
     if isinstance(some_dict, dict):
         if some_dict == {}:
             raise Exception(f"Error, property dict: {check_type} was empty.")
         for key in some_dict:
 
-            # Verify the keys are within permissible keys.
+            # Verify the keys are within the supported dictionary keys.
             if key not in reference_object:
                 raise Exception(
                     f"Error, property.key:{key} is not in the supported "
                     + f"property keys:{reference_object.keys()}."
                 )
-            # Check values belonging to key
+            # Check if values belonging to key are within supported range.
             if check_type == "adaptation":
                 verify_adaptation_values(supp_sets, some_dict, key)
             elif check_type == "radiation":
@@ -287,19 +296,28 @@ def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
 
 
 def verify_adaptation_values(supp_sets, adaptation: dict, key: str) -> None:
-    """
+    """The configuration settings contain key named: adaptation. The value of
+    belonging to this key is a dictionary, which also has several keys.
+
+    This method checks whether these adaptation dictionary keys, are within
+    the supported range of adaptation setting keys. These adaptation dictionary
+    keys should each have values of the type list. These list elements should
+    have the type float, or be empty lists. The empty list represents: no
+    adaptation is used, signified by the key name: "None".
+
+    This method verifies the keys in the adaptation dictionary are within the
+    supported range. It also checks if the values of the adaptation dictionary
+    keys are a list, and whether all elements in those lists are of type float.
 
     :param adaptation: dict:
     :param key: str:
     :param supp_sets:
-    :param adaptation: dict:
-    :param key: str:
-
     """
 
-    if not isinstance(adaptation[key], type(supp_sets.adaptation[key])) or (
-        not isinstance(adaptation[key], float)
-        and not isinstance(adaptation[key], list)
+    # Verifies the configuration settings adaptation value is of the same type
+    # as the supported adaptation configuration setting (which is a list)).
+    if not isinstance(adaptation[key], type(supp_sets.adaptation[key])) and (
+        not isinstance(adaptation[key], list)
     ):
         raise Exception(
             f'Error, value of adaptation["{key}"]='
@@ -307,22 +325,32 @@ def verify_adaptation_values(supp_sets, adaptation: dict, key: str) -> None:
             + "), is of different type than the expected and supported "
             + f"type: {type(supp_sets.adaptation[key])}"
         )
-    # TODO: verify the elements in the list are of type float, if the value
-    # is a list.
+
+    # Verifies the values in the list of adaptation settings are of type float.
     if isinstance(adaptation[key], list):
         for setting in adaptation[key]:
             verify_object_type(setting, float, None)
 
 
 def verify_radiation_values(supp_sets, radiation: dict, key: str) -> None:
-    """
+    """The configuration settings contain key named: radiation. The value of
+    belonging to this key is a dictionary, which also has several keys.
+
+    This method checks whether these radiation dictionary keys, are within
+    the supported range of adaptation setting keys. These adaptation dictionary
+    keys should each have values of the type list. These list elements should
+    have the type float, tuple(float, float) or be empty lists. The empty list
+    represents: no radiation is used, signified by the key name: "None".
+
+    This method verifies the keys in the adaptation dictionary are within the
+    supported range. It also checks if the values of the adaptation dictionary
+    keys are a list, and whether all elements in those lists are of type float
+    or tuple. If the types are tuple, it also checks whether the values within
+    those tuples are of type float.
 
     :param radiation: dict:
     :param key: str:
     :param supp_sets:
-    :param radiation: dict:
-    :param key: str:
-
     """
     if not isinstance(radiation[key], type(supp_sets.radiation[key])) or (
         not isinstance(radiation[key], list)
