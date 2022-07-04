@@ -29,7 +29,7 @@ class Supported_settings:
         self.iterations = list(range(0, 3, 1))
 
         # The number of iterations for which the Alipour approximation is ran.
-        self.m = list(range(0, 1, 1))
+        self.m_vals = list(range(0, 1, 1))
 
         # Specify the maximum number of: (maximum number of graphs per run
         # size).

@@ -16,7 +16,7 @@ from tests.experiment_settings.test_generic_configuration import (
 )
 
 
-class Test_m_settings(unittest.TestCase):
+class Test_m_vals_settings(unittest.TestCase):
     """Tests whether the verify_configuration_settings_types function catches
     invalid m settings.."""
 
@@ -24,10 +24,10 @@ class Test_m_settings(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.supp_sets = Supported_settings()
-        self.valid_m = self.supp_sets.m
+        self.valid_m_vals = self.supp_sets.m_vals
 
-        self.invalid_m_value = {
-            "m": "invalid value of type string iso list of floats",
+        self.invalid_m_vals_value = {
+            "m_vals": "invalid value of type string iso list of floats",
         }
 
         self.supp_sets = supp_sets
@@ -35,7 +35,7 @@ class Test_m_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_m_is_none(self):
+    def test_m_vals_is_none(self):
         """Verifies an error is thrown if configuration settings do not contain
         this setting.."""
 
@@ -53,7 +53,7 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_type(self):
+    def test_catch_invalid_m_vals_type(self):
         """."""
 
         with self.assertRaises(Exception) as context:
@@ -69,12 +69,12 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_value_type_too_low(self):
+    def test_catch_invalid_m_vals_value_type_too_low(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of m in copy.
-        config_settings["m"] = [-2]
+        config_settings["m_vals"] = [-2]
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -82,18 +82,18 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
+            "Error, m_vals was expected to be in range:"
+            + f'{self.with_adaptation_with_radiation["m_vals"]}.'
             + f" Instead, it contains:{-2}.",
             str(context.exception),
         )
 
-    def test_catch_invalid_m_value_type_too_high(self):
+    def test_catch_invalid_m_vals_value_type_too_high(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of m in copy.
-        config_settings["m"] = [50]
+        config_settings["m_vals"] = [50]
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -101,18 +101,18 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
+            "Error, m_vals was expected to be in range:"
+            + f'{self.with_adaptation_with_radiation["m_vals"]}.'
             + f" Instead, it contains:{50}.",
             str(context.exception),
         )
 
-    def test_catch_empty_m_value_list(self):
+    def test_catch_empty_m_vals_value_list(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of m in copy.
-        config_settings["m"] = []
+        config_settings["m_vals"] = []
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -125,7 +125,7 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_returns_valid_m(self):
+    def test_returns_valid_m_vals(self):
         """Verifies a valid m is returned."""
         returned_dict = verify_configuration_settings(
             self.supp_sets,
@@ -134,14 +134,14 @@ class Test_m_settings(unittest.TestCase):
         )
         self.assertIsInstance(returned_dict, dict)
 
-    def test_empty_m(self):
+    def test_empty_m_vals(self):
         """Verifies an exception is thrown if an empty m dict is thrown."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        config_settings.pop("m")
+        config_settings.pop("m_vals")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -149,23 +149,23 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'m'",
+            "'m_vals'",
             str(context.exception),
         )
 
-    def test_m_value_is_invalid_type(self):
+    def test_m_vals_value_is_invalid_type(self):
         """Verifies an exception is thrown if the configuration setting:
 
-        m is of invalid type.
+        m_vals is of invalid type.
         """
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_sets.m)
+        expected_type = type(self.supp_sets.m_vals)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            config_settings["m"] = invalid_config_setting_value
+            config_settings["m_vals"] = invalid_config_setting_value
             verify_type_error_is_thrown_on_configuration_setting_type(
                 invalid_config_setting_value,
                 config_settings,

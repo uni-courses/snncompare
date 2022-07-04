@@ -23,7 +23,7 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
         )
 
     # Verify settings of type: list and tuple.
-    verify_list_setting(supp_sets, experiment_config["m"], int, "m")
+    verify_list_setting(supp_sets, experiment_config["m_vals"], int, "m_vals")
     verify_list_setting(
         supp_sets, experiment_config["iterations"], int, "iterations"
     )
@@ -119,8 +119,8 @@ def get_expected_range(setting_name, supp_sets):
     """
     if setting_name == "iterations":
         return supp_sets.iterations
-    if setting_name == "m":
-        return supp_sets.m
+    if setting_name == "m_vals":
+        return supp_sets.m_vals
     if setting_name == "simulators":
         return supp_sets.simulators
 

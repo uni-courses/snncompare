@@ -17,7 +17,7 @@ adap_sets = Adaptation_settings()
 rad_sets = Radiation_settings()
 with_adaptation_with_radiation = {
     "iterations": list(range(0, 3, 1)),
-    "m": list(range(0, 1, 1)),
+    "m_vals": list(range(0, 1, 1)),
     "min_max_graphs": 1,
     "max_max_graphs": 15,
     "min_graph_size": 3,
