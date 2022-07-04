@@ -35,11 +35,18 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.invalid_adaptation_key = {"non-existing-key": 5}
 
+    # TODO: write test that verifies an error is thrown if the adaptation key
+    # is not set.
+
     def test_catch_adaptation_is_none(self):
-        """."""
+        """Verifies if an error is thrown if the value belonging to the
+        adaptation key in the configuration settings has value: None.
+
+        (The value should be a dict.)
+        """
 
         with self.assertRaises(Exception) as context:
-            # adaptation dictionary of type None throws error.
+            # Adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(self.supp_sets, None, "adaptation")
 
         self.assertEqual(
@@ -49,7 +56,12 @@ class Test_adaptation_settings(unittest.TestCase):
         )
 
     def test_catch_invalid_adaptation_type(self):
-        """."""
+        """Verifies if an error is thrown if the value belonging to the
+        adaptation key in the configuration settings has a value of type
+        string.
+
+        (The value should be a dict.)
+        """
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
@@ -96,7 +108,7 @@ class Test_adaptation_settings(unittest.TestCase):
         )
 
     def test_returns_valid_adaptation(self):
-        """TODO: verify dict is returned for valid adaptation."""
+        """Verifies dict is returned for valid adaptation."""
         returned_dict = verify_adap_and_rad_settings(
             self.supp_sets, self.valid_adaptation, "adaptation"
         )

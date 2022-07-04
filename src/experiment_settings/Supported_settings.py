@@ -11,15 +11,13 @@ setting types should be identical.)
 # hierarchy is used, leading to 10/7 instance attributes.
 from src.experiment_settings.verify_supported_settings import (
     verify_configuration_settings,
+    verify_min_max,
 )
 
 
 class Supported_settings:
     """Stores examples of the supported experiment settings, such as radiation
-    and adaptation settings.
-
-    Also verifies the settings that are created.
-    """
+    and adaptation settings."""
 
     def __init__(
         self,
@@ -28,16 +26,25 @@ class Supported_settings:
         self.iterations = list(range(0, 3, 1))
 
         # The number of iterations for which the Alipour approximation is ran.
-        self.m = list(range(0, 1, 1))
+        self.m_vals = list(range(0, 1, 1))
 
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
+        self.min_max_graphs = 1
         self.max_max_graphs = 15
+        verify_min_max(self.min_max_graphs, self.max_max_graphs)
+
+        # Specify the maximum graph size.
+        self.min_graph_size = 3
+        self.max_graph_size = 20
+        verify_min_max(self.min_graph_size, self.max_graph_size)
+
         # The size of the graph and the maximum number of used graphs of that
         # size.
         self.size_and_max_graphs = [
-            (3, self.max_max_graphs),
-            (4, self.max_max_graphs),
+            (self.min_graph_size, self.max_max_graphs),
+            (5, 4),  # Means: get 4 graphs of size 5 for experiment.
+            (self.max_graph_size, self.max_max_graphs),
         ]
 
         # Overwrite the simulation results or not.
