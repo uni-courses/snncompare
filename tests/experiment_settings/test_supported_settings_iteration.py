@@ -121,11 +121,14 @@ class Test_iterations_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Remove key and value of m.
+        expected_type = type(self.supp_sets.iterations)
 
-        # Verify it throws an error on None.
-        invalid_config_setting_value = ""
-        config_settings["iterations"] = invalid_config_setting_value
-        verify_type_error_is_thrown_on_configuration_setting_type(
-            invalid_config_setting_value, config_settings, list, self
-        )
+        # Verify it throws an error on None and string.
+        for invalid_config_setting_value in [None, ""]:
+            config_settings["iterations"] = invalid_config_setting_value
+            verify_type_error_is_thrown_on_configuration_setting_type(
+                invalid_config_setting_value,
+                config_settings,
+                expected_type,
+                self,
+            )

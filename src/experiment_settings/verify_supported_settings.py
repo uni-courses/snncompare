@@ -171,7 +171,7 @@ def verify_integer_settings(max_max_graphs_setting, min_val, max_val):
     if not isinstance(max_max_graphs_setting, int):
         raise Exception(
             f"Error, expected type:{int}, yet it was:"
-            + f"{type(max_max_graphs_setting)}"
+            + f"{type(max_max_graphs_setting)} for:{max_max_graphs_setting}"
         )
     if max_max_graphs_setting < min_val:
         raise Exception(
@@ -210,7 +210,7 @@ def verify_bool_setting(bool_setting):
     if not isinstance(bool_setting, bool):
         raise Exception(
             f"Error, expected type:{bool}, yet it was:"
-            + f"{type(bool_setting)}"
+            + f"{type(bool_setting)} for:{bool_setting}"
         )
 
 

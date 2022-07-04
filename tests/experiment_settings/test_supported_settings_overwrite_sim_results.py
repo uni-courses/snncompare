@@ -52,7 +52,7 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
 
         self.assertEqual(
             "Error, expected type:<class 'bool'>, yet it was:"
-            + "<class 'NoneType'>",
+            + f"{type(None)} for:{None}",
             str(context.exception),
         )
 

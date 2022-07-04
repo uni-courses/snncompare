@@ -89,7 +89,7 @@ class Test_min_graph_size_settings(unittest.TestCase):
 
         self.assertEqual(
             "Error, expected type:<class 'int'>, yet it was:"
-            + "<class 'NoneType'>",
+            + f"{type(None)} for:{None}",
             str(context.exception),
         )
 
