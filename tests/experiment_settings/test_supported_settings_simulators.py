@@ -34,37 +34,7 @@ class Test_simulators_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_simulators = self.supp_sets.simulators
 
-    def test_simulators_is_none(self):
-        """Verifies an error is thrown if configuration settings do not contain
-        this setting.."""
-
-        with self.assertRaises(Exception) as context:
-            # Configuration Settings of type None throw error.
-            verify_configuration_settings(
-                self.supp_sets, None, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, the experiment_config is of type:"
-            + f"{type(None)}, yet it was expected to be of"
-            + " type dict.",
-            str(context.exception),
-        )
-
-    def test_catch_invalid_simulators_type(self):
-        """."""
-
-        with self.assertRaises(Exception) as context:
-            # simulators dictionary of type None throws error.
-            verify_configuration_settings(
-                self.supp_sets, "string_instead_of_dict", has_unique_id=False
-            )
-        self.assertEqual(
-            "Error, the experiment_config is of type:"
-            + f'{type("")}, yet it was expected to be of'
-            + " type dict.",
-            str(context.exception),
-        )
+    # TODO: write test simulators is of invalid type.
 
     def test_catch_invalid_simulators_value(self):
         """."""

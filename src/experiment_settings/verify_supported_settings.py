@@ -99,8 +99,9 @@ def verify_list_setting(supp_sets, setting, element_type, setting_name):
     :param supp_sets:
     :param setting_name:
     """
-    expected_range = get_expected_range(setting_name, supp_sets)
+
     verify_list_element_types_and_list_len(setting, element_type)
+    expected_range = get_expected_range(setting_name, supp_sets)
     for element in setting:
         if element not in expected_range:
             raise Exception(

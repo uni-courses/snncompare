@@ -11,6 +11,7 @@ from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
     supp_sets,
+    verify_type_error_is_thrown_on_configuration_setting_type,
     with_adaptation_with_radiation,
 )
 
@@ -34,7 +35,6 @@ class Test_iterations_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_iterations = self.supp_sets.iterations
 
-    # TODO: write test_iterations is None
     # TODO: write test_iterations is of invalid type.
 
     def test_catch_invalid_iterations_value_type_too_low(self):
@@ -111,4 +111,21 @@ class Test_iterations_settings(unittest.TestCase):
         self.assertEqual(
             "'iterations'",
             str(context.exception),
+        )
+
+    def test_iterations_value_is_invalid_type(self):
+        """Verifies an exception is thrown if the configuration setting:
+
+        iterations is of invalid type.
+        """
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Remove key and value of m.
+
+        # Verify it throws an error on None.
+        invalid_config_setting_value = ""
+        config_settings["iterations"] = invalid_config_setting_value
+        verify_type_error_is_thrown_on_configuration_setting_type(
+            invalid_config_setting_value, config_settings, list, self
         )

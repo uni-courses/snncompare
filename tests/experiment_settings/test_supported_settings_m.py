@@ -39,6 +39,7 @@ class Test_m_settings(unittest.TestCase):
         this setting.."""
 
         with self.assertRaises(Exception) as context:
+
             # Configuration Settings of type None throw error.
             verify_configuration_settings(
                 self.supp_sets, None, has_unique_id=False

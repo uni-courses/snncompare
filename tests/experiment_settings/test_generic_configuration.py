@@ -106,3 +106,27 @@ class Test_generic_configuration_settings(unittest.TestCase):
             has_unique_id=False,
         )
         self.assertIsInstance(returned_dict, dict)
+
+
+def verify_type_error_is_thrown_on_configuration_setting_type(
+    invalid_config_setting_value, config_settings, expected_type, test_object
+):
+    """Verifies an error is thrown on an invalid configuration setting type."""
+    actual_type = type(invalid_config_setting_value)
+    if not isinstance(actual_type, type) and not isinstance(
+        expected_type, type
+    ):
+        raise Exception(
+            "Error this method requires two types. You gave:"
+            + f"{actual_type},{expected_type}"
+        )
+    with test_object.assertRaises(Exception) as context:
+        verify_configuration_settings(
+            test_object.supp_sets, config_settings, has_unique_id=False
+        )
+
+    test_object.assertEqual(
+        f"Error, expected type:{expected_type}, yet it was:"
+        + f"{actual_type} for:{invalid_config_setting_value}",
+        str(context.exception),
+    )
