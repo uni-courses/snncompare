@@ -70,39 +70,92 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
     def test_catch_invalid_size_and_max_graphs_value_type_too_low(self):
         """."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        config_settings_first = copy.deepcopy(
+            self.with_adaptation_with_radiation
+        )
+        config_settings_second = copy.deepcopy(
+            self.with_adaptation_with_radiation
+        )
         # Set negative value of size_and_max_graphs in copy.
-        config_settings["size_and_max_graphs"] = [-2]
+        config_settings_first["size_and_max_graphs"] = [
+            (2, self.supp_sets.max_max_graphs),
+            (self.supp_sets.min_graph_size, self.supp_sets.max_max_graphs),
+        ]
+        config_settings_second["size_and_max_graphs"] = [
+            (self.supp_sets.min_graph_size, self.supp_sets.max_max_graphs),
+            (-2, self.supp_sets.max_max_graphs),
+        ]
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_sets, config_settings_first, has_unique_id=False
             )
 
         self.assertEqual(
-            "Error, size_and_max_graphs was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["size_and_max_graphs"]}.'
-            + f" Instead, it contains:{-2}.",
+            "Error, setting expected to be at least"
+            + f" {self.supp_sets.min_graph_size}. Instead, it is:"
+            + f"{2}",
             str(context.exception),
         )
 
-    def test_catch_invalid_size_and_max_graphs_value_type_too_high(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of size_and_max_graphs in copy.
-        config_settings["size_and_max_graphs"] = [50]
-        print(f"config_settings={config_settings}")
-
+        # Verify it catches the too large graph_size at the second tuple as
+        # well.
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_sets, config_settings_second, has_unique_id=False
             )
 
         self.assertEqual(
-            "Error, size_and_max_graphs was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["size_and_max_graphs"]}.'
-            + f" Instead, it contains:{50}.",
+            "Error, setting expected to be at least"
+            + f" {self.supp_sets.min_graph_size}. Instead, it is:"
+            + f"{-2}",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_size_and_max_graphs_value_size_too_high(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings_first = copy.deepcopy(
+            self.with_adaptation_with_radiation
+        )
+        config_settings_second = copy.deepcopy(
+            self.with_adaptation_with_radiation
+        )
+        # Set the desired graph size to 50, which is larger than allowed in
+        # self.supp_sets.max_graph_size. The max_graphs is set to the maximum
+        # which is acceptable.
+        config_settings_first["size_and_max_graphs"] = [
+            (50, self.supp_sets.max_max_graphs),
+            (self.supp_sets.min_graph_size, self.supp_sets.max_max_graphs),
+        ]
+        config_settings_second["size_and_max_graphs"] = [
+            (self.supp_sets.min_graph_size, self.supp_sets.max_max_graphs),
+            (42, self.supp_sets.max_max_graphs),
+        ]
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings_first, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, setting expected to be at most"
+            + f" {self.supp_sets.max_graph_size}. Instead, it is:"
+            + f"{50}",
+            str(context.exception),
+        )
+
+        # Verify it catches the too large graph_size at the second tuple as
+        # well.
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings_second, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, setting expected to be at most"
+            + f" {self.supp_sets.max_graph_size}. Instead, it is:"
+            + f"{42}",
             str(context.exception),
         )
 

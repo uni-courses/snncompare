@@ -11,6 +11,7 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
 
     :param experiment_config: param has_unique_id:
     :param has_unique_id:
+    :param supp_sets:
 
     """
     if not isinstance(has_unique_id, bool):
@@ -23,8 +24,10 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
         )
 
     # Verify settings of type: list and tuple.
-    verify_m_setting(supp_sets, experiment_config["m"])
-    verify_iterations_setting(supp_sets, experiment_config["iterations"])
+    verify_list_setting(supp_sets, experiment_config["m"], int, "m")
+    verify_list_setting(
+        supp_sets, experiment_config["iterations"], int, "iterations"
+    )
     verify_size_and_max_graphs_settings(
         supp_sets, experiment_config["size_and_max_graphs"]
     )
@@ -66,10 +69,14 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     return experiment_config
 
 
-def verify_list_setting(list_setting, element_types):
+def verify_list_element_types_and_list_len(list_setting, element_type):
     """Verifies the types and length of configuration settings that are stored
-    with a value of type list."""
-    verify_object_type(list_setting, list, element_types=element_types)
+    with a value of type list.
+
+    :param list_setting:
+    :param element_type:
+    """
+    verify_object_type(list_setting, list, element_type=element_type)
     if len(list_setting) < 1:
         raise Exception(
             "Error, list was expected contain at least 1 integer."
@@ -77,19 +84,40 @@ def verify_list_setting(list_setting, element_types):
         )
 
 
-def verify_iterations_setting(supp_sets, iterations_setting):
+def verify_list_setting(
+    supp_sets, iterations_setting, element_type, setting_name
+):
     """Verifies the type of m setting is valid, and that its values are within
     the supported range.
 
     :param iterations_setting:
+    :param supp_sets:
+    :param element_type:
+    :param setting_name:
     """
-    verify_list_setting(iterations_setting, int)
+
+    verify_list_element_types_and_list_len(iterations_setting, element_type)
     for iteration in iterations_setting:
         if iteration not in supp_sets.iterations:
             raise Exception(
-                "Error, iterations was expected to be in range:"
-                + f"{supp_sets.iterations}. Instead, it contains:{iteration}."
+                f"Error, {setting_name} was expected to be in range:"
+                + f"{get_expected_range(setting_name,supp_sets)}. Instead, it"
+                + f" contains:{iteration}."
             )
+
+
+def get_expected_range(setting_name, supp_sets):
+    """
+
+    :param setting_name:
+    :param supp_sets:
+
+    """
+    if setting_name == "iterations":
+        return supp_sets.iterations
+    if setting_name == "m":
+        return supp_sets.m
+    raise Exception("Error, unsupported parameter requested.")
 
 
 def verify_size_and_max_graphs_settings(
@@ -99,31 +127,29 @@ def verify_size_and_max_graphs_settings(
     the supported range.
 
     :param iterations_setting:
+    :param supp_sets:
+    :param size_and_max_graphs_setting:
     """
-    verify_list_setting(size_and_max_graphs_setting, tuple)
+    print(f"size_and_max_graphs_setting={size_and_max_graphs_setting}")
+    verify_list_element_types_and_list_len(size_and_max_graphs_setting, tuple)
 
-    # TODO: update to allow for different graph sizes.
-    # for iteration in size_and_max_graphs_setting:
-    #    if iteration not in supp_sets.iterations:
-    #        raise Exception(
-    #            "Error, iterations was expected to be in range:"
-    #            + f"{supp_sets.iterations}. Instead, it contains:{iteration}."
-    #        )
+    for size_and_max_graphs in size_and_max_graphs_setting:
+        size = size_and_max_graphs[0]
+        max_graphs = size_and_max_graphs[1]
 
+        verify_integer_settings(
+            supp_sets,
+            size,
+            supp_sets.min_graph_size,
+            supp_sets.max_graph_size,
+        )
 
-def verify_m_setting(supp_sets, m_setting):
-    """Verifies the type of m setting is valid, and that its values are within
-    the supported range.
-
-    :param m_setting:
-    """
-    verify_list_setting(m_setting, int)
-    for m in m_setting:
-        if m not in supp_sets.m:
-            raise Exception(
-                f"Error, m was expected to be in range:{supp_sets.m}."
-                + f" Instead, it contains:{m}."
-            )
+        verify_integer_settings(
+            supp_sets,
+            max_graphs,
+            supp_sets.min_max_graphs,
+            supp_sets.max_max_graphs,
+        )
 
 
 def verify_integer_settings(
@@ -135,6 +161,9 @@ def verify_integer_settings(
     # TODO: verify min is smaller than max for supported settings.
 
     :param max_max_graphs_setting:
+    :param supp_sets:
+    :param min_val:
+    :param max_val:
     """
     if not isinstance(max_max_graphs_setting, int):
         raise Exception(
@@ -143,19 +172,22 @@ def verify_integer_settings(
         )
     if max_max_graphs_setting < min_val:
         raise Exception(
-            f"Error, setting expected to be at least {min_val} or "
-            + f"larger. Instead, it is:{max_max_graphs_setting}"
+            f"Error, setting expected to be at least {min_val}. "
+            + f"Instead, it is:{max_max_graphs_setting}"
         )
     if max_max_graphs_setting > max_val:
         raise Exception(
             "Error, setting expected to be at most"
-            + f"{max_val}. Instead, it is:"
+            + f" {max_val}. Instead, it is:"
             + f"{max_max_graphs_setting}"
         )
 
 
 def verify_bool_setting(bool_setting):
-    """Verifies the bool_setting value is a boolean."""
+    """Verifies the bool_setting value is a boolean.
+
+    :param bool_setting:
+    """
     if not isinstance(bool_setting, bool):
         raise Exception(
             f"Error, expected type:{bool}, yet it was:"
@@ -163,12 +195,12 @@ def verify_bool_setting(bool_setting):
         )
 
 
-def verify_object_type(obj, expected_type, element_types=None):
+def verify_object_type(obj, expected_type, element_type=None):
     """Verifies an object type, and if the object is a tuple, it also verifies
     the types within the tuple or list.
 
     :param obj: param expected_type:
-    :param element_types: Default value = None)
+    :param element_type: Default value = None)
     :param expected_type:
     """
 
@@ -183,17 +215,17 @@ def verify_object_type(obj, expected_type, element_types=None):
     if isinstance(obj, (list, tuple)):
 
         # Verify user passed the expected element types.
-        if element_types is None:
+        if element_type is None:
             raise Exception("Expected a type to check list element types.")
 
         # Verify the element types.
-        print(f"element_types={element_types}")
-        if not all(isinstance(n, element_types) for n in obj):
+        print(f"element_type={element_type}")
+        if not all(isinstance(n, element_type) for n in obj):
 
-            # if list(map(type, obj)) != element_types:
+            # if list(map(type, obj)) != element_type:
             raise Exception(
                 f"Error, obj={obj}, its type is:{list(map(type, obj))},"
-                + f" expected type:{element_types}"
+                + f" expected type:{element_type}"
             )
 
 
@@ -202,6 +234,7 @@ def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
 
     :param some_dict: param check_type:
     :param check_type:
+    :param supp_sets:
     """
     if check_type == "adaptation":
         reference_object: Dict[str, Any] = supp_sets.adaptation
@@ -240,6 +273,7 @@ def verify_adaptation_values(supp_sets, adaptation: dict, key: str) -> None:
 
     :param adaptation: dict:
     :param key: str:
+    :param supp_sets:
 
     """
 
@@ -263,14 +297,6 @@ def verify_adaptation_values(supp_sets, adaptation: dict, key: str) -> None:
 def verify_radiation_values(supp_sets, radiation: dict, key: str) -> None:
     """
 
-    :param radiation: dict:
-    :param key: str:
-    :param radiation: dict:
-    :param key: str:
-    :param radiation: dict:
-    :param key: str:
-    :param radiation: dict:
-    :param key: str:
     :param radiation: dict:
     :param key: str:
 

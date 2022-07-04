@@ -113,7 +113,6 @@ class Test_iterations_settings(unittest.TestCase):
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of iterations in copy.
         config_settings["iterations"] = [50]
-        print(f"config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(

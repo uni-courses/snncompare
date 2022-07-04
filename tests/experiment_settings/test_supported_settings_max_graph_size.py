@@ -82,8 +82,8 @@ class Test_max_graph_size_settings(unittest.TestCase):
 
         self.assertEqual(
             "Error, setting expected to be at least "
-            + f"{self.supp_sets.min_graph_size} or "
-            + f"larger. Instead, it is:{-2}",
+            + f"{self.supp_sets.min_graph_size}. "
+            + f"Instead, it is:{-2}",
             str(context.exception),
         )
 
@@ -93,7 +93,6 @@ class Test_max_graph_size_settings(unittest.TestCase):
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
         config_settings["max_graph_size"] = 50
-        print(f"config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -101,7 +100,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, setting expected to be at most"
+            "Error, setting expected to be at most "
             + f"{self.supp_sets.max_graph_size}. Instead, it is:"
             + "50",
             str(context.exception),
