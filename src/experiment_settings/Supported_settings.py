@@ -11,6 +11,7 @@ setting types should be identical.)
 # hierarchy is used, leading to 10/7 instance attributes.
 from src.experiment_settings.verify_supported_settings import (
     verify_configuration_settings,
+    verify_min_max,
 )
 
 
@@ -34,10 +35,12 @@ class Supported_settings:
         # size).
         self.min_max_graphs = 1
         self.max_max_graphs = 15
+        verify_min_max(self.min_max_graphs, self.max_max_graphs)
 
         # Specify the maximum graph size.
         self.min_graph_size = 3
         self.max_graph_size = 20
+        verify_min_max(self.min_graph_size, self.max_graph_size)
 
         # The size of the graph and the maximum number of used graphs of that
         # size.

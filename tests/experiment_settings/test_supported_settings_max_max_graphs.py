@@ -87,6 +87,30 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    def test_catch_max_max_graphs_is_smaller_than_min_max_graphs(self):
+        """To state the obvious, this also tests whether min_max_graphs is
+        larger than max_graph size throws an exception."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of max_max_graphs in copy.
+        config_settings["min_max_graphs"] = (
+            config_settings["min_max_graphs"] + 1
+        )
+        config_settings["max_max_graphs"] = (
+            config_settings["min_max_graphs"] - 1
+        )
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            f'Lower bound:{config_settings["min_max_graphs"]} is larger than'
+            f' upper bound:{config_settings["max_max_graphs"]}.',
+            str(context.exception),
+        )
+
     def test_catch_invalid_max_max_graphs_value_type_too_high(self):
         """."""
         # Create deepcopy of configuration settings.

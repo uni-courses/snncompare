@@ -36,31 +36,34 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     )
 
     # Verify settings of type integer.
-    # TODO: verify min is smaller than max for supported settings.
-    # TODO: verify min is smaller than max for experiment_config.
     verify_integer_settings(
-        supp_sets,
         experiment_config["min_max_graphs"],
         supp_sets.min_max_graphs,
         supp_sets.max_max_graphs,
     )
     verify_integer_settings(
-        supp_sets,
         experiment_config["max_max_graphs"],
         supp_sets.min_max_graphs,
         supp_sets.max_max_graphs,
     )
     verify_integer_settings(
-        supp_sets,
         experiment_config["min_graph_size"],
         supp_sets.min_graph_size,
         supp_sets.max_graph_size,
     )
     verify_integer_settings(
-        supp_sets,
         experiment_config["max_graph_size"],
         supp_sets.min_graph_size,
         supp_sets.max_graph_size,
+    )
+
+    verify_min_max(
+        experiment_config["min_graph_size"],
+        experiment_config["max_graph_size"],
+    )
+    verify_min_max(
+        experiment_config["min_max_graphs"],
+        experiment_config["max_max_graphs"],
     )
 
     # Verify settings of type bool.
@@ -87,25 +90,23 @@ def verify_list_element_types_and_list_len(list_setting, element_type):
         )
 
 
-def verify_list_setting(
-    supp_sets, iterations_setting, element_type, setting_name
-):
+def verify_list_setting(supp_sets, setting, element_type, setting_name):
     """Verifies the type of m setting is valid, and that its values are within
     the supported range.
 
-    :param iterations_setting: param supp_sets:
+    :param setting: param supp_sets:
     :param element_type: param setting_name:
     :param supp_sets:
     :param setting_name:
     """
     expected_range = get_expected_range(setting_name, supp_sets)
-    verify_list_element_types_and_list_len(iterations_setting, element_type)
-    for iteration in iterations_setting:
-        if iteration not in expected_range:
+    verify_list_element_types_and_list_len(setting, element_type)
+    for element in setting:
+        if element not in expected_range:
             raise Exception(
                 f"Error, {setting_name} was expected to be in range:"
                 + f"{expected_range}. Instead, it"
-                + f" contains:{iteration}."
+                + f" contains:{element}."
             )
 
 
@@ -133,7 +134,7 @@ def verify_size_and_max_graphs_settings(
     """Verifies the type of m setting is valid, and that its values are within
     the supported range.
 
-    :param iterations_setting: param supp_sets:
+    :param supp_sets:
     :param size_and_max_graphs_setting:
     :param supp_sets:
     """
@@ -145,27 +146,21 @@ def verify_size_and_max_graphs_settings(
         max_graphs = size_and_max_graphs[1]
 
         verify_integer_settings(
-            supp_sets,
             size,
             supp_sets.min_graph_size,
             supp_sets.max_graph_size,
         )
 
         verify_integer_settings(
-            supp_sets,
             max_graphs,
             supp_sets.min_max_graphs,
             supp_sets.max_max_graphs,
         )
 
 
-def verify_integer_settings(
-    supp_sets, max_max_graphs_setting, min_val, max_val
-):
+def verify_integer_settings(max_max_graphs_setting, min_val, max_val):
     """Verifies the maximum value that the max_graphs per size can have is a
     positive integer.
-
-    # TODO: verify min is smaller than max for supported settings.
 
     :param max_max_graphs_setting: param supp_sets:
     :param min_val: param max_val:
@@ -187,6 +182,22 @@ def verify_integer_settings(
             "Error, setting expected to be at most"
             + f" {max_val}. Instead, it is:"
             + f"{max_max_graphs_setting}"
+        )
+
+
+def verify_min_max(min_val, max_val):
+    """Checks whether a lower bound/minimum value is indeed smaller than an
+    upperbound/maximum value.
+
+    Also verifies the values are either of type integer or float.
+    """
+    for val in [min_val, max_val]:
+        if not isinstance(val, (float, int)):
+            raise Exception("Expected {val} to be of type int, or float.")
+    if min_val > max_val:
+        raise Exception(
+            f"Lower bound:{min_val} is larger than upper bound:"
+            + f"{max_val}."
         )
 
 
