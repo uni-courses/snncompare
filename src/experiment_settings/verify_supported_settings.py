@@ -22,14 +22,43 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
             + " type dict."
         )
 
+    # Verify settings of type: list and tuple.
     verify_m_setting(supp_sets, experiment_config["m"])
     verify_iterations_setting(supp_sets, experiment_config["iterations"])
-    verify_max_max_graphs_setting(
-        supp_sets, experiment_config["max_max_graphs"]
+    verify_size_and_max_graphs_settings(
+        supp_sets, experiment_config["size_and_max_graphs"]
     )
 
-    verify_bool_setting(experiment_config["overwrite_sim_results"])
+    # Verify settings of type integer.
+    # TODO: verify min is smaller than max for supported settings.
+    # TODO: verify min is smaller than max for experiment_config.
+    verify_integer_settings(
+        supp_sets,
+        experiment_config["min_max_graphs"],
+        supp_sets.min_max_graphs,
+        supp_sets.max_max_graphs,
+    )
+    verify_integer_settings(
+        supp_sets,
+        experiment_config["max_max_graphs"],
+        supp_sets.min_max_graphs,
+        supp_sets.max_max_graphs,
+    )
+    verify_integer_settings(
+        supp_sets,
+        experiment_config["min_graph_size"],
+        supp_sets.min_graph_size,
+        supp_sets.max_graph_size,
+    )
+    verify_integer_settings(
+        supp_sets,
+        experiment_config["max_graph_size"],
+        supp_sets.min_graph_size,
+        supp_sets.max_graph_size,
+    )
 
+    # Verify settings of type bool.
+    verify_bool_setting(experiment_config["overwrite_sim_results"])
     verify_bool_setting(experiment_config["overwrite_visualisation"])
 
     if has_unique_id:
@@ -63,6 +92,25 @@ def verify_iterations_setting(supp_sets, iterations_setting):
             )
 
 
+def verify_size_and_max_graphs_settings(
+    supp_sets, size_and_max_graphs_setting
+):
+    """Verifies the type of m setting is valid, and that its values are within
+    the supported range.
+
+    :param iterations_setting:
+    """
+    verify_list_setting(size_and_max_graphs_setting, tuple)
+
+    # TODO: update to allow for different graph sizes.
+    # for iteration in size_and_max_graphs_setting:
+    #    if iteration not in supp_sets.iterations:
+    #        raise Exception(
+    #            "Error, iterations was expected to be in range:"
+    #            + f"{supp_sets.iterations}. Instead, it contains:{iteration}."
+    #        )
+
+
 def verify_m_setting(supp_sets, m_setting):
     """Verifies the type of m setting is valid, and that its values are within
     the supported range.
@@ -78,9 +126,13 @@ def verify_m_setting(supp_sets, m_setting):
             )
 
 
-def verify_max_max_graphs_setting(supp_sets, max_max_graphs_setting):
+def verify_integer_settings(
+    supp_sets, max_max_graphs_setting, min_val, max_val
+):
     """Verifies the maximum value that the max_graphs per size can have is a
     positive integer.
+
+    # TODO: verify min is smaller than max for supported settings.
 
     :param max_max_graphs_setting:
     """
@@ -89,15 +141,15 @@ def verify_max_max_graphs_setting(supp_sets, max_max_graphs_setting):
             f"Error, expected type:{int}, yet it was:"
             + f"{type(max_max_graphs_setting)}"
         )
-    if max_max_graphs_setting < 1:
+    if max_max_graphs_setting < min_val:
         raise Exception(
-            "Error, max_max_graphs_setting expected to be 1 or "
+            f"Error, setting expected to be at least {min_val} or "
             + f"larger. Instead, it is:{max_max_graphs_setting}"
         )
-    if max_max_graphs_setting > supp_sets.max_max_graphs:
+    if max_max_graphs_setting > max_val:
         raise Exception(
-            "Error, max_max_graphs_setting expected to be at most"
-            + f"{supp_sets.max_max_graphs}. Instead, it is:"
+            "Error, setting expected to be at most"
+            + f"{max_val}. Instead, it is:"
             + f"{max_max_graphs_setting}"
         )
 

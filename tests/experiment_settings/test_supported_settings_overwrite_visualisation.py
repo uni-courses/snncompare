@@ -104,9 +104,8 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
-        print(f"Before config_settings={config_settings}")
+
         config_settings.pop("overwrite_visualisation")
-        print(f"After config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(

@@ -32,7 +32,13 @@ class Supported_settings:
 
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
+        self.min_max_graphs = 1
         self.max_max_graphs = 15
+
+        # Specify the maximum graph size.
+        self.min_graph_size = 3
+        self.max_graph_size = 20
+
         # The size of the graph and the maximum number of used graphs of that
         # size.
         self.size_and_max_graphs = [

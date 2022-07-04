@@ -139,9 +139,8 @@ class Test_m_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
-        print(f"Before config_settings={config_settings}")
+
         config_settings.pop("m")
-        print(f"After config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(

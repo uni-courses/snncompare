@@ -81,7 +81,8 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, max_max_graphs_setting expected to be 1 or "
+            "Error, setting expected to be at least "
+            + f"{self.supp_sets.min_max_graphs} or "
             + f"larger. Instead, it is:{-2}",
             str(context.exception),
         )
@@ -100,7 +101,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, max_max_graphs_setting expected to be at most"
+            "Error, setting expected to be at most"
             + f"{self.supp_sets.max_max_graphs}. Instead, it is:"
             + "50",
             str(context.exception),
@@ -140,9 +141,8 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
-        print(f"Before config_settings={config_settings}")
+
         config_settings.pop("max_max_graphs")
-        print(f"After config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
