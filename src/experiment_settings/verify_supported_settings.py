@@ -27,6 +27,10 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     verify_max_max_graphs_setting(
         supp_sets, experiment_config["max_max_graphs"]
     )
+    verify_overwrite_sim_results_setting(
+        experiment_config["overwrite_sim_results"]
+    )
+
     if has_unique_id:
         print("TODO: test unique id type.")
     return experiment_config
@@ -97,6 +101,18 @@ def verify_max_max_graphs_setting(supp_sets, max_max_graphs_setting):
         )
 
 
+def verify_overwrite_sim_results_setting(overwrite_sim_results_setting):
+    """Verifies the overwrite_sim_results_setting value is a boolean.
+
+    :param max_max_graphs_setting:
+    """
+    if not isinstance(overwrite_sim_results_setting, bool):
+        raise Exception(
+            f"Error, expected type:{bool}, yet it was:"
+            + f"{type(overwrite_sim_results_setting)}"
+        )
+
+
 def verify_object_type(obj, expected_type, element_types=None):
     """Verifies an object type, and if the object is a tuple, it also verifies
     the types within the tuple or list.
@@ -145,6 +161,7 @@ def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
         raise Exception(f"Check type:{check_type} not supported.")
 
     # Verify object is a dictionary.
+    print(f"some_dict={some_dict}")
     if isinstance(some_dict, dict):
         if some_dict == {}:
             raise Exception(f"Error, property dict: {check_type} was empty.")

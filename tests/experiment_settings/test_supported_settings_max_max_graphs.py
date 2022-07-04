@@ -4,14 +4,15 @@ specifications."""
 import copy
 import unittest
 
-from src.experiment_settings.experiment_settings import (
-    Adaptation_settings,
-    Radiation_settings,
-)
 from src.experiment_settings.Supported_settings import Supported_settings
 from src.experiment_settings.verify_supported_settings import (
-    verify_adap_and_rad_settings,
     verify_configuration_settings,
+)
+from tests.experiment_settings.test_supported_settings_iteration import (
+    adap_sets,
+    rad_sets,
+    supp_sets,
+    with_adaptation_with_radiation,
 )
 
 
@@ -30,23 +31,10 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             + " floats",
         }
 
-        self.supp_sets = Supported_settings()
-        self.adap_sets = Adaptation_settings()
-        self.rad_sets = Radiation_settings()
-        self.with_adaptation_with_radiation = {
-            "iterations": list(range(0, 3, 1)),
-            "m": list(range(0, 1, 1)),
-            "max_max_graphs": 15,
-            "size,max_graphs": [(3, 15), (4, 15)],
-            "adaptation": verify_adap_and_rad_settings(
-                self.supp_sets, self.adap_sets.with_adaptation, "adaptation"
-            ),
-            "radiation": verify_adap_and_rad_settings(
-                self.supp_sets, self.rad_sets.with_radiation, "radiation"
-            ),
-            "overwrite": True,
-            "simulators": ["nx"],
-        }
+        self.supp_sets = supp_sets
+        self.adap_sets = adap_sets
+        self.rad_sets = rad_sets
+        self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
     def test_max_max_graphs_is_none(self):
         """Verifies an error is thrown if configuration settings do not contain

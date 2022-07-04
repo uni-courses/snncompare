@@ -14,6 +14,25 @@ from src.experiment_settings.verify_supported_settings import (
     verify_configuration_settings,
 )
 
+supp_sets = Supported_settings()
+adap_sets = Adaptation_settings()
+rad_sets = Radiation_settings()
+with_adaptation_with_radiation = {
+    "iterations": list(range(0, 3, 1)),
+    "m": list(range(0, 1, 1)),
+    "max_max_graphs": 15,
+    "size,max_graphs": [(3, 15), (4, 15)],
+    "adaptation": verify_adap_and_rad_settings(
+        supp_sets, adap_sets.with_adaptation, "adaptation"
+    ),
+    "radiation": verify_adap_and_rad_settings(
+        supp_sets, rad_sets.with_radiation, "radiation"
+    ),
+    "overwrite_sim_results": True,
+    "overwrite_visualisation": True,
+    "simulators": ["nx"],
+}
+
 
 class Test_iterations_settings(unittest.TestCase):
     """Tests whether the verify_configuration_settings_types function catches
@@ -22,30 +41,17 @@ class Test_iterations_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_settings()
-        self.valid_iterations = self.supp_sets.iterations
+        # self.supp_sets = Supported_settings()
 
         self.invalid_iterations_value = {
             "iterations": "invalid value of type string iso list of floats",
         }
 
-        self.supp_sets = Supported_settings()
-        self.adap_sets = Adaptation_settings()
-        self.rad_sets = Radiation_settings()
-        self.with_adaptation_with_radiation = {
-            "iterations": list(range(0, 3, 1)),
-            "m": list(range(0, 1, 1)),
-            "max_max_graphs": 15,
-            "size,max_graphs": [(3, 15), (4, 15)],
-            "adaptation": verify_adap_and_rad_settings(
-                self.supp_sets, self.adap_sets.with_adaptation, "adaptation"
-            ),
-            "radiation": verify_adap_and_rad_settings(
-                self.supp_sets, self.rad_sets.with_radiation, "radiation"
-            ),
-            "overwrite": True,
-            "simulators": ["nx"],
-        }
+        self.supp_sets = supp_sets
+        self.adap_sets = adap_sets
+        self.rad_sets = rad_sets
+        self.with_adaptation_with_radiation = with_adaptation_with_radiation
+        self.valid_iterations = self.supp_sets.iterations
 
     def test_iterations_is_none(self):
         """Verifies an error is thrown if configuration settings do not contain

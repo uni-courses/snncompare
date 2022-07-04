@@ -1,4 +1,5 @@
-"""Verifies the Supported_settings object catches invalid m specifications."""
+"""Verifies the Supported_settings object catches invalid overwrite_sim_results
+specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
@@ -15,18 +16,19 @@ from tests.experiment_settings.test_supported_settings_iteration import (
 )
 
 
-class Test_m_settings(unittest.TestCase):
+class Test_overwrite_sim_results_settings(unittest.TestCase):
     """Tests whether the verify_configuration_settings_types function catches
-    invalid m settings.."""
+    invalid overwrite_sim_results settings.."""
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.supp_sets = Supported_settings()
-        self.valid_m = self.supp_sets.m
+        self.valid_overwrite_sim_results = self.supp_sets.overwrite_sim_results
 
-        self.invalid_m_value = {
-            "m": "invalid value of type string iso list of floats",
+        self.invalid_overwrite_sim_results_value = {
+            "overwrite_sim_results": "invalid value of type string iso list of"
+            + " floats",
         }
 
         self.supp_sets = supp_sets
@@ -34,7 +36,7 @@ class Test_m_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_m_is_none(self):
+    def test_overwrite_sim_results_is_none(self):
         """Verifies an error is thrown if configuration settings do not contain
         m."""
 
@@ -51,15 +53,14 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_type(self):
+    def test_catch_invalid_overwrite_sim_results_type(self):
         """."""
 
         with self.assertRaises(Exception) as context:
-            # m dictionary of type None throws error.
+            # overwrite_sim_results dictionary of type None throws error.
             verify_configuration_settings(
                 self.supp_sets, "string_instead_of_dict", has_unique_id=False
             )
-
         self.assertEqual(
             "Error, the experiment_config is of type:"
             + f'{type("")}, yet it was expected to be of'
@@ -67,12 +68,12 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_value_type_too_low(self):
+    def test_catch_empty_overwrite_sim_results_value(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = [-2]
+        # Set negative value of overwrite_sim_results in copy.
+        config_settings["overwrite_sim_results"] = None
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -80,52 +81,13 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
-            + f" Instead, it contains:{-2}.",
-            str(context.exception),
-        )
-
-    def test_catch_invalid_m_value_type_too_high(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = [50]
-        print(f"config_settings={config_settings}")
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
-            + f" Instead, it contains:{50}.",
-            str(context.exception),
-        )
-
-    def test_catch_empty_m_value_list(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = []
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, list was expected contain at least 1 integer."
-            + f" Instead, it has length:{0}",
+            "Error, expected type:<class 'bool'>, yet it was:"
+            + "<class 'NoneType'>",
             str(context.exception),
         )
 
     def test_returns_valid_m(self):
-        """Verifies a valid m is returned."""
+        """Verifies a valid overwrite_sim_results is returned."""
         returned_dict = verify_configuration_settings(
             self.supp_sets,
             self.with_adaptation_with_radiation,
@@ -133,14 +95,15 @@ class Test_m_settings(unittest.TestCase):
         )
         self.assertIsInstance(returned_dict, dict)
 
-    def test_empty_m(self):
-        """Verifies an exception is thrown if an empty m dict is thrown."""
+    def test_empty_overwrite_sim_results(self):
+        """Verifies an exception is thrown if an empty overwrite_sim_results
+        dict is thrown."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
         print(f"Before config_settings={config_settings}")
-        config_settings.pop("m")
+        config_settings.pop("overwrite_sim_results")
         print(f"After config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
@@ -149,6 +112,6 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'m'",
+            "'overwrite_sim_results'",
             str(context.exception),
         )
