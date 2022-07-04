@@ -33,8 +33,9 @@ class Test_iterations_settings(unittest.TestCase):
         self.adap_sets = Adaptation_settings()
         self.rad_sets = Radiation_settings()
         self.with_adaptation_with_radiation = {
-            "m": list(range(0, 1, 1)),
             "iterations": list(range(0, 3, 1)),
+            "m": list(range(0, 1, 1)),
+            "max_max_graphs": 15,
             "size,max_graphs": [(3, 15), (4, 15)],
             "adaptation": verify_adap_and_rad_settings(
                 self.supp_sets, self.adap_sets.with_adaptation, "adaptation"
@@ -144,7 +145,7 @@ class Test_iterations_settings(unittest.TestCase):
         )
         self.assertIsInstance(returned_dict, dict)
 
-    def test_empty_iteration(self):
+    def test_empty_iterations(self):
         """Verifies an exception is thrown if an empty iterations dict is
         thrown."""
 

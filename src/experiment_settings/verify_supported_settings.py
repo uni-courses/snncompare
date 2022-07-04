@@ -24,6 +24,9 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
 
     verify_m_setting(supp_sets, experiment_config["m"])
     verify_iterations_setting(supp_sets, experiment_config["iterations"])
+    verify_max_max_graphs_setting(
+        supp_sets, experiment_config["max_max_graphs"]
+    )
     if has_unique_id:
         print("TODO: test unique id type.")
     return experiment_config
@@ -68,6 +71,30 @@ def verify_m_setting(supp_sets, m_setting):
                 f"Error, m was expected to be in range:{supp_sets.m}."
                 + f" Instead, it contains:{m}."
             )
+
+
+def verify_max_max_graphs_setting(supp_sets, max_max_graphs_setting):
+    """Verifies the maximum value that the max_graphs per size can have is a
+    positive integer.
+
+    :param max_max_graphs_setting:
+    """
+    if not isinstance(max_max_graphs_setting, int):
+        raise Exception(
+            f"Error, expected type:{int}, yet it was:"
+            + f"{type(max_max_graphs_setting)}"
+        )
+    if max_max_graphs_setting < 1:
+        raise Exception(
+            "Error, max_max_graphs_setting expected to be 1 or "
+            + f"larger. Instead, it is:{max_max_graphs_setting}"
+        )
+    if max_max_graphs_setting > supp_sets.max_max_graphs:
+        raise Exception(
+            "Error, max_max_graphs_setting expected to be at most"
+            + f"{supp_sets.max_max_graphs}. Instead, it is:"
+            + f"{max_max_graphs_setting}"
+        )
 
 
 def verify_object_type(obj, expected_type, element_types=None):

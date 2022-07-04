@@ -1,4 +1,5 @@
-"""Verifies the Supported_settings object catches invalid m specifications."""
+"""Verifies the Supported_settings object catches invalid max_max_graphs
+specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
@@ -14,18 +15,19 @@ from src.experiment_settings.verify_supported_settings import (
 )
 
 
-class Test_m_settings(unittest.TestCase):
+class Test_max_max_graphs_settings(unittest.TestCase):
     """Tests whether the verify_configuration_settings_types function catches
-    invalid m settings.."""
+    invalid max_max_graphs settings.."""
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.supp_sets = Supported_settings()
-        self.valid_m = self.supp_sets.m
+        self.valid_max_max_graphs = self.supp_sets.max_max_graphs
 
-        self.invalid_m_value = {
-            "m": "invalid value of type string iso list of floats",
+        self.invalid_max_max_graphs_value = {
+            "max_max_graphs": "invalid value of type string iso list of"
+            + " floats",
         }
 
         self.supp_sets = Supported_settings()
@@ -46,7 +48,7 @@ class Test_m_settings(unittest.TestCase):
             "simulators": ["nx"],
         }
 
-    def test_m_is_none(self):
+    def test_max_max_graphs_is_none(self):
         """Verifies an error is thrown if configuration settings do not contain
         m."""
 
@@ -63,15 +65,14 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_type(self):
+    def test_catch_invalid_max_max_graphs_type(self):
         """."""
 
         with self.assertRaises(Exception) as context:
-            # m dictionary of type None throws error.
+            # max_max_graphs dictionary of type None throws error.
             verify_configuration_settings(
                 self.supp_sets, "string_instead_of_dict", has_unique_id=False
             )
-
         self.assertEqual(
             "Error, the experiment_config is of type:"
             + f'{type("")}, yet it was expected to be of'
@@ -79,12 +80,12 @@ class Test_m_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_value_type_too_low(self):
+    def test_catch_invalid_max_max_graphs_value_type_too_low(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = [-2]
+        # Set negative value of max_max_graphs in copy.
+        config_settings["max_max_graphs"] = -2
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -92,18 +93,17 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
-            + f" Instead, it contains:{-2}.",
+            "Error, max_max_graphs_setting expected to be 1 or "
+            + f"larger. Instead, it is:{-2}",
             str(context.exception),
         )
 
-    def test_catch_invalid_m_value_type_too_high(self):
+    def test_catch_invalid_max_max_graphs_value_type_too_high(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = [50]
+        # Set negative value of max_max_graphs in copy.
+        config_settings["max_max_graphs"] = 50
         print(f"config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
@@ -112,18 +112,18 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, m was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m"]}.'
-            + f" Instead, it contains:{50}.",
+            "Error, max_max_graphs_setting expected to be at most"
+            + f"{self.supp_sets.max_max_graphs}. Instead, it is:"
+            + "50",
             str(context.exception),
         )
 
-    def test_catch_empty_m_value_list(self):
+    def test_catch_empty_max_max_graphs_value(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of m in copy.
-        config_settings["m"] = []
+        # Set negative value of max_max_graphs in copy.
+        config_settings["max_max_graphs"] = None
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -131,13 +131,13 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, list was expected contain at least 1 integer."
-            + f" Instead, it has length:{0}",
+            "Error, expected type:<class 'int'>, yet it was:"
+            + "<class 'NoneType'>",
             str(context.exception),
         )
 
     def test_returns_valid_m(self):
-        """Verifies a valid m is returned."""
+        """Verifies a valid max_max_graphs is returned."""
         returned_dict = verify_configuration_settings(
             self.supp_sets,
             self.with_adaptation_with_radiation,
@@ -145,14 +145,15 @@ class Test_m_settings(unittest.TestCase):
         )
         self.assertIsInstance(returned_dict, dict)
 
-    def test_empty_m(self):
-        """Verifies an exception is thrown if an empty m dict is thrown."""
+    def test_empty_max_max_graphs(self):
+        """Verifies an exception is thrown if an empty max_max_graphs dict is
+        thrown."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
         print(f"Before config_settings={config_settings}")
-        config_settings.pop("m")
+        config_settings.pop("max_max_graphs")
         print(f"After config_settings={config_settings}")
 
         with self.assertRaises(Exception) as context:
@@ -161,6 +162,6 @@ class Test_m_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'m'",
+            "'max_max_graphs'",
             str(context.exception),
         )
