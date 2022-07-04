@@ -12,6 +12,7 @@ from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
     supp_sets,
+    verify_type_error_is_thrown_on_configuration_setting_type,
     with_adaptation_with_radiation,
 )
 
@@ -122,3 +123,23 @@ class Test_min_max_graphs_settings(unittest.TestCase):
             "'min_max_graphs'",
             str(context.exception),
         )
+
+    def test_min_max_graphs_value_is_invalid_type(self):
+        """Verifies an exception is thrown if the configuration setting:
+
+        min_max_graphs is of invalid type.
+        """
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        expected_type = type(self.supp_sets.min_max_graphs)
+
+        # Verify it throws an error on None and string.
+        for invalid_config_setting_value in [None, ""]:
+            config_settings["min_max_graphs"] = invalid_config_setting_value
+            verify_type_error_is_thrown_on_configuration_setting_type(
+                invalid_config_setting_value,
+                config_settings,
+                expected_type,
+                self,
+            )
