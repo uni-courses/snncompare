@@ -37,7 +37,6 @@ class Test_min_graph_size_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    # TODO: write test min_max_graphs is of invalid type.
     def test_catch_invalid_min_graph_size_value_type_too_low(self):
         """."""
         # Create deepcopy of configuration settings.

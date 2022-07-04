@@ -7,12 +7,11 @@ from typing import Any, Dict
 
 # pylint: disable=W0613
 def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
-    """TODO: Verifies the experiment configuration settings are valid.
+    """Verifies the experiment configuration settings are valid.
 
     :param experiment_config: param has_unique_id:
     :param has_unique_id: param supp_sets:
     :param supp_sets:
-
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")

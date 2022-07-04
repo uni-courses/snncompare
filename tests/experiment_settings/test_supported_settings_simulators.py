@@ -35,8 +35,6 @@ class Test_simulators_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_simulators = self.supp_sets.simulators
 
-    # TODO: write test simulators is of invalid type.
-
     def test_catch_invalid_simulators_value(self):
         """."""
         # Create deepcopy of configuration settings.

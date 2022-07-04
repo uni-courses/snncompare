@@ -38,7 +38,6 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    # TODO: write test overwrite_visualisation is of invalid type.
     def test_catch_empty_overwrite_visualisation_value(self):
         """."""
         # Create deepcopy of configuration settings.

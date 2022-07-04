@@ -96,7 +96,7 @@ class Test_adaptation_settings(unittest.TestCase):
         )
 
     def test_returns_valid_adaptation(self):
-        """TODO: verify dict is returned for valid adaptation."""
+        """Verifies dict is returned for valid adaptation."""
         returned_dict = verify_adap_and_rad_settings(
             self.supp_sets, self.valid_adaptation, "adaptation"
         )

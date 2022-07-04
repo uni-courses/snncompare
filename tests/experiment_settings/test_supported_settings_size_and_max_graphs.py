@@ -36,8 +36,6 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_size_and_max_graphs = self.supp_sets.size_and_max_graphs
 
-    # TODO: write test size_and_max_graphs is of invalid type.
-
     def test_catch_invalid_size_and_max_graphs_value_type_too_low(self):
         """."""
         # Create deepcopy of configuration settings.

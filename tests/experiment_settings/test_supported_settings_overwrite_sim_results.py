@@ -37,8 +37,6 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    # TODO: write test overwrite_sim_results is of invalid type.
-
     def test_catch_empty_overwrite_sim_results_value(self):
         """."""
         # Create deepcopy of configuration settings.

@@ -35,8 +35,6 @@ class Test_iterations_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_iterations = self.supp_sets.iterations
 
-    # TODO: write test_iterations is of invalid type.
-
     def test_catch_invalid_iterations_value_type_too_low(self):
         """."""
         # Create deepcopy of configuration settings.
