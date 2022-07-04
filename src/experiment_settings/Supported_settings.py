@@ -42,8 +42,9 @@ class Supported_settings:
         # The size of the graph and the maximum number of used graphs of that
         # size.
         self.size_and_max_graphs = [
-            (3, self.max_max_graphs),
-            (4, self.max_max_graphs),
+            (self.min_graph_size, self.max_max_graphs),
+            (5, 4),  # Means: get 4 graphs of size 5 for experiment.
+            (self.max_graph_size, self.max_max_graphs),
         ]
 
         # Overwrite the simulation results or not.

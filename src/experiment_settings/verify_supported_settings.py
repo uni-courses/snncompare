@@ -10,7 +10,7 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     """TODO: Verifies the experiment configuration settings are valid.
 
     :param experiment_config: param has_unique_id:
-    :param has_unique_id:
+    :param has_unique_id: param supp_sets:
     :param supp_sets:
 
     """
@@ -27,6 +27,9 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     verify_list_setting(supp_sets, experiment_config["m"], int, "m")
     verify_list_setting(
         supp_sets, experiment_config["iterations"], int, "iterations"
+    )
+    verify_list_setting(
+        supp_sets, experiment_config["simulators"], str, "simulators"
     )
     verify_size_and_max_graphs_settings(
         supp_sets, experiment_config["size_and_max_graphs"]
@@ -73,7 +76,7 @@ def verify_list_element_types_and_list_len(list_setting, element_type):
     """Verifies the types and length of configuration settings that are stored
     with a value of type list.
 
-    :param list_setting:
+    :param list_setting: param element_type:
     :param element_type:
     """
     verify_object_type(list_setting, list, element_type=element_type)
@@ -90,18 +93,18 @@ def verify_list_setting(
     """Verifies the type of m setting is valid, and that its values are within
     the supported range.
 
-    :param iterations_setting:
+    :param iterations_setting: param supp_sets:
+    :param element_type: param setting_name:
     :param supp_sets:
-    :param element_type:
     :param setting_name:
     """
-
+    expected_range = get_expected_range(setting_name, supp_sets)
     verify_list_element_types_and_list_len(iterations_setting, element_type)
     for iteration in iterations_setting:
-        if iteration not in supp_sets.iterations:
+        if iteration not in expected_range:
             raise Exception(
                 f"Error, {setting_name} was expected to be in range:"
-                + f"{get_expected_range(setting_name,supp_sets)}. Instead, it"
+                + f"{expected_range}. Instead, it"
                 + f" contains:{iteration}."
             )
 
@@ -109,7 +112,7 @@ def verify_list_setting(
 def get_expected_range(setting_name, supp_sets):
     """
 
-    :param setting_name:
+    :param setting_name: param supp_sets:
     :param supp_sets:
 
     """
@@ -117,6 +120,10 @@ def get_expected_range(setting_name, supp_sets):
         return supp_sets.iterations
     if setting_name == "m":
         return supp_sets.m
+    if setting_name == "simulators":
+        return supp_sets.simulators
+
+    # TODO: test this is raised.
     raise Exception("Error, unsupported parameter requested.")
 
 
@@ -126,9 +133,9 @@ def verify_size_and_max_graphs_settings(
     """Verifies the type of m setting is valid, and that its values are within
     the supported range.
 
-    :param iterations_setting:
-    :param supp_sets:
+    :param iterations_setting: param supp_sets:
     :param size_and_max_graphs_setting:
+    :param supp_sets:
     """
     print(f"size_and_max_graphs_setting={size_and_max_graphs_setting}")
     verify_list_element_types_and_list_len(size_and_max_graphs_setting, tuple)
@@ -160,9 +167,9 @@ def verify_integer_settings(
 
     # TODO: verify min is smaller than max for supported settings.
 
-    :param max_max_graphs_setting:
+    :param max_max_graphs_setting: param supp_sets:
+    :param min_val: param max_val:
     :param supp_sets:
-    :param min_val:
     :param max_val:
     """
     if not isinstance(max_max_graphs_setting, int):
@@ -233,7 +240,7 @@ def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
     """Verifies the settings of adaptation or radiation property are valid.
 
     :param some_dict: param check_type:
-    :param check_type:
+    :param check_type: param supp_sets:
     :param supp_sets:
     """
     if check_type == "adaptation":
@@ -274,6 +281,8 @@ def verify_adaptation_values(supp_sets, adaptation: dict, key: str) -> None:
     :param adaptation: dict:
     :param key: str:
     :param supp_sets:
+    :param adaptation: dict:
+    :param key: str:
 
     """
 
@@ -297,6 +306,9 @@ def verify_adaptation_values(supp_sets, adaptation: dict, key: str) -> None:
 def verify_radiation_values(supp_sets, radiation: dict, key: str) -> None:
     """
 
+    :param radiation: dict:
+    :param key: str:
+    :param supp_sets:
     :param radiation: dict:
     :param key: str:
 
