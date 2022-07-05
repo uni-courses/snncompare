@@ -11,7 +11,7 @@ from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
     supp_sets,
-    verify_type_error_is_thrown_on_configuration_setting_type,
+    verify_type_error_is_thrown_on_configuration_setting_value,
     with_adaptation_with_radiation,
 )
 
@@ -171,7 +171,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
 
         self.assertEqual(
             # "'size_and_max_graphs'",
-            "Error:.+? is not in the configuration"
+            "Error:size_and_max_graphs is not in the configuration"
             + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
@@ -191,7 +191,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             config_settings[
                 "size_and_max_graphs"
             ] = invalid_config_setting_value
-            verify_type_error_is_thrown_on_configuration_setting_type(
+            verify_type_error_is_thrown_on_configuration_setting_value(
                 invalid_config_setting_value,
                 config_settings,
                 expected_type,

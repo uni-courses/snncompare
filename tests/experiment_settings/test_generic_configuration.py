@@ -1,5 +1,6 @@
 """Verifies The Supported_settings object catches invalid adaptation
 specifications."""
+import copy
 import unittest
 
 from src.experiment_settings.experiment_settings import (
@@ -59,12 +60,11 @@ class Test_generic_configuration_settings(unittest.TestCase):
             ],  # Multiply firing frequency with 5 to limit spike decay
             # impact.
         }
+        self.invalid_adaptation_key = {"non-existing-key": 5}
 
         self.invalid_adaptation_value = {
             "redundancy": "invalid value of type string iso list",
         }
-
-        self.invalid_adaptation_key = {"non-existing-key": 5}
 
     def test_config_settings_is_none(self):
         """Verifies an error is thrown if configuration settings object is of
@@ -111,11 +111,33 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
         self.assertIsInstance(returned_dict, dict)
 
+    def verify_type_error_is_thrown_on_configuration_setting_key(self):
+        """Verifies an error is thrown on an invalid configuration setting
+        key."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(with_adaptation_with_radiation)
 
-def verify_type_error_is_thrown_on_configuration_setting_type(
+        # Add invalid key to configuration dictionary.
+        config_settings.add(self.invalid_adaptation_key)
+
+        with self.assertRaises(Exception) as context:
+            # iterations dictionary of type None throws error.
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+        self.assertEqual(
+            f"Error:{self.invalid_adaptation_key} is not supported by the"
+            + " configuration settings:"
+            + f"{self.supp_sets.config_setting_parameters}",
+            str(context.exception),
+        )
+
+
+def verify_type_error_is_thrown_on_configuration_setting_value(
     invalid_config_setting_value, config_settings, expected_type, test_object
 ):
-    """Verifies an error is thrown on an invalid configuration setting type."""
+    """Verifies an error is thrown on an invalid configuration setting
+    value."""
     actual_type = type(invalid_config_setting_value)
     if not isinstance(actual_type, type) and not isinstance(
         expected_type, type

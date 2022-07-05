@@ -93,7 +93,20 @@ def verify_configuration_settings_dict_is_complete(
     for expected_key in supp_sets.config_setting_parameters:
         if expected_key not in experiment_config.keys():
             raise Exception(
-                "Error:.+? is not in the configuration"
+                f"Error:{expected_key} is not in the configuration"
+                + f" settings:{experiment_config.keys()}"
+            )
+
+
+def verify_configuration_settings_dict_contains_only_valid_entries(
+    supp_sets, experiment_config
+):
+    """Verifies the configuration settings dictionary does not contain any
+    invalid keys."""
+    for actual_key in experiment_config.keys():
+        if actual_key not in supp_sets.config_setting_parameters:
+            raise Exception(
+                f"Error:{actual_key} is not supported by the configuration"
                 + f" settings:{experiment_config.keys()}"
             )
 

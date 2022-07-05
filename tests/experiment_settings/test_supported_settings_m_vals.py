@@ -11,7 +11,7 @@ from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
     supp_sets,
-    verify_type_error_is_thrown_on_configuration_setting_type,
+    verify_type_error_is_thrown_on_configuration_setting_value,
     with_adaptation_with_radiation,
 )
 
@@ -174,7 +174,7 @@ class Test_m_vals_settings(unittest.TestCase):
             config_settings["algorithms"]["MDSA"][
                 "m_vals"
             ] = invalid_config_setting_value
-            verify_type_error_is_thrown_on_configuration_setting_type(
+            verify_type_error_is_thrown_on_configuration_setting_value(
                 invalid_config_setting_value,
                 config_settings,
                 expected_type,

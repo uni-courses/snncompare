@@ -11,7 +11,7 @@ from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
     supp_sets,
-    verify_type_error_is_thrown_on_configuration_setting_type,
+    verify_type_error_is_thrown_on_configuration_setting_value,
     with_adaptation_with_radiation,
 )
 
@@ -102,7 +102,7 @@ class Test_simulators_settings(unittest.TestCase):
 
         self.assertEqual(
             # "'simulators'",
-            "Error:.+? is not in the configuration"
+            "Error:simulators is not in the configuration"
             + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
@@ -120,7 +120,7 @@ class Test_simulators_settings(unittest.TestCase):
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
             config_settings["simulators"] = invalid_config_setting_value
-            verify_type_error_is_thrown_on_configuration_setting_type(
+            verify_type_error_is_thrown_on_configuration_setting_value(
                 invalid_config_setting_value,
                 config_settings,
                 expected_type,

@@ -50,7 +50,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.assertEqual(
             # "'adaptation'",
-            "Error:.+? is not in the configuration"
+            "Error:adaptation is not in the configuration"
             + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
