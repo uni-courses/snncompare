@@ -1,10 +1,17 @@
 """Verifies The Supported_settings object catches invalid adaptation
 specifications."""
+import copy
 import unittest
 
-from src.experiment_settings.Supported_settings import Supported_settings
 from src.experiment_settings.verify_supported_settings import (
     verify_adap_and_rad_settings,
+    verify_configuration_settings,
+)
+from tests.experiment_settings.test_generic_configuration import (
+    adap_sets,
+    rad_sets,
+    supp_sets,
+    with_adaptation_with_radiation,
 )
 
 
@@ -15,19 +22,11 @@ class Test_adaptation_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_settings()
-        self.valid_adaptation = {
-            "redundancy": [1.0, 2.0],  # Create 1 and 2 redundant neuron(s) per
-            # neuron.
-            "population": [
-                10.0
-            ],  # Create a population of 10 neurons to represent a
-            # single neuron.
-            "rate_coding": [
-                5.0
-            ],  # Multiply firing frequency with 5 to limit spike decay
-            # impact.
-        }
+        self.supp_sets = supp_sets
+        self.adap_sets = adap_sets
+        self.rad_sets = rad_sets
+        self.with_adaptation_with_radiation = with_adaptation_with_radiation
+        self.valid_iterations = self.supp_sets.iterations
 
         self.invalid_adaptation_value = {
             "redundancy": "invalid value of type string iso list",
@@ -35,8 +34,24 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.invalid_adaptation_key = {"non-existing-key": 5}
 
-    # TODO: write test that verifies an error is thrown if the adaptation key
-    # is not set.
+    def test_adaptation_key_removed_from_config_settings_dict(self):
+        """Verifies an error is thrown if the adaptation key is not set."""
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+
+        # Remove key (and value) of adaptation from configuration settings.
+        config_settings.pop("adaptation")
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "'adaptation'",
+            str(context.exception),
+        )
 
     def test_catch_adaptation_is_none(self):
         """Verifies if an error is thrown if the value belonging to the
@@ -110,7 +125,9 @@ class Test_adaptation_settings(unittest.TestCase):
     def test_returns_valid_adaptation(self):
         """Verifies dict is returned for valid adaptation."""
         returned_dict = verify_adap_and_rad_settings(
-            self.supp_sets, self.valid_adaptation, "adaptation"
+            self.supp_sets,
+            self.with_adaptation_with_radiation["adaptation"],
+            "adaptation",
         )
         self.assertIsInstance(returned_dict, dict)
 

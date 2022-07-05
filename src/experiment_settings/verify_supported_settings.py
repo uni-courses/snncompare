@@ -22,8 +22,17 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
             + " type dict."
         )
 
+    # TODO:
+    # verify_configuration_settings_dict_is_complete()
+    # TODO: verify no unknown configuration settings are presented.
+
     # Verify settings of type: list and tuple.
-    verify_list_setting(supp_sets, experiment_config["m_vals"], int, "m_vals")
+    verify_list_setting(
+        supp_sets,
+        experiment_config["algorithms"]["MDSA"]["m_vals"],
+        int,
+        "m_vals",
+    )
     verify_list_setting(
         supp_sets, experiment_config["iterations"], int, "iterations"
     )
@@ -126,7 +135,7 @@ def get_expected_range(setting_name, supp_sets):
     if setting_name == "iterations":
         return supp_sets.iterations
     if setting_name == "m_vals":
-        return supp_sets.m_vals
+        return supp_sets.algorithms["MDSA"].m_vals
     if setting_name == "simulators":
         return supp_sets.simulators
 
@@ -293,6 +302,10 @@ def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
         "Error, property is expected to be a dict, yet"
         + f" it was of type: {type(some_dict)}."
     )
+
+
+def verify_algorithm_settings(supp_sets, some_dict, check_type) -> dict:
+    """TODO: Verifies the settings of the algorithm are valid."""
 
 
 def verify_adaptation_values(supp_sets, adaptation: dict, key: str) -> None:

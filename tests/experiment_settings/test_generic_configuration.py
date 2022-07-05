@@ -16,8 +16,12 @@ supp_sets = Supported_settings()
 adap_sets = Adaptation_settings()
 rad_sets = Radiation_settings()
 with_adaptation_with_radiation = {
+    "algorithms": {
+        "MDSA": {
+            "m_vals": list(range(0, 1, 1)),
+        }
+    },
     "iterations": list(range(0, 3, 1)),
-    "m_vals": list(range(0, 1, 1)),
     "min_max_graphs": 1,
     "max_max_graphs": 15,
     "min_graph_size": 3,
@@ -79,7 +83,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_configuration_settings_type(self):
+    def test_catch_invalid_config_settings_type(self):
         """Verifies an error is thrown if configuration settings object is of
         invalid type.
 

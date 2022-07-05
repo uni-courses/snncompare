@@ -24,7 +24,7 @@ class Test_m_vals_settings(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.supp_sets = Supported_settings()
-        self.valid_m_vals = self.supp_sets.m_vals
+        self.valid_m_vals = self.supp_sets.algorithms["MDSA"].m_vals
 
         self.invalid_m_vals_value = {
             "m_vals": "invalid value of type string iso list of floats",
@@ -74,16 +74,19 @@ class Test_m_vals_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of m in copy.
-        config_settings["m_vals"] = [-2]
+        config_settings["algorithms"]["MDSA"]["m_vals"] = [-2]
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 
+        expected_m_vals = self.with_adaptation_with_radiation["algorithms"][
+            "MDSA"
+        ]["m_vals"]
         self.assertEqual(
             "Error, m_vals was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m_vals"]}.'
+            + f"{expected_m_vals}."
             + f" Instead, it contains:{-2}.",
             str(context.exception),
         )
@@ -93,16 +96,19 @@ class Test_m_vals_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of m in copy.
-        config_settings["m_vals"] = [50]
+        config_settings["algorithms"]["MDSA"]["m_vals"] = [50]
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 
+        expected_m_vals = self.with_adaptation_with_radiation["algorithms"][
+            "MDSA"
+        ]["m_vals"]
         self.assertEqual(
             "Error, m_vals was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["m_vals"]}.'
+            + f"{expected_m_vals}."
             + f" Instead, it contains:{50}.",
             str(context.exception),
         )
@@ -112,7 +118,7 @@ class Test_m_vals_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of m in copy.
-        config_settings["m_vals"] = []
+        config_settings["algorithms"]["MDSA"]["m_vals"] = []
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -141,7 +147,7 @@ class Test_m_vals_settings(unittest.TestCase):
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        config_settings.pop("m_vals")
+        config_settings["algorithms"]["MDSA"].pop("m_vals")
 
         with self.assertRaises(Exception) as context:
             verify_configuration_settings(
@@ -161,11 +167,13 @@ class Test_m_vals_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_sets.m_vals)
+        expected_type = type(self.supp_sets.algorithms["MDSA"].m_vals)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            config_settings["m_vals"] = invalid_config_setting_value
+            config_settings["algorithms"]["MDSA"][
+                "m_vals"
+            ] = invalid_config_setting_value
             verify_type_error_is_thrown_on_configuration_setting_type(
                 invalid_config_setting_value,
                 config_settings,

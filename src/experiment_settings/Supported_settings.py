@@ -9,6 +9,7 @@ setting types should be identical.)
 # pylint: disable=R0902
 # The settings object contains all the settings as a dictionary, hence no
 # hierarchy is used, leading to 10/7 instance attributes.
+from src.experiment_settings.Supported_algorithms import MDSA
 from src.experiment_settings.verify_supported_settings import (
     verify_configuration_settings,
     verify_min_max,
@@ -22,11 +23,26 @@ class Supported_settings:
     def __init__(
         self,
     ) -> None:
+        # Config_settings dictionary keys:
+        self.config_setting_parameters = [
+            "algorithm",
+            "iterations",
+            "min_max_graphs",
+            "max_max_graphs",
+            "min_graph_size",
+            "max_graph_size",
+            "size_and_max_graphs",
+            "adaptation",
+            "radiation",
+            "overwrite_sim_results",
+            "overwrite_visualisation",
+            "simulators",
+        ]
+
+        self.algorithms = {"MDSA": MDSA()}
+
         # The number of times the experiment is repeated.
         self.iterations = list(range(0, 3, 1))
-
-        # The number of iterations for which the Alipour approximation is ran.
-        self.m_vals = list(range(0, 1, 1))
 
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
