@@ -36,7 +36,68 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_size_and_max_graphs = self.supp_sets.size_and_max_graphs
 
-    def test_catch_invalid_size_and_max_graphs_value_type_too_low(self):
+    def test_error_is_thrown_if_size_and_max_graphs_key_is_missing(self):
+        """Verifies an exception is thrown if an empty size_and_max_graphs dict
+        is thrown."""
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Remove key and value of m.
+        config_settings.pop("size_and_max_graphs")
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            # "'size_and_max_graphs'",
+            "Error:size_and_max_graphs is not in the configuration"
+            + f" settings:{config_settings.keys()}",
+            str(context.exception),
+        )
+
+    def test_error_is_thrown_for_invalid_size_and_max_graphs_value_type(self):
+        """Verifies an exception is thrown if the configuration setting:
+
+        size_and_max_graphs is of invalid type.
+        """
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        expected_type = type(self.supp_sets.size_and_max_graphs)
+
+        # Verify it throws an error on None and string.
+        for invalid_config_setting_value in [None, ""]:
+            config_settings[
+                "size_and_max_graphs"
+            ] = invalid_config_setting_value
+            verify_error_is_thrown_on_invalid_configuration_setting_value(
+                invalid_config_setting_value,
+                config_settings,
+                expected_type,
+                self,
+            )
+
+    def test_catch_empty_size_and_max_graphs_value_list(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of size_and_max_graphs in copy.
+        config_settings["size_and_max_graphs"] = []
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, list was expected contain at least 1 integer."
+            + f" Instead, it has length:{0}",
+            str(context.exception),
+        )
+
+    def test_catch_size_and_max_graphs_value_too_low(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings_first = copy.deepcopy(
@@ -81,7 +142,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_size_and_max_graphs_value_size_too_high(self):
+    def test_catch_size_and_max_graphs_value_too_high(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings_first = copy.deepcopy(
@@ -127,64 +188,3 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             + f"{42}",
             str(context.exception),
         )
-
-    def test_catch_empty_size_and_max_graphs_value_list(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of size_and_max_graphs in copy.
-        config_settings["size_and_max_graphs"] = []
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, list was expected contain at least 1 integer."
-            + f" Instead, it has length:{0}",
-            str(context.exception),
-        )
-
-    def test_empty_size_and_max_graphs(self):
-        """Verifies an exception is thrown if an empty size_and_max_graphs dict
-        is thrown."""
-
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Remove key and value of m.
-        config_settings.pop("size_and_max_graphs")
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            # "'size_and_max_graphs'",
-            "Error:size_and_max_graphs is not in the configuration"
-            + f" settings:{config_settings.keys()}",
-            str(context.exception),
-        )
-
-    def test_size_and_max_graphs_value_is_invalid_type(self):
-        """Verifies an exception is thrown if the configuration setting:
-
-        size_and_max_graphs is of invalid type.
-        """
-
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_sets.size_and_max_graphs)
-
-        # Verify it throws an error on None and string.
-        for invalid_config_setting_value in [None, ""]:
-            config_settings[
-                "size_and_max_graphs"
-            ] = invalid_config_setting_value
-            verify_error_is_thrown_on_invalid_configuration_setting_value(
-                invalid_config_setting_value,
-                config_settings,
-                expected_type,
-                self,
-            )
