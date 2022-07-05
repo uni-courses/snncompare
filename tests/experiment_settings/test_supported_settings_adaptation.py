@@ -34,7 +34,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.invalid_adaptation_key = {"non-existing-key": 5}
 
-    def test_adaptation_key_removed_from_config_settings_dict(self):
+    def test_error_is_thrown_if_adaptation_key_is_missing(self):
         """Verifies an error is thrown if the adaptation key is not set."""
 
         # Create deepcopy of configuration settings.
@@ -55,11 +55,11 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_adaptation_is_none(self):
+    def test_error_is_thrown_for_invalid_adaptation_value_type_is_none(self):
         """Verifies if an error is thrown if the value belonging to the
         adaptation key in the configuration settings has value: None.
 
-        (The value should be a dict.)
+        (The value should be a dict.) # TODO use generic method.
         """
 
         with self.assertRaises(Exception) as context:
@@ -72,12 +72,12 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_adaptation_type(self):
+    def test_error_is_thrown_for_invalid_adaptation_value_type_is_string(self):
         """Verifies if an error is thrown if the value belonging to the
         adaptation key in the configuration settings has a value of type
         string.
 
-        (The value should be a dict.)
+        (The value should be a dict.) # TODO use generic method.
         """
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
@@ -93,7 +93,21 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_adaptation_key(self):
+    def test_error_is_thrown_if_adaptation_dictionary_keys_are_missing(self):
+        """Verifies an exception is thrown if an empty adaptation dict is
+        thrown."""
+        with self.assertRaises(Exception) as context:
+            # adaptation dictionary of type None throws error.
+            verify_adap_and_rad_settings(self.supp_sets, {}, "adaptation")
+
+        self.assertEqual(
+            "Error, property dict: adaptation was empty.",
+            # "Error:adaptation is not in the configuration"
+            # + f" settings:{config_settings.keys()}",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_adaptation_dict_key(self):
         """."""
 
         with self.assertRaises(Exception) as context:
@@ -108,7 +122,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_adaptation_value_type(self):
+    def test_catch_invalid_adaptation_dict_value_type_for_key(self):
         """."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
@@ -123,17 +137,3 @@ class Test_adaptation_settings(unittest.TestCase):
             + f"{list}",
             str(context.exception),
         )
-
-    def test_empty_adaptation(self):
-        """Verifies an exception is thrown if an empty adaptation dict is
-        thrown."""
-        with self.assertRaises(Exception) as context:
-            # adaptation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, {}, "adaptation")
-
-        self.assertEqual(
-            "Error, property dict: adaptation was empty.",
-            str(context.exception),
-        )
-
-    # TODO: write test for if adaptation key is removed from config settings.

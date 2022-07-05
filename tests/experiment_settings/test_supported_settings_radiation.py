@@ -27,7 +27,8 @@ class Test_radiation_settings(unittest.TestCase):
 
     # TODO: write test that verifies an error is thrown if the radiation key
     # is not set.
-    def test_catch_radiation_is_none(self):
+
+    def test_error_is_thrown_for_invalid_radiation_value_type_is_none(self):
         """Verifies if an error is thrown if the value belonging to the
         radiation key in the configuration settings has value: None.
 
@@ -44,12 +45,12 @@ class Test_radiation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_radiation_type(self):
+    def test_error_is_thrown_for_invalid_radiation_value_type_is_string(self):
         """Verifies if an error is thrown if the value belonging to the
-        adaptation key in the configuration settings has a value of type
-        string.
+        radiation key in the configuration settings has a value of type string.
 
-        (The value should be a dict.)
+        (The value should be a dict.) # TODO: use generic method for
+        this test.
         """
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
@@ -63,7 +64,21 @@ class Test_radiation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_radiation_key(self):
+    def test_error_is_thrown_if_radiation_dictionary_keys_are_missing(self):
+        """Verifies an exception is thrown if an empty radiation dict is
+        thrown."""
+        with self.assertRaises(Exception) as context:
+            # radiation dictionary of type None throws error.
+            verify_adap_and_rad_settings(self.supp_sets, {}, "radiation")
+
+        self.assertEqual(
+            "Error, property dict: radiation was empty.",
+            # "Error:radiation is not in the configuration"
+            # + f" settings:{config_settings.keys()}",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_radiation_dict_key(self):
         """."""
 
         with self.assertRaises(Exception) as context:
@@ -78,8 +93,14 @@ class Test_radiation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_radiation_value_type(self):
-        """."""
+    def test_catch_invalid_radiation_dict_value_type_for_key(self):
+        """Tests whether the radiation setting dictionary throws an error if it
+        contains an invalid value type for one of its keys.
+
+        In this case, the neuron_death key of the radiation dictionary
+        is set to an invalid value type. It is set to string, whereas it
+        should be a float or dict.
+        """
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
             verify_adap_and_rad_settings(
@@ -90,19 +111,5 @@ class Test_radiation_settings(unittest.TestCase):
             "Error, the radiation value is of type:"
             + f"{str}, yet it was expected to be"
             + " float or dict.",
-            str(context.exception),
-        )
-
-    def test_empty_radiation(self):
-        """Verifies an exception is thrown if an empty radiation dict is
-        thrown."""
-        with self.assertRaises(Exception) as context:
-            # radiation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, {}, "radiation")
-
-        self.assertEqual(
-            "Error, property dict: radiation was empty.",
-            # "Error:radiation is not in the configuration"
-            # + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
