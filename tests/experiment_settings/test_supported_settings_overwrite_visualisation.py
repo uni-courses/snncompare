@@ -81,6 +81,8 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'overwrite_visualisation'",
+            # "'overwrite_visualisation'",
+            "Error:.+? is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )

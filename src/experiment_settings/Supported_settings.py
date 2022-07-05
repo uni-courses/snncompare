@@ -25,7 +25,7 @@ class Supported_settings:
     ) -> None:
         # Config_settings dictionary keys:
         self.config_setting_parameters = [
-            "algorithm",
+            "algorithms",
             "iterations",
             "min_max_graphs",
             "max_max_graphs",

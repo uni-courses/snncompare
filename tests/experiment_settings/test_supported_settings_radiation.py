@@ -109,5 +109,7 @@ class Test_radiation_settings(unittest.TestCase):
 
         self.assertEqual(
             "Error, property dict: radiation was empty.",
+            # "Error:.+? is not in the configuration"
+            # + f" settings:{config_settings.keys()}",
             str(context.exception),
         )

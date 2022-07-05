@@ -49,7 +49,9 @@ class Test_adaptation_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'adaptation'",
+            # "'adaptation'",
+            "Error:.+? is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
 
@@ -142,3 +144,5 @@ class Test_adaptation_settings(unittest.TestCase):
             "Error, property dict: adaptation was empty.",
             str(context.exception),
         )
+
+    # TODO: write test for if adaptation key is removed from config settings.

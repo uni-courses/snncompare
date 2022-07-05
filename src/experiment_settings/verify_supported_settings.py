@@ -23,7 +23,9 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
         )
 
     # TODO:
-    # verify_configuration_settings_dict_is_complete()
+    verify_configuration_settings_dict_is_complete(
+        supp_sets, experiment_config
+    )
     # TODO: verify no unknown configuration settings are presented.
 
     # Verify settings of type: list and tuple.
@@ -82,6 +84,18 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     if has_unique_id:
         print("TODO: test unique id type.")
     return experiment_config
+
+
+def verify_configuration_settings_dict_is_complete(
+    supp_sets, experiment_config
+):
+    """Verifies the configuration settings dictionary is complete."""
+    for expected_key in supp_sets.config_setting_parameters:
+        if expected_key not in experiment_config.keys():
+            raise Exception(
+                "Error:.+? is not in the configuration"
+                + f" settings:{experiment_config.keys()}"
+            )
 
 
 def verify_list_element_types_and_list_len(list_setting, element_type):

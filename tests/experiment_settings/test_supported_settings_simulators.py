@@ -101,7 +101,9 @@ class Test_simulators_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'simulators'",
+            # "'simulators'",
+            "Error:.+? is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
 

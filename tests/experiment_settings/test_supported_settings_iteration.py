@@ -24,6 +24,7 @@ class Test_iterations_settings(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # self.supp_sets = Supported_settings()
+        self.maxDiff = None  # Display full error message.
 
         self.invalid_iterations_value = {
             "iterations": "invalid value of type string iso list of floats",
@@ -107,7 +108,9 @@ class Test_iterations_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'iterations'",
+            # "'iterations'",
+            "Error:.+? is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
 

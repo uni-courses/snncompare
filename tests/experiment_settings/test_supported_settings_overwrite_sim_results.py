@@ -80,7 +80,9 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'overwrite_sim_results'",
+            # "'overwrite_sim_results'",
+            "Error:.+? is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
 

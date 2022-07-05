@@ -118,7 +118,9 @@ class Test_min_graph_size_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'min_graph_size'",
+            # "'min_graph_size'",
+            "Error:.+? is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
 

@@ -173,6 +173,8 @@ class Test_max_graph_size_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "'max_graph_size'",
+            # "'max_graph_size'",
+            "Error:.+? is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
