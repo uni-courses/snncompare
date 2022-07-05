@@ -93,13 +93,6 @@ class Test_radiation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_returns_valid_radiation(self):
-        """Verifies a valid radiation is returned."""
-        returned_dict = verify_adap_and_rad_settings(
-            self.supp_sets, self.valid_radiation, "radiation"
-        )
-        self.assertIsInstance(returned_dict, dict)
-
     def test_empty_radiation(self):
         """Verifies an exception is thrown if an empty radiation dict is
         thrown."""

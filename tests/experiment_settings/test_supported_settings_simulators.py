@@ -76,15 +76,6 @@ class Test_simulators_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_returns_valid_m(self):
-        """Verifies a valid simulators is returned."""
-        returned_dict = verify_configuration_settings(
-            self.supp_sets,
-            self.with_adaptation_with_radiation,
-            has_unique_id=False,
-        )
-        self.assertIsInstance(returned_dict, dict)
-
     def test_empty_simulators(self):
         """Verifies an exception is thrown if an empty simulators dict is
         thrown."""

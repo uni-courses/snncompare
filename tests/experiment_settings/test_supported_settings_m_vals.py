@@ -35,15 +35,6 @@ class Test_m_vals_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_returns_valid_m_vals(self):
-        """Verifies a valid m is returned."""
-        returned_dict = verify_configuration_settings(
-            self.supp_sets,
-            self.with_adaptation_with_radiation,
-            has_unique_id=False,
-        )
-        self.assertIsInstance(returned_dict, dict)
-
     def test_error_is_thrown_if_m_vals_key_is_missing(self):
         """Verifies an exception is thrown if the m_vals key is missing from
         the MDSA algorithm settings dictionary of the supported algorithms

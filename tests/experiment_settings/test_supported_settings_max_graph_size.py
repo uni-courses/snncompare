@@ -148,15 +148,6 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_returns_valid_m(self):
-        """Verifies a valid max_graph_size is returned."""
-        returned_dict = verify_configuration_settings(
-            self.supp_sets,
-            self.with_adaptation_with_radiation,
-            has_unique_id=False,
-        )
-        self.assertIsInstance(returned_dict, dict)
-
     def test_empty_max_graph_size(self):
         """Verifies an exception is thrown if an empty max_graph_size dict is
         thrown."""

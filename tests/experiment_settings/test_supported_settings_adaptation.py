@@ -124,15 +124,6 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_returns_valid_adaptation(self):
-        """Verifies dict is returned for valid adaptation."""
-        returned_dict = verify_adap_and_rad_settings(
-            self.supp_sets,
-            self.with_adaptation_with_radiation["adaptation"],
-            "adaptation",
-        )
-        self.assertIsInstance(returned_dict, dict)
-
     def test_empty_adaptation(self):
         """Verifies an exception is thrown if an empty adaptation dict is
         thrown."""

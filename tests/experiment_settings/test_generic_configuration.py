@@ -47,7 +47,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_settings()
+
         self.valid_adaptation = {
             "redundancy": [1.0, 2.0],  # Create 1 and 2 redundant neuron(s) per
             # neuron.
@@ -66,15 +66,25 @@ class Test_generic_configuration_settings(unittest.TestCase):
             "redundancy": "invalid value of type string iso list",
         }
 
+    def test_returns_valid_configuration_settings(self):
+        """Verifies a valid configuration settings object and object type is
+        returned."""
+        returned_dict = verify_configuration_settings(
+            supp_sets,
+            with_adaptation_with_radiation,
+            has_unique_id=False,
+        )
+        self.assertIsInstance(returned_dict, dict)
+
+        self.assertEqual(with_adaptation_with_radiation, returned_dict)
+
     def test_config_settings_is_none(self):
         """Verifies an error is thrown if configuration settings object is of
         type None."""
 
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
-            verify_configuration_settings(
-                self.supp_sets, None, has_unique_id=False
-            )
+            verify_configuration_settings(supp_sets, None, has_unique_id=False)
 
         self.assertEqual(
             "Error, the experiment_config is of type:"
@@ -93,7 +103,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_configuration_settings(
-                self.supp_sets, "string_instead_of_dict", has_unique_id=False
+                supp_sets, "string_instead_of_dict", has_unique_id=False
             )
         self.assertEqual(
             "Error, the experiment_config is of type:"
@@ -101,18 +111,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
             + " type dict.",
             str(context.exception),
         )
-
-    def test_returns_valid_configuration_settings(self):
-        """Verifies a valid configuration settings object and object type is
-        returned."""
-        returned_dict = verify_configuration_settings(
-            self.supp_sets,
-            with_adaptation_with_radiation,
-            has_unique_id=False,
-        )
-        self.assertIsInstance(returned_dict, dict)
-
-        self.assertEqual(with_adaptation_with_radiation, returned_dict)
 
     def test_error_is_thrown_on_invalid_configuration_setting_key(self):
         """Verifies an error is thrown on an invalid configuration setting
@@ -126,12 +124,12 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
+                supp_sets, config_settings, has_unique_id=False
             )
         self.assertEqual(
             f"Error:{self.invalid_adaptation_key} is not supported by the"
             + " configuration settings:"
-            + f"{self.supp_sets.config_setting_parameters}",
+            + f"{supp_sets.config_setting_parameters}",
             str(context.exception),
         )
 

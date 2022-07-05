@@ -93,15 +93,6 @@ class Test_min_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_returns_valid_m(self):
-        """Verifies a valid min_max_graphs is returned."""
-        returned_dict = verify_configuration_settings(
-            self.supp_sets,
-            self.with_adaptation_with_radiation,
-            has_unique_id=False,
-        )
-        self.assertIsInstance(returned_dict, dict)
-
     def test_empty_min_max_graphs(self):
         """Verifies an exception is thrown if an empty min_max_graphs dict is
         thrown."""
