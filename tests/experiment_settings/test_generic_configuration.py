@@ -133,7 +133,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
 
 
-def verify_type_error_is_thrown_on_configuration_setting_value(
+def verify_error_is_thrown_on_invalid_configuration_setting_value(
     invalid_config_setting_value, config_settings, expected_type, test_object
 ):
     """Verifies an error is thrown on an invalid configuration setting
