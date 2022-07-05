@@ -38,25 +38,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_catch_empty_overwrite_visualisation_value(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of overwrite_visualisation in copy.
-        config_settings["overwrite_visualisation"] = None
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, expected type:<class 'bool'>, yet it was:"
-            + f"{type(None)} for:{None}",
-            str(context.exception),
-        )
-
-    def test_empty_overwrite_visualisation(self):
+    def test_error_is_thrown_if_overwrite_visualisation_key_is_missing(self):
         """Verifies an exception is thrown if an empty overwrite_visualisation
         dict is thrown."""
 
@@ -75,5 +57,29 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
             # "'overwrite_visualisation'",
             "Error:overwrite_visualisation is not in the configuration"
             + f" settings:{config_settings.keys()}",
+            str(context.exception),
+        )
+
+    def test_error_is_thrown_for_invalid_overwrite_visualisation_value_type(
+        self,
+    ):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of overwrite_visualisation in copy.
+
+        # TODO: generalise to also check if an error is thrown if it contains a
+        # string or integer, using the generic test file.
+        # verify_error_is_thrown_on_invalid_configuration_setting_value
+        config_settings["overwrite_visualisation"] = None
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, expected type:<class 'bool'>, yet it was:"
+            + f"{type(None)} for:{None}",
             str(context.exception),
         )

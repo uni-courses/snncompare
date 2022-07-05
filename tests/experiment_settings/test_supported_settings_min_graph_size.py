@@ -37,63 +37,7 @@ class Test_min_graph_size_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_catch_invalid_min_graph_size_value_type_too_low(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of min_graph_size in copy.
-        config_settings["min_graph_size"] = -2
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, setting expected to be at least "
-            + f"{self.supp_sets.min_graph_size}. "
-            + f"Instead, it is:{-2}",
-            str(context.exception),
-        )
-
-    def test_catch_invalid_min_graph_size_value_type_too_high(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of min_graph_size in copy.
-        config_settings["min_graph_size"] = 50
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, setting expected to be at most "
-            + f"{self.supp_sets.max_graph_size}. Instead, it is:"
-            + "50",
-            str(context.exception),
-        )
-
-    def test_catch_empty_min_graph_size_value(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of min_graph_size in copy.
-        config_settings["min_graph_size"] = None
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, expected type:<class 'int'>, yet it was:"
-            + f"{type(None)} for:{None}",
-            str(context.exception),
-        )
-
-    def test_empty_min_graph_size(self):
+    def test_error_is_thrown_if_min_graph_size_key_is_missing(self):
         """Verifies an exception is thrown if an empty min_graph_size dict is
         thrown."""
 
@@ -115,7 +59,7 @@ class Test_min_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_min_graph_size_value_is_invalid_type(self):
+    def test_error_is_thrown_for_invalid_min_graph_size_value_type(self):
         """Verifies an exception is thrown if the configuration setting:
 
         min_graph_size is of invalid type.
@@ -134,3 +78,43 @@ class Test_min_graph_size_settings(unittest.TestCase):
                 expected_type,
                 self,
             )
+
+    # TODO: test_catch_empty_min_graph_size_value_list
+
+    def test_catch_min_graph_size_value_too_low(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of min_graph_size in copy.
+        config_settings["min_graph_size"] = -2
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, setting expected to be at least "
+            + f"{self.supp_sets.min_graph_size}. "
+            + f"Instead, it is:{-2}",
+            str(context.exception),
+        )
+
+    def test_catch_min_graph_size_value_too_high(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of min_graph_size in copy.
+        config_settings["min_graph_size"] = 50
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, setting expected to be at most "
+            + f"{self.supp_sets.max_graph_size}. Instead, it is:"
+            + "50",
+            str(context.exception),
+        )

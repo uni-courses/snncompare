@@ -37,32 +37,14 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_catch_empty_overwrite_sim_results_value(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of overwrite_sim_results in copy.
-        config_settings["overwrite_sim_results"] = None
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, expected type:<class 'bool'>, yet it was:"
-            + f"{type(None)} for:{None}",
-            str(context.exception),
-        )
-
     def test_empty_overwrite_sim_results(self):
         """Verifies an exception is thrown if an empty overwrite_sim_results
         dict is thrown."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Remove key and value of m.
 
+        # Remove key and value of m.
         config_settings.pop("overwrite_sim_results")
 
         with self.assertRaises(Exception) as context:
@@ -98,3 +80,21 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
                 expected_type,
                 self,
             )
+
+    def test_catch_empty_overwrite_sim_results_value(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of overwrite_sim_results in copy.
+        config_settings["overwrite_sim_results"] = None
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, expected type:<class 'bool'>, yet it was:"
+            + f"{type(None)} for:{None}",
+            str(context.exception),
+        )

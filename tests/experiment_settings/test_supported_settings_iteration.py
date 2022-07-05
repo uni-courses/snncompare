@@ -36,62 +36,6 @@ class Test_iterations_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_iterations = self.supp_sets.iterations
 
-    def test_catch_invalid_iterations_value_type_too_low(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of iterations in copy.
-        config_settings["iterations"] = [-2]
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, iterations was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["iterations"]}.'
-            + f" Instead, it contains:{-2}.",
-            str(context.exception),
-        )
-
-    def test_catch_invalid_iterations_value_type_too_high(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of iterations in copy.
-        config_settings["iterations"] = [50]
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, iterations was expected to be in range:"
-            + f'{self.with_adaptation_with_radiation["iterations"]}.'
-            + f" Instead, it contains:{50}.",
-            str(context.exception),
-        )
-
-    def test_catch_empty_iterations_value_list(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of iterations in copy.
-        config_settings["iterations"] = []
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, list was expected contain at least 1 integer."
-            + f" Instead, it has length:{0}",
-            str(context.exception),
-        )
-
     def test_empty_iterations(self):
         """Verifies an exception is thrown if an empty iterations dict is
         thrown."""
@@ -133,3 +77,59 @@ class Test_iterations_settings(unittest.TestCase):
                 expected_type,
                 self,
             )
+
+    def test_catch_empty_iterations_value_list(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of iterations in copy.
+        config_settings["iterations"] = []
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, list was expected contain at least 1 integer."
+            + f" Instead, it has length:{0}",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_iterations_value_type_too_low(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of iterations in copy.
+        config_settings["iterations"] = [-2]
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, iterations was expected to be in range:"
+            + f'{self.with_adaptation_with_radiation["iterations"]}.'
+            + f" Instead, it contains:{-2}.",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_iterations_value_type_too_high(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of iterations in copy.
+        config_settings["iterations"] = [50]
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, iterations was expected to be in range:"
+            + f'{self.with_adaptation_with_radiation["iterations"]}.'
+            + f" Instead, it contains:{50}.",
+            str(context.exception),
+        )

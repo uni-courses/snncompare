@@ -37,87 +37,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_catch_invalid_max_max_graphs_value_type_too_low(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_max_graphs in copy.
-        config_settings["max_max_graphs"] = -2
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, setting expected to be at least "
-            + f"{self.supp_sets.min_max_graphs}. "
-            + f"Instead, it is:{-2}",
-            str(context.exception),
-        )
-
-    def test_catch_max_max_graphs_is_smaller_than_min_max_graphs(self):
-        """To state the obvious, this also tests whether min_max_graphs is
-        larger than max_graph size throws an exception."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_max_graphs in copy.
-        config_settings["min_max_graphs"] = (
-            config_settings["min_max_graphs"] + 1
-        )
-        config_settings["max_max_graphs"] = (
-            config_settings["min_max_graphs"] - 1
-        )
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            f'Lower bound:{config_settings["min_max_graphs"]} is larger than'
-            f' upper bound:{config_settings["max_max_graphs"]}.',
-            str(context.exception),
-        )
-
-    def test_catch_invalid_max_max_graphs_value_type_too_high(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_max_graphs in copy.
-        config_settings["max_max_graphs"] = 50
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, setting expected to be at most "
-            + f"{self.supp_sets.max_max_graphs}. Instead, it is:"
-            + "50",
-            str(context.exception),
-        )
-
-    def test_catch_empty_max_max_graphs_value(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_max_graphs in copy.
-        config_settings["max_max_graphs"] = None
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, expected type:<class 'int'>, yet it was:"
-            + f"{type(None)} for:{None}",
-            str(context.exception),
-        )
-
-    def test_empty_max_max_graphs(self):
+    def test_error_is_thrown_if_max_max_graphs_key_is_missing(self):
         """Verifies an exception is thrown if an empty max_max_graphs dict is
         thrown."""
 
@@ -158,3 +78,84 @@ class Test_max_max_graphs_settings(unittest.TestCase):
                 expected_type,
                 self,
             )
+
+    def test_error_is_thrown_for_invalid_max_max_graphs_value_type(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+
+        # Set negative value of max_max_graphs in copy.
+        config_settings["max_max_graphs"] = None
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, expected type:<class 'int'>, yet it was:"
+            + f"{type(None)} for:{None}",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_max_max_graphs_value_type_too_low(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of max_max_graphs in copy.
+        config_settings["max_max_graphs"] = -2
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, setting expected to be at least "
+            + f"{self.supp_sets.min_max_graphs}. "
+            + f"Instead, it is:{-2}",
+            str(context.exception),
+        )
+
+    def test_catch_max_max_graphs_value_too_low(self):
+        """To state the obvious, this also tests whether min_max_graphs is
+        larger than max_graph size throws an exception."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of max_max_graphs in copy.
+        config_settings["min_max_graphs"] = (
+            config_settings["min_max_graphs"] + 1
+        )
+        config_settings["max_max_graphs"] = (
+            config_settings["min_max_graphs"] - 1
+        )
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            f'Lower bound:{config_settings["min_max_graphs"]} is larger than'
+            f' upper bound:{config_settings["max_max_graphs"]}.',
+            str(context.exception),
+        )
+
+    def test_catch_max_max_graphs_value_too_high(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of max_max_graphs in copy.
+        config_settings["max_max_graphs"] = 50
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, setting expected to be at most "
+            + f"{self.supp_sets.max_max_graphs}. Instead, it is:"
+            + "50",
+            str(context.exception),
+        )

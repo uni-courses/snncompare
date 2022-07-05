@@ -36,39 +36,47 @@ class Test_max_graph_size_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_max_graph_size_is_none(self):
-        """Verifies an error is thrown if configuration settings do not contain
-        this setting.."""
+    def test_error_is_thrown_if_max_graph_size_key_is_missing(self):
+        """Verifies an exception is thrown if an empty max_graph_size dict is
+        thrown."""
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Remove key and value of m.
+
+        config_settings.pop("max_graph_size")
 
         with self.assertRaises(Exception) as context:
-            # Configuration Settings of type None throw error.
             verify_configuration_settings(
-                self.supp_sets, None, has_unique_id=False
+                self.supp_sets, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
-            "Error, the experiment_config is of type:"
-            + f"{type(None)}, yet it was expected to be of"
-            + " type dict.",
+            # "'max_graph_size'",
+            "Error:max_graph_size is not in the configuration"
+            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
 
-    def test_catch_invalid_max_graph_size_type(self):
+    def test_error_is_thrown_for_invalid_max_graph_size_value_type(self):
         """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of max_graph_size in copy.
+        config_settings["max_graph_size"] = None
 
         with self.assertRaises(Exception) as context:
-            # max_graph_size dictionary of type None throws error.
             verify_configuration_settings(
-                self.supp_sets, "string_instead_of_dict", has_unique_id=False
+                self.supp_sets, config_settings, has_unique_id=False
             )
+
         self.assertEqual(
-            "Error, the experiment_config is of type:"
-            + f'{type("")}, yet it was expected to be of'
-            + " type dict.",
+            "Error, expected type:<class 'int'>, yet it was:"
+            + f"{type(None)} for:{None}",
             str(context.exception),
         )
 
-    def test_catch_invalid_max_graph_size_value_type_too_low(self):
+    def test_catch_max_graph_size_value_too_low(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -111,7 +119,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_max_graph_size_value_type_too_high(self):
+    def test_catch_max_graph_size_value_too_high(self):
         """."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -127,45 +135,5 @@ class Test_max_graph_size_settings(unittest.TestCase):
             "Error, setting expected to be at most "
             + f"{self.supp_sets.max_graph_size}. Instead, it is:"
             + "50",
-            str(context.exception),
-        )
-
-    def test_catch_empty_max_graph_size_value(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_graph_size in copy.
-        config_settings["max_graph_size"] = None
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, expected type:<class 'int'>, yet it was:"
-            + f"{type(None)} for:{None}",
-            str(context.exception),
-        )
-
-    def test_empty_max_graph_size(self):
-        """Verifies an exception is thrown if an empty max_graph_size dict is
-        thrown."""
-
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Remove key and value of m.
-
-        config_settings.pop("max_graph_size")
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            # "'max_graph_size'",
-            "Error:max_graph_size is not in the configuration"
-            + f" settings:{config_settings.keys()}",
             str(context.exception),
         )

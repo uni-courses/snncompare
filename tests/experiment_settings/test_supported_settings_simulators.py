@@ -35,6 +35,66 @@ class Test_simulators_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_simulators = self.supp_sets.simulators
 
+    def test_error_is_thrown_if_simulators_key_is_missing(self):
+        """Verifies an exception is thrown if an empty simulators dict is
+        thrown."""
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Remove key and value of m.
+
+        config_settings.pop("simulators")
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            # "'simulators'",
+            "Error:simulators is not in the configuration"
+            + f" settings:{config_settings.keys()}",
+            str(context.exception),
+        )
+
+    def test_error_is_thrown_for_invalid_simulators_value_type(self):
+        """Verifies an exception is thrown if the configuration setting:
+
+        simulators is of invalid type.
+        """
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        expected_type = type(self.supp_sets.simulators)
+
+        # Verify it throws an error on None and string.
+        for invalid_config_setting_value in [None, ""]:
+            config_settings["simulators"] = invalid_config_setting_value
+            verify_error_is_thrown_on_invalid_configuration_setting_value(
+                invalid_config_setting_value,
+                config_settings,
+                expected_type,
+                self,
+            )
+
+    def test_catch_empty_simulators_value_list(self):
+        """."""
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        # Set negative value of simulators in copy.
+        config_settings["simulators"] = []
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            "Error, list was expected contain at least 1 integer."
+            + f" Instead, it has length:{0}",
+            str(context.exception),
+        )
+
     def test_catch_invalid_simulators_value(self):
         """."""
         # Create deepcopy of configuration settings.
@@ -57,63 +117,3 @@ class Test_simulators_settings(unittest.TestCase):
             + " Instead, it contains:invalid_simulator_name.",
             str(context.exception),
         )
-
-    def test_catch_empty_simulators_value_list(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of simulators in copy.
-        config_settings["simulators"] = []
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, list was expected contain at least 1 integer."
-            + f" Instead, it has length:{0}",
-            str(context.exception),
-        )
-
-    def test_empty_simulators(self):
-        """Verifies an exception is thrown if an empty simulators dict is
-        thrown."""
-
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Remove key and value of m.
-
-        config_settings.pop("simulators")
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            # "'simulators'",
-            "Error:simulators is not in the configuration"
-            + f" settings:{config_settings.keys()}",
-            str(context.exception),
-        )
-
-    def test_simulators_value_is_invalid_type(self):
-        """Verifies an exception is thrown if the configuration setting:
-
-        simulators is of invalid type.
-        """
-
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_sets.simulators)
-
-        # Verify it throws an error on None and string.
-        for invalid_config_setting_value in [None, ""]:
-            config_settings["simulators"] = invalid_config_setting_value
-            verify_error_is_thrown_on_invalid_configuration_setting_value(
-                invalid_config_setting_value,
-                config_settings,
-                expected_type,
-                self,
-            )

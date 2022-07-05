@@ -101,7 +101,7 @@ class Test_m_vals_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_vals_value_too_low(self):
+    def test_catch_m_vals_value_too_low(self):
         """Verifies an exception is thrown if the m_vals dictionary value is
         lower than the supported range of m_vals values permits."""
 
@@ -126,7 +126,7 @@ class Test_m_vals_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_m_vals_value_too_high(self):
+    def test_catch_m_vals_value_too_high(self):
         """Verifies an exception is thrown if the m_vals dictionary value is
         higher than the supported range of m_vals values permits."""
 
