@@ -103,13 +103,16 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
 
     def test_returns_valid_configuration_settings(self):
-        """Verifies a valid configuration settings object is returned."""
+        """Verifies a valid configuration settings object and object type is
+        returned."""
         returned_dict = verify_configuration_settings(
             self.supp_sets,
             with_adaptation_with_radiation,
             has_unique_id=False,
         )
         self.assertIsInstance(returned_dict, dict)
+
+        self.assertEqual(with_adaptation_with_radiation, returned_dict)
 
     def test_error_is_thrown_on_invalid_configuration_setting_key(self):
         """Verifies an error is thrown on an invalid configuration setting
@@ -136,8 +139,11 @@ class Test_generic_configuration_settings(unittest.TestCase):
 def verify_error_is_thrown_on_invalid_configuration_setting_value(
     invalid_config_setting_value, config_settings, expected_type, test_object
 ):
-    """Verifies an error is thrown on an invalid configuration setting
-    value."""
+    """Verifies an error is thrown on an invalid configuration setting value.
+
+    This method is called by other test files and is genereric for most
+    configuration setting parameters.
+    """
     actual_type = type(invalid_config_setting_value)
     if not isinstance(actual_type, type) and not isinstance(
         expected_type, type
