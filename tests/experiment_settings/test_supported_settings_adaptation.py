@@ -123,7 +123,13 @@ class Test_adaptation_settings(unittest.TestCase):
         )
 
     def test_catch_invalid_adaptation_dict_value_type_for_key(self):
-        """."""
+        """Tests whether the adaptation setting dictionary throws an error if
+        it contains an invalid value type for one of its keys.
+
+        In this case, the neuron_death key of the adaptation dictionary
+        is set to an invalid value type. It is set to string, whereas it
+        should be a float or dict.
+        """
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(

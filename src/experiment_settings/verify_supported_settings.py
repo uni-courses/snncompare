@@ -22,11 +22,10 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
             + " type dict."
         )
 
-    # TODO:
     verify_configuration_settings_dict_is_complete(
         supp_sets, experiment_config
     )
-    # TODO: verify no unknown configuration settings are presented.
+    # Verify no unknown configuration settings are presented.
     verify_configuration_settings_dict_contains_only_valid_entries(
         supp_sets, experiment_config
     )
@@ -93,7 +92,9 @@ def verify_configuration_settings_dict_is_complete(
     supp_sets, experiment_config
 ):
     """Verifies the configuration settings dictionary is complete."""
+    print(f"experiment_config.keys()={experiment_config.keys()}")
     for expected_key in supp_sets.config_setting_parameters:
+        print(f"expected_key={expected_key}")
         if expected_key not in experiment_config.keys():
             raise Exception(
                 f"Error:{expected_key} is not in the configuration"

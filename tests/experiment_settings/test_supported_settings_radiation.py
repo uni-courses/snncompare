@@ -1,11 +1,18 @@
 """Verifies The Supported_settings object catches invalid radiation
 specifications."""
 # pylint: disable=R0801
+import copy
 import unittest
 
-from src.experiment_settings.Supported_settings import Supported_settings
 from src.experiment_settings.verify_supported_settings import (
     verify_adap_and_rad_settings,
+    verify_configuration_settings,
+)
+from tests.experiment_settings.test_generic_configuration import (
+    adap_sets,
+    rad_sets,
+    supp_sets,
+    with_adaptation_with_radiation,
 )
 
 
@@ -16,7 +23,11 @@ class Test_radiation_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_settings()
+        self.supp_sets = supp_sets
+        self.adap_sets = adap_sets
+        self.rad_sets = rad_sets
+        self.with_adaptation_with_radiation = with_adaptation_with_radiation
+
         self.valid_radiation = self.supp_sets.radiation
 
         self.invalid_radiation_value = {
@@ -25,8 +36,28 @@ class Test_radiation_settings(unittest.TestCase):
 
         self.invalid_radiation_key = {"non-existing-key": 5}
 
-    # TODO: write test that verifies an error is thrown if the radiation key
-    # is not set.
+    def test_error_is_thrown_if_radiation_key_is_missing(self):
+        """Verifies an exception is thrown if the radiation key is missing from
+        the MDSA algorithm settings dictionary of the supported algorithms
+        dictionary of the configuration settings dictionary."""
+
+        # Create deepcopy of configuration settings.
+        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+
+        # Remove key and value of m.
+        config_settings.pop("radiation")
+
+        with self.assertRaises(Exception) as context:
+            verify_configuration_settings(
+                self.supp_sets, config_settings, has_unique_id=False
+            )
+
+        self.assertEqual(
+            # "'radiation'",
+            "Error:radiation is not in the configuration"
+            + f" settings:{config_settings.keys()}",
+            str(context.exception),
+        )
 
     def test_error_is_thrown_for_invalid_radiation_value_type_is_none(self):
         """Verifies if an error is thrown if the value belonging to the
