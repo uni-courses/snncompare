@@ -37,8 +37,8 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         self.valid_size_and_max_graphs = self.supp_sets.size_and_max_graphs
 
     def test_error_is_thrown_if_size_and_max_graphs_key_is_missing(self):
-        """Verifies an exception is thrown if an empty size_and_max_graphs dict
-        is thrown."""
+        """Verifies an exception is thrown if the size_and_max_graphs key is
+        missing from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -58,9 +58,11 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         )
 
     def test_error_is_thrown_for_invalid_size_and_max_graphs_value_type(self):
-        """Verifies an exception is thrown if the configuration setting:
+        """Verifies an exception is thrown if the size_and_max_graphs
+        dictionary value, is of invalid type.
 
-        size_and_max_graphs is of invalid type.
+        (Invalid types None, and string are tested, a list with floats
+        is expected).
         """
 
         # Create deepcopy of configuration settings.
@@ -80,7 +82,8 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             )
 
     def test_catch_empty_size_and_max_graphs_value_list(self):
-        """."""
+        """Verifies an exception is thrown if the size_and_max_graphs
+        dictionary value is a list without elements."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of size_and_max_graphs in copy.
@@ -98,7 +101,9 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         )
 
     def test_catch_size_and_max_graphs_value_too_low(self):
-        """."""
+        """Verifies an exception is thrown if the size_and_max_graphs
+        dictionary value is lower than the supported range of
+        size_and_max_graphs values permits."""
         # Create deepcopy of configuration settings.
         config_settings_first = copy.deepcopy(
             self.with_adaptation_with_radiation
@@ -143,7 +148,9 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         )
 
     def test_catch_size_and_max_graphs_value_too_high(self):
-        """."""
+        """Verifies an exception is thrown if the size_and_max_graphs
+        dictionary value is higher than the supported range of
+        size_and_max_graphs values permits."""
         # Create deepcopy of configuration settings.
         config_settings_first = copy.deepcopy(
             self.with_adaptation_with_radiation

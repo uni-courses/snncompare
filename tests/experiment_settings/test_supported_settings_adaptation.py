@@ -35,7 +35,9 @@ class Test_adaptation_settings(unittest.TestCase):
         self.invalid_adaptation_key = {"non-existing-key": 5}
 
     def test_error_is_thrown_if_adaptation_key_is_missing(self):
-        """Verifies an error is thrown if the adaptation key is not set."""
+        """Verifies an exception is thrown if the adaptation key is missing
+        from the MDSA algorithm settings dictionary of the supported algorithms
+        dictionary of the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)

@@ -37,9 +37,9 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_empty_overwrite_sim_results(self):
-        """Verifies an exception is thrown if an empty overwrite_sim_results
-        dict is thrown."""
+    def test_error_is_thrown_if_overwrite_sim_results_key_is_missing(self):
+        """Verifies an exception is thrown if the overwrite_sim_results key is
+        missing from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -60,9 +60,11 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         )
 
     def test_overwrite_sim_results_value_is_invalid_type(self):
-        """Verifies an exception is thrown if the configuration setting:
+        """Verifies an exception is thrown if the overwrite_sim_results
+        dictionary value, is of invalid type.
 
-        overwrite_sim_results is of invalid type.
+        (Invalid types None, and string are tested, a list with floats
+        is expected).
         """
 
         # Create deepcopy of configuration settings.
@@ -80,21 +82,3 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
                 expected_type,
                 self,
             )
-
-    def test_catch_empty_overwrite_sim_results_value(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of overwrite_sim_results in copy.
-        config_settings["overwrite_sim_results"] = None
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, expected type:<class 'bool'>, yet it was:"
-            + f"{type(None)} for:{None}",
-            str(context.exception),
-        )

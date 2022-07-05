@@ -36,8 +36,8 @@ class Test_simulators_settings(unittest.TestCase):
         self.valid_simulators = self.supp_sets.simulators
 
     def test_error_is_thrown_if_simulators_key_is_missing(self):
-        """Verifies an exception is thrown if an empty simulators dict is
-        thrown."""
+        """Verifies an exception is thrown if the simulators key is missing
+        from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -58,9 +58,11 @@ class Test_simulators_settings(unittest.TestCase):
         )
 
     def test_error_is_thrown_for_invalid_simulators_value_type(self):
-        """Verifies an exception is thrown if the configuration setting:
+        """Verifies an exception is thrown if the simulators dictionary value,
+        is of invalid type.
 
-        simulators is of invalid type.
+        (Invalid types None, and string are tested, a list with floats
+        is expected).
         """
 
         # Create deepcopy of configuration settings.
@@ -78,7 +80,8 @@ class Test_simulators_settings(unittest.TestCase):
             )
 
     def test_catch_empty_simulators_value_list(self):
-        """."""
+        """Verifies an exception is thrown if the simulators dictionary value
+        is a list without elements."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of simulators in copy.
@@ -96,7 +99,8 @@ class Test_simulators_settings(unittest.TestCase):
         )
 
     def test_catch_invalid_simulators_value(self):
-        """."""
+        """Verifies an exception is thrown if the simulators dictionary value
+        is not supported by the permissible simulators values."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of simulators in copy.

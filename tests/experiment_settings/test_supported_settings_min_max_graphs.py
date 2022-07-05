@@ -38,8 +38,8 @@ class Test_min_max_graphs_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
     def test_error_is_thrown_if_min_max_graphs_key_is_missing(self):
-        """Verifies an exception is thrown if an empty min_max_graphs dict is
-        thrown."""
+        """Verifies an exception is thrown if the min_max_graphs key is missing
+        from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -60,9 +60,11 @@ class Test_min_max_graphs_settings(unittest.TestCase):
         )
 
     def test_error_is_thrown_for_invalid_min_max_graphs_value_type(self):
-        """Verifies an exception is thrown if the configuration setting:
+        """Verifies an exception is thrown if the min_max_graphs dictionary
+        value, is of invalid type.
 
-        min_max_graphs is of invalid type.
+        (Invalid types None, and string are tested, a list with floats
+        is expected).
         """
 
         # Create deepcopy of configuration settings.
@@ -82,7 +84,9 @@ class Test_min_max_graphs_settings(unittest.TestCase):
     # TODO: test_catch_empty_min_max_graphs_value_list
 
     def test_catch_min_max_graphs_value_too_low(self):
-        """."""
+        """Verifies an exception is thrown if the min_max_graphs dictionary
+        value is lower than the supported range of min_max_graphs values
+        permits."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of min_max_graphs in copy.
@@ -101,7 +105,9 @@ class Test_min_max_graphs_settings(unittest.TestCase):
         )
 
     def test_catch_min_max_graphs_value_too_high(self):
-        """."""
+        """Verifies an exception is thrown if the min_max_graphs dictionary
+        value is higher than the supported range of min_max_graphs values
+        permits."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of min_max_graphs in copy.

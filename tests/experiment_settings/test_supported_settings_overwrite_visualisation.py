@@ -39,8 +39,8 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
     def test_error_is_thrown_if_overwrite_visualisation_key_is_missing(self):
-        """Verifies an exception is thrown if an empty overwrite_visualisation
-        dict is thrown."""
+        """Verifies an exception is thrown if the overwrite_visualisation key
+        is missing from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -63,7 +63,12 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
     def test_error_is_thrown_for_invalid_overwrite_visualisation_value_type(
         self,
     ):
-        """."""
+        """Verifies an exception is thrown if the overwrite_visualisation
+        dictionary value, is of invalid type.
+
+        (Invalid types None, and string are tested, a list with floats
+        is expected).
+        """
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of overwrite_visualisation in copy.

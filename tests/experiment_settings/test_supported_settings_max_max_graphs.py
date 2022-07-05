@@ -38,8 +38,8 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
     def test_error_is_thrown_if_max_max_graphs_key_is_missing(self):
-        """Verifies an exception is thrown if an empty max_max_graphs dict is
-        thrown."""
+        """Verifies an exception is thrown if the max_max_graphs key is missing
+        from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -59,10 +59,12 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_max_max_graphs_value_is_invalid_type(self):
-        """Verifies an exception is thrown if the configuration setting:
+    def test_error_is_thrown_for_invalid_max_max_graphs_value_type(self):
+        """Verifies an exception is thrown if the max_max_graphs dictionary
+        value, is of invalid type.
 
-        max_max_graphs is of invalid type.
+        (Invalid types None, and string are tested, a list with floats
+        is expected).
         """
 
         # Create deepcopy of configuration settings.
@@ -79,27 +81,10 @@ class Test_max_max_graphs_settings(unittest.TestCase):
                 self,
             )
 
-    def test_error_is_thrown_for_invalid_max_max_graphs_value_type(self):
-        """."""
-        # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-
-        # Set negative value of max_max_graphs in copy.
-        config_settings["max_max_graphs"] = None
-
-        with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
-                self.supp_sets, config_settings, has_unique_id=False
-            )
-
-        self.assertEqual(
-            "Error, expected type:<class 'int'>, yet it was:"
-            + f"{type(None)} for:{None}",
-            str(context.exception),
-        )
-
     def test_catch_invalid_max_max_graphs_value_type_too_low(self):
-        """."""
+        """Verifies an exception is thrown if the max_max_graphs dictionary
+        value is lower than the supported range of max_max_graphs values
+        permits."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
@@ -117,9 +102,9 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_max_max_graphs_value_too_low(self):
-        """To state the obvious, this also tests whether min_max_graphs is
-        larger than max_graph size throws an exception."""
+    def test_catch_max_max_graphs_is_smaller_than_min_max_graphs(self):
+        """Verifies an exception is thrown if the max_max_graphs value is
+        smaller than the min_max_graphs value."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
@@ -142,7 +127,9 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         )
 
     def test_catch_max_max_graphs_value_too_high(self):
-        """."""
+        """Verifies an exception is thrown if the max_max_graphs dictionary
+        value is higher than the supported range of max_max_graphs values
+        permits."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.

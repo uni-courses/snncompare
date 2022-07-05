@@ -36,9 +36,9 @@ class Test_iterations_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_iterations = self.supp_sets.iterations
 
-    def test_empty_iterations(self):
-        """Verifies an exception is thrown if an empty iterations dict is
-        thrown."""
+    def test_error_is_thrown_if_iterations_key_is_missing(self):
+        """Verifies an exception is thrown if the iteration key is missing from
+        the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
@@ -59,9 +59,11 @@ class Test_iterations_settings(unittest.TestCase):
         )
 
     def test_iterations_value_is_invalid_type(self):
-        """Verifies an exception is thrown if the configuration setting:
+        """Verifies an exception is thrown if the iteration dictionary value,
+        is of invalid type.
 
-        iterations is of invalid type.
+        (Invalid types None, and string are tested, a list with floats
+        is expected).
         """
 
         # Create deepcopy of configuration settings.
@@ -79,7 +81,8 @@ class Test_iterations_settings(unittest.TestCase):
             )
 
     def test_catch_empty_iterations_value_list(self):
-        """."""
+        """Verifies an exception is thrown if the iteration dictionary value is
+        a list without elements."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of iterations in copy.
@@ -96,8 +99,9 @@ class Test_iterations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_iterations_value_type_too_low(self):
-        """."""
+    def test_catch_iterations_value_too_low(self):
+        """Verifies an exception is thrown if the iteration dictionary value is
+        lower than the supported range of iteration values permits."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of iterations in copy.
@@ -115,8 +119,9 @@ class Test_iterations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_iterations_value_type_too_high(self):
-        """."""
+    def test_catch_iterations_value_too_high(self):
+        """Verifies an exception is thrown if the iteration dictionary value is
+        higher than the supported range of iteration values permits."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of iterations in copy.
