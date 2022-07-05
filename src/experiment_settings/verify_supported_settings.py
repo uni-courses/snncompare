@@ -27,6 +27,9 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
         supp_sets, experiment_config
     )
     # TODO: verify no unknown configuration settings are presented.
+    verify_configuration_settings_dict_contains_only_valid_entries(
+        supp_sets, experiment_config
+    )
 
     # Verify settings of type: list and tuple.
     verify_list_setting(
@@ -107,7 +110,7 @@ def verify_configuration_settings_dict_contains_only_valid_entries(
         if actual_key not in supp_sets.config_setting_parameters:
             raise Exception(
                 f"Error:{actual_key} is not supported by the configuration"
-                + f" settings:{experiment_config.keys()}"
+                + f" settings:{supp_sets.config_setting_parameters}"
             )
 
 

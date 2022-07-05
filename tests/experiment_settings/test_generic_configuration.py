@@ -60,7 +60,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             ],  # Multiply firing frequency with 5 to limit spike decay
             # impact.
         }
-        self.invalid_adaptation_key = {"non-existing-key": 5}
+        self.invalid_adaptation_key = "non-existing-key"
 
         self.invalid_adaptation_value = {
             "redundancy": "invalid value of type string iso list",
@@ -111,14 +111,14 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
         self.assertIsInstance(returned_dict, dict)
 
-    def verify_type_error_is_thrown_on_configuration_setting_key(self):
+    def test_error_is_thrown_on_invalid_configuration_setting_key(self):
         """Verifies an error is thrown on an invalid configuration setting
         key."""
         # Create deepcopy of configuration settings.
         config_settings = copy.deepcopy(with_adaptation_with_radiation)
 
         # Add invalid key to configuration dictionary.
-        config_settings.add(self.invalid_adaptation_key)
+        config_settings[self.invalid_adaptation_key] = "Filler"
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
