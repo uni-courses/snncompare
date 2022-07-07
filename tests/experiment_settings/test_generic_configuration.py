@@ -3,7 +3,7 @@ specifications."""
 import copy
 import unittest
 
-from src.experiment_settings.experiment_settings import (
+from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptation_settings,
     Radiation_settings,
 )

@@ -426,3 +426,17 @@ def verify_radiation_values(supp_sets, radiation: dict, key: str) -> None:
                     f"Unexpected setting type:{type(setting)} for:"
                     + f" {setting}."
                 )
+
+
+def verify_has_unique_id(experiment_config):
+    """Verifies the config setting has a unique id."""
+    if not isinstance(experiment_config, dict):
+        raise Exception(
+            "The configuration settings is not a dictionary,"
+            + f"instead it is: of type:{type(experiment_config)}."
+        )
+    if "unique_id" not in experiment_config.keys():
+        raise Exception(
+            "The configuration settings do not contain a unique id even though"
+            + f" that was expected. experiment_config is:{experiment_config}."
+        )

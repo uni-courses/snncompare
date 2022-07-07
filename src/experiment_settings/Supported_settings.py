@@ -17,8 +17,11 @@ from src.experiment_settings.verify_supported_settings import (
 
 
 class Supported_settings:
-    """Stores examples of the supported experiment settings, such as radiation
-    and adaptation settings."""
+    """Stores the supported experiment setting parameter ranges.
+
+    An experiment can consist of multiple runs. A run is a particular
+    combination of experiment setting parameters.
+    """
 
     def __init__(
         self,
@@ -155,6 +158,16 @@ class Supported_settings:
             "delta_vth": self.delta_vth,
         }
 
+    def has_unique_config_id(self, experiment_config):
+        """
+
+        :param experiment_config:
+
+        """
+        if "unique_id" in experiment_config.keys():
+            return True
+        return False
+
     def append_unique_config_id(self, experiment_config: dict) -> dict:
         """Checks if an experiment configuration dictionary already has a
         unique identifier, and if not it computes and appends it.
@@ -172,6 +185,7 @@ class Supported_settings:
         verify_configuration_settings(
             self, experiment_config, has_unique_id=False
         )
+
         hash_set = frozenset(experiment_config.values())
         unique_id = hash(hash_set)
         experiment_config["unique_id"] = unique_id
