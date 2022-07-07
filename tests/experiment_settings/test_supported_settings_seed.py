@@ -1,12 +1,14 @@
-"""Verifies the Supported_settings object catches invalid seed
+"""Verifies the Supported_experiment_settings object catches invalid seed
 specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
 
-from src.experiment_settings.Supported_settings import Supported_settings
-from src.experiment_settings.verify_supported_settings import (
-    verify_configuration_settings,
+from src.experiment_settings.Supported_experiment_settings import (
+    Supported_experiment_settings,
+)
+from src.experiment_settings.verify_experiment_settings import (
+    verify_experiment_config,
 )
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
@@ -18,13 +20,13 @@ from tests.experiment_settings.test_generic_configuration import (
 
 
 class Test_seed_settings(unittest.TestCase):
-    """Tests whether the verify_configuration_settings_types function catches
+    """Tests whether the verify_experiment_config_types function catches
     invalid seed settings.."""
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_settings()
+        self.supp_sets = Supported_experiment_settings()
         self.valid_seed = self.supp_sets.seed
 
         self.invalid_seed_value = {
@@ -47,7 +49,7 @@ class Test_seed_settings(unittest.TestCase):
         config_settings.pop("seed")
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 

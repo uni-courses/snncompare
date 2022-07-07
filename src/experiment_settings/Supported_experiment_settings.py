@@ -10,13 +10,13 @@ setting types should be identical.)
 # The settings object contains all the settings as a dictionary, hence no
 # hierarchy is used, leading to 10/7 instance attributes.
 from src.experiment_settings.Supported_algorithms import MDSA
-from src.experiment_settings.verify_supported_settings import (
-    verify_configuration_settings,
+from src.experiment_settings.verify_experiment_settings import (
+    verify_experiment_config,
     verify_min_max,
 )
 
 
-class Supported_settings:
+class Supported_experiment_settings:
     """Stores the supported experiment setting parameter ranges.
 
     An experiment can consist of multiple runs. A run is a particular
@@ -187,14 +187,10 @@ class Supported_settings:
                 + "already contains a unique identifier."
             )
 
-        verify_configuration_settings(
-            self, experiment_config, has_unique_id=False
-        )
+        verify_experiment_config(self, experiment_config, has_unique_id=False)
 
         hash_set = frozenset(experiment_config.values())
         unique_id = hash(hash_set)
         experiment_config["unique_id"] = unique_id
-        verify_configuration_settings(
-            self, experiment_config, has_unique_id=True
-        )
+        verify_experiment_config(self, experiment_config, has_unique_id=True)
         return experiment_config

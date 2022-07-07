@@ -8,10 +8,12 @@ from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptation_settings,
     Radiation_settings,
 )
-from src.experiment_settings.Supported_settings import Supported_settings
-from src.experiment_settings.verify_supported_settings import (
+from src.experiment_settings.Supported_experiment_settings import (
+    Supported_experiment_settings,
+)
+from src.experiment_settings.verify_experiment_settings import (
     verify_adap_and_rad_settings,
-    verify_configuration_settings,
+    verify_experiment_config,
     verify_has_unique_id,
 )
 
@@ -29,10 +31,10 @@ class Experiment_runner:
         self.config_settings = config_settings
 
         # Load the ranges of supported settings.
-        self.supp_sets = Supported_settings()
+        self.supp_sets = Supported_experiment_settings()
 
         # Verify the experiment config_settings are complete and valid.
-        verify_configuration_settings(
+        verify_experiment_config(
             self.supp_sets, config_settings, has_unique_id=False
         )
 
@@ -74,7 +76,7 @@ class Experiment_runner:
 def example_config_settings():
     """Creates example experiment configuration settings."""
     # Create prerequisites
-    supp_sets = Supported_settings()
+    supp_sets = Supported_experiment_settings()
     adap_sets = Adaptation_settings()
     rad_sets = Radiation_settings()
 

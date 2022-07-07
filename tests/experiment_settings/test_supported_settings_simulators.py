@@ -1,11 +1,11 @@
-"""Verifies the Supported_settings object catches invalid simulators
+"""Verifies the Supported_experiment_settings object catches invalid simulators
 specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
 
-from src.experiment_settings.verify_supported_settings import (
-    verify_configuration_settings,
+from src.experiment_settings.verify_experiment_settings import (
+    verify_experiment_config,
 )
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
@@ -17,13 +17,13 @@ from tests.experiment_settings.test_generic_configuration import (
 
 
 class Test_simulators_settings(unittest.TestCase):
-    """Tests whether the verify_configuration_settings_types function catches
+    """Tests whether the verify_experiment_config_types function catches
     invalid simulators settings.."""
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.supp_sets = Supported_settings()
+        # self.supp_sets = Supported_experiment_settings()
 
         self.invalid_simulators_value = {
             "simulators": "invalid value of type string iso list of floats",
@@ -46,7 +46,7 @@ class Test_simulators_settings(unittest.TestCase):
         config_settings.pop("simulators")
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 
@@ -88,7 +88,7 @@ class Test_simulators_settings(unittest.TestCase):
         config_settings["simulators"] = []
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 
@@ -111,7 +111,7 @@ class Test_simulators_settings(unittest.TestCase):
         ]
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 

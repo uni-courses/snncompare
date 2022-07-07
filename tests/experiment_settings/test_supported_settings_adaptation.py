@@ -1,11 +1,11 @@
-"""Verifies The Supported_settings object catches invalid adaptation
+"""Verifies The Supported_experiment_settings object catches invalid adaptation
 specifications."""
 import copy
 import unittest
 
-from src.experiment_settings.verify_supported_settings import (
+from src.experiment_settings.verify_experiment_settings import (
     verify_adap_and_rad_settings,
-    verify_configuration_settings,
+    verify_experiment_config,
 )
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
@@ -46,7 +46,7 @@ class Test_adaptation_settings(unittest.TestCase):
         config_settings.pop("adaptation")
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 

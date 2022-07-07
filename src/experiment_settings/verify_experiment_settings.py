@@ -6,7 +6,7 @@ from typing import Any, Dict
 
 
 # pylint: disable=W0613
-def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
+def verify_experiment_config(supp_sets, experiment_config, has_unique_id):
     """Verifies the selected experiment configuration settings are valid.
 
     :param experiment_config: param has_unique_id:
@@ -22,11 +22,9 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
             + " type dict."
         )
 
-    verify_configuration_settings_dict_is_complete(
-        supp_sets, experiment_config
-    )
+    verify_experiment_config_dict_is_complete(supp_sets, experiment_config)
     # Verify no unknown configuration settings are presented.
-    verify_configuration_settings_dict_contains_only_valid_entries(
+    verify_experiment_config_dict_contains_only_valid_entries(
         supp_sets, experiment_config
     )
 
@@ -91,9 +89,7 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     return experiment_config
 
 
-def verify_configuration_settings_dict_is_complete(
-    supp_sets, experiment_config
-):
+def verify_experiment_config_dict_is_complete(supp_sets, experiment_config):
     """Verifies the configuration settings dictionary is complete."""
     print(f"experiment_config.keys()={experiment_config.keys()}")
     for expected_key in supp_sets.config_setting_parameters:
@@ -105,7 +101,7 @@ def verify_configuration_settings_dict_is_complete(
             )
 
 
-def verify_configuration_settings_dict_contains_only_valid_entries(
+def verify_experiment_config_dict_contains_only_valid_entries(
     supp_sets, experiment_config
 ):
     """Verifies the configuration settings dictionary does not contain any
@@ -160,8 +156,8 @@ def verify_list_setting(supp_sets, setting, element_type, setting_name):
 
 
 def get_expected_range(setting_name, supp_sets):
-    """Returns the ranges as specified in the Supported_settings object for the
-    asked setting.
+    """Returns the ranges as specified in the Supported_experiment_settings
+    object for the asked setting.
 
     :param setting_name: param supp_sets:
     :param supp_sets:
@@ -308,7 +304,7 @@ def verify_adap_and_rad_settings(supp_sets, some_dict, check_type) -> dict:
     :param supp_sets:
     """
 
-    # Load the example settings from the Supported_settings object.
+    # Load the example settings from the Supported_experiment_settings object.
     if check_type == "adaptation":
         reference_object: Dict[str, Any] = supp_sets.adaptation
     elif check_type == "radiation":

@@ -1,7 +1,9 @@
 """Contains experiment settings."""
 # pylint: disable=R0801
-from src.experiment_settings.Supported_settings import Supported_settings
-from src.experiment_settings.verify_supported_settings import (
+from src.experiment_settings.Supported_experiment_settings import (
+    Supported_experiment_settings,
+)
+from src.experiment_settings.verify_experiment_settings import (
     verify_adap_and_rad_settings,
 )
 
@@ -67,7 +69,7 @@ class Radiation_settings:
 
 adaptation_settings = Adaptation_settings()
 radiation_settings = Radiation_settings()
-supported_settings = Supported_settings()
+supported_settings = Supported_experiment_settings()
 
 with_and_without_adaptation_and_radiation = {
     "m": list(range(0, 1, 1)),

@@ -1,11 +1,11 @@
-"""Verifies the Supported_settings object catches invalid iterations
+"""Verifies the Supported_experiment_settings object catches invalid iterations
 specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
 
-from src.experiment_settings.verify_supported_settings import (
-    verify_configuration_settings,
+from src.experiment_settings.verify_experiment_settings import (
+    verify_experiment_config,
 )
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
@@ -17,13 +17,13 @@ from tests.experiment_settings.test_generic_configuration import (
 
 
 class Test_iterations_settings(unittest.TestCase):
-    """Tests whether the verify_configuration_settings function catches invalid
+    """Tests whether the verify_experiment_config function catches invalid
     iterations settings."""
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.supp_sets = Supported_settings()
+        # self.supp_sets = Supported_experiment_settings()
         self.maxDiff = None  # Display full error message.
 
         self.invalid_iterations_value = {
@@ -47,7 +47,7 @@ class Test_iterations_settings(unittest.TestCase):
         config_settings.pop("iterations")
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 
@@ -89,7 +89,7 @@ class Test_iterations_settings(unittest.TestCase):
         config_settings["iterations"] = []
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 
@@ -108,7 +108,7 @@ class Test_iterations_settings(unittest.TestCase):
         config_settings["iterations"] = [-2]
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 
@@ -128,7 +128,7 @@ class Test_iterations_settings(unittest.TestCase):
         config_settings["iterations"] = [50]
 
         with self.assertRaises(Exception) as context:
-            verify_configuration_settings(
+            verify_experiment_config(
                 self.supp_sets, config_settings, has_unique_id=False
             )
 

@@ -1,4 +1,4 @@
-"""Verifies The Supported_settings object catches invalid adaptation
+"""Verifies The Supported_experiment_settings object catches invalid adaptation
 specifications."""
 import copy
 import unittest
@@ -7,13 +7,15 @@ from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptation_settings,
     Radiation_settings,
 )
-from src.experiment_settings.Supported_settings import Supported_settings
-from src.experiment_settings.verify_supported_settings import (
+from src.experiment_settings.Supported_experiment_settings import (
+    Supported_experiment_settings,
+)
+from src.experiment_settings.verify_experiment_settings import (
     verify_adap_and_rad_settings,
-    verify_configuration_settings,
+    verify_experiment_config,
 )
 
-supp_sets = Supported_settings()
+supp_sets = Supported_experiment_settings()
 adap_sets = Adaptation_settings()
 rad_sets = Radiation_settings()
 with_adaptation_with_radiation = {
@@ -70,7 +72,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
     def test_returns_valid_configuration_settings(self):
         """Verifies a valid configuration settings object and object type is
         returned."""
-        returned_dict = verify_configuration_settings(
+        returned_dict = verify_experiment_config(
             supp_sets,
             with_adaptation_with_radiation,
             has_unique_id=False,
@@ -85,7 +87,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
-            verify_configuration_settings(supp_sets, None, has_unique_id=False)
+            verify_experiment_config(supp_sets, None, has_unique_id=False)
 
         self.assertEqual(
             "Error, the experiment_config is of type:"
@@ -103,7 +105,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
-            verify_configuration_settings(
+            verify_experiment_config(
                 supp_sets, "string_instead_of_dict", has_unique_id=False
             )
         self.assertEqual(
@@ -124,7 +126,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
-            verify_configuration_settings(
+            verify_experiment_config(
                 supp_sets, config_settings, has_unique_id=False
             )
         self.assertEqual(
@@ -152,7 +154,7 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
             + f"{actual_type},{expected_type}"
         )
     with test_object.assertRaises(Exception) as context:
-        verify_configuration_settings(
+        verify_experiment_config(
             test_object.supp_sets, config_settings, has_unique_id=False
         )
 
