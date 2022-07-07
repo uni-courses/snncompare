@@ -28,20 +28,25 @@ class Supported_settings:
     ) -> None:
         # Config_settings dictionary keys:
         self.config_setting_parameters = [
+            "adaptation",
             "algorithms",
             "iterations",
-            "min_max_graphs",
+            "max_graph_size",
             "max_max_graphs",
             "min_graph_size",
-            "max_graph_size",
-            "size_and_max_graphs",
-            "adaptation",
+            "min_max_graphs",
             "radiation",
             "overwrite_sim_results",
             "overwrite_visualisation",
+            "seed",
             "simulators",
+            "size_and_max_graphs",
         ]
 
+        self.seed = 5
+
+        # Create dictionary with algorithm name as key, and algorithm settings
+        # object as value.
         self.algorithms = {"MDSA": MDSA()}
 
         # The number of times the experiment is repeated.

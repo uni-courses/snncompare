@@ -17,25 +17,26 @@ supp_sets = Supported_settings()
 adap_sets = Adaptation_settings()
 rad_sets = Radiation_settings()
 with_adaptation_with_radiation = {
+    "adaptation": verify_adap_and_rad_settings(
+        supp_sets, adap_sets.with_adaptation, "adaptation"
+    ),
     "algorithms": {
         "MDSA": {
             "m_vals": list(range(0, 1, 1)),
         }
     },
     "iterations": list(range(0, 3, 1)),
-    "min_max_graphs": 1,
-    "max_max_graphs": 15,
     "min_graph_size": 3,
+    "min_max_graphs": 1,
     "max_graph_size": 20,
-    "size_and_max_graphs": [(3, 15), (4, 15)],
-    "adaptation": verify_adap_and_rad_settings(
-        supp_sets, adap_sets.with_adaptation, "adaptation"
-    ),
+    "max_max_graphs": 15,
+    "overwrite_sim_results": True,
+    "overwrite_visualisation": True,
     "radiation": verify_adap_and_rad_settings(
         supp_sets, rad_sets.with_radiation, "radiation"
     ),
-    "overwrite_sim_results": True,
-    "overwrite_visualisation": True,
+    "seed": 5,
+    "size_and_max_graphs": [(3, 15), (4, 15)],
     "simulators": ["nx"],
 }
 

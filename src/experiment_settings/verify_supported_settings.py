@@ -40,6 +40,7 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     verify_list_setting(
         supp_sets, experiment_config["iterations"], int, "iterations"
     )
+
     verify_list_setting(
         supp_sets, experiment_config["simulators"], str, "simulators"
     )
@@ -48,6 +49,8 @@ def verify_configuration_settings(supp_sets, experiment_config, has_unique_id):
     )
 
     # Verify settings of type integer.
+    verify_integer_settings(experiment_config["seed"])
+
     verify_integer_settings(
         experiment_config["min_max_graphs"],
         supp_sets.min_max_graphs,
@@ -205,7 +208,7 @@ def verify_size_and_max_graphs_settings(
         )
 
 
-def verify_integer_settings(integer_setting, min_val, max_val):
+def verify_integer_settings(integer_setting, min_val=None, max_val=None):
     """Verifies an integer setting is of type integer and that it is within the
     supported minimum and maximum value range..
 
@@ -218,17 +221,19 @@ def verify_integer_settings(integer_setting, min_val, max_val):
             f"Error, expected type:{int}, yet it was:"
             + f"{type(integer_setting)} for:{integer_setting}"
         )
-    if integer_setting < min_val:
-        raise Exception(
-            f"Error, setting expected to be at least {min_val}. "
-            + f"Instead, it is:{integer_setting}"
-        )
-    if integer_setting > max_val:
-        raise Exception(
-            "Error, setting expected to be at most"
-            + f" {max_val}. Instead, it is:"
-            + f"{integer_setting}"
-        )
+    if (min_val is not None) and (max_val is not None):
+
+        if integer_setting < min_val:
+            raise Exception(
+                f"Error, setting expected to be at least {min_val}. "
+                + f"Instead, it is:{integer_setting}"
+            )
+        if integer_setting > max_val:
+            raise Exception(
+                "Error, setting expected to be at most"
+                + f" {max_val}. Instead, it is:"
+                + f"{integer_setting}"
+            )
 
 
 def verify_min_max(min_val, max_val):
