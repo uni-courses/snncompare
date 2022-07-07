@@ -13,7 +13,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
-    supp_sets,
+    supp_experi_setts,
     with_adaptation_with_radiation,
 )
 
@@ -25,15 +25,15 @@ class Test_max_graph_size_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_experiment_settings()
-        self.valid_max_graph_size = self.supp_sets.max_graph_size
+        self.supp_experi_setts = Supported_experiment_settings()
+        self.valid_max_graph_size = self.supp_experi_setts.max_graph_size
 
         self.invalid_max_graph_size_value = {
             "max_graph_size": "invalid value of type string iso list of"
             + " floats",
         }
 
-        self.supp_sets = supp_sets
+        self.supp_experi_setts = supp_experi_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
@@ -50,7 +50,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
@@ -74,7 +74,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
@@ -94,12 +94,12 @@ class Test_max_graph_size_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
             "Error, setting expected to be at least "
-            + f"{self.supp_sets.min_graph_size}. "
+            + f"{self.supp_experi_setts.min_graph_size}. "
             + f"Instead, it is:{-2}",
             str(context.exception),
         )
@@ -119,7 +119,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
@@ -139,12 +139,12 @@ class Test_max_graph_size_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
             "Error, setting expected to be at most "
-            + f"{self.supp_sets.max_graph_size}. Instead, it is:"
+            + f"{self.supp_experi_setts.max_graph_size}. Instead, it is:"
             + "50",
             str(context.exception),
         )

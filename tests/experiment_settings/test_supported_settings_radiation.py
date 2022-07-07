@@ -11,7 +11,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
-    supp_sets,
+    supp_experi_setts,
     with_adaptation_with_radiation,
 )
 
@@ -23,12 +23,12 @@ class Test_radiation_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = supp_sets
+        self.supp_experi_setts = supp_experi_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-        self.valid_radiation = self.supp_sets.radiation
+        self.valid_radiation = self.supp_experi_setts.radiation
 
         self.invalid_radiation_value = {
             "neuron_death": "invalid value of type string iso list",
@@ -49,7 +49,7 @@ class Test_radiation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
@@ -68,7 +68,9 @@ class Test_radiation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, None, "radiation")
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts, None, "radiation"
+            )
 
         self.assertEqual(
             "Error, property is expected to be a dict, yet"
@@ -86,7 +88,7 @@ class Test_radiation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_sets, "string_instead_of_dict", "radiation"
+                self.supp_experi_setts, "string_instead_of_dict", "radiation"
             )
 
         self.assertEqual(
@@ -100,7 +102,9 @@ class Test_radiation_settings(unittest.TestCase):
         thrown."""
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, {}, "radiation")
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts, {}, "radiation"
+            )
 
         self.assertEqual(
             "Error, property dict: radiation was empty.",
@@ -115,12 +119,12 @@ class Test_radiation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_sets, self.invalid_radiation_key, "radiation"
+                self.supp_experi_setts, self.invalid_radiation_key, "radiation"
             )
 
         self.assertEqual(
             "Error, property.key:non-existing-key is not in the supported "
-            + f"property keys:{self.supp_sets.radiation.keys()}.",
+            + f"property keys:{self.supp_experi_setts.radiation.keys()}.",
             str(context.exception),
         )
 
@@ -135,7 +139,9 @@ class Test_radiation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_sets, self.invalid_radiation_value, "radiation"
+                self.supp_experi_setts,
+                self.invalid_radiation_value,
+                "radiation",
             )
 
         self.assertEqual(

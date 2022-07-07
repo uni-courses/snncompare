@@ -31,17 +31,21 @@ class Experiment_runner:
         self.config_settings = config_settings
 
         # Load the ranges of supported settings.
-        self.supp_sets = Supported_experiment_settings()
+        self.supp_experi_setts = Supported_experiment_settings()
 
         # Verify the experiment config_settings are complete and valid.
         verify_experiment_config(
-            self.supp_sets, config_settings, has_unique_id=False
+            self.supp_experi_setts, config_settings, has_unique_id=False
         )
 
         # If the experiment config_settings does not contain a hash-code,
         # create the unique hash code for this configuration.
-        if not self.supp_sets.has_unique_config_id(self.config_settings):
-            self.supp_sets.append_unique_config_id(self, self.config_settings)
+        if not self.supp_experi_setts.has_unique_config_id(
+            self.config_settings
+        ):
+            self.supp_experi_setts.append_unique_config_id(
+                self, self.config_settings
+            )
 
         # Verify the unique hash code for this configuration is valid.
         verify_has_unique_id(self.config_settings)
@@ -76,7 +80,7 @@ class Experiment_runner:
 def example_config_settings():
     """Creates example experiment configuration settings."""
     # Create prerequisites
-    supp_sets = Supported_experiment_settings()
+    supp_experi_setts = Supported_experiment_settings()
     adap_sets = Adaptation_settings()
     rad_sets = Radiation_settings()
 
@@ -89,7 +93,7 @@ def example_config_settings():
             }
         },
         "adaptation": verify_adap_and_rad_settings(
-            supp_sets, adap_sets.with_adaptation, "adaptation"
+            supp_experi_setts, adap_sets.with_adaptation, "adaptation"
         ),
         "iterations": list(range(0, 3, 1)),
         "min_max_graphs": 1,
@@ -99,7 +103,7 @@ def example_config_settings():
         "overwrite_sim_results": True,
         "overwrite_visualisation": True,
         "radiation": verify_adap_and_rad_settings(
-            supp_sets, rad_sets.with_radiation, "radiation"
+            supp_experi_setts, rad_sets.with_radiation, "radiation"
         ),
         "size_and_max_graphs": [(3, 15), (4, 15)],
         "simulators": ["nx"],

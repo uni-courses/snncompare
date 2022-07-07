@@ -10,7 +10,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
-    supp_sets,
+    supp_experi_setts,
     with_adaptation_with_radiation,
 )
 
@@ -22,11 +22,11 @@ class Test_adaptation_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = supp_sets
+        self.supp_experi_setts = supp_experi_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
-        self.valid_iterations = self.supp_sets.iterations
+        self.valid_iterations = self.supp_experi_setts.iterations
 
         self.invalid_adaptation_value = {
             "redundancy": "invalid value of type string iso list",
@@ -47,7 +47,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
@@ -66,7 +66,9 @@ class Test_adaptation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # Adaptation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, None, "adaptation")
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts, None, "adaptation"
+            )
 
         self.assertEqual(
             "Error, property is expected to be a dict, yet"
@@ -84,7 +86,7 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_sets,
+                self.supp_experi_setts,
                 "string_instead_of_dict",
                 "adaptation",
             )
@@ -100,7 +102,9 @@ class Test_adaptation_settings(unittest.TestCase):
         thrown."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, {}, "adaptation")
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts, {}, "adaptation"
+            )
 
         self.assertEqual(
             "Error, property dict: adaptation was empty.",
@@ -115,12 +119,14 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_sets, self.invalid_adaptation_key, "adaptation"
+                self.supp_experi_setts,
+                self.invalid_adaptation_key,
+                "adaptation",
             )
 
         self.assertEqual(
             "Error, property.key:non-existing-key is not in the supported "
-            + f"property keys:{self.supp_sets.adaptation.keys()}.",
+            + f"property keys:{self.supp_experi_setts.adaptation.keys()}.",
             str(context.exception),
         )
 
@@ -135,7 +141,9 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_sets, self.invalid_adaptation_value, "adaptation"
+                self.supp_experi_setts,
+                self.invalid_adaptation_value,
+                "adaptation",
             )
 
         self.assertEqual(

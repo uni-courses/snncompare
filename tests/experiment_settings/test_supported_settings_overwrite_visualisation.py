@@ -13,7 +13,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_configuration import (
     adap_sets,
     rad_sets,
-    supp_sets,
+    supp_experi_setts,
     with_adaptation_with_radiation,
 )
 
@@ -25,9 +25,9 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_experiment_settings()
+        self.supp_experi_setts = Supported_experiment_settings()
         self.valid_overwrite_visualisation = (
-            self.supp_sets.overwrite_visualisation
+            self.supp_experi_setts.overwrite_visualisation
         )
 
         self.invalid_overwrite_visualisation_value = {
@@ -35,7 +35,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
             + " of floats",
         }
 
-        self.supp_sets = supp_sets
+        self.supp_experi_setts = supp_experi_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
@@ -52,7 +52,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
@@ -82,7 +82,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_sets, config_settings, has_unique_id=False
+                self.supp_experi_setts, config_settings, has_unique_id=False
             )
 
         self.assertEqual(
