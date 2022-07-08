@@ -1,10 +1,17 @@
-"""Verifies The Supported_settings object catches invalid adaptation
+"""Verifies The Supported_experiment_settings object catches invalid adaptation
 specifications."""
+import copy
 import unittest
 
-from src.experiment_settings.Supported_settings import Supported_settings
-from src.experiment_settings.verify_supported_settings import (
+from src.experiment_settings.verify_experiment_settings import (
     verify_adap_and_rad_settings,
+    verify_experiment_config,
+)
+from tests.experiment_settings.test_generic_experiment_settings import (
+    adap_sets,
+    rad_sets,
+    supp_experi_setts,
+    with_adaptation_with_radiation,
 )
 
 
@@ -15,19 +22,11 @@ class Test_adaptation_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_sets = Supported_settings()
-        self.valid_adaptation = {
-            "redundancy": [1.0, 2.0],  # Create 1 and 2 redundant neuron(s) per
-            # neuron.
-            "population": [
-                10.0
-            ],  # Create a population of 10 neurons to represent a
-            # single neuron.
-            "rate_coding": [
-                5.0
-            ],  # Multiply firing frequency with 5 to limit spike decay
-            # impact.
-        }
+        self.supp_experi_setts = supp_experi_setts
+        self.adap_sets = adap_sets
+        self.rad_sets = rad_sets
+        self.with_adaptation_with_radiation = with_adaptation_with_radiation
+        self.valid_iterations = self.supp_experi_setts.iterations
 
         self.invalid_adaptation_value = {
             "redundancy": "invalid value of type string iso list",
@@ -35,19 +34,44 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.invalid_adaptation_key = {"non-existing-key": 5}
 
-    # TODO: write test that verifies an error is thrown if the adaptation key
-    # is not set.
+    def test_error_is_thrown_if_adaptation_key_is_missing(self):
+        """Verifies an exception is thrown if the adaptation key is missing
+        from the MDSA algorithm settings dictionary of the supported algorithms
+        dictionary of the configuration settings dictionary."""
 
-    def test_catch_adaptation_is_none(self):
+        # Create deepcopy of configuration settings.
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+
+        # Remove key (and value) of adaptation from configuration settings.
+        experi_config.pop("adaptations")
+
+        with self.assertRaises(Exception) as context:
+            verify_experiment_config(
+                self.supp_experi_setts,
+                experi_config,
+                has_unique_id=False,
+                strict=True,
+            )
+
+        self.assertEqual(
+            # "'adaptation'",
+            "Error:adaptations is not in the configuration"
+            + f" settings:{experi_config.keys()}",
+            str(context.exception),
+        )
+
+    def test_error_is_thrown_for_invalid_adaptation_value_type_is_none(self):
         """Verifies if an error is thrown if the value belonging to the
         adaptation key in the configuration settings has value: None.
 
-        (The value should be a dict.)
+        (The value should be a dict.) # TODO use generic method.
         """
 
         with self.assertRaises(Exception) as context:
             # Adaptation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, None, "adaptation")
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts, None, "adaptations"
+            )
 
         self.assertEqual(
             "Error, property is expected to be a dict, yet"
@@ -55,19 +79,19 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_adaptation_type(self):
+    def test_error_is_thrown_for_invalid_adaptation_value_type_is_string(self):
         """Verifies if an error is thrown if the value belonging to the
         adaptation key in the configuration settings has a value of type
         string.
 
-        (The value should be a dict.)
+        (The value should be a dict.) # TODO use generic method.
         """
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_sets,
+                self.supp_experi_setts,
                 "string_instead_of_dict",
-                "adaptation",
+                "adaptations",
             )
 
         self.assertEqual(
@@ -76,52 +100,59 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_adaptation_key(self):
-        """."""
-
-        with self.assertRaises(Exception) as context:
-            # adaptation dictionary of type None throws error.
-            verify_adap_and_rad_settings(
-                self.supp_sets, self.invalid_adaptation_key, "adaptation"
-            )
-
-        self.assertEqual(
-            "Error, property.key:non-existing-key is not in the supported "
-            + f"property keys:{self.supp_sets.adaptation.keys()}.",
-            str(context.exception),
-        )
-
-    def test_catch_invalid_adaptation_value_type(self):
-        """."""
-        with self.assertRaises(Exception) as context:
-            # adaptation dictionary of type None throws error.
-            verify_adap_and_rad_settings(
-                self.supp_sets, self.invalid_adaptation_value, "adaptation"
-            )
-
-        self.assertEqual(
-            'Error, value of adaptation["redundancy"]='
-            + f"invalid value of type string iso list, (which has type:{str})"
-            + ", is of different type than the expected and supported type: "
-            + f"{list}",
-            str(context.exception),
-        )
-
-    def test_returns_valid_adaptation(self):
-        """Verifies dict is returned for valid adaptation."""
-        returned_dict = verify_adap_and_rad_settings(
-            self.supp_sets, self.valid_adaptation, "adaptation"
-        )
-        self.assertIsInstance(returned_dict, dict)
-
-    def test_empty_adaptation(self):
+    def test_error_is_thrown_if_adaptation_dictionary_keys_are_missing(self):
         """Verifies an exception is thrown if an empty adaptation dict is
         thrown."""
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
-            verify_adap_and_rad_settings(self.supp_sets, {}, "adaptation")
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts, {}, "adaptations"
+            )
 
         self.assertEqual(
-            "Error, property dict: adaptation was empty.",
+            "Error, property dict: adaptations was empty.",
+            # "Error:adaptation is not in the configuration"
+            # + f" settings:{experi_config.keys()}",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_adaptation_dict_key(self):
+        """."""
+
+        with self.assertRaises(Exception) as context:
+            # adaptation dictionary of type None throws error.
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts,
+                self.invalid_adaptation_key,
+                "adaptations",
+            )
+
+        self.assertEqual(
+            "Error, property.key:non-existing-key is not in the supported "
+            + f"property keys:{self.supp_experi_setts.adaptations.keys()}.",
+            str(context.exception),
+        )
+
+    def test_catch_invalid_adaptation_dict_value_type_for_key(self):
+        """Tests whether the adaptation setting dictionary throws an error if
+        it contains an invalid value type for one of its keys.
+
+        In this case, the neuron_death key of the adaptation dictionary
+        is set to an invalid value type. It is set to string, whereas it
+        should be a float or dict.
+        """
+        with self.assertRaises(Exception) as context:
+            # adaptation dictionary of type None throws error.
+            verify_adap_and_rad_settings(
+                self.supp_experi_setts,
+                self.invalid_adaptation_value,
+                "adaptations",
+            )
+
+        self.assertEqual(
+            'Error, value of adaptations["redundancy"]='
+            + f"invalid value of type string iso list, (which has type:{str})"
+            + ", is of different type than the expected and supported type: "
+            + f"{list}",
             str(context.exception),
         )

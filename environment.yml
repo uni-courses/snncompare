@@ -67,3 +67,5 @@ dependencies:
     - pyupgrade
 # Another static type checker for python like mypy.
     - pyright
+# Tag files using Python.
+    - pytaggit

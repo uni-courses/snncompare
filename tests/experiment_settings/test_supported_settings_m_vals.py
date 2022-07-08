@@ -1,5 +1,5 @@
-"""Verifies the Supported_experiment_settings object catches invalid
-max_max_graphs specifications."""
+"""Verifies the Supported_experiment_settings object catches invalid m
+specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
@@ -19,19 +19,18 @@ from tests.experiment_settings.test_generic_experiment_settings import (
 )
 
 
-class Test_max_max_graphs_settings(unittest.TestCase):
+class Test_m_vals_settings(unittest.TestCase):
     """Tests whether the verify_experiment_config_types function catches
-    invalid max_max_graphs settings.."""
+    invalid m settings.."""
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.supp_experi_setts = Supported_experiment_settings()
-        self.valid_max_max_graphs = self.supp_experi_setts.max_max_graphs
+        self.valid_m_vals = self.supp_experi_setts.algorithms["MDSA"].m_vals
 
-        self.invalid_max_max_graphs_value = {
-            "max_max_graphs": "invalid value of type string iso list of"
-            + " floats",
+        self.invalid_m_vals_value = {
+            "m_vals": "invalid value of type string iso list of floats",
         }
 
         self.supp_experi_setts = supp_experi_setts
@@ -39,15 +38,16 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_error_is_thrown_if_max_max_graphs_key_is_missing(self):
-        """Verifies an exception is thrown if the max_max_graphs key is missing
-        from the configuration settings dictionary."""
+    def test_error_is_thrown_if_m_vals_key_is_missing(self):
+        """Verifies an exception is thrown if the m_vals key is missing from
+        the MDSA algorithm settings dictionary of the supported algorithms
+        dictionary of the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Remove key and value of m.
 
-        experi_config.pop("max_max_graphs")
+        # Remove key and value of m.
+        experi_config["algorithms"]["MDSA"].pop("m_vals")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
@@ -58,15 +58,13 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            # "'max_max_graphs'",
-            "Error:max_max_graphs is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            "'m_vals'",
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_max_max_graphs_value_type(self):
-        """Verifies an exception is thrown if the max_max_graphs dictionary
-        value, is of invalid type.
+    def test_error_is_thrown_for_invalid_m_vals_value_type(self):
+        """Verifies an exception is thrown if the m_vals dictionary value, is
+        of invalid type.
 
         (Invalid types None, and string are tested, a list with floats
         is expected).
@@ -74,11 +72,13 @@ class Test_max_max_graphs_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_experi_setts.max_max_graphs)
+        expected_type = type(self.supp_experi_setts.algorithms["MDSA"].m_vals)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experi_config["max_max_graphs"] = invalid_config_setting_value
+            experi_config["algorithms"]["MDSA"][
+                "m_vals"
+            ] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
                 experi_config,
@@ -86,14 +86,15 @@ class Test_max_max_graphs_settings(unittest.TestCase):
                 self,
             )
 
-    def test_catch_invalid_max_max_graphs_value_type_too_low(self):
-        """Verifies an exception is thrown if the max_max_graphs dictionary
-        value is lower than the supported range of max_max_graphs values
-        permits."""
+    def test_catch_empty_m_vals_value_list(self):
+        """Verifies an exception is thrown if the m_vals dictionary value is a
+        list without elements."""
+
         # Create deepcopy of configuration settings.
         experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_max_graphs in copy.
-        experi_config["max_max_graphs"] = -2
+
+        # Set negative value of m in copy.
+        experi_config["algorithms"]["MDSA"]["m_vals"] = []
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
@@ -104,20 +105,20 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, setting expected to be at least "
-            + f"{self.supp_experi_setts.min_max_graphs}. "
-            + f"Instead, it is:{-2}",
+            "Error, list was expected contain at least 1 integer."
+            + f" Instead, it has length:{0}",
             str(context.exception),
         )
 
-    def test_catch_max_max_graphs_is_smaller_than_min_max_graphs(self):
-        """Verifies an exception is thrown if the max_max_graphs value is
-        smaller than the min_max_graphs value."""
+    def test_catch_m_vals_value_too_low(self):
+        """Verifies an exception is thrown if the m_vals dictionary value is
+        lower than the supported range of m_vals values permits."""
+
         # Create deepcopy of configuration settings.
         experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_max_graphs in copy.
-        experi_config["min_max_graphs"] = experi_config["min_max_graphs"] + 1
-        experi_config["max_max_graphs"] = experi_config["min_max_graphs"] - 1
+
+        # Set negative value of m in copy.
+        experi_config["algorithms"]["MDSA"]["m_vals"] = [-2]
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
@@ -127,20 +128,25 @@ class Test_max_max_graphs_settings(unittest.TestCase):
                 strict=True,
             )
 
+        expected_m_vals = self.with_adaptation_with_radiation["algorithms"][
+            "MDSA"
+        ]["m_vals"]
         self.assertEqual(
-            f'Lower bound:{experi_config["min_max_graphs"]} is larger than'
-            f' upper bound:{experi_config["max_max_graphs"]}.',
+            "Error, m_vals was expected to be in range:"
+            + f"{expected_m_vals}."
+            + f" Instead, it contains:{-2}.",
             str(context.exception),
         )
 
-    def test_catch_max_max_graphs_value_too_high(self):
-        """Verifies an exception is thrown if the max_max_graphs dictionary
-        value is higher than the supported range of max_max_graphs values
-        permits."""
+    def test_catch_m_vals_value_too_high(self):
+        """Verifies an exception is thrown if the m_vals dictionary value is
+        higher than the supported range of m_vals values permits."""
+
         # Create deepcopy of configuration settings.
         experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        # Set negative value of max_max_graphs in copy.
-        experi_config["max_max_graphs"] = 50
+
+        # Set negative value of m in copy.
+        experi_config["algorithms"]["MDSA"]["m_vals"] = [50]
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
@@ -150,9 +156,12 @@ class Test_max_max_graphs_settings(unittest.TestCase):
                 strict=True,
             )
 
+        expected_m_vals = self.with_adaptation_with_radiation["algorithms"][
+            "MDSA"
+        ]["m_vals"]
         self.assertEqual(
-            "Error, setting expected to be at most "
-            + f"{self.supp_experi_setts.max_max_graphs}. Instead, it is:"
-            + "50",
+            "Error, m_vals was expected to be in range:"
+            + f"{expected_m_vals}."
+            + f" Instead, it contains:{50}.",
             str(context.exception),
         )
