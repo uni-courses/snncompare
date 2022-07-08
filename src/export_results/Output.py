@@ -273,9 +273,8 @@ def get_extensions_list(run_config, stage_index) -> list:
     :param run_config: param stage_index:
     :param stage_index:
 
-    """
     extensions = list(get_extensions_dict(run_config, stage_index).values())
-    print(f"extensions={extensions}")
+    """
     return list(get_extensions_dict(run_config, stage_index).values())
 
 
@@ -288,15 +287,20 @@ def performed_stage(run_config, stage_index):
     expected_filenames = []
 
     filename = run_config_to_filename(run_config)
-    relative_output_dir = "results/stage_{stage_index}/"
+    relative_output_dir = f"results/stage_{stage_index}/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
         if stage_index in [1, 2, 4]:
+            print(f"relative_output_dir={relative_output_dir}")
+            print(f"filename={filename}")
+            print(f"len(filename)={len(filename)}")
+            print(f"extension={extension}")
+            print("")
             expected_filenames.append(
                 relative_output_dir + filename + extension
             )
+            # TODO: append expected_filepath to run_config per stage.
 
-        # Before
         if stage_index == 3:
             nr_of_simulation_steps = get_nr_of_simulation_steps(
                 relative_output_dir, filename

@@ -78,17 +78,18 @@ class Experiment_runner:
         # Generate run configurations.
         run_configs = experiment_config_to_run_configs(experi_config)
 
-        to_run = determine_what_to_run(run_configs)
+        for run_config in run_configs:
+            to_run = determine_what_to_run(run_config)
 
-        if to_run["stage_1"]:
+            if to_run["stage_1"]:
 
-            pass
-        if to_run["stage_2"]:
-            pass
-        if to_run["stage_3"]:
-            pass
-        if to_run["stage_4"]:
-            pass
+                pass
+            if to_run["stage_2"]:
+                pass
+            if to_run["stage_3"]:
+                pass
+            if to_run["stage_4"]:
+                pass
 
 
 def experiment_config_to_run_configs(experi_config: dict):
@@ -107,36 +108,40 @@ def experiment_config_to_run_configs(experi_config: dict):
     for algorithm_name, algo_setts_dict in experi_config["algorithms"].items():
         for algo_config in convert_algorithm_to_setting_list(algo_setts_dict):
             algorithm = {algorithm_name: algo_config}
-            for key, value in experi_config["adaptations"].items():
-                adaptation = {
-                    key: value,
-                }
-                for radiation_name, radiation_setts_list in experi_config[
-                    "radiations"
-                ].items():
-                    # TODO: verify it is of type list.
-                    for rad_config in radiation_setts_list:
-                        radiation = {radiation_name: rad_config}
-                        for iteration in experi_config["iterations"]:
-                            for size_and_max_graph in experi_config[
-                                "size_and_max_graphs"
-                            ]:
-                                for simulator in experi_config["simulators"]:
-                                    for graph_nr in range(
-                                        0, size_and_max_graph[1]
-                                    ):
-                                        run_configs.append(
-                                            run_parameters_to_dict(
-                                                adaptation,
-                                                algorithm,
-                                                iteration,
-                                                size_and_max_graph,
-                                                graph_nr,
-                                                radiation,
-                                                experi_config,
-                                                simulator,
+            for adaptation_name, adaptation_setts_list in experi_config[
+                "adaptations"
+            ].items():
+                for adaptation_config in adaptation_setts_list:
+                    adaptation = {adaptation_name: adaptation_config}
+
+                    for radiation_name, radiation_setts_list in experi_config[
+                        "radiations"
+                    ].items():
+                        # TODO: verify it is of type list.
+                        for rad_config in radiation_setts_list:
+                            radiation = {radiation_name: rad_config}
+                            for iteration in experi_config["iterations"]:
+                                for size_and_max_graph in experi_config[
+                                    "size_and_max_graphs"
+                                ]:
+                                    for simulator in experi_config[
+                                        "simulators"
+                                    ]:
+                                        for graph_nr in range(
+                                            0, size_and_max_graph[1]
+                                        ):
+                                            run_configs.append(
+                                                run_parameters_to_dict(
+                                                    adaptation,
+                                                    algorithm,
+                                                    iteration,
+                                                    size_and_max_graph,
+                                                    graph_nr,
+                                                    radiation,
+                                                    experi_config,
+                                                    simulator,
+                                                )
                                             )
-                                        )
 
     for run_config in run_configs:
         verify_run_config(

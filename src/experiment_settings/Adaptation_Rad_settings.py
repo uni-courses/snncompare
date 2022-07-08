@@ -24,6 +24,7 @@ class Adaptations_settings:
         self.with_adaptation = {
             "redundancy": [
                 1.0,
+                2.0,
             ],
         }
 
