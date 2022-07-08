@@ -58,6 +58,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             self.supp_run_settings,
             self.valid_run_setting,
             has_unique_id=False,
+            strict=True,
         )
         self.assertIsInstance(returned_dict, dict)
 
@@ -70,7 +71,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
             verify_run_config(
-                self.supp_run_settings, None, has_unique_id=False
+                self.supp_run_settings, None, has_unique_id=False, strict=True
             )
 
         self.assertEqual(
@@ -93,6 +94,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
                 self.supp_run_settings,
                 "string_instead_of_dict",
                 has_unique_id=False,
+                strict=True,
             )
         self.assertEqual(
             "Error, the run_config is of type:"
@@ -118,7 +120,10 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_run_config(
-                self.supp_run_settings, experi_config, has_unique_id=False
+                self.supp_run_settings,
+                experi_config,
+                has_unique_id=False,
+                strict=True,
             )
         self.assertEqual(
             f"Error:{self.invalid_adaptation_key} is not supported by the"
@@ -146,7 +151,10 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
         )
     with test_object.assertRaises(Exception) as context:
         verify_run_config(
-            test_object.supp_experi_setts, experi_config, has_unique_id=False
+            test_object.supp_experi_setts,
+            experi_config,
+            has_unique_id=False,
+            strict=True,
         )
 
     test_object.assertEqual(

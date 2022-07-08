@@ -13,6 +13,9 @@ setting types should be identical.)
 # pylint: disable=R0903
 
 
+from src.experiment_settings.Supported_experiment_settings import (
+    dict_to_frozen_set,
+)
 from src.experiment_settings.verify_run_settings import verify_run_config
 
 
@@ -44,6 +47,7 @@ class Supported_run_settings:
             "export_snns": bool,
             "show_snns": bool,
             "stage": int,
+            "unique_id": int,
         }
 
     def append_unique_config_id(self, run_config: dict) -> dict:
@@ -60,12 +64,13 @@ class Supported_run_settings:
                 + "already contains a unique identifier."
             )
 
-        verify_run_config(self, run_config, has_unique_id=False)
+        verify_run_config(self, run_config, has_unique_id=False, strict=True)
 
-        hash_set = frozenset(run_config.values())
+        # hash_set = frozenset(run_config.values())
+        hash_set = dict_to_frozen_set(run_config)
         unique_id = hash(hash_set)
         run_config["unique_id"] = unique_id
-        verify_run_config(self, run_config, has_unique_id=True)
+        verify_run_config(self, run_config, has_unique_id=False, strict=False)
         return run_config
 
     def assert_has_key(self, some_dict: dict, key: str, some_type: type):

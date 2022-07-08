@@ -202,7 +202,7 @@ class Supported_experiment_settings:
 
         # Compute a unique code belonging to this particular experiment
         # configuration.
-        hash_set = self.dict_to_frozen_set(experiment_config)
+        hash_set = dict_to_frozen_set(experiment_config)
 
         unique_id = hash(hash_set)
         experiment_config["unique_id"] = unique_id
@@ -211,11 +211,40 @@ class Supported_experiment_settings:
         )
         return experiment_config
 
-    def dict_to_frozen_set(self, experiment_config: dict) -> frozenset:
-        """Converts a dictionary into a frozenset, such that a hash code of the
-        dict can be computed."""
-        some_dict = copy.deepcopy(experiment_config)
-        for value in some_dict.values():
-            if isinstance(value, dict):
-                value = self.dict_to_frozen_set(value)
-        return frozenset(some_dict)
+
+def dict_to_frozen_set(experiment_config: dict) -> frozenset:
+    """Converts a dictionary into a frozenset, such that a hash code of the
+    dict can be computed."""
+    some_dict = copy.deepcopy(experiment_config)
+    for value in some_dict.values():
+        if isinstance(value, dict):
+            value = dict_to_frozen_set(value)
+    return frozenset(some_dict)
+
+
+def convert_algorithm_to_setting_list(algorithm: dict):
+    """Takes in a dictionary with parameters that may have lists of values, and
+    creates a list of algorithm dictionaries of all brute force combinations of
+    the values of the parameters lists."""
+    algorithms = []
+
+    # Loop through the parameters and value lists.
+    for parameter, values_list in algorithm.items():
+        if not isinstance(values_list, list):
+            raise Exception(
+                f"Error, the values_list of{parameter} is not"
+                + f" of type list, instead, it is:{type(values_list)}"
+            )
+        if parameter[-1] != "s":
+            raise Exception(
+                "Error, the parameter name should be in plural"
+                + "form, ending at an s."
+            )
+
+        # Loop through the values in a list of values of a parameter.
+        for value in values_list:
+            # TODO: allow for multiple parameters.
+            # Now the dictionary is overwritten for each parameter.
+            algorithms.append({parameter[:-1]: value})
+
+    return algorithms

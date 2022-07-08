@@ -88,8 +88,6 @@ def verify_experiment_config(
     verify_bool_setting(experiment_config["overwrite_sim_results"])
     verify_bool_setting(experiment_config["overwrite_visualisation"])
 
-    if has_unique_id:
-        print("TODO: test unique id type.")
     return experiment_config
 
 
@@ -97,9 +95,7 @@ def verify_experiment_config_dict_is_complete(
     supp_experi_setts, experiment_config
 ):
     """Verifies the configuration settings dictionary is complete."""
-    print(f"experiment_config.keys()={experiment_config.keys()}")
     for expected_key in supp_experi_setts.parameters:
-        print(f"expected_key={expected_key}")
         if expected_key not in experiment_config.keys():
             raise Exception(
                 f"Error:{expected_key} is not in the configuration"
@@ -301,7 +297,6 @@ def verify_object_type(obj, expected_type, element_type=None):
             raise Exception("Expected a type to check list element types.")
 
         # Verify the element types.
-        print(f"element_type={element_type}")
         if not all(isinstance(n, element_type) for n in obj):
 
             # if list(map(type, obj)) != element_type:

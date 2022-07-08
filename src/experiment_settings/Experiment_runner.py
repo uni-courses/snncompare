@@ -10,6 +10,7 @@ from src.experiment_settings.Adaptation_Rad_settings import (
 )
 from src.experiment_settings.Supported_experiment_settings import (
     Supported_experiment_settings,
+    convert_algorithm_to_setting_list,
 )
 from src.experiment_settings.Supported_run_settings import (
     Supported_run_settings,
@@ -76,7 +77,6 @@ class Experiment_runner:
         """
         # Generate run configurations.
         run_configs = experiment_config_to_run_configs(experi_config)
-        print(f"run_configs={run_configs}")
 
         to_run = determine_what_to_run(run_configs)
 
@@ -97,37 +97,51 @@ def experiment_config_to_run_configs(experi_config: dict):
 
     Verifies whether each run_config is valid.
     """
+    # pylint: disable=R0914
     supp_run_setts = Supported_run_settings()
     run_configs = []
+
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
-    for algorithm in experi_config["algorithms"]:
-        print(f"algorithm={algorithm}")
-        for adaptation in experi_config["adaptations"]:
-            print(f"adaptation={adaptation}")
-            for radiation in experi_config["radiations"]:
-                print(f"radiation={radiation}")
-                for iteration in experi_config["iterations"]:
-                    for size_and_max_graph in experi_config[
-                        "size_and_max_graphs"
-                    ]:
-                        for simulator in experi_config["simulators"]:
-                            for graph_nr in range(0, size_and_max_graph[1]):
-                                run_configs.append(
-                                    run_parameters_to_dict(
-                                        adaptation,
-                                        algorithm,
-                                        iteration,
-                                        size_and_max_graph,
-                                        graph_nr,
-                                        radiation,
-                                        experi_config,
-                                        simulator,
-                                    )
-                                )
+    # for algorithm in experi_config["algorithms"]:
+    for algorithm_name, algo_setts_dict in experi_config["algorithms"].items():
+        for algo_config in convert_algorithm_to_setting_list(algo_setts_dict):
+            algorithm = {algorithm_name: algo_config}
+            for key, value in experi_config["adaptations"].items():
+                adaptation = {
+                    key: value,
+                }
+                for radiation_name, radiation_setts_list in experi_config[
+                    "radiations"
+                ].items():
+                    # TODO: verify it is of type list.
+                    for rad_config in radiation_setts_list:
+                        radiation = {radiation_name: rad_config}
+                        for iteration in experi_config["iterations"]:
+                            for size_and_max_graph in experi_config[
+                                "size_and_max_graphs"
+                            ]:
+                                for simulator in experi_config["simulators"]:
+                                    for graph_nr in range(
+                                        0, size_and_max_graph[1]
+                                    ):
+                                        run_configs.append(
+                                            run_parameters_to_dict(
+                                                adaptation,
+                                                algorithm,
+                                                iteration,
+                                                size_and_max_graph,
+                                                graph_nr,
+                                                radiation,
+                                                experi_config,
+                                                simulator,
+                                            )
+                                        )
 
     for run_config in run_configs:
-        verify_run_config(supp_run_setts, run_config, False)
+        verify_run_config(
+            supp_run_setts, run_config, has_unique_id=False, strict=True
+        )
 
         # Append unique_id to run_config
         supp_run_setts.append_unique_config_id(run_config)
@@ -241,7 +255,7 @@ def example_experi_config():
     with_adaptation_with_radiation = {
         "algorithms": {
             "MDSA": {
-                "m_vals": list(range(0, 1, 1)),
+                "m_vals": list(range(0, 4, 1)),
             }
         },
         "adaptations": verify_adap_and_rad_settings(

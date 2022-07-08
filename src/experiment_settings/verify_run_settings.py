@@ -11,7 +11,7 @@ from src.experiment_settings.verify_experiment_settings import (
 
 
 # pylint: disable=W0613
-def verify_run_config(supp_run_setts, run_config, has_unique_id):
+def verify_run_config(supp_run_setts, run_config, has_unique_id, strict: bool):
     """Verifies the selected experiment configuration settings are valid.
 
     :param run_config: param has_unique_id:
@@ -31,7 +31,7 @@ def verify_run_config(supp_run_setts, run_config, has_unique_id):
 
     # Verify no unknown configuration settings are presented.
     verify_run_config_dict_contains_only_valid_entries(
-        supp_run_setts, run_config
+        supp_run_setts, run_config, strict
     )
 
     verify_parameter_types(supp_run_setts, run_config)
@@ -40,16 +40,13 @@ def verify_run_config(supp_run_setts, run_config, has_unique_id):
     verify_integer_settings(run_config["algorithm"]["MDSA"]["m_val"])
     # TODO: verify radiation setting for single run.
 
-    if has_unique_id:
-        print("TODO: test unique id type.")
+    # TODO: test unique id type
     return run_config
 
 
 def verify_parameter_types(supp_run_setts, run_config):
     """Checks for each parameter in the supported_run_settings object whether
     it is of a valid type."""
-    # pprint(f"supp_run_setts.parameters={supp_run_setts.parameters}")
-    # pprint(f"run_config={run_config}")
     for supported_key in supp_run_setts.parameters.keys():
         if not isinstance(
             run_config[supported_key], supp_run_setts.parameters[supported_key]
@@ -73,18 +70,26 @@ def verify_run_config_dict_is_complete(supp_run_setts, run_config):
 
 
 def verify_run_config_dict_contains_only_valid_entries(
-    supp_run_setts, run_config
+    supp_run_setts, run_config, strict: bool
 ):
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in run_config.keys():
         if actual_key not in supp_run_setts.parameters:
-            # TODO: allow for optional arguments:
-            # stage, show, export, duration
-            raise Exception(
-                f"Error:{actual_key} is not supported by the configuration"
-                + f" settings:{supp_run_setts.parameters}"
-            )
+            if strict:
+                # TODO: allow for optional arguments:
+                # stage, show, export, duration
+                raise Exception(
+                    f"Error:{actual_key} is not supported by the configuration"
+                    + f" settings:{supp_run_setts.parameters}"
+                )
+            if actual_key not in supp_run_setts.optional_parameters:
+                raise Exception(
+                    f"Error:{actual_key} is not supported by the configuration"
+                    + f" settings:{supp_run_setts.parameters}, nor by the"
+                    + " optional settings:"
+                    + f"{supp_run_setts.optional_parameters}"
+                )
 
 
 def verify_has_unique_id(run_config):
