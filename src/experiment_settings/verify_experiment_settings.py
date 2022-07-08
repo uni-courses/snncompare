@@ -98,7 +98,7 @@ def verify_experiment_config_dict_is_complete(
 ):
     """Verifies the configuration settings dictionary is complete."""
     print(f"experiment_config.keys()={experiment_config.keys()}")
-    for expected_key in supp_experi_setts.config_setting_parameters:
+    for expected_key in supp_experi_setts.parameters:
         print(f"expected_key={expected_key}")
         if expected_key not in experiment_config.keys():
             raise Exception(
@@ -113,10 +113,10 @@ def verify_experiment_config_dict_contains_only_valid_entries(
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in experiment_config.keys():
-        if actual_key not in supp_experi_setts.config_setting_parameters:
+        if actual_key not in supp_experi_setts.parameters:
             raise Exception(
                 f"Error:{actual_key} is not supported by the configuration"
-                + f" settings:{supp_experi_setts.config_setting_parameters}"
+                + f" settings:{supp_experi_setts.parameters}"
             )
 
 
@@ -306,8 +306,8 @@ def verify_object_type(obj, expected_type, element_type=None):
 def verify_adap_and_rad_settings(
     supp_experi_setts, some_dict, check_type
 ) -> dict:
-    """Verifies the settings of adaptation or radiation property are valid.
-    Returns a dictionary with the adaptation setting if the settngs are valid.
+    """Verifies the settings of adaptations or radiation property are valid.
+    Returns a dictionary with the adaptations setting if the settngs are valid.
 
     :param some_dict: param check_type:
     :param check_type: param supp_experi_setts:
@@ -315,8 +315,8 @@ def verify_adap_and_rad_settings(
     """
 
     # Load the example settings from the Supported_experiment_settings object.
-    if check_type == "adaptation":
-        reference_object: Dict[str, Any] = supp_experi_setts.adaptation
+    if check_type == "adaptations":
+        reference_object: Dict[str, Any] = supp_experi_setts.adaptations
     elif check_type == "radiation":
         reference_object = supp_experi_setts.radiation
     else:
@@ -335,7 +335,7 @@ def verify_adap_and_rad_settings(
                     + f"property keys:{reference_object.keys()}."
                 )
             # Check if values belonging to key are within supported range.
-            if check_type == "adaptation":
+            if check_type == "adaptations":
                 verify_adaptation_values(supp_experi_setts, some_dict, key)
             elif check_type == "radiation":
                 verify_radiation_values(supp_experi_setts, some_dict, key)
@@ -353,41 +353,42 @@ def verify_algorithm_settings(
 
 
 def verify_adaptation_values(
-    supp_experi_setts, adaptation: dict, key: str
+    supp_experi_setts, adaptations: dict, key: str
 ) -> None:
-    """The configuration settings contain key named: adaptation. The value of
+    """The configuration settings contain key named: adaptations. The value of
     belonging to this key is a dictionary, which also has several keys.
 
-    This method checks whether these adaptation dictionary keys, are within
-    the supported range of adaptation setting keys. These adaptation dictionary
-    keys should each have values of the type list. These list elements should
-    have the type float, or be empty lists. The empty list represents: no
-    adaptation is used, signified by the key name: "None".
+    This method checks whether these adaptations dictionary keys, are within
+    the supported range of adaptations setting keys. These adaptations
+    dictionary keys should each have values of the type list. These list
+    elements should have the type float, or be empty lists. The empty list
+    represents: no adaptations is used, signified by the key name: "None".
 
-    This method verifies the keys in the adaptation dictionary are within the
-    supported range. It also checks if the values of the adaptation dictionary
+    This method verifies the keys in the adaptations dictionary are within the
+    supported range. It also checks if the values of the adaptations dictionary
     keys are a list, and whether all elements in those lists are of type float.
 
-    :param adaptation: dict:
+    :param adaptations: dict:
     :param key: str:
     :param supp_experi_setts:
     """
 
-    # Verifies the configuration settings adaptation value is of the same type
-    # as the supported adaptation configuration setting (which is a list)).
+    # Verifies the configuration settings adaptations value is of the same type
+    # as the supported adaptations configuration setting (which is a list)).
     if not isinstance(
-        adaptation[key], type(supp_experi_setts.adaptation[key])
-    ) and (not isinstance(adaptation[key], list)):
+        adaptations[key], type(supp_experi_setts.adaptations[key])
+    ) and (not isinstance(adaptations[key], list)):
         raise Exception(
-            f'Error, value of adaptation["{key}"]='
-            + f"{adaptation[key]}, (which has type:{type(adaptation[key])}"
+            f'Error, value of adaptations["{key}"]='
+            + f"{adaptations[key]}, (which has type:{type(adaptations[key])}"
             + "), is of different type than the expected and supported "
-            + f"type: {type(supp_experi_setts.adaptation[key])}"
+            + f"type: {type(supp_experi_setts.adaptations[key])}"
         )
 
-    # Verifies the values in the list of adaptation settings are of type float.
-    if isinstance(adaptation[key], list):
-        for setting in adaptation[key]:
+    # Verifies the values in the list of adaptations settings are of type
+    # float.
+    if isinstance(adaptations[key], list):
+        for setting in adaptations[key]:
             verify_object_type(setting, float, None)
 
 
@@ -398,13 +399,14 @@ def verify_radiation_values(
     belonging to this key is a dictionary, which also has several keys.
 
     This method checks whether these radiation dictionary keys, are within
-    the supported range of adaptation setting keys. These adaptation dictionary
-    keys should each have values of the type list. These list elements should
-    have the type float, tuple(float, float) or be empty lists. The empty list
-    represents: no radiation is used, signified by the key name: "None".
+    the supported range of adaptations setting keys. These adaptations
+    dictionary keys should each have values of the type list. These list
+    elements should have the type float, tuple(float, float) or be empty lists.
+    The empty list represents: no radiation is used, signified by the key name:
+    "None".
 
-    This method verifies the keys in the adaptation dictionary are within the
-    supported range. It also checks if the values of the adaptation dictionary
+    This method verifies the keys in the adaptations dictionary are within the
+    supported range. It also checks if the values of the adaptations dictionary
     keys are a list, and whether all elements in those lists are of type float
     or tuple. If the types are tuple, it also checks whether the values within
     those tuples are of type float.

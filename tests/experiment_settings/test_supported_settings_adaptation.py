@@ -43,7 +43,7 @@ class Test_adaptation_settings(unittest.TestCase):
         config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Remove key (and value) of adaptation from configuration settings.
-        config_settings.pop("adaptation")
+        config_settings.pop("adaptations")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
@@ -52,7 +52,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.assertEqual(
             # "'adaptation'",
-            "Error:adaptation is not in the configuration"
+            "Error:adaptations is not in the configuration"
             + f" settings:{config_settings.keys()}",
             str(context.exception),
         )
@@ -67,7 +67,7 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # Adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_experi_setts, None, "adaptation"
+                self.supp_experi_setts, None, "adaptations"
             )
 
         self.assertEqual(
@@ -88,7 +88,7 @@ class Test_adaptation_settings(unittest.TestCase):
             verify_adap_and_rad_settings(
                 self.supp_experi_setts,
                 "string_instead_of_dict",
-                "adaptation",
+                "adaptations",
             )
 
         self.assertEqual(
@@ -103,11 +103,11 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_experi_setts, {}, "adaptation"
+                self.supp_experi_setts, {}, "adaptations"
             )
 
         self.assertEqual(
-            "Error, property dict: adaptation was empty.",
+            "Error, property dict: adaptations was empty.",
             # "Error:adaptation is not in the configuration"
             # + f" settings:{config_settings.keys()}",
             str(context.exception),
@@ -121,12 +121,12 @@ class Test_adaptation_settings(unittest.TestCase):
             verify_adap_and_rad_settings(
                 self.supp_experi_setts,
                 self.invalid_adaptation_key,
-                "adaptation",
+                "adaptations",
             )
 
         self.assertEqual(
             "Error, property.key:non-existing-key is not in the supported "
-            + f"property keys:{self.supp_experi_setts.adaptation.keys()}.",
+            + f"property keys:{self.supp_experi_setts.adaptations.keys()}.",
             str(context.exception),
         )
 
@@ -143,11 +143,11 @@ class Test_adaptation_settings(unittest.TestCase):
             verify_adap_and_rad_settings(
                 self.supp_experi_setts,
                 self.invalid_adaptation_value,
-                "adaptation",
+                "adaptations",
             )
 
         self.assertEqual(
-            'Error, value of adaptation["redundancy"]='
+            'Error, value of adaptations["redundancy"]='
             + f"invalid value of type string iso list, (which has type:{str})"
             + ", is of different type than the expected and supported type: "
             + f"{list}",

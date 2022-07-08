@@ -5,7 +5,7 @@
 
 
 from src.experiment_settings.Adaptation_Rad_settings import (
-    Adaptation_settings,
+    Adaptations_settings,
     Radiation_settings,
 )
 from src.experiment_settings.Supported_experiment_settings import (
@@ -81,7 +81,7 @@ def example_config_settings():
     """Creates example experiment configuration settings."""
     # Create prerequisites
     supp_experi_setts = Supported_experiment_settings()
-    adap_sets = Adaptation_settings()
+    adap_sets = Adaptations_settings()
     rad_sets = Radiation_settings()
 
     # Create the experiment configuration settings for a run with adaptation
@@ -92,8 +92,8 @@ def example_config_settings():
                 "m_vals": list(range(0, 1, 1)),
             }
         },
-        "adaptation": verify_adap_and_rad_settings(
-            supp_experi_setts, adap_sets.with_adaptation, "adaptation"
+        "adaptations": verify_adap_and_rad_settings(
+            supp_experi_setts, adap_sets.with_adaptation, "adaptations"
         ),
         "iterations": list(range(0, 3, 1)),
         "min_max_graphs": 1,

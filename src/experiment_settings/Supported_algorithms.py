@@ -13,8 +13,15 @@ class MDSA:
         self,
     ) -> None:
 
-        # List of the parameters of this algorithm.
+        # List of the algorithm parameters for an experiment settings dict.
         self.algo_parameters = ["m_vals"]
 
-        # The number of iterations for which the Alipour approximation is ran.
+        # List of the algorithm parameters for a run settings dict.
+        self.algo_parameters = ["m_val"]
+
+        # List with values for m. m is the number of iterations for which the
+        # Alipour approximation is ran.
         self.m_vals = list(range(0, 1, 1))
+
+        # A values for m for a specific run setting.
+        self.m_val = 0

@@ -26,9 +26,10 @@ class Supported_experiment_settings:
     def __init__(
         self,
     ) -> None:
+
         # Config_settings dictionary keys:
-        self.config_setting_parameters = [
-            "adaptation",
+        self.parameters = [
+            "adaptations",
             "algorithms",
             "iterations",
             "max_graph_size",
@@ -89,7 +90,7 @@ class Supported_experiment_settings:
         """Specifies all the supported types of adaptation settings."""
 
         # Specify the (to be) supported adaptation types.
-        self.adaptation = {
+        self.adaptations = {
             "None": [],
             "redundancy": [
                 1.0,
