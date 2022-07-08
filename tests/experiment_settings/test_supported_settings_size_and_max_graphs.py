@@ -10,7 +10,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
-    supp_experi_config,
+    supp_experi_setts,
     verify_error_is_thrown_on_invalid_configuration_setting_value,
     with_adaptation_with_radiation,
 )
@@ -23,19 +23,19 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.supp_experi_config = Supported_experiment_settings()
+        # self.supp_experi_setts = Supported_experiment_settings()
 
         self.invalid_size_and_max_graphs_value = {
             "size_and_max_graphs": "invalid value of type string iso list of"
             + " floats",
         }
 
-        self.supp_experi_config = supp_experi_config
+        self.supp_experi_setts = supp_experi_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_size_and_max_graphs = (
-            self.supp_experi_config.size_and_max_graphs
+            self.supp_experi_setts.size_and_max_graphs
         )
 
     def test_error_is_thrown_if_size_and_max_graphs_key_is_missing(self):
@@ -49,7 +49,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config, experi_config, has_unique_id=False
+                self.supp_experi_setts, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
@@ -69,7 +69,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_experi_config.size_and_max_graphs)
+        expected_type = type(self.supp_experi_setts.size_and_max_graphs)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
@@ -91,7 +91,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config, experi_config, has_unique_id=False
+                self.supp_experi_setts, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
@@ -113,30 +113,30 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         )
         # Set negative value of size_and_max_graphs in copy.
         experi_config_first["size_and_max_graphs"] = [
-            (2, self.supp_experi_config.max_max_graphs),
+            (2, self.supp_experi_setts.max_max_graphs),
             (
-                self.supp_experi_config.min_graph_size,
-                self.supp_experi_config.max_max_graphs,
+                self.supp_experi_setts.min_graph_size,
+                self.supp_experi_setts.max_max_graphs,
             ),
         ]
         experi_config_second["size_and_max_graphs"] = [
             (
-                self.supp_experi_config.min_graph_size,
-                self.supp_experi_config.max_max_graphs,
+                self.supp_experi_setts.min_graph_size,
+                self.supp_experi_setts.max_max_graphs,
             ),
-            (-2, self.supp_experi_config.max_max_graphs),
+            (-2, self.supp_experi_setts.max_max_graphs),
         ]
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config,
+                self.supp_experi_setts,
                 experi_config_first,
                 has_unique_id=False,
             )
 
         self.assertEqual(
             "Error, setting expected to be at least"
-            + f" {self.supp_experi_config.min_graph_size}. Instead, it is:"
+            + f" {self.supp_experi_setts.min_graph_size}. Instead, it is:"
             + f"{2}",
             str(context.exception),
         )
@@ -145,14 +145,14 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         # well.
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config,
+                self.supp_experi_setts,
                 experi_config_second,
                 has_unique_id=False,
             )
 
         self.assertEqual(
             "Error, setting expected to be at least"
-            + f" {self.supp_experi_config.min_graph_size}. Instead, it is:"
+            + f" {self.supp_experi_setts.min_graph_size}. Instead, it is:"
             + f"{-2}",
             str(context.exception),
         )
@@ -169,33 +169,33 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             self.with_adaptation_with_radiation
         )
         # Set the desired graph size to 50, which is larger than allowed in
-        # self.supp_experi_config.max_graph_size. The max_graphs is set to the
+        # self.supp_experi_setts.max_graph_size. The max_graphs is set to the
         # maximum which is acceptable.
         experi_config_first["size_and_max_graphs"] = [
-            (50, self.supp_experi_config.max_max_graphs),
+            (50, self.supp_experi_setts.max_max_graphs),
             (
-                self.supp_experi_config.min_graph_size,
-                self.supp_experi_config.max_max_graphs,
+                self.supp_experi_setts.min_graph_size,
+                self.supp_experi_setts.max_max_graphs,
             ),
         ]
         experi_config_second["size_and_max_graphs"] = [
             (
-                self.supp_experi_config.min_graph_size,
-                self.supp_experi_config.max_max_graphs,
+                self.supp_experi_setts.min_graph_size,
+                self.supp_experi_setts.max_max_graphs,
             ),
-            (42, self.supp_experi_config.max_max_graphs),
+            (42, self.supp_experi_setts.max_max_graphs),
         ]
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config,
+                self.supp_experi_setts,
                 experi_config_first,
                 has_unique_id=False,
             )
 
         self.assertEqual(
             "Error, setting expected to be at most"
-            + f" {self.supp_experi_config.max_graph_size}. Instead, it is:"
+            + f" {self.supp_experi_setts.max_graph_size}. Instead, it is:"
             + f"{50}",
             str(context.exception),
         )
@@ -204,14 +204,14 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         # well.
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config,
+                self.supp_experi_setts,
                 experi_config_second,
                 has_unique_id=False,
             )
 
         self.assertEqual(
             "Error, setting expected to be at most"
-            + f" {self.supp_experi_config.max_graph_size}. Instead, it is:"
+            + f" {self.supp_experi_setts.max_graph_size}. Instead, it is:"
             + f"{42}",
             str(context.exception),
         )

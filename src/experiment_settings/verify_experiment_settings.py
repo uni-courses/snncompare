@@ -7,13 +7,13 @@ from typing import Any, Dict
 
 # pylint: disable=W0613
 def verify_experiment_config(
-    supp_experi_config, experiment_config, has_unique_id
+    supp_experi_setts, experiment_config, has_unique_id
 ):
     """Verifies the selected experiment configuration settings are valid.
 
     :param experiment_config: param has_unique_id:
-    :param has_unique_id: param supp_experi_config:
-    :param supp_experi_config:
+    :param has_unique_id: param supp_experi_setts:
+    :param supp_experi_setts:
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
@@ -25,29 +25,29 @@ def verify_experiment_config(
         )
 
     verify_experiment_config_dict_is_complete(
-        supp_experi_config, experiment_config
+        supp_experi_setts, experiment_config
     )
     # Verify no unknown configuration settings are presented.
     verify_experiment_config_dict_contains_only_valid_entries(
-        supp_experi_config, experiment_config
+        supp_experi_setts, experiment_config
     )
 
     # Verify settings of type: list and tuple.
     verify_list_setting(
-        supp_experi_config,
+        supp_experi_setts,
         experiment_config["algorithms"]["MDSA"]["m_vals"],
         int,
         "m_vals",
     )
     verify_list_setting(
-        supp_experi_config, experiment_config["iterations"], int, "iterations"
+        supp_experi_setts, experiment_config["iterations"], int, "iterations"
     )
 
     verify_list_setting(
-        supp_experi_config, experiment_config["simulators"], str, "simulators"
+        supp_experi_setts, experiment_config["simulators"], str, "simulators"
     )
     verify_size_and_max_graphs_settings(
-        supp_experi_config, experiment_config["size_and_max_graphs"]
+        supp_experi_setts, experiment_config["size_and_max_graphs"]
     )
 
     # Verify settings of type integer.
@@ -55,23 +55,23 @@ def verify_experiment_config(
 
     verify_integer_settings(
         experiment_config["min_max_graphs"],
-        supp_experi_config.min_max_graphs,
-        supp_experi_config.max_max_graphs,
+        supp_experi_setts.min_max_graphs,
+        supp_experi_setts.max_max_graphs,
     )
     verify_integer_settings(
         experiment_config["max_max_graphs"],
-        supp_experi_config.min_max_graphs,
-        supp_experi_config.max_max_graphs,
+        supp_experi_setts.min_max_graphs,
+        supp_experi_setts.max_max_graphs,
     )
     verify_integer_settings(
         experiment_config["min_graph_size"],
-        supp_experi_config.min_graph_size,
-        supp_experi_config.max_graph_size,
+        supp_experi_setts.min_graph_size,
+        supp_experi_setts.max_graph_size,
     )
     verify_integer_settings(
         experiment_config["max_graph_size"],
-        supp_experi_config.min_graph_size,
-        supp_experi_config.max_graph_size,
+        supp_experi_setts.min_graph_size,
+        supp_experi_setts.max_graph_size,
     )
 
     # Verify a lower bound/min is not larger than a upper bound/max value.
@@ -94,11 +94,11 @@ def verify_experiment_config(
 
 
 def verify_experiment_config_dict_is_complete(
-    supp_experi_config, experiment_config
+    supp_experi_setts, experiment_config
 ):
     """Verifies the configuration settings dictionary is complete."""
     print(f"experiment_config.keys()={experiment_config.keys()}")
-    for expected_key in supp_experi_config.parameters:
+    for expected_key in supp_experi_setts.parameters:
         print(f"expected_key={expected_key}")
         if expected_key not in experiment_config.keys():
             raise Exception(
@@ -108,15 +108,15 @@ def verify_experiment_config_dict_is_complete(
 
 
 def verify_experiment_config_dict_contains_only_valid_entries(
-    supp_experi_config, experiment_config
+    supp_experi_setts, experiment_config
 ):
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in experiment_config.keys():
-        if actual_key not in supp_experi_config.parameters:
+        if actual_key not in supp_experi_setts.parameters:
             raise Exception(
                 f"Error:{actual_key} is not supported by the configuration"
-                + f" settings:{supp_experi_config.parameters}"
+                + f" settings:{supp_experi_setts.parameters}"
             )
 
 
@@ -136,15 +136,15 @@ def verify_list_element_types_and_list_len(list_setting, element_type):
 
 
 def verify_list_setting(
-    supp_experi_config, setting, element_type, setting_name
+    supp_experi_setts, setting, element_type, setting_name
 ):
     """Verifies the configuration settings that have values of type list, that
     the list has at least 1 element in it, and that its values are within the
     supported range.
 
-    :param setting: param supp_experi_config:
+    :param setting: param supp_experi_setts:
     :param element_type: param setting_name:
-    :param supp_experi_config:
+    :param supp_experi_setts:
     :param setting_name:
     """
 
@@ -153,7 +153,7 @@ def verify_list_setting(
 
     # Verify the configuration setting list elements are all within the
     # supported range.
-    expected_range = get_expected_range(setting_name, supp_experi_config)
+    expected_range = get_expected_range(setting_name, supp_experi_setts)
     for element in setting:
         if element not in expected_range:
             raise Exception(
@@ -163,34 +163,34 @@ def verify_list_setting(
             )
 
 
-def get_expected_range(setting_name, supp_experi_config):
+def get_expected_range(setting_name, supp_experi_setts):
     """Returns the ranges as specified in the Supported_experiment_settings
     object for the asked setting.
 
-    :param setting_name: param supp_experi_config:
-    :param supp_experi_config:
+    :param setting_name: param supp_experi_setts:
+    :param supp_experi_setts:
     """
     if setting_name == "iterations":
-        return supp_experi_config.iterations
+        return supp_experi_setts.iterations
     if setting_name == "m_vals":
-        return supp_experi_config.algorithms["MDSA"].m_vals
+        return supp_experi_setts.algorithms["MDSA"].m_vals
     if setting_name == "simulators":
-        return supp_experi_config.simulators
+        return supp_experi_setts.simulators
 
     # TODO: test this is raised.
     raise Exception("Error, unsupported parameter requested.")
 
 
 def verify_size_and_max_graphs_settings(
-    supp_experi_config, size_and_max_graphs_setting
+    supp_experi_setts, size_and_max_graphs_setting
 ):
     """Verifies the configuration setting size_and_max_graphs_setting values
     are a list of tuples with at least 1 tuple, and that its values are within
     the supported range.
 
-    :param supp_experi_config:
+    :param supp_experi_setts:
     :param size_and_max_graphs_setting:
-    :param supp_experi_config:
+    :param supp_experi_setts:
     """
     verify_list_element_types_and_list_len(size_and_max_graphs_setting, tuple)
 
@@ -201,14 +201,14 @@ def verify_size_and_max_graphs_settings(
 
         verify_integer_settings(
             size,
-            supp_experi_config.min_graph_size,
-            supp_experi_config.max_graph_size,
+            supp_experi_setts.min_graph_size,
+            supp_experi_setts.max_graph_size,
         )
 
         verify_integer_settings(
             max_graphs,
-            supp_experi_config.min_max_graphs,
-            supp_experi_config.max_max_graphs,
+            supp_experi_setts.min_max_graphs,
+            supp_experi_setts.max_max_graphs,
         )
 
 
@@ -304,21 +304,21 @@ def verify_object_type(obj, expected_type, element_type=None):
 
 
 def verify_adap_and_rad_settings(
-    supp_experi_config, some_dict, check_type
+    supp_experi_setts, some_dict, check_type
 ) -> dict:
     """Verifies the settings of adaptations or radiations property are valid.
     Returns a dictionary with the adaptations setting if the settngs are valid.
 
     :param some_dict: param check_type:
-    :param check_type: param supp_experi_config:
-    :param supp_experi_config:
+    :param check_type: param supp_experi_setts:
+    :param supp_experi_setts:
     """
 
     # Load the example settings from the Supported_experiment_settings object.
     if check_type == "adaptations":
-        reference_object: Dict[str, Any] = supp_experi_config.adaptations
+        reference_object: Dict[str, Any] = supp_experi_setts.adaptations
     elif check_type == "radiations":
-        reference_object = supp_experi_config.radiations
+        reference_object = supp_experi_setts.radiations
     else:
         raise Exception(f"Check type:{check_type} not supported.")
 
@@ -336,9 +336,9 @@ def verify_adap_and_rad_settings(
                 )
             # Check if values belonging to key are within supported range.
             if check_type == "adaptations":
-                verify_adaptation_values(supp_experi_config, some_dict, key)
+                verify_adaptation_values(supp_experi_setts, some_dict, key)
             elif check_type == "radiations":
-                verify_radiations_values(supp_experi_config, some_dict, key)
+                verify_radiations_values(supp_experi_setts, some_dict, key)
         return some_dict
     raise Exception(
         "Error, property is expected to be a dict, yet"
@@ -347,13 +347,13 @@ def verify_adap_and_rad_settings(
 
 
 def verify_algorithm_settings(
-    supp_experi_config, some_dict, check_type
+    supp_experi_setts, some_dict, check_type
 ) -> dict:
     """TODO: Verifies the settings of the algorithm are valid."""
 
 
 def verify_adaptation_values(
-    supp_experi_config, adaptations: dict, key: str
+    supp_experi_setts, adaptations: dict, key: str
 ) -> None:
     """The configuration settings contain key named: adaptations. The value of
     belonging to this key is a dictionary, which also has several keys.
@@ -370,19 +370,19 @@ def verify_adaptation_values(
 
     :param adaptations: dict:
     :param key: str:
-    :param supp_experi_config:
+    :param supp_experi_setts:
     """
 
     # Verifies the configuration settings adaptations value is of the same type
     # as the supported adaptations configuration setting (which is a list)).
     if not isinstance(
-        adaptations[key], type(supp_experi_config.adaptations[key])
+        adaptations[key], type(supp_experi_setts.adaptations[key])
     ) and (not isinstance(adaptations[key], list)):
         raise Exception(
             f'Error, value of adaptations["{key}"]='
             + f"{adaptations[key]}, (which has type:{type(adaptations[key])}"
             + "), is of different type than the expected and supported "
-            + f"type: {type(supp_experi_config.adaptations[key])}"
+            + f"type: {type(supp_experi_setts.adaptations[key])}"
         )
 
     # Verifies the values in the list of adaptations settings are of type
@@ -393,7 +393,7 @@ def verify_adaptation_values(
 
 
 def verify_radiations_values(
-    supp_experi_config, radiations: dict, key: str
+    supp_experi_setts, radiations: dict, key: str
 ) -> None:
     """The configuration settings contain key named: radiations. The value of
     belonging to this key is a dictionary, which also has several keys.
@@ -413,10 +413,10 @@ def verify_radiations_values(
 
     :param radiations: dict:
     :param key: str:
-    :param supp_experi_config:
+    :param supp_experi_setts:
     """
     if not isinstance(
-        radiations[key], type(supp_experi_config.radiations[key])
+        radiations[key], type(supp_experi_setts.radiations[key])
     ) or (not isinstance(radiations[key], list)):
 
         raise Exception(

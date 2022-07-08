@@ -10,12 +10,12 @@ from src.experiment_settings.verify_experiment_settings import (
 
 
 # pylint: disable=W0613
-def verify_run_config(supp_run_config, run_config, has_unique_id):
+def verify_run_config(supp_run_setts, run_config, has_unique_id):
     """Verifies the selected experiment configuration settings are valid.
 
     :param run_config: param has_unique_id:
-    :param has_unique_id: param supp_experi_config:
-    :param supp_experi_config:
+    :param has_unique_id: param supp_experi_setts:
+    :param supp_experi_setts:
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
@@ -26,14 +26,14 @@ def verify_run_config(supp_run_config, run_config, has_unique_id):
             + " type dict."
         )
 
-    verify_run_config_dict_is_complete(supp_run_config, run_config)
+    verify_run_config_dict_is_complete(supp_run_setts, run_config)
 
     # Verify no unknown configuration settings are presented.
     verify_run_config_dict_contains_only_valid_entries(
-        supp_run_config, run_config
+        supp_run_setts, run_config
     )
 
-    verify_parameter_types(supp_run_config, run_config)
+    verify_parameter_types(supp_run_setts, run_config)
 
     # TODO: verify a single algorithm is evaluated in a single run.
     verify_integer_settings(run_config["algorithm"]["MDSA"]["m_val"])
@@ -44,25 +44,25 @@ def verify_run_config(supp_run_config, run_config, has_unique_id):
     return run_config
 
 
-def verify_parameter_types(supp_run_config, run_config):
+def verify_parameter_types(supp_run_setts, run_config):
     """Checks for each parameter in the supported_run_settings object whether
     it is of a valid type."""
-    for supported_key in supp_run_config.parameters.keys():
+    for supported_key in supp_run_setts.parameters.keys():
         if not isinstance(
             run_config[supported_key],
-            supp_run_config.parameters[supported_key],
+            supp_run_setts.parameters[supported_key],
         ):
             raise Exception(
                 f"Error, {supported_key} is of type: "
                 + f"{type(run_config[supported_key])} whereas it is expected"
                 " to be of type :"
-                + f"{type(supp_run_config.parameters[supported_key])}"
+                + f"{type(supp_run_setts.parameters[supported_key])}"
             )
 
 
-def verify_run_config_dict_is_complete(supp_run_config, run_config):
+def verify_run_config_dict_is_complete(supp_run_setts, run_config):
     """Verifies the configuration settings dictionary is complete."""
-    for expected_key in supp_run_config.parameters.keys():
+    for expected_key in supp_run_setts.parameters.keys():
         if expected_key not in run_config.keys():
             raise Exception(
                 f"Error:{expected_key} is not in the configuration"
@@ -71,15 +71,15 @@ def verify_run_config_dict_is_complete(supp_run_config, run_config):
 
 
 def verify_run_config_dict_contains_only_valid_entries(
-    supp_run_config, run_config
+    supp_run_setts, run_config
 ):
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in run_config.keys():
-        if actual_key not in supp_run_config.parameters:
+        if actual_key not in supp_run_setts.parameters:
             raise Exception(
                 f"Error:{actual_key} is not supported by the configuration"
-                + f" settings:{supp_run_config.parameters}"
+                + f" settings:{supp_run_setts.parameters}"
             )
 
 

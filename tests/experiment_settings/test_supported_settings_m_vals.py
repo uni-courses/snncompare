@@ -13,7 +13,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
-    supp_experi_config,
+    supp_experi_setts,
     verify_error_is_thrown_on_invalid_configuration_setting_value,
     with_adaptation_with_radiation,
 )
@@ -26,14 +26,14 @@ class Test_m_vals_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_experi_config = Supported_experiment_settings()
-        self.valid_m_vals = self.supp_experi_config.algorithms["MDSA"].m_vals
+        self.supp_experi_setts = Supported_experiment_settings()
+        self.valid_m_vals = self.supp_experi_setts.algorithms["MDSA"].m_vals
 
         self.invalid_m_vals_value = {
             "m_vals": "invalid value of type string iso list of floats",
         }
 
-        self.supp_experi_config = supp_experi_config
+        self.supp_experi_setts = supp_experi_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
@@ -51,7 +51,7 @@ class Test_m_vals_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config, experi_config, has_unique_id=False
+                self.supp_experi_setts, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
@@ -69,7 +69,7 @@ class Test_m_vals_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_experi_config.algorithms["MDSA"].m_vals)
+        expected_type = type(self.supp_experi_setts.algorithms["MDSA"].m_vals)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
@@ -95,7 +95,7 @@ class Test_m_vals_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config, experi_config, has_unique_id=False
+                self.supp_experi_setts, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
@@ -116,7 +116,7 @@ class Test_m_vals_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config, experi_config, has_unique_id=False
+                self.supp_experi_setts, experi_config, has_unique_id=False
             )
 
         expected_m_vals = self.with_adaptation_with_radiation["algorithms"][
@@ -141,7 +141,7 @@ class Test_m_vals_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_config, experi_config, has_unique_id=False
+                self.supp_experi_setts, experi_config, has_unique_id=False
             )
 
         expected_m_vals = self.with_adaptation_with_radiation["algorithms"][

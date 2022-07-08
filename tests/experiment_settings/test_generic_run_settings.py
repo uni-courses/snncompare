@@ -146,7 +146,7 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
         )
     with test_object.assertRaises(Exception) as context:
         verify_run_config(
-            test_object.supp_experi_config, experi_config, has_unique_id=False
+            test_object.supp_experi_setts, experi_config, has_unique_id=False
         )
 
     test_object.assertEqual(
