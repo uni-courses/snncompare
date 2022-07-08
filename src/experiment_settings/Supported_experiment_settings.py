@@ -9,6 +9,7 @@ setting types should be identical.)
 # pylint: disable=R0902
 # The settings object contains all the settings as a dictionary, hence no
 # hierarchy is used, leading to 10/7 instance attributes.
+
 from src.experiment_settings.Supported_algorithms import MDSA
 from src.experiment_settings.verify_experiment_settings import (
     verify_experiment_config,
@@ -28,21 +29,25 @@ class Supported_experiment_settings:
     ) -> None:
 
         # experi_config dictionary keys:
-        self.parameters = [
-            "adaptations",
-            "algorithms",
-            "iterations",
-            "max_graph_size",
-            "max_max_graphs",
-            "min_graph_size",
-            "min_max_graphs",
-            "radiations",
-            "overwrite_sim_results",
-            "overwrite_visualisation",
-            "seed",
-            "simulators",
-            "size_and_max_graphs",
-        ]
+        self.parameters = {
+            "adaptations": dict,
+            "algorithms": dict,
+            "iterations": list,
+            "max_graph_size": int,
+            "max_max_graphs": int,
+            "min_graph_size": int,
+            "min_max_graphs": int,
+            "radiations": dict,
+            "overwrite_sim_results": bool,
+            "overwrite_visualisation": bool,
+            "seed": int,
+            "simulators": list,
+            "size_and_max_graphs": list,
+        }
+        self.optional_parameters = {
+            "show_snns": bool,
+            "export_snns": bool,
+        }
 
         self.seed = 5
 

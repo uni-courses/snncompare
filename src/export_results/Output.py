@@ -69,9 +69,9 @@ def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
     values are added as file tags, to make it easier to filter certain
     runs to manually inspect the results.
 
-    :param experiment_config:
-    :param run_config:
+    :param experiment_config: param run_config:
     :param graphs_stage_1:
+    :param run_config:
     """
     run_config_to_filename(run_config)
     # TODO: Ensure output file exists.
@@ -101,9 +101,9 @@ def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
     added as file tags, to make it easier to filter certain runs to
     manually inspect the results.
 
-    :param experiment_config:
-    :param run_config:
+    :param experiment_config: param run_config:
     :param graphs_stage_2:
+    :param run_config:
     """
     run_config_to_filename(run_config)
     # TODO: Ensure output file exists.
@@ -132,9 +132,9 @@ def output_files_stage_3(experiment_config, run_config, graphs_stage_3):
     will be outputted. For naming scheme and taging, see documentation
     of function output_files_stage_1 or output_files_stage_2.
 
-    :param experiment_config:
-    :param run_config:
+    :param experiment_config: param run_config:
     :param graphs_stage_3:
+    :param run_config:
     """
     run_config_to_filename(run_config)
     # TODO: Optional: ensure output files exists.
@@ -164,9 +164,14 @@ def output_files_stage_4(
     :param nodes_alipour: List[int]:
     :param nodes_snn: List[int]:
     :param run_config: dict:
+    :param correct: bool:
+    :param experiment_config: dict:
+    :param nodes_alipour: List[int]:
+    :param nodes_snn: List[int]:
+    :param run_config: dict:
     """
 
-    run_config_to_filename(experiment_config, run_config)
+    run_config_to_filename(run_config)
     # TODO: Optional: ensure output files exists.
 
     # TODO: ensure the run parameters are in a legend
@@ -183,8 +188,10 @@ class Stage_1_graphs:
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage_1
-        verify_stage_1_graphs()
+        self.graphs_stage_1 = graphs_stage_1
+        verify_stage_1_graphs(
+            experiment_config, run_config, self.graphs_stage_1
+        )
         # G_original
         # G_SNN_input
         # G_SNN_adapted
@@ -201,8 +208,10 @@ class Stage_2_graphs:
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage_2
-        verify_stage_2_graphs()
+        self.graphs_stage_2 = graphs_stage_2
+        verify_stage_2_graphs(
+            experiment_config, run_config, self.graphs_stage_2
+        )
 
 
 # pylint: disable=R0903
@@ -214,8 +223,10 @@ class Stage_3_graphs:
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage_3
-        verify_stage_3_graphs()
+        self.graphs_stage_3 = graphs_stage_3
+        verify_stage_3_graphs(
+            experiment_config, run_config, self.graphs_stage_3
+        )
 
 
 # pylint: disable=R0903
@@ -228,15 +239,17 @@ class Stage_4_graphs:
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage_4
-        verify_stage_4_graphs()
+        self.graphs_stage_4 = graphs_stage_4
+        verify_stage_4_graphs(
+            experiment_config, run_config, self.graphs_stage_4
+        )
 
 
 def get_extensions_dict(run_config, stage_index) -> dict:
     """Returns the file extensions of the output types.
     TODO: support .json as well as .txt for the dictionaries.
 
-    :param run_config:
+    :param run_config: param stage_index:
     :param stage_index:
 
     """
@@ -258,7 +271,7 @@ def get_extensions_dict(run_config, stage_index) -> dict:
 def get_extensions_list(run_config, stage_index) -> list:
     """
 
-    :param run_config:
+    :param run_config: param stage_index:
     :param stage_index:
 
     """
@@ -270,7 +283,7 @@ def get_extensions_list(run_config, stage_index) -> list:
 def performed_stage(run_config, stage_index):
     """Verifies the required output files exist for a given simulation.
 
-    :param run_config:
+    :param run_config: param stage_index:
     :param stage_index:
     """
     expected_filenames = []
@@ -307,7 +320,7 @@ def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
 
     # TODO: decide json output or dict output.
 
-    :param relative_output_dir:
+    :param relative_output_dir: param filename:
     :param filename:
     """
     stage_2_output_dict_filepath = relative_output_dir + filename
@@ -319,7 +332,7 @@ def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
 def get_nr_of_simulation_steps(relative_output_dir, filename) -> int:
     """Reads the amount of simulation steps from the stage2 run configuration.
 
-    :param relative_output_dir:
+    :param relative_output_dir: param filename:
     :param filename:
     """
     stage_2_output_dict = load_stage_2_output_dict(

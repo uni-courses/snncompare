@@ -13,6 +13,9 @@ setting types should be identical.)
 # pylint: disable=R0903
 
 
+from src.experiment_settings.verify_run_settings import verify_run_config
+
+
 class Supported_run_settings:
     """Stores the supported experiment setting parameter ranges.
 
@@ -36,3 +39,43 @@ class Supported_run_settings:
             "seed": int,
             "simulator": str,
         }
+        self.optional_parameters = {
+            "duration": int,
+            "export_snns": bool,
+            "show_snns": bool,
+            "stage": int,
+        }
+
+    def append_unique_config_id(self, run_config: dict) -> dict:
+        """Checks if an run configuration dictionary already has a unique
+        identifier, and if not it computes and appends it.
+
+        If it does, throws an error.
+
+        :param run_config: dict:
+        """
+        if "unique_id" in run_config.keys():
+            raise Exception(
+                f"Error, the run_config:{run_config}\n"
+                + "already contains a unique identifier."
+            )
+
+        verify_run_config(self, run_config, has_unique_id=False)
+
+        hash_set = frozenset(run_config.values())
+        unique_id = hash(hash_set)
+        run_config["unique_id"] = unique_id
+        verify_run_config(self, run_config, has_unique_id=True)
+        return run_config
+
+    def assert_has_key(self, some_dict: dict, key: str, some_type: type):
+        """Asserts a dictionary has some key with a value of a certain type.
+
+        Throws error if the key does not exist, or if the value is of an
+        invalid type.
+        """
+        if not isinstance(some_dict[key], some_type):
+            raise Exception(
+                "Error, the dictionary:{some_dict} did not"
+                + f"contain a key:{key} of type:{type}"
+            )

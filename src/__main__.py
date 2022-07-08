@@ -5,31 +5,39 @@ that invokes this script."""
 # Import external libraries.
 # import networkx as nx
 
+from src.experiment_settings.Experiment_runner import (
+    Experiment_runner,
+    example_experi_config,
+)
 from src.export_results.load_pickles_get_results import (
     run_experiment_on_pickles,
 )
+from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
 from src.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
+from src.simulation.run_on_networkx import run_snn_on_networkx
 
 from .arg_parser import parse_cli_args
-from .get_graph import get_networkx_graph_of_2_neurons
 
 # Import code from this project.
-from .run_on_networkx import (
-    add_nx_neurons_to_networkx_graph,
-    run_snn_on_networkx,
-)
+
+experi_config = example_experi_config()
+show_snns = True
+export_snns = True
+Experiment_runner(experi_config, show_snns=show_snns, export_snns=export_snns)
 
 # Parse command line interface arguments to determine what this script does.
 args = parse_cli_args()
+
 
 # Get a standard graph for illustratory purposes.
 G = get_networkx_graph_of_2_neurons()
 
 if args.run_on_networkx:
-    add_nx_neurons_to_networkx_graph(G)
+    # TODO: verify why this is necessary.
+    # append_neurons_to_networkx_graph(G)
     run_snn_on_networkx(G, 2)
 elif args.run_on_lava:
     # Convert the networkx specification to lava SNN.

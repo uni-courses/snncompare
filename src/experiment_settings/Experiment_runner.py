@@ -11,11 +11,15 @@ from src.experiment_settings.Adaptation_Rad_settings import (
 from src.experiment_settings.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
+from src.experiment_settings.Supported_run_settings import (
+    Supported_run_settings,
+)
 from src.experiment_settings.verify_experiment_settings import (
     verify_adap_and_rad_settings,
     verify_experiment_config,
     verify_has_unique_id,
 )
+from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import (
     create_results_directories,
     performed_stage,
@@ -27,7 +31,9 @@ class Experiment_runner:
 
     # pylint: disable=R0903
 
-    def __init__(self, experi_config: dict, export: bool, show: bool) -> None:
+    def __init__(
+        self, experi_config: dict, export_snns: bool, show_snns: bool
+    ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
         create_results_directories()
@@ -46,16 +52,14 @@ class Experiment_runner:
         # If the experiment experi_config does not contain a hash-code,
         # create the unique hash code for this configuration.
         if not self.supp_experi_setts.has_unique_config_id(self.experi_config):
-            self.supp_experi_setts.append_unique_config_id(
-                self, self.experi_config
-            )
+            self.supp_experi_setts.append_unique_config_id(self.experi_config)
 
         # Verify the unique hash code for this configuration is valid.
         verify_has_unique_id(self.experi_config)
 
-        # Append the export and show arguments.
-        self.experi_config["export"] = export
-        self.experi_config["show"] = show
+        # Append the export_snns and show_snns arguments.
+        self.experi_config["export_snns"] = export_snns
+        self.experi_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
         self.__perform_run(self.experi_config)
@@ -69,10 +73,12 @@ class Experiment_runner:
         """
         # Generate run configurations.
         run_configs = experiment_config_to_run_configs(experi_config)
+        print(f"run_configs={run_configs}")
 
         to_run = determine_what_to_run(run_configs)
 
         if to_run["stage_1"]:
+
             pass
         if to_run["stage_2"]:
             pass
@@ -82,16 +88,82 @@ class Experiment_runner:
             pass
 
 
-def experiment_config_to_run_configs(experi_config):
+def experiment_config_to_run_configs(experi_config: dict):
     """Generates all the run_config dictionaries of a single experiment
     configuration.
 
     Verifies whether each run_config is valid.
     """
-    # TODO: implement
-    if experi_config:
-        return 1
-    return 2
+    supp_run_setts = Supported_run_settings()
+    run_configs = []
+    # pylint: disable=R1702
+    # TODO: make it loop through a list of keys.
+    for algorithm in experi_config["algorithms"]:
+        print(f"algorithm={algorithm}")
+        for adaptation in experi_config["adaptations"]:
+            print(f"adaptation={adaptation}")
+            for radiation in experi_config["radiations"]:
+                print(f"radiation={radiation}")
+                for iteration in experi_config["iterations"]:
+                    for size_and_max_graph in experi_config[
+                        "size_and_max_graphs"
+                    ]:
+                        for simulator in experi_config["simulators"]:
+                            for graph_nr in size_and_max_graph[1]:
+                                run_configs.append(
+                                    run_parameters_to_dict(
+                                        adaptation,
+                                        algorithm,
+                                        iteration,
+                                        size_and_max_graph,
+                                        graph_nr,
+                                        radiation,
+                                        experi_config,
+                                        simulator,
+                                    )
+                                )
+
+    for run_config in run_configs:
+        verify_run_config(supp_run_setts, run_config, False)
+
+        # Append unique_id to run_config
+        supp_run_setts.append_unique_config_id(run_config)
+
+        # Append show_snns and export_snns to run config.
+        supp_run_setts.assert_has_key(experi_config, "show_snns", bool)
+        supp_run_setts.assert_has_key(experi_config, "export_snns", bool)
+        run_config["show_snns"] = experi_config["show_snns"]
+        run_config["export_snns"] = experi_config["export_snns"]
+    return run_configs
+
+
+# pylint: disable=R0913
+def run_parameters_to_dict(
+    adaptation,
+    algorithm,
+    iteration,
+    size_and_max_graph,
+    graph_nr,
+    radiation,
+    experi_config,
+    simulator,
+):
+    """Stores selected parameters into a dictionary.
+
+    Written as separate argument to keep code width under 80 lines.
+    """
+    return {
+        "adaptation": adaptation,
+        "algorithm": algorithm,
+        "iteration": iteration,
+        "graph_size": size_and_max_graph[0],
+        "graph_nr": graph_nr,
+        "radiation": radiation,
+        "overwrite_sim_results": experi_config["overwrite_sim_results"],
+        "overwrite_visualisation": experi_config["overwrite_visualisation"],
+        "seed": experi_config["seed"],
+        "simulator": simulator,
+    }
 
 
 def determine_what_to_run(run_config) -> dict:
