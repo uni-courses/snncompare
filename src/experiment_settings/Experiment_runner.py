@@ -16,6 +16,10 @@ from src.experiment_settings.verify_experiment_settings import (
     verify_experiment_config,
     verify_has_unique_id,
 )
+from src.export_results.Output import (
+    create_results_directories,
+    performed_stage,
+)
 
 
 class Experiment_runner:
@@ -24,6 +28,9 @@ class Experiment_runner:
     # pylint: disable=R0903
 
     def __init__(self, experi_config: dict, export: bool, show: bool) -> None:
+
+        # Ensure output directories are created for stages 1 to 4.
+        create_results_directories()
 
         # Store the experiment configuration settings.
         self.experi_config = experi_config
@@ -50,27 +57,101 @@ class Experiment_runner:
         self.experi_config["export"] = export
         self.experi_config["show"] = show
 
-        # determine_what_to_run
-
-        # TODO: Perform run accordingly.
-        # __perform_run
-
-    def determine_what_to_run(self):
-        """Scans for existing output and then combines the run configuration
-        settings to determine what still should be computed."""
-        # Determine which of the 4 stages have been performed.
-
-        # Check if the run is already performed without exporting.
-
-        # Check if the run is already performed with exporting.
+        # Perform runs accordingly.
+        self.__perform_run(self.experi_config)
 
     # pylint: disable=W0238
-    def __perform_run(self):
+    def __perform_run(self, experi_config):
         """Private method that runs the experiment.
 
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
+        # Generate run configurations.
+        run_configs = experiment_config_to_run_configs(experi_config)
+
+        to_run = determine_what_to_run(run_configs)
+
+        if to_run["stage_1"]:
+            pass
+        if to_run["stage_2"]:
+            pass
+        if to_run["stage_3"]:
+            pass
+        if to_run["stage_4"]:
+            pass
+
+
+def experiment_config_to_run_configs(experi_config):
+    """Generates all the run_config dictionaries of a single experiment
+    configuration.
+
+    Verifies whether each run_config is valid.
+    """
+    # TODO: implement
+    if experi_config:
+        return 1
+    return 2
+
+
+def determine_what_to_run(run_config) -> dict:
+    """Scans for existing output and then combines the run configuration
+    settings to determine what still should be computed."""
+    to_run = {
+        "stage_1": False,
+        "stage_2": False,
+        "stage_3": False,
+        "stage_4": False,
+    }
+    # Determine which of the 4 stages have been performed and which stages
+    # still have to be completed.
+
+    if (
+        not performed_stage(
+            run_config,
+            1,
+        )
+        or run_config["overwrite_sim_results"]
+    ):
+        # If original graphs do not yet exist, or a manual overwrite is
+        # requested, create them (Note it only asks for an overwrite of
+        # the sim results, but it is assumed this means re-do the
+        # simulation).
+        to_run["stage_1"] = True
+    if (
+        not performed_stage(run_config, 2)
+        or run_config["overwrite_sim_results"]
+    ):
+        to_run["stage_2"] = True
+    if (
+        not performed_stage(run_config, 3)
+        or run_config["overwrite_visualisation"]
+    ):
+        # Note this allows the user to create inconsistent simulation
+        # results and visualisation. E.g. the simulated behaviour may
+        # have changed due to code changes, yet the visualisation would
+        # not be updated stage 3 has already been performed, with
+        # overwrite_sim_results=True, and overwrite_visualisation=False.
+        to_run["stage_3"] = True
+    # Throw warning to user about potential discrepancy between graph
+    # behaviour and old visualisation.
+    if (
+        performed_stage(run_config, 3)
+        and run_config["overwrite_sim_results"]
+        and not run_config["overwrite_visualisation"]
+    ):
+        input(
+            "Warning, if you have changed the graph behaviour without "
+            + "overwrite_visualisation=True, your visualisation may/will "
+            + "not match with what the graphs actually do. We suggest you "
+            + "try this again with:overwrite_visualisation=True"
+        )
+    if (
+        not performed_stage(run_config, 4)
+        or run_config["overwrite_sim_results"]
+    ):
+        to_run["stage_4"] = True
+    return to_run
 
 
 def example_experi_config():

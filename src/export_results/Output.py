@@ -9,7 +9,16 @@ Input: Experiment configuration.
         mechanism.
 """
 # pylint: disable=W0613 # work in progress.
+import json
+from typing import List
+
+from anyio import Path
+
 from src.export_results.helper import run_config_to_filename
+from src.export_results.plot_graphs import (
+    create_root_dir_if_not_exists,
+    create_target_dir_if_not_exists,
+)
 from src.export_results.verify_stage_1_graphs import verify_stage_1_graphs
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
 from src.export_results.verify_stage_3_graphs import verify_stage_3_graphs
@@ -35,9 +44,23 @@ with_adaptation_with_radiation = {
 }
 
 
+def create_results_directories():
+    """Results directory structure is: <repository root_dir>/results/stage_1.
+
+    <repository root_dir>/results/stage_2 <repository
+    root_dir>/results/stage_3 <repository root_dir>/results/stage_4
+    """
+    create_root_dir_if_not_exists("results")
+    for stage_index in range(1, 5):  # Indices 1 to 4
+        create_target_dir_if_not_exists("results/", f"stage_{stage_index}")
+
+    # TODO: assert directory: <repo root dir>/results/stage_1" exists
+
+
 def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
     """Merges the experiment configuration dict, run configuration dict and
-    graphs into a single dict.
+    graphs into a single dict. This method assumes only the graphs that are to
+    be exported are passed into this method.
 
     The graphs have not yet been simulated, hence they should be
     convertible into dicts. This merged dict is then written to file.
@@ -45,9 +68,14 @@ def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
     as well as the unique_id of the run. Furthermore, all run parameter
     values are added as file tags, to make it easier to filter certain
     runs to manually inspect the results.
+
+    :param experiment_config:
+    :param run_config:
+    :param graphs_stage_1:
     """
     run_config_to_filename(run_config)
     # TODO: Ensure output file exists.
+    # TODO: Verify the correct graphs is passed by checking the graph tag.
     # TODO: merge experiment config, run_config and graphs into single dict.
     # TODO: Write experiment_config to file (pprint(dict), or json)
     # TODO: Write run_config to file (pprint(dict), or json)
@@ -57,7 +85,8 @@ def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
 
 def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
     """Merges the experiment configuration dict, run configuration dict into a
-    single dict.
+    single dict. This method assumes only the graphs that are to be exported
+    are passed into this method.
 
     If the networkx (nx) simulator is used, the graphs should be
     convertible into dicts. This merged dict is then written to file. If
@@ -71,9 +100,14 @@ def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
     unique_id of the run. Furthermore, all run parameter values are
     added as file tags, to make it easier to filter certain runs to
     manually inspect the results.
+
+    :param experiment_config:
+    :param run_config:
+    :param graphs_stage_2:
     """
     run_config_to_filename(run_config)
     # TODO: Ensure output file exists.
+    # TODO: Verify the correct graphs is passed by checking the graph tag.
 
     # TODO: merge experiment config, run_config into single dict.
     if run_config["simulator"] == "nx":
@@ -97,23 +131,46 @@ def output_files_stage_3(experiment_config, run_config, graphs_stage_3):
     If the graphs are simulated for 50 timesteps, 50 pictures per graph
     will be outputted. For naming scheme and taging, see documentation
     of function output_files_stage_1 or output_files_stage_2.
+
+    :param experiment_config:
+    :param run_config:
+    :param graphs_stage_3:
     """
     run_config_to_filename(run_config)
     # TODO: Optional: ensure output files exists.
 
-    # TODO: merge experiment config, run_config into single dict.
-    if run_config["simulator"] == "nx":
-        # TODO: append graphs to dict.
+    # TODO: loop through graphs and create visualisation.
+    # TODO: ensure the run parameters are in a legend
+    # TODO: loop over the graphs (t), and output them.
+    # TODO: append tags to output file(s).
 
-        pass
-    elif run_config["simulator"] == "lava":
-        # TODO: terminate simulation.
-        # TODO: write simulated lava graphs to pickle.
-        pass
-    else:
-        raise Exception("Simulator not supported.")
-    # TODO: write merged dict to file.
 
+def output_files_stage_4(
+    correct: bool,
+    experiment_config: dict,
+    nodes_alipour: List[int],
+    nodes_snn: List[int],
+    run_config: dict,
+):
+    """This only outputs the algorithm performance and adaptation performance
+    on the specific graph.
+
+    It does so by outputting the nodes selected by Alipour, the nodes
+    selected by the SNN graph, and a boolean indicating whether they are
+    the same or not.
+
+    :param correct: bool:
+    :param experiment_config: dict:
+    :param nodes_alipour: List[int]:
+    :param nodes_snn: List[int]:
+    :param run_config: dict:
+    """
+
+    run_config_to_filename(experiment_config, run_config)
+    # TODO: Optional: ensure output files exists.
+
+    # TODO: ensure the run parameters are in a legend
+    # TODO: loop over the graphs (t), and output them.
     # TODO: append tags to output file(s).
 
 
@@ -122,11 +179,11 @@ class Stage_1_graphs:
     """Stage 1: The networkx graphs that will be propagated."""
 
     def __init__(
-        self, experiment_config: dict, graphs_stage1: dict, run_config: dict
+        self, experiment_config: dict, graphs_stage_1: dict, run_config: dict
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage1
+        self.graphs = graphs_stage_1
         verify_stage_1_graphs()
         # G_original
         # G_SNN_input
@@ -140,11 +197,11 @@ class Stage_2_graphs:
     """Stage 2: The propagated networkx graphs (at least one per timestep)."""
 
     def __init__(
-        self, experiment_config: dict, graphs_stage2: dict, run_config: dict
+        self, experiment_config: dict, graphs_stage_2: dict, run_config: dict
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage2
+        self.graphs = graphs_stage_2
         verify_stage_2_graphs()
 
 
@@ -153,11 +210,11 @@ class Stage_3_graphs:
     """Stage 3: Visaualisation of the networkx graphs over time."""
 
     def __init__(
-        self, experiment_config: dict, graphs_stage3: dict, run_config: dict
+        self, experiment_config: dict, graphs_stage_3: dict, run_config: dict
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage3
+        self.graphs = graphs_stage_3
         verify_stage_3_graphs()
 
 
@@ -167,9 +224,106 @@ class Stage_4_graphs:
     mechanism."""
 
     def __init__(
-        self, experiment_config: dict, graphs_stage4: dict, run_config: dict
+        self, experiment_config: dict, graphs_stage_4: dict, run_config: dict
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs = graphs_stage4
+        self.graphs = graphs_stage_4
         verify_stage_4_graphs()
+
+
+def get_extensions_dict(run_config, stage_index) -> dict:
+    """Returns the file extensions of the output types.
+    TODO: support .json as well as .txt for the dictionaries.
+
+    :param run_config:
+    :param stage_index:
+
+    """
+    if stage_index == 1:
+        return {"config_and_graphs": ".txt"}
+    if stage_index == 2:
+        if run_config["simulator"] == "lava":
+            return {"config": ".txt", "graphs": ".pkl"}
+
+        return {"config_and_graphs": ".txt"}
+    if stage_index == 3:
+        # TODO: support .eps and/or .pdf.
+        return {"graphs": ".png"}
+    if stage_index == 4:
+        return {"config_and_results": ".txt"}
+    raise Exception("Unsupported experiment stage.")
+
+
+def get_extensions_list(run_config, stage_index) -> list:
+    """
+
+    :param run_config:
+    :param stage_index:
+
+    """
+    extensions = list(get_extensions_dict(run_config, stage_index).values())
+    print(f"extensions={extensions}")
+    return list(get_extensions_dict(run_config, stage_index).values())
+
+
+def performed_stage(run_config, stage_index):
+    """Verifies the required output files exist for a given simulation.
+
+    :param run_config:
+    :param stage_index:
+    """
+    expected_filenames = []
+
+    filename = run_config_to_filename(run_config)
+    relative_output_dir = "results/stage_{stage_index}/"
+    extensions = get_extensions_list(run_config, stage_index)
+    for extension in extensions:
+        if stage_index in [1, 2, 4]:
+            expected_filenames.append(
+                relative_output_dir + filename + extension
+            )
+
+        # Before
+        if stage_index == 3:
+            nr_of_simulation_steps = get_nr_of_simulation_steps(
+                relative_output_dir, filename
+            )
+            for t in range(0, nr_of_simulation_steps):
+                # Generate graph filenames
+                expected_filenames.append(
+                    relative_output_dir + filename + f"t_{t}" + extension
+                )
+
+    # Check if the expected output files already exist.
+    for filename in expected_filenames:
+        if not Path(relative_output_dir + filename).is_file():
+            return False
+    return True
+
+
+def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
+    """Loads the stage_2 output dictionary from a file.
+
+    # TODO: decide json output or dict output.
+
+    :param relative_output_dir:
+    :param filename:
+    """
+    stage_2_output_dict_filepath = relative_output_dir + filename
+    with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
+        stage_2_output_dict = json.load(json_file)
+    return stage_2_output_dict
+
+
+def get_nr_of_simulation_steps(relative_output_dir, filename) -> int:
+    """Reads the amount of simulation steps from the stage2 run configuration.
+
+    :param relative_output_dir:
+    :param filename:
+    """
+    stage_2_output_dict = load_stage_2_output_dict(
+        relative_output_dir, filename
+    )
+    run_config = stage_2_output_dict["run_config"]
+    return run_config["duration"]

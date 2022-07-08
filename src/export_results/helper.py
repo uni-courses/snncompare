@@ -24,6 +24,9 @@ def run_config_to_filename(run_config):
     Does that by flattining the dictionary (and all its child-
     dictionaries).
     """
+    # TODO: order dictionaries by alphabetical order by default.
+    # TODO: allow user to specify a custom order of parameters.
+
     # Don't, that makes it more difficult to load the dict again.
     # Remove the ' symbols.
     # Don't, that makes it more difficult to load the dict again.

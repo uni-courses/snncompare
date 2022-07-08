@@ -12,7 +12,7 @@ Input: Experiment configuration.
 
 
 # pylint: disable=W0613
-def verify_stage_4_graphs(experiment_config, run_config, graphs_stage4):
+def verify_stage_4_graphs(experiment_config, run_config, graphs_stage_4):
     """Verifies the generated graphs are compliant and complete for the
     specified run configuration.
 

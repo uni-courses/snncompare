@@ -77,6 +77,8 @@ def verify_run_config_dict_contains_only_valid_entries(
     invalid keys."""
     for actual_key in run_config.keys():
         if actual_key not in supp_run_setts.parameters:
+            # TODO: allow for optional arguments:
+            # stage, show, export, duration
             raise Exception(
                 f"Error:{actual_key} is not supported by the configuration"
                 + f" settings:{supp_run_setts.parameters}"
