@@ -34,8 +34,8 @@ with_adaptation_with_radiation = {
     "max_max_graphs": 15,
     "overwrite_sim_results": True,
     "overwrite_visualisation": True,
-    "radiation": verify_adap_and_rad_settings(
-        supp_experi_setts, rad_sets.with_radiation, "radiation"
+    "radiations": verify_adap_and_rad_settings(
+        supp_experi_setts, rad_sets.with_radiation, "radiations"
     ),
     "seed": 5,
     "size_and_max_graphs": [(3, 15), (4, 15)],

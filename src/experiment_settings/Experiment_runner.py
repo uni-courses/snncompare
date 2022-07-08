@@ -102,8 +102,8 @@ def example_config_settings():
         "max_graph_size": 20,
         "overwrite_sim_results": True,
         "overwrite_visualisation": True,
-        "radiation": verify_adap_and_rad_settings(
-            supp_experi_setts, rad_sets.with_radiation, "radiation"
+        "radiations": verify_adap_and_rad_settings(
+            supp_experi_setts, rad_sets.with_radiation, "radiations"
         ),
         "size_and_max_graphs": [(3, 15), (4, 15)],
         "simulators": ["nx"],

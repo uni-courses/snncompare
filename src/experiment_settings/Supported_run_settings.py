@@ -33,7 +33,7 @@ class Supported_run_settings:
             "iteration": int,
             "graph_size": int,
             "nr_of_graphs": int,
-            "radiation": dict,
+            "radiations": dict,
             "overwrite_sim_results": bool,
             "overwrite_visualisation": bool,
             "seed": int,

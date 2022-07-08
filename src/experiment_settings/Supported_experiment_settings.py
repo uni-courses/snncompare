@@ -36,7 +36,7 @@ class Supported_experiment_settings:
             "max_max_graphs",
             "min_graph_size",
             "min_max_graphs",
-            "radiation",
+            "radiations",
             "overwrite_sim_results",
             "overwrite_visualisation",
             "seed",
@@ -83,8 +83,8 @@ class Supported_experiment_settings:
         # Generate the supported adaptation settings.
         self.specify_supported_adaptation_settings()
 
-        # Generate the supported radiation settings.
-        self.specify_supported_radiation_settings()
+        # Generate the supported radiations settings.
+        self.specify_supported_radiations_settings()
 
     def specify_supported_adaptation_settings(self):
         """Specifies all the supported types of adaptation settings."""
@@ -105,13 +105,13 @@ class Supported_experiment_settings:
             # impact.
         }
 
-    def specify_supported_radiation_settings(self):
-        """Specifies types of supported radiation settings. Some settings
+    def specify_supported_radiations_settings(self):
+        """Specifies types of supported radiations settings. Some settings
         consist of a list of tuples, with the probability of a change
         occurring, followed by the average magnitude of the change.
 
         Others only contain a list of floats which represent the
-        probability of radiation induced change occurring.
+        probability of radiations induced change occurring.
         """
         # List of tuples with x=probabiltity of change, y=average value change
         # in synaptic weights.
@@ -133,14 +133,14 @@ class Supported_experiment_settings:
             (0.25, 0.1),
         ]
 
-        # Create a supported radiation setting example.
-        self.radiation = {
-            # No radiation
+        # Create a supported radiations setting example.
+        self.radiations = {
+            # No radiations
             "None": [],
-            # Radiation effects are transient, they last for 1 or 10 simulation
-            # steps. If transient is 0., the changes are permanent.
+            # radiations effects are transient, they last for 1 or 10
+            # simulation steps. If transient is 0., the changes are permanent.
             "transient": [0.0, 1.0, 10.0],
-            # List of probabilities of a neuron dying due to radiation.
+            # List of probabilities of a neuron dying due to radiations.
             "neuron_death": [
                 0.01,
                 0.05,
@@ -148,7 +148,7 @@ class Supported_experiment_settings:
                 0.2,
                 0.25,
             ],
-            # List of probabilities of a synapse dying due to radiation.
+            # List of probabilities of a synapse dying due to radiations.
             "synaptic_death": [
                 0.01,
                 0.05,
@@ -157,10 +157,10 @@ class Supported_experiment_settings:
                 0.25,
             ],
             # List of: (probability of synaptic weight change, and the average
-            # factor with which it changes due to radiation).
+            # factor with which it changes due to radiations).
             "delta_synaptic_w": self.delta_synaptic_w,
             # List of: (probability of neuron threshold change, and the average
-            # factor with which it changes due to radiation).
+            # factor with which it changes due to radiations).
             "delta_vth": self.delta_vth,
         }
 

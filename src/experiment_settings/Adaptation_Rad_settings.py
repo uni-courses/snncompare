@@ -80,10 +80,10 @@ with_and_without_adaptation_and_radiation = {
         adaptation_settings.with_and_without_adaptation,
         "adaptations",
     ),
-    "radiation": verify_adap_and_rad_settings(
+    "radiations": verify_adap_and_rad_settings(
         supported_settings,
         radiation_settings.with_and_without_radiation,
-        "radiation",
+        "radiations",
     ),
     "overwrite": True,
     "simulators": ["nx"],

@@ -306,7 +306,7 @@ def verify_object_type(obj, expected_type, element_type=None):
 def verify_adap_and_rad_settings(
     supp_experi_setts, some_dict, check_type
 ) -> dict:
-    """Verifies the settings of adaptations or radiation property are valid.
+    """Verifies the settings of adaptations or radiations property are valid.
     Returns a dictionary with the adaptations setting if the settngs are valid.
 
     :param some_dict: param check_type:
@@ -317,8 +317,8 @@ def verify_adap_and_rad_settings(
     # Load the example settings from the Supported_experiment_settings object.
     if check_type == "adaptations":
         reference_object: Dict[str, Any] = supp_experi_setts.adaptations
-    elif check_type == "radiation":
-        reference_object = supp_experi_setts.radiation
+    elif check_type == "radiations":
+        reference_object = supp_experi_setts.radiations
     else:
         raise Exception(f"Check type:{check_type} not supported.")
 
@@ -337,8 +337,8 @@ def verify_adap_and_rad_settings(
             # Check if values belonging to key are within supported range.
             if check_type == "adaptations":
                 verify_adaptation_values(supp_experi_setts, some_dict, key)
-            elif check_type == "radiation":
-                verify_radiation_values(supp_experi_setts, some_dict, key)
+            elif check_type == "radiations":
+                verify_radiations_values(supp_experi_setts, some_dict, key)
         return some_dict
     raise Exception(
         "Error, property is expected to be a dict, yet"
@@ -392,18 +392,18 @@ def verify_adaptation_values(
             verify_object_type(setting, float, None)
 
 
-def verify_radiation_values(
-    supp_experi_setts, radiation: dict, key: str
+def verify_radiations_values(
+    supp_experi_setts, radiations: dict, key: str
 ) -> None:
-    """The configuration settings contain key named: radiation. The value of
+    """The configuration settings contain key named: radiations. The value of
     belonging to this key is a dictionary, which also has several keys.
 
-    This method checks whether these radiation dictionary keys, are within
+    This method checks whether these radiations dictionary keys, are within
     the supported range of adaptations setting keys. These adaptations
     dictionary keys should each have values of the type list. These list
     elements should have the type float, tuple(float, float) or be empty lists.
-    The empty list represents: no radiation is used, signified by the key name:
-    "None".
+    The empty list represents: no radiations is used, signified by the key
+    name: "None".
 
     This method verifies the keys in the adaptations dictionary are within the
     supported range. It also checks if the values of the adaptations dictionary
@@ -411,35 +411,35 @@ def verify_radiation_values(
     or tuple. If the types are tuple, it also checks whether the values within
     those tuples are of type float.
 
-    :param radiation: dict:
+    :param radiations: dict:
     :param key: str:
     :param supp_experi_setts:
     """
     if not isinstance(
-        radiation[key], type(supp_experi_setts.radiation[key])
-    ) or (not isinstance(radiation[key], list)):
+        radiations[key], type(supp_experi_setts.radiations[key])
+    ) or (not isinstance(radiations[key], list)):
 
         raise Exception(
-            "Error, the radiation value is of type:"
-            + f"{type(radiation[key])}, yet it was expected to be"
+            "Error, the radiations value is of type:"
+            + f"{type(radiations[key])}, yet it was expected to be"
             + " float or dict."
         )
 
-    # Verify radiation setting types.
-    if isinstance(radiation[key], list):
-        for setting in radiation[key]:
+    # Verify radiations setting types.
+    if isinstance(radiations[key], list):
+        for setting in radiations[key]:
 
-            # Verify radiation setting can be of type float.
+            # Verify radiations setting can be of type float.
             if isinstance(setting, float):
                 # TODO: superfluous check.
                 verify_object_type(setting, float, None)
-            # Verify radiation setting can be of type tuple.
+            # Verify radiations setting can be of type tuple.
             elif isinstance(setting, tuple):
-                # Verify the radiation setting tuple is of type float,
+                # Verify the radiations setting tuple is of type float,
                 # float.
                 verify_object_type(setting, tuple, (float, float))
             else:
-                # Throw error if the radiation setting is something other
+                # Throw error if the radiations setting is something other
                 # than a float or tuple of floats.
                 raise Exception(
                     f"Unexpected setting type:{type(setting)} for:"
