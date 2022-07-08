@@ -49,7 +49,10 @@ class Test_radiations_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, experi_config, has_unique_id=False
+                self.supp_experi_setts,
+                experi_config,
+                has_unique_id=False,
+                strict=True,
             )
 
         self.assertEqual(

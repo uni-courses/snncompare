@@ -10,9 +10,8 @@ Input: Experiment configuration.
 """
 # pylint: disable=W0613 # work in progress.
 import json
+from pathlib import Path
 from typing import List
-
-from anyio import Path
 
 from src.export_results.helper import run_config_to_filename
 from src.export_results.plot_graphs import (

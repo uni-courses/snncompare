@@ -10,6 +10,8 @@ setting types should be identical.)
 # The settings object contains all the settings as a dictionary, hence no
 # hierarchy is used, leading to 10/7 instance attributes.
 
+import copy
+
 from src.experiment_settings.Supported_algorithms import MDSA
 from src.experiment_settings.verify_experiment_settings import (
     verify_experiment_config,
@@ -47,6 +49,7 @@ class Supported_experiment_settings:
         self.optional_parameters = {
             "show_snns": bool,
             "export_snns": bool,
+            "unique_id": int,
         }
 
         self.seed = 5
@@ -193,10 +196,26 @@ class Supported_experiment_settings:
                 + "already contains a unique identifier."
             )
 
-        verify_experiment_config(self, experiment_config, has_unique_id=False)
+        verify_experiment_config(
+            self, experiment_config, has_unique_id=False, strict=True
+        )
 
-        hash_set = frozenset(experiment_config.values())
+        # Compute a unique code belonging to this particular experiment
+        # configuration.
+        hash_set = self.dict_to_frozen_set(experiment_config)
+
         unique_id = hash(hash_set)
         experiment_config["unique_id"] = unique_id
-        verify_experiment_config(self, experiment_config, has_unique_id=True)
+        verify_experiment_config(
+            self, experiment_config, has_unique_id=True, strict=True
+        )
         return experiment_config
+
+    def dict_to_frozen_set(self, experiment_config: dict) -> frozenset:
+        """Converts a dictionary into a frozenset, such that a hash code of the
+        dict can be computed."""
+        some_dict = copy.deepcopy(experiment_config)
+        for value in some_dict.values():
+            if isinstance(value, dict):
+                value = self.dict_to_frozen_set(value)
+        return frozenset(some_dict)

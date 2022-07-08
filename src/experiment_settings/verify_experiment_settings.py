@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 # pylint: disable=W0613
 def verify_experiment_config(
-    supp_experi_setts, experiment_config, has_unique_id
+    supp_experi_setts, experiment_config, has_unique_id, strict: bool
 ):
     """Verifies the selected experiment configuration settings are valid.
 
@@ -29,7 +29,7 @@ def verify_experiment_config(
     )
     # Verify no unknown configuration settings are presented.
     verify_experiment_config_dict_contains_only_valid_entries(
-        supp_experi_setts, experiment_config
+        supp_experi_setts, experiment_config, strict
     )
 
     # Verify settings of type: list and tuple.
@@ -108,16 +108,24 @@ def verify_experiment_config_dict_is_complete(
 
 
 def verify_experiment_config_dict_contains_only_valid_entries(
-    supp_experi_setts, experiment_config
+    supp_experi_setts, experiment_config, strict: bool
 ):
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in experiment_config.keys():
         if actual_key not in supp_experi_setts.parameters:
-            raise Exception(
-                f"Error:{actual_key} is not supported by the configuration"
-                + f" settings:{supp_experi_setts.parameters}"
-            )
+            if strict:
+                raise Exception(
+                    f"Error:{actual_key} is not supported by the configuration"
+                    + f" settings:{supp_experi_setts.parameters}"
+                )
+            if actual_key not in supp_experi_setts.optional_parameters:
+                raise Exception(
+                    f"Error:{actual_key} is not supported by the configuration"
+                    + f" settings:{supp_experi_setts.parameters}, nor by the"
+                    + " optional settings:"
+                    + f"{supp_experi_setts.optional_parameters}"
+                )
 
 
 def verify_list_element_types_and_list_len(list_setting, element_type):

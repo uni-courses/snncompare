@@ -46,7 +46,10 @@ class Experiment_runner:
 
         # Verify the experiment experi_config are complete and valid.
         verify_experiment_config(
-            self.supp_experi_setts, experi_config, has_unique_id=False
+            self.supp_experi_setts,
+            experi_config,
+            has_unique_id=False,
+            strict=True,
         )
 
         # If the experiment experi_config does not contain a hash-code,
@@ -254,6 +257,7 @@ def example_experi_config():
         "radiations": verify_adap_and_rad_settings(
             supp_experi_setts, rad_sets.with_radiation, "radiations"
         ),
+        "seed": 42,
         "size_and_max_graphs": [(3, 15), (4, 15)],
         "simulators": ["nx"],
     }
