@@ -13,7 +13,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
-    supp_experi_setts,
+    supp_experi_config,
     with_adaptation_with_radiation,
 )
 
@@ -25,15 +25,15 @@ class Test_max_graph_size_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_experi_setts = Supported_experiment_settings()
-        self.valid_max_graph_size = self.supp_experi_setts.max_graph_size
+        self.supp_experi_config = Supported_experiment_settings()
+        self.valid_max_graph_size = self.supp_experi_config.max_graph_size
 
         self.invalid_max_graph_size_value = {
             "max_graph_size": "invalid value of type string iso list of"
             + " floats",
         }
 
-        self.supp_experi_setts = supp_experi_setts
+        self.supp_experi_config = supp_experi_config
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
@@ -43,20 +43,20 @@ class Test_max_graph_size_settings(unittest.TestCase):
         from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        config_settings.pop("max_graph_size")
+        experi_config.pop("max_graph_size")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
             # "'max_graph_size'",
             "Error:max_graph_size is not in the configuration"
-            + f" settings:{config_settings.keys()}",
+            + f" settings:{experi_config.keys()}",
             str(context.exception),
         )
 
@@ -68,13 +68,13 @@ class Test_max_graph_size_settings(unittest.TestCase):
         is expected).
         """
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        config_settings["max_graph_size"] = None
+        experi_config["max_graph_size"] = None
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
@@ -88,18 +88,18 @@ class Test_max_graph_size_settings(unittest.TestCase):
         value is lower than the supported range of max_graph_size values
         permits."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        config_settings["max_graph_size"] = -2
+        experi_config["max_graph_size"] = -2
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
             "Error, setting expected to be at least "
-            + f"{self.supp_experi_setts.min_graph_size}. "
+            + f"{self.supp_experi_config.min_graph_size}. "
             + f"Instead, it is:{-2}",
             str(context.exception),
         )
@@ -108,23 +108,19 @@ class Test_max_graph_size_settings(unittest.TestCase):
         """To state the obvious, this also tests whether min_graph_size is
         larger than max_graph size throws an exception."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        config_settings["min_graph_size"] = (
-            config_settings["min_graph_size"] + 1
-        )
-        config_settings["max_graph_size"] = (
-            config_settings["min_graph_size"] - 1
-        )
+        experi_config["min_graph_size"] = experi_config["min_graph_size"] + 1
+        experi_config["max_graph_size"] = experi_config["min_graph_size"] - 1
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
-            f'Lower bound:{config_settings["min_graph_size"]} is larger than'
-            f' upper bound:{config_settings["max_graph_size"]}.',
+            f'Lower bound:{experi_config["min_graph_size"]} is larger than'
+            f' upper bound:{experi_config["max_graph_size"]}.',
             str(context.exception),
         )
 
@@ -133,18 +129,18 @@ class Test_max_graph_size_settings(unittest.TestCase):
         value is higher than the supported range of max_graph_size values
         permits."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        config_settings["max_graph_size"] = 50
+        experi_config["max_graph_size"] = 50
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
             "Error, setting expected to be at most "
-            + f"{self.supp_experi_setts.max_graph_size}. Instead, it is:"
+            + f"{self.supp_experi_config.max_graph_size}. Instead, it is:"
             + "50",
             str(context.exception),
         )

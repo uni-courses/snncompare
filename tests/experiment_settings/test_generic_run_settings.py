@@ -63,7 +63,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         self.assertEqual(self.valid_run_setting, returned_dict)
 
-    def test_config_settings_is_none(self):
+    def test_experi_config_is_none(self):
         """Verifies an error is thrown if configuration settings object is of
         type None."""
 
@@ -80,7 +80,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_config_settings_type(self):
+    def test_catch_invalid_experi_config_type(self):
         """Verifies an error is thrown if configuration settings object is of
         invalid type.
 
@@ -105,20 +105,20 @@ class Test_generic_configuration_settings(unittest.TestCase):
         """Verifies an error is thrown on an invalid configuration setting
         key."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.valid_run_setting)
+        experi_config = copy.deepcopy(self.valid_run_setting)
 
         # Add invalid key to configuration dictionary.
-        config_settings[self.invalid_adaptation_key] = "Filler"
-        # print(f'config_settings={config_settings}')
+        experi_config[self.invalid_adaptation_key] = "Filler"
+        # print(f'experi_config={experi_config}')
         # verify_run_config(
         #        self.supp_run_settings,
-        #        config_settings, has_unique_id=False
+        #        experi_config, has_unique_id=False
         #    )
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_run_config(
-                self.supp_run_settings, config_settings, has_unique_id=False
+                self.supp_run_settings, experi_config, has_unique_id=False
             )
         self.assertEqual(
             f"Error:{self.invalid_adaptation_key} is not supported by the"
@@ -129,7 +129,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
 
 def verify_error_is_thrown_on_invalid_configuration_setting_value(
-    invalid_config_setting_value, config_settings, expected_type, test_object
+    invalid_config_setting_value, experi_config, expected_type, test_object
 ):
     """Verifies an error is thrown on an invalid configuration setting value.
 
@@ -146,7 +146,7 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
         )
     with test_object.assertRaises(Exception) as context:
         verify_run_config(
-            test_object.supp_experi_setts, config_settings, has_unique_id=False
+            test_object.supp_experi_config, experi_config, has_unique_id=False
         )
 
     test_object.assertEqual(

@@ -23,7 +23,7 @@ class Supported_run_settings:
     def __init__(
         self,
     ) -> None:
-        # Config_settings dictionary keys:
+        # experi_config dictionary keys:
         self.parameters = {
             "adaptation": dict,
             "algorithm": dict,

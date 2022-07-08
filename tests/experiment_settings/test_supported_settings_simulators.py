@@ -10,7 +10,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from tests.experiment_settings.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
-    supp_experi_setts,
+    supp_experi_config,
     verify_error_is_thrown_on_invalid_configuration_setting_value,
     with_adaptation_with_radiation,
 )
@@ -23,37 +23,37 @@ class Test_simulators_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.supp_experi_setts = Supported_experiment_settings()
+        # self.supp_experi_config = Supported_experiment_settings()
 
         self.invalid_simulators_value = {
             "simulators": "invalid value of type string iso list of floats",
         }
 
-        self.supp_experi_setts = supp_experi_setts
+        self.supp_experi_config = supp_experi_config
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
-        self.valid_simulators = self.supp_experi_setts.simulators
+        self.valid_simulators = self.supp_experi_config.simulators
 
     def test_error_is_thrown_if_simulators_key_is_missing(self):
         """Verifies an exception is thrown if the simulators key is missing
         from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        config_settings.pop("simulators")
+        experi_config.pop("simulators")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
             # "'simulators'",
             "Error:simulators is not in the configuration"
-            + f" settings:{config_settings.keys()}",
+            + f" settings:{experi_config.keys()}",
             str(context.exception),
         )
 
@@ -66,15 +66,15 @@ class Test_simulators_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_experi_setts.simulators)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        expected_type = type(self.supp_experi_config.simulators)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            config_settings["simulators"] = invalid_config_setting_value
+            experi_config["simulators"] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
-                config_settings,
+                experi_config,
                 expected_type,
                 self,
             )
@@ -83,13 +83,13 @@ class Test_simulators_settings(unittest.TestCase):
         """Verifies an exception is thrown if the simulators dictionary value
         is a list without elements."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of simulators in copy.
-        config_settings["simulators"] = []
+        experi_config["simulators"] = []
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
@@ -102,9 +102,9 @@ class Test_simulators_settings(unittest.TestCase):
         """Verifies an exception is thrown if the simulators dictionary value
         is not supported by the permissible simulators values."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(self.with_adaptation_with_radiation)
+        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of simulators in copy.
-        config_settings["simulators"] = [
+        experi_config["simulators"] = [
             "nx",
             "invalid_simulator_name",
             "lava",
@@ -112,12 +112,12 @@ class Test_simulators_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts, config_settings, has_unique_id=False
+                self.supp_experi_config, experi_config, has_unique_id=False
             )
 
         self.assertEqual(
             "Error, simulators was expected to be in range:"
-            + f"{self.supp_experi_setts.simulators}."
+            + f"{self.supp_experi_config.simulators}."
             + " Instead, it contains:invalid_simulator_name.",
             str(context.exception),
         )

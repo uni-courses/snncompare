@@ -27,7 +27,7 @@ class Supported_experiment_settings:
         self,
     ) -> None:
 
-        # Config_settings dictionary keys:
+        # experi_config dictionary keys:
         self.parameters = [
             "adaptations",
             "algorithms",
