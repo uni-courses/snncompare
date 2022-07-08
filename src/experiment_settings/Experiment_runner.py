@@ -112,7 +112,7 @@ def experiment_config_to_run_configs(experi_config: dict):
                         "size_and_max_graphs"
                     ]:
                         for simulator in experi_config["simulators"]:
-                            for graph_nr in size_and_max_graph[1]:
+                            for graph_nr in range(0, size_and_max_graph[1]):
                                 run_configs.append(
                                     run_parameters_to_dict(
                                         adaptation,

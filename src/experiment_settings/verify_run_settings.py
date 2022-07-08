@@ -4,6 +4,7 @@
 """
 # pylint: disable=R0801
 
+
 from src.experiment_settings.verify_experiment_settings import (
     verify_integer_settings,
 )
@@ -47,16 +48,17 @@ def verify_run_config(supp_run_setts, run_config, has_unique_id):
 def verify_parameter_types(supp_run_setts, run_config):
     """Checks for each parameter in the supported_run_settings object whether
     it is of a valid type."""
+    # pprint(f"supp_run_setts.parameters={supp_run_setts.parameters}")
+    # pprint(f"run_config={run_config}")
     for supported_key in supp_run_setts.parameters.keys():
         if not isinstance(
-            run_config[supported_key],
-            supp_run_setts.parameters[supported_key],
+            run_config[supported_key], supp_run_setts.parameters[supported_key]
         ):
             raise Exception(
                 f"Error, {supported_key} is of type: "
                 + f"{type(run_config[supported_key])} whereas it is expected"
                 " to be of type :"
-                + f"{type(supp_run_setts.parameters[supported_key])}"
+                + f"{supp_run_setts.parameters[supported_key]}"
             )
 
 

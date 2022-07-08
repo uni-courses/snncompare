@@ -207,7 +207,7 @@ class Supported_experiment_settings:
         unique_id = hash(hash_set)
         experiment_config["unique_id"] = unique_id
         verify_experiment_config(
-            self, experiment_config, has_unique_id=True, strict=True
+            self, experiment_config, has_unique_id=True, strict=False
         )
         return experiment_config
 
