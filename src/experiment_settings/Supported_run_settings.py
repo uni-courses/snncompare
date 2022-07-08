@@ -13,9 +13,6 @@ setting types should be identical.)
 # pylint: disable=R0903
 
 
-from typing import Tuple
-
-
 class Supported_run_settings:
     """Stores the supported experiment setting parameter ranges.
 
@@ -28,15 +25,14 @@ class Supported_run_settings:
     ) -> None:
         # Config_settings dictionary keys:
         self.parameters = {
-            "adaptations": dict,
+            "adaptation": dict,
             "algorithm": dict,
             "iteration": int,
             "graph_size": int,
-            "nr_of_graphs": int,
-            "radiations": dict,
+            "graph_nr": int,
+            "radiation": dict,
             "overwrite_sim_results": bool,
             "overwrite_visualisation": bool,
             "seed": int,
             "simulator": str,
-            "size_and_max_graph": Tuple[int, int],
         }

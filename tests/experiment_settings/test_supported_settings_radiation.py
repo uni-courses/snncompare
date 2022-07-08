@@ -8,7 +8,7 @@ from src.experiment_settings.verify_experiment_settings import (
     verify_adap_and_rad_settings,
     verify_experiment_config,
 )
-from tests.experiment_settings.test_generic_configuration import (
+from tests.experiment_settings.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
     supp_experi_setts,

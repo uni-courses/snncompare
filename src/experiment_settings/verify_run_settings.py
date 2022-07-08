@@ -36,7 +36,7 @@ def verify_run_config(supp_run_setts, run_config, has_unique_id):
     verify_parameter_types(supp_run_setts, run_config)
 
     # TODO: verify a single algorithm is evaluated in a single run.
-    verify_integer_settings(run_config["algorithms"]["MDSA"]["m_val"])
+    verify_integer_settings(run_config["algorithm"]["MDSA"]["m_val"])
     # TODO: verify radiation setting for single run.
 
     if has_unique_id:
@@ -47,22 +47,22 @@ def verify_run_config(supp_run_setts, run_config, has_unique_id):
 def verify_parameter_types(supp_run_setts, run_config):
     """Checks for each parameter in the supported_run_settings object whether
     it is of a valid type."""
-    for supported_key in supp_run_setts.parameters.keys:
-        if not (
+    for supported_key in supp_run_setts.parameters.keys():
+        if not isinstance(
             run_config[supported_key],
-            supp_run_setts.parameters[supported_key][1],
+            supp_run_setts.parameters[supported_key],
         ):
             raise Exception(
                 f"Error, {supported_key} is of type: "
                 + f"{type(run_config[supported_key])} whereas it is expected"
                 " to be of type :"
-                + f"{type(supp_run_setts.parameters[supported_key][1])}"
+                + f"{type(supp_run_setts.parameters[supported_key])}"
             )
 
 
 def verify_run_config_dict_is_complete(supp_run_setts, run_config):
     """Verifies the configuration settings dictionary is complete."""
-    for expected_key in supp_run_setts.parameters.keys:
+    for expected_key in supp_run_setts.parameters.keys():
         if expected_key not in run_config.keys():
             raise Exception(
                 f"Error:{expected_key} is not in the configuration"

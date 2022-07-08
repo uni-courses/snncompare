@@ -10,7 +10,7 @@ from src.experiment_settings.Supported_experiment_settings import (
 from src.experiment_settings.verify_experiment_settings import (
     verify_experiment_config,
 )
-from tests.experiment_settings.test_generic_configuration import (
+from tests.experiment_settings.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
     supp_experi_setts,

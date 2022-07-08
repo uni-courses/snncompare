@@ -4,44 +4,40 @@ specifications."""
 import copy
 import unittest
 
-from src.experiment_settings.Adaptation_Rad_settings import (
-    Adaptations_settings,
-    Radiation_settings,
+from src.experiment_settings.Supported_run_settings import (
+    Supported_run_settings,
 )
-from src.experiment_settings.Supported_experiment_settings import (
-    Supported_experiment_settings,
-)
-from src.experiment_settings.verify_experiment_settings import (
-    verify_adap_and_rad_settings,
-    verify_experiment_config,
-)
+from src.experiment_settings.verify_run_settings import verify_run_config
 
-supp_experi_setts = Supported_experiment_settings()
-adap_sets = Adaptations_settings()
-rad_sets = Radiation_settings()
 with_adaptation_with_radiation = {
-    "adaptations": verify_adap_and_rad_settings(
-        supp_experi_setts, adap_sets.with_adaptation, "adaptations"
-    ),
-    "algorithms": {
+    "adaptation": {"redundancy": 1.0},
+    "algorithm": {
         "MDSA": {
-            "m_vals": list(range(0, 1, 1)),
+            "m_val": 2,
         }
     },
-    "iterations": list(range(0, 3, 1)),
-    "min_graph_size": 3,
-    "min_max_graphs": 1,
-    "max_graph_size": 20,
-    "max_max_graphs": 15,
+    "graph_size": 4,
+    "graph_nr": 5,
+    "iteration": 4,
     "overwrite_sim_results": True,
     "overwrite_visualisation": True,
-    "radiations": verify_adap_and_rad_settings(
-        supp_experi_setts, rad_sets.with_radiation, "radiations"
-    ),
+    "radiation": {
+        "delta_synaptic_w": (0.05, 0.4),
+    },
     "seed": 5,
-    "size_and_max_graphs": [(3, 15), (4, 15)],
-    "simulators": ["nx"],
+    "simulator": "lava",
 }
+
+# TODO: verify error is thrown on unsupported value.
+# "adaptations": {"redundancy": 1.},
+# TODO: verify error is thrown on unsupported value.
+# "radiations": {"delta_synaptic_w":(0.05, 0.4),},
+# TODO: verify transient is also a supported keyword.
+# "radiations": {"delta_synaptic_w":(0.05, 0.4),"transient": 10},
+# TODO: verify neuron_death is also supported.
+# "radiations": {"neuron_death": 0.25},
+# TODO: verify transient is also a supported keyword.
+# "radiations": {"neuron_death": 0.25,"transient": 10},
 
 
 class Test_generic_configuration_settings(unittest.TestCase):
@@ -51,36 +47,21 @@ class Test_generic_configuration_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.valid_adaptation = {
-            "redundancy": [1.0, 2.0],  # Create 1 and 2 redundant neuron(s) per
-            # neuron.
-            "population": [
-                10.0
-            ],  # Create a population of 10 neurons to represent a
-            # single neuron.
-            "rate_coding": [
-                5.0
-            ],  # Multiply firing frequency with 5 to limit spike decay
-            # impact.
-        }
+        self.supp_run_settings = Supported_run_settings()
+        self.valid_run_setting = with_adaptation_with_radiation
         self.invalid_adaptation_key = "non-existing-key"
-
-        self.invalid_adaptation_value = {
-            "redundancy": "invalid value of type string iso list",
-        }
 
     def test_returns_valid_configuration_settings(self):
         """Verifies a valid configuration settings object and object type is
         returned."""
-        returned_dict = verify_experiment_config(
-            supp_experi_setts,
-            with_adaptation_with_radiation,
+        returned_dict = verify_run_config(
+            self.supp_run_settings,
+            self.valid_run_setting,
             has_unique_id=False,
         )
         self.assertIsInstance(returned_dict, dict)
 
-        self.assertEqual(with_adaptation_with_radiation, returned_dict)
+        self.assertEqual(self.valid_run_setting, returned_dict)
 
     def test_config_settings_is_none(self):
         """Verifies an error is thrown if configuration settings object is of
@@ -88,12 +69,12 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
-            verify_experiment_config(
-                supp_experi_setts, None, has_unique_id=False
+            verify_run_config(
+                self.supp_run_settings, None, has_unique_id=False
             )
 
         self.assertEqual(
-            "Error, the experiment_config is of type:"
+            "Error, the run_config is of type:"
             + f"{type(None)}, yet it was expected to be of"
             + " type dict.",
             str(context.exception),
@@ -108,13 +89,13 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
-            verify_experiment_config(
-                supp_experi_setts,
+            verify_run_config(
+                self.supp_run_settings,
                 "string_instead_of_dict",
                 has_unique_id=False,
             )
         self.assertEqual(
-            "Error, the experiment_config is of type:"
+            "Error, the run_config is of type:"
             + f'{type("")}, yet it was expected to be of'
             + " type dict.",
             str(context.exception),
@@ -124,20 +105,25 @@ class Test_generic_configuration_settings(unittest.TestCase):
         """Verifies an error is thrown on an invalid configuration setting
         key."""
         # Create deepcopy of configuration settings.
-        config_settings = copy.deepcopy(with_adaptation_with_radiation)
+        config_settings = copy.deepcopy(self.valid_run_setting)
 
         # Add invalid key to configuration dictionary.
         config_settings[self.invalid_adaptation_key] = "Filler"
+        # print(f'config_settings={config_settings}')
+        # verify_run_config(
+        #        self.supp_run_settings,
+        #        config_settings, has_unique_id=False
+        #    )
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
-            verify_experiment_config(
-                supp_experi_setts, config_settings, has_unique_id=False
+            verify_run_config(
+                self.supp_run_settings, config_settings, has_unique_id=False
             )
         self.assertEqual(
             f"Error:{self.invalid_adaptation_key} is not supported by the"
             + " configuration settings:"
-            + f"{supp_experi_setts.parameters}",
+            + f"{self.supp_run_settings.parameters}",
             str(context.exception),
         )
 
@@ -159,7 +145,7 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
             + f"{actual_type},{expected_type}"
         )
     with test_object.assertRaises(Exception) as context:
-        verify_experiment_config(
+        verify_run_config(
             test_object.supp_experi_setts, config_settings, has_unique_id=False
         )
 
