@@ -200,6 +200,7 @@ def determine_what_to_run(run_config) -> dict:
     # Determine which of the 4 stages have been performed and which stages
     # still have to be completed.
 
+    # Check if the input graphs exist, (the graphs that can still be adapted.)
     if (
         not performed_stage(
             run_config,
@@ -212,15 +213,23 @@ def determine_what_to_run(run_config) -> dict:
         # the sim results, but it is assumed this means re-do the
         # simulation).
         to_run["stage_1"] = True
+
+    # Check if the incoming graphs have been supplemented with adaptation
+    # and/or radiation.
     if (
         not performed_stage(run_config, 2)
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
+
+    # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not performed_stage(run_config, 3)
         or run_config["overwrite_visualisation"]
     ):
+        # TODO: include preliminary check to see if output of stage 1 and 2
+        # exists.
+
         # Note this allows the user to create inconsistent simulation
         # results and visualisation. E.g. the simulated behaviour may
         # have changed due to code changes, yet the visualisation would
@@ -240,6 +249,9 @@ def determine_what_to_run(run_config) -> dict:
             + "not match with what the graphs actually do. We suggest you "
             + "try this again with:overwrite_visualisation=True"
         )
+
+    # Check if the results of the simulation with respect to alipour need to be
+    # completed.
     if (
         not performed_stage(run_config, 4)
         or run_config["overwrite_sim_results"]

@@ -1,12 +1,12 @@
 """Contains the output of an experiment run at 4 different stages.
 
 Input: Experiment configuration.
-    SubInput: Run configuration within an experiment.
-        Stage 1: The networkx graphs that will be propagated.
-        Stage 2: The propagated networkx graphs (at least one per timestep).
-        Stage 3: Visaualisation of the networkx graphs over time.
-        Stage 4: Post-processed performance data of algorithm and adaptation
-        mechanism.
+SubInput: Run configuration within an experiment.
+    Stage 1: The networkx graphs that will be propagated.
+    Stage 2: The propagated networkx graphs (at least one per timestep).
+    Stage 3: Visaualisation of the networkx graphs over time.
+    Stage 4: Post-processed performance data of algorithm and adaptation
+    mechanism.
 """
 # pylint: disable=W0613 # work in progress.
 import json
@@ -278,19 +278,21 @@ def get_extensions_list(run_config, stage_index) -> list:
     return list(get_extensions_dict(run_config, stage_index).values())
 
 
-def performed_stage(run_config, stage_index):
+def performed_stage(run_config, stage_index: int) -> bool:
     """Verifies the required output files exist for a given simulation.
 
     :param run_config: param stage_index:
     :param stage_index:
     """
     expected_filenames = []
+    print(f"stage_index={stage_index}")
 
     filename = run_config_to_filename(run_config)
     relative_output_dir = f"results/stage_{stage_index}/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
         if stage_index in [1, 2, 4]:
+
             print(f"relative_output_dir={relative_output_dir}")
             print(f"filename={filename}")
             print(f"len(filename)={len(filename)}")
@@ -302,6 +304,13 @@ def performed_stage(run_config, stage_index):
             # TODO: append expected_filepath to run_config per stage.
 
         if stage_index == 3:
+
+            # Check if output file(s) of stage 2 exist, otherwise return False.
+            if not Path(relative_output_dir + filename + extension).is_file():
+                return False
+
+            # If the expected output files containing the adapted graphs exist,
+            # get the number of simulation steps.
             nr_of_simulation_steps = get_nr_of_simulation_steps(
                 relative_output_dir, filename
             )
@@ -321,12 +330,14 @@ def performed_stage(run_config, stage_index):
 def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
     """Loads the stage_2 output dictionary from a file.
 
-    # TODO: decide json output or dict output.
+    # TODO: Determine why the file does not yet exist at this positinoc.
+    # TODO: Output dict to json format.
 
     :param relative_output_dir: param filename:
     :param filename:
     """
     stage_2_output_dict_filepath = relative_output_dir + filename
+    print(f"stage_2_output_dict_filepath={stage_2_output_dict_filepath}")
     with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
         stage_2_output_dict = json.load(json_file)
     return stage_2_output_dict
