@@ -1,42 +1,11 @@
 """Creates test object."""
 
-import copy
 
 from lava.proc.monitor.process import Monitor
 
-from src.graph_generation.helper_network_structure import (
-    get_degree_graph_with_separate_wta_circuits,
-)
 from src.helper import fill_dictionary, generate_list_of_n_random_nrs
-from src.old_conversion import convert_networkx_graph_to_snn_with_one_neuron
 
 # from src.networkx_to_snn import convert_networkx_graph_to_snn_with_one_neuron
-
-
-def create_test_object(
-    adaptation,
-    G,
-    m,
-    seed,
-):
-    """Creates object that is used to manage the simulated radiation test.
-
-    :param adaptation: indicates if test uses brain adaptation or not.
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param iteration: The initialisation iteration that is used.
-    :param m: The amount of approximation iterations used in the MDSA
-    approximation.
-    :param rad_dam: Indicates whether radiation damage is simulated or not.
-    :param seed: The value of the random seed used for this test.
-    :param plot_input_graph: Default value = False) Whether the input graph is
-    plotted or not.
-    :param plot_snn_graph: Default value = False)
-    :param export: Default value = True) Specifies whether the graphs are
-    outpututted.
-    """
-    test_object = Test_properties(adaptation, G, m, seed)
-
-    return (test_object,)
 
 
 def get_degree_receiver_previous_property_dicts(
@@ -200,62 +169,6 @@ class Degree_receiver:
         self.du = 0
         self.dv = 1
         self.vth = 1
-
-
-class Test_properties:
-    """Contains test parameters."""
-
-    # pylint: disable=R0902
-    # TODO: reduce 19/5 instance attributes to at most 15/15.
-    # pylint: disable=R0903
-    def __init__(self, adaptation, G, m, seed):
-        # Specify the expected neuron properties.
-        self.sample_selector_neuron = Selector_neuron()
-        self.sample_spike_once_neuron = Spike_once_neuron()
-        self.sample_rand_neuron = Rand_neuron()
-        self.sample_degree_receiver_neuron = Degree_receiver()
-        self.sample_counter_neuron = Counter_neuron()
-        self.m = m
-
-        # Specify the expected synaptic weights
-        # TODO: Specify per synapse group. (except for the random synapses)
-        self.incoming_selector_weight = -5
-
-        # Move the graph on which the algorithm is ran.
-        self.G = G
-
-        self.rand_props = Alipour_properties(G, seed)
-        # TODO: Rename all rand_nrs usages.
-        self.rand_nrs = self.rand_props.initial_rand_current
-        print(f"self.rand_nrs={self.rand_nrs}")
-        # TODO: Rename all rand_nrs usages.
-        self.rand_ceil = self.rand_props.rand_ceil
-        self.delta = self.rand_props.delta
-
-        # Convert the fully connected graph into a networkx graph that
-        # stores the snn properties.
-        # rand_ceil+1 because the maximum random number is rand_ceil which
-        # should map to range 0<rand<1 when divided by the synaptic weight of
-        # spike_once neurons. (and not to range 0<rand<=1 as it would without
-        # the +1).
-        self.get_degree = get_degree_graph_with_separate_wta_circuits(
-            self.G,
-            self.rand_nrs,
-            self.rand_ceil * self.delta + 1,
-            m,
-        )
-        self.mdsa_graph = copy.deepcopy(self.get_degree)
-
-        # Convert the snn networkx graph into a Loihi SNN if no adapted
-        # version is generated.
-        if not adaptation:
-            (
-                self.converted_nodes,
-                self.lhs_neuron,
-                self.neurons,
-                self.lhs_node,
-                self.neuron_dict,
-            ) = convert_networkx_graph_to_snn_with_one_neuron(self.get_degree)
 
 
 class Alipour_properties:

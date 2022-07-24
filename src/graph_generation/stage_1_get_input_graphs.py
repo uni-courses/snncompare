@@ -5,23 +5,36 @@ networkx Graph.
 """
 import copy
 from pprint import pprint
-from typing import List
 
 import networkx as nx
 
+from src.graph_generation.adaptation.mdsa_snn_algo import (
+    specify_mdsa_network_properties,
+)
+from src.graph_generation.adaptation.redundancy import (
+    implement_adaptation_mechanism,
+)
 from src.graph_generation.Used_graphs import Used_graphs
 
 
-def get_used_graphs(run_config: dict) -> List[nx.DiGraph]:
+def get_used_graphs(run_config: dict) -> dict:
     """First gets the input graph.
 
     Then generates a graph with adaptation if it is required. Then
     generates a graph with radiation if it is required. Then returns
     this list of graphs.
     """
-    input_graph = get_input_graph(run_config)
-    get_adapted_graph(input_graph, run_config)
-    return [input_graph]
+    graphs = {}
+    graphs["input_graph"] = get_input_graph(run_config)
+    graphs["snn_algo_graph"] = get_snn_algo_graph(
+        graphs["input_graph"], run_config
+    )
+    if has_adaptation(run_config):
+        graphs["adapted_snn_graph"] = get_adapted_graph(
+            graphs["snn_algo_graph"], run_config
+        )
+
+    return graphs
 
 
 def get_input_graph(run_config: dict) -> nx.DiGraph:
@@ -33,8 +46,7 @@ def get_input_graph(run_config: dict) -> nx.DiGraph:
     # TODO: Pass random seed.
     input_graph = get_the_input_graphs(run_config)
 
-    # TODO: Verify the graphs are valid.
-
+    # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
     return input_graph
 
 
@@ -53,7 +65,33 @@ def get_the_input_graphs(run_config) -> nx.DiGraph:
     )
 
 
-def get_adapted_graph(input_graph: nx.DiGraph, run_config: dict) -> nx.DiGraph:
+def get_snn_algo_graph(
+    input_graph: nx.DiGraph, run_config: dict
+) -> nx.DiGraph:
+    """Takes the input graph and converts it to an snn that solves some
+    algorithm when it is being ran.
+
+    This SNN is encoded as a networkx graph.
+    """
+
+    # TODO: include check to verify only one algorithm is selected.
+    # TODO: verify only one setting value is selected per algorithm setting.
+    for algo_name, algo_settings in run_config["algorithm"].items():
+        if algo_name == "MDSA":
+            if isinstance(algo_settings["m_val"], int):
+                snn_algo_graph = specify_mdsa_network_properties(
+                    input_graph, algo_settings["m_val"], run_config["seed"]
+                )
+            else:
+                raise Exception("Error, m_val setting is not of type int.")
+        else:
+            raise Exception(
+                "Error, algo_name:{algo_name} is not (yet) supported."
+            )
+    return snn_algo_graph
+
+
+def get_adapted_graph(snn_algo_graph: nx.DiGraph, run_config: dict):
     """Converts an input graph of stage 1 and applies a form of brain-inspired
     adaptation to it."""
     pprint(run_config)
@@ -64,30 +102,55 @@ def get_adapted_graph(input_graph: nx.DiGraph, run_config: dict) -> nx.DiGraph:
         pprint(adapatation_name)
 
         if adapatation_name is None:
-            pass
-        elif adapatation_name == "redundancy":
+            raise Exception(
+                "Error, if no adaptation is selected, this method should not"
+                + " be reached."
+            )
+        if adapatation_name == "redundancy":
             if not isinstance(adaptation_setting, float):
                 raise Exception(
                     f"Error, adaptation_setting={adaptation_setting},"
                     + "which is not an int."
                 )
-            get_redundant_graph(input_graph, adaptation_setting)
-        else:
-            raise Exception(
-                f"Error, adapatation_name:{adapatation_name} is not"
-                + " supported."
+            adaptation_graph = get_redundant_graph(
+                snn_algo_graph, adaptation_setting
             )
+            return adaptation_graph
+        raise Exception(
+            f"Error, adapatation_name:{adapatation_name} is not"
+            + " supported."
+        )
 
 
-def get_redundant_graph(input_graph: nx.DiGraph, red_lev: float):
+def has_adaptation(run_config):
+    """Checks if the adaptation contains a None setting.
+
+    TODO: ensure the adaptation only consists of 1 setting per run.
+    TODO: throw an error if the adaptation settings contain multiple
+    settings, like "redundancy" and "None" simultaneously.
+    """
+    for adapatation_name in run_config["adaptation"].keys():
+        if adapatation_name is not None:
+            return True
+    return False
+
+
+def get_redundant_graph(
+    snn_algo_graph: nx.DiGraph, red_lev: float
+) -> nx.DiGraph:
     """Returns a networkx graph that has a form of adaptation added."""
     if red_lev == 0:
         raise Exception(
             "Redundancy level 0 not supported if adaptation is" + " required."
         )
     if red_lev == 1:
-        copy.deepcopy(input_graph)
-    else:
-        raise Exception(
-            "Error, redundancy level above 1 is currently not" + " supported."
+        adaptation_graph = copy.deepcopy(snn_algo_graph)
+        # TODO: apply redundancy
+        implement_adaptation_mechanism(
+            adaptation_graph,
         )
+        return adaptation_graph
+
+    raise Exception(
+        "Error, redundancy level above 1 is currently not" + " supported."
+    )
