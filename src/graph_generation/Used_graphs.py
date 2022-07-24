@@ -10,7 +10,7 @@ class Used_graphs:
         self.four = self.get_graphs_with_4_neurons()
         self.five = self.get_graphs_with_5_neurons()
 
-    def get_graphs(self, size):
+    def get_graphs(self, size: int):
         """Returns the graphs that are used for testing, per selected size.
 
         :param size: Nr of nodes in the original graph on which test is ran.

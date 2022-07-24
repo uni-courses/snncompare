@@ -29,7 +29,7 @@ def export_end_results(
     sim_time,
     unique_hash,
 ):
-    """
+    """Exports the results of the run to a json file and to a pickle file.
 
     :param dead_neuron_names:
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -52,7 +52,6 @@ def export_end_results(
     :param selected_nodes:
     :param sim_time: Nr. of timesteps for which the experiment is ran.
     :param unique_hash:
-
     """
     # pylint: disable=R0913
     # pylint: disable=R0914
@@ -61,6 +60,7 @@ def export_end_results(
 
     create_root_dir_if_not_exists("results")
 
+    # Specify output filename for both json and pickle files.
     output_name = (
         f"_death_prob{neuron_death_probability}_adapt_{has_adaptation}_raddam"
         + f"{has_radiation}__seed{seed}_size{len(G)}_m{m}"
@@ -109,7 +109,7 @@ def export_results_as_json(
     selected_nodes,
     sim_time,
 ):
-    """
+    """Ensures the graphs can be exported to json format.
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param dead_neuron_names:
@@ -125,7 +125,6 @@ def export_results_as_json(
     :param seed: The value of the random seed used for this test.
     :param selected_nodes:
     :param sim_time: Nr. of timesteps for which the experiment is ran.
-
     """
     # pylint: disable=R0913
     # One could perform work to cluster the properties into different objects.
@@ -147,6 +146,9 @@ def export_results_as_json(
 
     with open(f"results/{output_name}.json", "w", encoding="utf-8") as fp:
         json.dump(test_results_dict, fp)
+
+    # TODO: verify the file exists.
+    # TODO: verify the file content is valid.
 
 
 def export_graphs_as_pickle(

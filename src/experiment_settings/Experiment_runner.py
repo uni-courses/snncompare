@@ -4,6 +4,8 @@
 """
 
 
+from pprint import pprint
+
 from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
@@ -25,6 +27,7 @@ from src.export_results.Output import (
     create_results_directories,
     performed_stage,
 )
+from src.graph_generation.stage_1_get_input_graphs import get_input_graph
 
 
 class Experiment_runner:
@@ -80,10 +83,11 @@ class Experiment_runner:
 
         for run_config in run_configs:
             to_run = determine_what_to_run(run_config)
-
+            print(f"to_run={to_run}")
+            pprint(run_config)
             if to_run["stage_1"]:
-
-                pass
+                # Run first stage of experiment, get input graph.
+                get_input_graph(run_config)
             if to_run["stage_2"]:
                 pass
             if to_run["stage_3"]:
@@ -289,7 +293,7 @@ def example_experi_config():
             supp_experi_setts, rad_sets.with_radiation, "radiations"
         ),
         "seed": 42,
-        "size_and_max_graphs": [(3, 15), (4, 15)],
+        "size_and_max_graphs": [(3, 1), (4, 3)],
         "simulators": ["nx"],
     }
     return with_adaptation_with_radiation
