@@ -27,7 +27,7 @@ from src.export_results.Output import (
     create_results_directories,
     performed_stage,
 )
-from src.graph_generation.stage_1_get_input_graphs import get_input_graph
+from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 
 
 class Experiment_runner:
@@ -87,7 +87,7 @@ class Experiment_runner:
             pprint(run_config)
             if to_run["stage_1"]:
                 # Run first stage of experiment, get input graph.
-                get_input_graph(run_config)
+                get_used_graphs(run_config)
             if to_run["stage_2"]:
                 pass
             if to_run["stage_3"]:
