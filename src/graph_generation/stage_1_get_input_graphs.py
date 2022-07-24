@@ -26,13 +26,21 @@ def get_used_graphs(run_config: dict) -> dict:
     """
     graphs = {}
     graphs["input_graph"] = get_input_graph(run_config)
+
+    # TODO: write test to verify the algorithm yields valid results on default
+    # MDSA SNN.
     graphs["snn_algo_graph"] = get_snn_algo_graph(
         graphs["input_graph"], run_config
     )
+
+    # TODO: write test to verify the algorithm yields valid results on default
+    # MDSA SNN.
     if has_adaptation(run_config):
         graphs["adapted_snn_graph"] = get_adapted_graph(
             graphs["snn_algo_graph"], run_config
         )
+
+    # TODO: get radiation graph.
 
     return graphs
 

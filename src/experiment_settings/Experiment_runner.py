@@ -89,10 +89,15 @@ class Experiment_runner:
                 # Run first stage of experiment, get input graph.
                 get_used_graphs(run_config)
             if to_run["stage_2"]:
+                # TODO: run simulation on networkx or lava backend.
                 pass
             if to_run["stage_3"]:
+                # TODO: Generate output graph plots of propagated graphs.
+                # TODO: Generate output json dicts of propagated graphs.
                 pass
             if to_run["stage_4"]:
+                # TODO: compute results per graph type and export performance
+                # to json dict.
                 pass
 
 
