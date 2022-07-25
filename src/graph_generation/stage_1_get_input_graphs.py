@@ -8,11 +8,12 @@ from pprint import pprint
 
 import networkx as nx
 
-from src.graph_generation.adaptation.mdsa_snn_algo import (
-    specify_mdsa_network_properties,
-)
 from src.graph_generation.adaptation.redundancy import (
     implement_adaptation_mechanism,
+)
+from src.graph_generation.radiation.Radiation_damage import Radiation_damage
+from src.graph_generation.snn_algo.mdsa_snn_algo import (
+    specify_mdsa_network_properties,
 )
 from src.graph_generation.Used_graphs import Used_graphs
 
@@ -40,7 +41,8 @@ def get_used_graphs(run_config: dict) -> dict:
             graphs["snn_algo_graph"], run_config
         )
 
-    # TODO: get radiation graph.
+    # TODO: check if has_radiation.
+    get_radiation_graph(graphs["adapted_snn_graph"], run_config)
 
     return graphs
 
@@ -103,18 +105,18 @@ def get_adapted_graph(snn_algo_graph: nx.DiGraph, run_config: dict):
     """Converts an input graph of stage 1 and applies a form of brain-inspired
     adaptation to it."""
     pprint(run_config)
-    for adapatation_name, adaptation_setting in run_config[
+    for adaptation_name, adaptation_setting in run_config[
         "adaptation"
     ].items():
-        print("adapatation")
-        pprint(adapatation_name)
+        print("adaptation")
+        pprint(adaptation_name)
 
-        if adapatation_name is None:
+        if adaptation_name is None:
             raise Exception(
                 "Error, if no adaptation is selected, this method should not"
                 + " be reached."
             )
-        if adapatation_name == "redundancy":
+        if adaptation_name == "redundancy":
             if not isinstance(adaptation_setting, float):
                 raise Exception(
                     f"Error, adaptation_setting={adaptation_setting},"
@@ -125,8 +127,7 @@ def get_adapted_graph(snn_algo_graph: nx.DiGraph, run_config: dict):
             )
             return adaptation_graph
         raise Exception(
-            f"Error, adapatation_name:{adapatation_name} is not"
-            + " supported."
+            f"Error, adaptation_name:{adaptation_name} is not" + " supported."
         )
 
 
@@ -137,8 +138,8 @@ def has_adaptation(run_config):
     TODO: throw an error if the adaptation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
     """
-    for adapatation_name in run_config["adaptation"].keys():
-        if adapatation_name is not None:
+    for adaptation_name in run_config["adaptation"].keys():
+        if adaptation_name is not None:
             return True
     return False
 
@@ -162,3 +163,57 @@ def get_redundant_graph(
     raise Exception(
         "Error, redundancy level above 1 is currently not" + " supported."
     )
+
+
+def get_radiation_graph(snn_graph, run_config: dict):
+    """Gets radiation graph."""
+
+    # TODO: determine on which graphs to apply the adaptation.
+
+    # TODO: Verify incoming graph has valid SNN properties.
+
+    # TODO: Check different radiation simulation times.
+
+    # Apply radiation simulation.
+    pprint(run_config)
+
+    for radiation_name, radiation_setting in run_config["radiation"].items():
+        print("radiation_name")
+        pprint(radiation_name)
+
+        if radiation_name is None:
+            raise Exception(
+                "Error, if no radiation is selected, this method should not"
+                + " be reached."
+            )
+        if radiation_name == "neuron_death":
+            if not isinstance(radiation_setting, float):
+                raise Exception(
+                    f"Error, radiation_setting={radiation_setting},"
+                    + "which is not an int."
+                )
+
+            rad_dam = Radiation_damage(probability=radiation_setting)
+            radiation_graph = copy.deepcopy(snn_graph)
+            dead_neuron_names = rad_dam.inject_simulated_radiation(
+                radiation_graph, rad_dam.neuron_death_probability
+            )
+            print(f"dead_neuron_names={dead_neuron_names}")
+
+            return radiation_graph
+        raise Exception(
+            f"Error, radiation_name:{radiation_name} is not" + " supported."
+        )
+
+
+def has_radiation(run_config):
+    """Checks if the radiation contains a None setting.
+
+    TODO: ensure the radiation only consists of 1 setting per run.
+    TODO: throw an error if the radiation settings contain multiple
+    settings, like "redundancy" and "None" simultaneously.
+    """
+    for adaptation_name in run_config["radiation"].keys():
+        if adaptation_name is not None:
+            return True
+    return False

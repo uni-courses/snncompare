@@ -14,7 +14,7 @@ from src.graph_generation.brain_adaptation import (
 from src.graph_generation.helper_network_structure import (
     plot_neuron_behaviour_over_time,
 )
-from src.graph_generation.Radiation_damage import Radiation_damage
+from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.Used_graphs import Used_graphs
 from src.helper import (
     create_neuron_monitors,
