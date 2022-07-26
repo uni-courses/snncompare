@@ -96,11 +96,11 @@ def create_redundant_node(adaptation_graph, node_name):
         pos=(
             float(
                 adaptation_graph.nodes[node_name]["pos"][0]
-                + 0.25 * adaptation_graph.d
+                + 0.25 * adaptation_graph.graph["alg_props"]["d"]
             ),
             float(
                 adaptation_graph.nodes[node_name]["pos"][1]
-                - 0.25 * adaptation_graph.d
+                - 0.25 * adaptation_graph.graph["alg_props"]["d"]
             ),
         ),
         spike={},

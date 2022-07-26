@@ -1,14 +1,14 @@
 """Takes an input graph and generates an SNN that solves the MDSA algorithm by
 Alipour et al."""
+from pprint import pprint
 from typing import List
 
 import networkx as nx
 
-from src.experiment_settings.create_testobject import Alipour_properties
 from src.graph_generation.helper_network_structure import (
     create_synapses_and_spike_dicts,
 )
-from src.helper import get_y_position
+from src.helper import generate_list_of_n_random_nrs, get_y_position
 
 
 def specify_mdsa_network_properties(
@@ -16,14 +16,16 @@ def specify_mdsa_network_properties(
 ) -> nx.DiGraph:
     """Takes an input graph and generates an SNN that runs the MDSA algorithm
     by Alipour."""
-    rand_props = Alipour_properties(input_graph, seed)
+    input_graph.graph["alg_props"] = Alipour_properties(
+        input_graph, seed
+    ).__dict__
+    pprint(input_graph.graph["alg_props"])
 
     # TODO: Rename all rand_nrs usages.
-    rand_nrs = rand_props.initial_rand_current
+    rand_nrs = input_graph.graph["alg_props"]["initial_rand_current"]
 
     # TODO: Rename all rand_nrs usages.
-    rand_ceil = rand_props.rand_ceil
-    # delta = rand_props.delta
+    rand_ceil = input_graph.graph["alg_props"]["rand_ceil"]
 
     # Convert the fully connected graph into a networkx graph that
     # stores the snn properties.
@@ -36,7 +38,8 @@ def specify_mdsa_network_properties(
     )
 
     # Specify the node x,y coordinate spacing distance for visualisation.
-    mdsa_snn_graph.d = 0.25 * (m_val + 1)
+    mdsa_snn_graph.graph["alg_props"]["d"] = 0.25 * (m_val + 1)
+    # mdsa_snn_graph.d =
 
     return mdsa_snn_graph
 
@@ -65,11 +68,16 @@ def input_graph_to_mdsa_snn_graph(
     # variables used in different combinations in various add_node() calls.
     # pylint: disable=R0912
     # TODO: reduce nr of branches.
+    # TODO: eliminate the need for a shift.
     shifted_m = m_val + 1
     d = 0.25 * shifted_m  # specify grid distance size
     # Specify edge weight for recurrent inhibitory synapse.
     inhib_recur_weight = -10
+
+    # Initialise the new graph object, and copy the graph attributes.
     mdsa_snn_graph = nx.DiGraph()
+    mdsa_snn_graph.graph = input_graph.graph
+
     # Define list of m mappings for sets of tuples containing synapses
     left: List = [{} for _ in range(shifted_m)]
     right: List = [{} for _ in range(shifted_m)]
@@ -383,3 +391,96 @@ def input_graph_to_mdsa_snn_graph(
     )
 
     return mdsa_snn_graph
+
+
+class Alipour_properties:
+    """Contains the properties required to compute Alipour algorithm
+    results."""
+
+    def __init__(self, G, seed):
+
+        # Initialise properties for Alipour algorithm
+        rand_ceil = self.get_random_ceiling(G)
+        rand_nrs = generate_list_of_n_random_nrs(
+            G, max_val=rand_ceil, seed=seed
+        )
+        delta = self.get_delta()
+        spread_rand_nrs = self.spread_rand_nrs_with_delta(delta, rand_nrs)
+        inhibition = self.get_inhibition(delta, G, rand_ceil)
+        initial_rand_current = self.get_initial_random_current(
+            inhibition, rand_nrs
+        )
+
+        # Store properties in object.
+        self.rand_ceil = rand_ceil
+        self.rand_nrs = rand_nrs
+        self.delta = delta
+        self.spread_rand_nrs = spread_rand_nrs
+        self.inhibition = inhibition
+        self.initial_rand_current = initial_rand_current
+
+    def get_random_ceiling(self, G):
+        """Generate the maximum random ceiling.
+
+        +2 to allow selecting a larger range of numbers than the number
+        of # nodes in the graph.
+
+        :param G: The original graph on which the MDSA algorithm is ran.
+        """
+        rand_ceil = len(G) + 0
+        return rand_ceil
+
+    def get_delta(self):
+        """Make the random numbers differ with at least delta>=2.
+
+        This is to prevent multiple degree_receiver_x_y neurons (that
+        differ less than delta) in a single WTA circuit to spike before
+        they are inhibited by the first winner. This inhibition goes via
+        the selector neuron and has a delay of 2. So a winner should
+        have a difference of at least 2.
+        """
+        delta = 2
+        return delta
+
+    def spread_rand_nrs_with_delta(self, delta, rand_nrs):
+        """Spread the random numbers with delta to ensure 1 winner in WTA
+        circuit.
+
+        :param delta: Value of how far the rand_nrs are separated.
+        :param rand_nrs: List of random numbers that are used.
+        """
+        spread_rand_nrs = [x * delta for x in rand_nrs]
+        print(f"spread_rand_nrs={spread_rand_nrs}")
+        return spread_rand_nrs
+
+    def get_inhibition(self, delta, G, rand_ceil):
+        """Add inhibition to rand_nrs to ensure the degree_receiver current
+        u[1] always starts negative. The a_in of the degree_receiver_x_y neuron
+        is.
+
+        : the incoming spike_once_x weights+rand_x neurons+selector_excitation
+        - There are at most n incoming spike signals.
+        - Each spike_once should have a weight of at least random_ceiling+1.
+        That is because the random value should map to 0<rand<1 with respect
+        to the difference of 1 spike_once more or less.
+        - The random_ceiling is specified.
+        - The excitatory neuron comes in at +1, a buffer of 1 yields+2.
+        Hence, the inhibition is computed as:
+
+        :param delta: Value of how far the rand_nrs are separated. param G:
+        :param rand_ceil: Ceiling of the range in which rand nrs can be
+        generated.
+        :param G: The original graph on which the MDSA algorithm is ran.
+        """
+        inhibition = len(G) * (rand_ceil * delta + 1) + (rand_ceil) * delta + 1
+        return inhibition
+
+    def get_initial_random_current(self, inhibition, rand_nrs):
+        """Returns the list with random initial currents for the rand_ neurons.
+
+        :param inhibition: Value of shift of rand_nrs to ensure
+        degree_receivers start at negative current u[t-0].
+        :param rand_nrs: List of random numbers that are used.
+        """
+        initial_rand_current = [x - inhibition for x in rand_nrs]
+        return initial_rand_current
