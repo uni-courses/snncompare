@@ -12,11 +12,9 @@ import json
 from pathlib import Path
 from typing import List
 
-from src.export_results.export_json_results import (
-    digraph_to_json,
-    write_dict_to_json,
-)
+from src.export_results.export_json_results import digraph_to_json
 from src.export_results.helper import run_config_to_filename
+from src.export_results.output_stage_1 import output_stage_1_json
 from src.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
     create_target_dir_if_not_exists,
@@ -81,42 +79,9 @@ def output_files_stage_1(
     :param run_config:
     """
     filename = run_config_to_filename(run_config)
-
-    # TODO: include stage index
-    output_dict = merge_experiment_and_run_config_with_graphs(
-        experiment_config, run_config, graphs_stage_1
+    output_stage_1_json(
+        experiment_config, filename, run_config, graphs_stage_1
     )
-    # run_config["stage_1_graphs"] = graphs_stage_1
-
-    # TODO: Optional: ensure output files exists.
-    output_filepath = f"results/stage_1/{filename}.json"
-    write_dict_to_json(output_filepath, output_dict)
-
-    # TODO: Ensure output file exists.
-    # TODO: Verify the correct graphs is passed by checking the graph tag.
-    # TODO: merge experiment config, run_config and graphs into single dict.
-    # TODO: Write experiment_config to file (pprint(dict), or json)
-    # TODO: Write run_config to file (pprint(dict), or json)
-    # TODO: Write graphs to file (pprint(dict), or json)
-    # TODO: append tags to output file.
-
-
-def merge_experiment_and_run_config_with_graphs(
-    experiment_config: dict, run_config: dict, graphs: dict
-) -> dict:
-    """Adds the networkx graphs of the graphs dictionary into the run config
-    dictionary."""
-    # Convert incoming graphs to dictionary.
-    graphs_dict = {}
-    for graph_name, graph in graphs.items():
-        graphs_dict[graph_name] = digraph_to_json(graph)
-
-    output_dict = {
-        "experiment_config": experiment_config,
-        "run_config": run_config,
-        "graphs_dict": graphs_dict,
-    }
-    return output_dict
 
 
 def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
@@ -384,3 +349,21 @@ def get_nr_of_simulation_steps(relative_output_dir, filename) -> int:
     )
     run_config = stage_2_output_dict["run_config"]
     return run_config["duration"]
+
+
+def merge_experiment_and_run_config_with_graphs(
+    experiment_config: dict, run_config: dict, graphs: dict
+) -> dict:
+    """Adds the networkx graphs of the graphs dictionary into the run config
+    dictionary."""
+    # Convert incoming graphs to dictionary.
+    graphs_dict = {}
+    for graph_name, graph in graphs.items():
+        graphs_dict[graph_name] = digraph_to_json(graph)
+
+    output_dict = {
+        "experiment_config": experiment_config,
+        "run_config": run_config,
+        "graphs_dict": graphs_dict,
+    }
+    return output_dict
