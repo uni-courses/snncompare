@@ -8,11 +8,15 @@ SubInput: Run configuration within an experiment.
     Stage 4: Post-processed performance data of algorithm and adaptation
     mechanism.
 """
-# pylint: disable=W0613 # work in progress.
 import json
 from pathlib import Path
+from pprint import pprint
 from typing import List
 
+from src.export_results.export_json_results import (
+    digraph_to_json,
+    write_dict_to_json,
+)
 from src.export_results.helper import run_config_to_filename
 from src.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
@@ -22,6 +26,9 @@ from src.export_results.verify_stage_1_graphs import verify_stage_1_graphs
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
 from src.export_results.verify_stage_3_graphs import verify_stage_3_graphs
 from src.export_results.verify_stage_4_graphs import verify_stage_4_graphs
+
+# pylint: disable=W0613 # work in progress.
+
 
 with_adaptation_with_radiation = {
     "adaptation": {"redundancy": 1.0},
@@ -56,7 +63,9 @@ def create_results_directories():
     # TODO: assert directory: <repo root dir>/results/stage_1" exists
 
 
-def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
+def output_files_stage_1(
+    experiment_config: dict, run_config: dict, graphs_stage_1: dict
+):
     """Merges the experiment configuration dict, run configuration dict and
     graphs into a single dict. This method assumes only the graphs that are to
     be exported are passed into this method.
@@ -72,7 +81,19 @@ def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
     :param graphs_stage_1:
     :param run_config:
     """
-    run_config_to_filename(run_config)
+    filename = run_config_to_filename(run_config)
+    print(f"filename={filename}")
+    pprint(run_config)
+
+    # TODO: include stage index
+    merge_run_config_and_graphs(run_config, graphs_stage_1)
+    # run_config["stage_1_graphs"] = graphs_stage_1
+
+    # TODO: Optional: ensure output files exists.
+    output_filepath = f"results/stage_1/{filename}.json"
+    print(f"output_filepath={output_filepath}")
+    write_dict_to_json(output_filepath, run_config)
+
     # TODO: Ensure output file exists.
     # TODO: Verify the correct graphs is passed by checking the graph tag.
     # TODO: merge experiment config, run_config and graphs into single dict.
@@ -80,6 +101,13 @@ def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
     # TODO: Write run_config to file (pprint(dict), or json)
     # TODO: Write graphs to file (pprint(dict), or json)
     # TODO: append tags to output file.
+
+
+def merge_run_config_and_graphs(run_config: dict, graphs: dict) -> None:
+    """Adds the networkx graphs of the graphs dictionary into the run config
+    dictionary."""
+    for graph_name, graph in graphs.items():
+        run_config[graph_name] = digraph_to_json(graph)
 
 
 def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
@@ -171,8 +199,6 @@ def output_files_stage_4(
     """
 
     run_config_to_filename(run_config)
-    # TODO: Optional: ensure output files exists.
-
     # TODO: ensure the run parameters are in a legend
     # TODO: loop over the graphs (t), and output them.
     # TODO: append tags to output file(s).

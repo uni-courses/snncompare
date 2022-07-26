@@ -23,6 +23,7 @@ from src.experiment_settings.verify_experiment_settings import (
 from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import (
     create_results_directories,
+    output_files_stage_1,
     performed_stage,
 )
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
@@ -87,11 +88,13 @@ class Experiment_runner:
             if to_run["stage_1"]:
                 # Run first stage of experiment, get input graph.
                 snn_graphs: dict = get_used_graphs(run_config)
+                output_files_stage_1(experi_config, run_config, snn_graphs)
             if to_run["stage_2"]:
                 # TODO: run simulation on networkx or lava backend.
                 sim_graphs(snn_graphs, run_config)
             if to_run["stage_3"]:
                 # TODO: Generate output graph plots of propagated graphs.
+
                 # TODO: Generate output json dicts of propagated graphs.
                 pass
             if to_run["stage_4"]:
@@ -280,13 +283,14 @@ def example_experi_config():
     with_adaptation_with_radiation = {
         "algorithms": {
             "MDSA": {
-                "m_vals": list(range(0, 4, 1)),
+                "m_vals": list(range(0, 2, 1)),
             }
         },
         "adaptations": verify_adap_and_rad_settings(
             supp_experi_setts, adap_sets.with_adaptation, "adaptations"
         ),
-        "iterations": list(range(0, 3, 1)),
+        # "iterations": list(range(0, 3, 1)),
+        "iterations": list(range(0, 1, 1)),
         "min_max_graphs": 1,
         "max_max_graphs": 15,
         "min_graph_size": 3,
@@ -297,7 +301,8 @@ def example_experi_config():
             supp_experi_setts, rad_sets.with_radiation, "radiations"
         ),
         "seed": 42,
-        "size_and_max_graphs": [(3, 1), (4, 3)],
+        # "size_and_max_graphs": [(3, 1), (4, 3)],
+        "size_and_max_graphs": [(3, 1)],
         "simulators": ["nx"],
     }
     return with_adaptation_with_radiation
