@@ -12,9 +12,11 @@ import json
 from pathlib import Path
 from typing import List
 
-from src.export_results.export_json_results import digraph_to_json
+from src.export_results.export_json_results import (
+    digraph_to_json,
+    write_dict_to_json,
+)
 from src.export_results.helper import run_config_to_filename
-from src.export_results.output_stage_1 import output_stage_1_json
 from src.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
     create_target_dir_if_not_exists,
@@ -79,8 +81,12 @@ def output_files_stage_1(
     :param run_config:
     """
     filename = run_config_to_filename(run_config)
-    output_stage_1_json(
-        experiment_config, filename, run_config, graphs_stage_1
+    output_stage_json(
+        experiment_config,
+        graphs_stage_1,
+        filename,
+        run_config,
+        1,
     )
 
 
@@ -112,13 +118,20 @@ def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
 
     # TODO: merge experiment config, run_config into single dict.
     if run_config["simulator"] == "nx":
-        # TODO: append graphs to dict.
+        # Output the json dictionary of the files.
+        filename = run_config_to_filename(run_config)
+        output_stage_json(
+            experiment_config,
+            graphs_stage_2,
+            filename,
+            run_config,
+            2,
+        )
 
-        pass
     elif run_config["simulator"] == "lava":
         # TODO: terminate simulation.
         # TODO: write simulated lava graphs to pickle.
-        pass
+        raise Exception("Error, lava export method not yet implemented.")
     else:
         raise Exception("Simulator not supported.")
     # TODO: write merged dict to file.
@@ -367,3 +380,30 @@ def merge_experiment_and_run_config_with_graphs(
         "graphs_dict": graphs_dict,
     }
     return output_dict
+
+
+def output_stage_json(
+    experiment_config: dict,
+    graphs_of_stage: dict,
+    filename: str,
+    run_config: dict,
+    stage: int,
+) -> None:
+    """Merges the experiment config, run config and graphs of stage 1 into a
+    single dict and exports that dict to a json file."""
+    # TODO: include stage index
+    output_dict = merge_experiment_and_run_config_with_graphs(
+        experiment_config, run_config, graphs_of_stage
+    )
+
+    # TODO: Optional: ensure output files exists.
+    output_filepath = f"results/stage_{stage}/{filename}.json"
+    write_dict_to_json(output_filepath, output_dict)
+
+    # TODO: Ensure output file exists.
+    # TODO: Verify the correct graphs is passed by checking the graph tag.
+    # TODO: merge experiment config, run_config and graphs into single dict.
+    # TODO: Write experiment_config to file (pprint(dict), or json)
+    # TODO: Write run_config to file (pprint(dict), or json)
+    # TODO: Write graphs to file (pprint(dict), or json)
+    # TODO: append tags to output file.
