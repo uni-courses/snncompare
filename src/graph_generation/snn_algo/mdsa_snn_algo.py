@@ -15,7 +15,10 @@ def specify_mdsa_network_properties(
     input_graph: nx.DiGraph, m_val: int, seed: int
 ) -> nx.DiGraph:
     """Takes an input graph and generates an SNN that runs the MDSA algorithm
-    by Alipour."""
+    by Alipour.
+
+    Also stores the algorithmic properties in the graph object.
+    """
     input_graph.graph["alg_props"] = Alipour_properties(
         input_graph, seed
     ).__dict__

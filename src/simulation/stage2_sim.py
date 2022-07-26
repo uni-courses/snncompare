@@ -35,11 +35,30 @@ def sim_graphs(
             some_conversion(snn_graph)
 
             # TODO: compute actual inhibition and mval
-            inhibition = 4
-            m_val = 1
-            sim_time = inhibition * (m_val + 1) + 10
-            graphs = run_snn_on_networkx(snn_graph, sim_time)
+            graphs = run_snn_on_networkx(
+                snn_graph, get_sim_duration(snn_graph, run_config)
+            )
     return graphs
+
+
+def get_sim_duration(
+    snn_graph: nx.DiGraph,
+    run_config: dict,
+) -> int:
+    """Compute the simulation duration for a given algorithm and graph."""
+    for algo_name, algo_settings in run_config["algorithm"].items():
+        if algo_name == "MDSA":
+
+            # TODO: determine why +10 is required.
+            # TODO: Move into stage_1 get input graphs.
+            sim_time = (
+                snn_graph.graph["alg_props"]["inhibition"]
+                * (algo_settings["m_val"] + 1)
+                + 10
+            )
+            return sim_time
+        raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
+    raise Exception("Error, the simulation time was not found.")
 
 
 def some_conversion(G: nx.DiGraph):

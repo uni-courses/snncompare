@@ -71,7 +71,6 @@ def run_snn_on_networkx(G: nx.DiGraph, t: int) -> List[nx.DiGraph]:
     :param t: int:
     """
     verify_networkx_snn_spec(G)
-
     G_behaviour = []
     for _ in range(t):
         run_simulation_with_networkx_for_1_timestep(G)
