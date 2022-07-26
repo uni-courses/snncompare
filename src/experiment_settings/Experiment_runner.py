@@ -295,7 +295,7 @@ def example_experi_config():
         "max_max_graphs": 15,
         "min_graph_size": 3,
         "max_graph_size": 20,
-        "overwrite_sim_results": True,
+        "overwrite_sim_results": False,
         "overwrite_visualisation": True,
         "radiations": verify_adap_and_rad_settings(
             supp_experi_setts, rad_sets.with_radiation, "radiations"

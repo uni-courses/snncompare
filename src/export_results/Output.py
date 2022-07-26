@@ -10,7 +10,6 @@ SubInput: Run configuration within an experiment.
 """
 import json
 from pathlib import Path
-from pprint import pprint
 from typing import List
 
 from src.export_results.export_json_results import (
@@ -82,17 +81,16 @@ def output_files_stage_1(
     :param run_config:
     """
     filename = run_config_to_filename(run_config)
-    print(f"filename={filename}")
-    pprint(run_config)
 
     # TODO: include stage index
-    merge_run_config_and_graphs(run_config, graphs_stage_1)
+    output_dict = merge_experiment_and_run_config_with_graphs(
+        experiment_config, run_config, graphs_stage_1
+    )
     # run_config["stage_1_graphs"] = graphs_stage_1
 
     # TODO: Optional: ensure output files exists.
     output_filepath = f"results/stage_1/{filename}.json"
-    print(f"output_filepath={output_filepath}")
-    write_dict_to_json(output_filepath, run_config)
+    write_dict_to_json(output_filepath, output_dict)
 
     # TODO: Ensure output file exists.
     # TODO: Verify the correct graphs is passed by checking the graph tag.
@@ -103,11 +101,22 @@ def output_files_stage_1(
     # TODO: append tags to output file.
 
 
-def merge_run_config_and_graphs(run_config: dict, graphs: dict) -> None:
+def merge_experiment_and_run_config_with_graphs(
+    experiment_config: dict, run_config: dict, graphs: dict
+) -> dict:
     """Adds the networkx graphs of the graphs dictionary into the run config
     dictionary."""
+    # Convert incoming graphs to dictionary.
+    graphs_dict = {}
     for graph_name, graph in graphs.items():
-        run_config[graph_name] = digraph_to_json(graph)
+        graphs_dict[graph_name] = digraph_to_json(graph)
+
+    output_dict = {
+        "experiment_config": experiment_config,
+        "run_config": run_config,
+        "graphs_dict": graphs_dict,
+    }
+    return output_dict
 
 
 def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
