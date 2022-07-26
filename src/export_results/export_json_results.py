@@ -13,7 +13,7 @@ def write_dict_to_json(output_filepath: str, some_dict: dict) -> None:
     """Writes a dict file to a .json file."""
     print(f"output_filepath={output_filepath}")
     with open(output_filepath, "w", encoding="utf-8") as fp:
-        json.dump(some_dict, fp)
+        json.dump(some_dict, fp, indent=4, sort_keys=True)
 
     # Verify the file exists.
     if not Path(output_filepath).is_file():
