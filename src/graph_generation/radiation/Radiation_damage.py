@@ -6,6 +6,9 @@ current MDSA approximation). TODO: include other radiation effects such
 as "unexpected/random" changes in neuronal and synaptic properties.
 """
 import random
+from typing import List
+
+import networkx as nx
 
 
 class Radiation_damage:
@@ -156,3 +159,22 @@ def store_dead_neuron_names_in_graph(G, dead_neuron_names):
             print(G.nodes[nodename]["rad_death"])
         else:
             G.nodes[nodename]["rad_death"] = False
+
+
+def verify_radiation_is_applied(
+    some_graph: nx.DiGraph, dead_neuron_names: List[str], rad_type: str
+):
+    """Goes through the dead neuron names, and verifies the radiation is
+    applied correctly."""
+    if rad_type == "neuron_death":
+        for nodename in some_graph:
+            if nodename in dead_neuron_names:
+                if some_graph.nodes[nodename]["vth"] != 9999:
+                    raise Exception(
+                        "Error, radiation is not applied to:{nodename}, even"
+                        + f" though it is in:{dead_neuron_names}"
+                    )
+    else:
+        raise Exception(
+            f"Error, radiation type: {rad_type} is not yet supported."
+        )

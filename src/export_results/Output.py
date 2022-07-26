@@ -284,8 +284,8 @@ def performed_stage(run_config, stage_index: int) -> bool:
     :param run_config: param stage_index:
     :param stage_index:
     """
+    print("")
     expected_filenames = []
-    print(f"stage_index={stage_index}")
 
     filename = run_config_to_filename(run_config)
     relative_output_dir = f"results/stage_{stage_index}/"
@@ -293,11 +293,6 @@ def performed_stage(run_config, stage_index: int) -> bool:
     for extension in extensions:
         if stage_index in [1, 2, 4]:
 
-            print(f"relative_output_dir={relative_output_dir}")
-            print(f"filename={filename}")
-            print(f"len(filename)={len(filename)}")
-            print(f"extension={extension}")
-            print("")
             expected_filenames.append(
                 relative_output_dir + filename + extension
             )

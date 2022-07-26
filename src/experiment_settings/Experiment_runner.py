@@ -4,8 +4,6 @@
 """
 
 
-from pprint import pprint
-
 from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
@@ -28,6 +26,7 @@ from src.export_results.Output import (
     performed_stage,
 )
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
+from src.simulation.stage2_sim import sim_graphs
 
 
 class Experiment_runner:
@@ -49,6 +48,7 @@ class Experiment_runner:
         self.supp_experi_setts = Supported_experiment_settings()
 
         # Verify the experiment experi_config are complete and valid.
+        # pylint: disable=R0801
         verify_experiment_config(
             self.supp_experi_setts,
             experi_config,
@@ -84,13 +84,12 @@ class Experiment_runner:
         for run_config in run_configs:
             to_run = determine_what_to_run(run_config)
             print(f"to_run={to_run}")
-            pprint(run_config)
             if to_run["stage_1"]:
                 # Run first stage of experiment, get input graph.
-                get_used_graphs(run_config)
+                snn_graphs: dict = get_used_graphs(run_config)
             if to_run["stage_2"]:
                 # TODO: run simulation on networkx or lava backend.
-                pass
+                sim_graphs(snn_graphs, run_config)
             if to_run["stage_3"]:
                 # TODO: Generate output graph plots of propagated graphs.
                 # TODO: Generate output json dicts of propagated graphs.

@@ -11,7 +11,10 @@ import networkx as nx
 from src.graph_generation.adaptation.redundancy import (
     implement_adaptation_mechanism,
 )
-from src.graph_generation.radiation.Radiation_damage import Radiation_damage
+from src.graph_generation.radiation.Radiation_damage import (
+    Radiation_damage,
+    verify_radiation_is_applied,
+)
 from src.graph_generation.snn_algo.mdsa_snn_algo import (
     specify_mdsa_network_properties,
 )
@@ -41,8 +44,13 @@ def get_used_graphs(run_config: dict) -> dict:
             graphs["snn_algo_graph"], run_config
         )
 
-    # TODO: check if has_radiation.
-    get_radiation_graph(graphs["adapted_snn_graph"], run_config)
+    if has_radiation(run_config):
+        graphs["rad_snn_algo_graph"] = get_radiation_graph(
+            graphs["snn_algo_graph"], run_config
+        )
+        graphs["rad_adapted_snn_graph"] = get_radiation_graph(
+            graphs["adapted_snn_graph"], run_config
+        )
 
     return graphs
 
@@ -104,12 +112,10 @@ def get_snn_algo_graph(
 def get_adapted_graph(snn_algo_graph: nx.DiGraph, run_config: dict):
     """Converts an input graph of stage 1 and applies a form of brain-inspired
     adaptation to it."""
-    pprint(run_config)
+
     for adaptation_name, adaptation_setting in run_config[
         "adaptation"
     ].items():
-        print("adaptation")
-        pprint(adaptation_name)
 
         if adaptation_name is None:
             raise Exception(
@@ -144,6 +150,19 @@ def has_adaptation(run_config):
     return False
 
 
+def has_radiation(run_config):
+    """Checks if the radiation contains a None setting.
+
+    TODO: ensure the radiation only consists of 1 setting per run.
+    TODO: throw an error if the radiation settings contain multiple
+    settings, like "redundancy" and "None" simultaneously.
+    """
+    for radiation_name in run_config["radiation"].keys():
+        if radiation_name is not None:
+            return True
+    return False
+
+
 def get_redundant_graph(
     snn_algo_graph: nx.DiGraph, red_lev: float
 ) -> nx.DiGraph:
@@ -166,7 +185,11 @@ def get_redundant_graph(
 
 
 def get_radiation_graph(snn_graph, run_config: dict):
-    """Gets radiation graph."""
+    """Makes a deep copy of the incoming graph and applies radiation to it.
+
+    Then returns the graph with the radiation, as well as a list of
+    neurons that are dead.
+    """
 
     # TODO: determine on which graphs to apply the adaptation.
 
@@ -178,8 +201,6 @@ def get_radiation_graph(snn_graph, run_config: dict):
     pprint(run_config)
 
     for radiation_name, radiation_setting in run_config["radiation"].items():
-        print("radiation_name")
-        pprint(radiation_name)
 
         if radiation_name is None:
             raise Exception(
@@ -199,21 +220,12 @@ def get_radiation_graph(snn_graph, run_config: dict):
                 radiation_graph, rad_dam.neuron_death_probability
             )
             print(f"dead_neuron_names={dead_neuron_names}")
+            # TODO: verify radiation is injected with V1000
+            verify_radiation_is_applied(
+                radiation_graph, dead_neuron_names, radiation_name
+            )
 
             return radiation_graph
         raise Exception(
-            f"Error, radiation_name:{radiation_name} is not" + " supported."
+            f"Error, radiation_name:{radiation_name} is not supported."
         )
-
-
-def has_radiation(run_config):
-    """Checks if the radiation contains a None setting.
-
-    TODO: ensure the radiation only consists of 1 setting per run.
-    TODO: throw an error if the radiation settings contain multiple
-    settings, like "redundancy" and "None" simultaneously.
-    """
-    for adaptation_name in run_config["radiation"].keys():
-        if adaptation_name is not None:
-            return True
-    return False
