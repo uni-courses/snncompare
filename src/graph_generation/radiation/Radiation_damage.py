@@ -32,7 +32,7 @@ class Radiation_damage:
         print(randomlist)
         return randomlist
 
-    def inject_simulated_radiation(self, get_degree, probability):
+    def inject_simulated_radiation(self, get_degree, probability, seed):
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -43,7 +43,9 @@ class Radiation_damage:
         # dead_neurons = self.get_list_of_dead_neurons(get_degree)
 
         # Get random neurons from list.
-        dead_neuron_names = self.get_random_neurons(get_degree, probability)
+        dead_neuron_names = self.get_random_neurons(
+            get_degree, probability, seed
+        )
 
         store_dead_neuron_names_in_graph(get_degree, dead_neuron_names)
 
@@ -52,7 +54,9 @@ class Radiation_damage:
 
         return dead_neuron_names
 
-    def get_random_neurons(self, get_degree, probability):
+    def get_random_neurons(
+        self, get_degree: nx.DiGraph, probability: float, seed: int
+    ):
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -60,10 +64,34 @@ class Radiation_damage:
         :param adaptation_only:  (Default value = False)
 
         """
+
+        # TODO: restore the probabilitiy  of firing instead of getting fraction
+        # of neurons.
+        nr_of_dead_neurons = int(len(get_degree) * probability)
+        print(f"seed={seed}")
+        random.seed(seed)
+        # Get a list of length nr_of_dead_neurons with random integers
+        # These integers indicate which neurons die.
+
+        rand_indices = random.sample(
+            range(0, len(get_degree)), nr_of_dead_neurons
+        )
+        print(rand_indices)
+
         dead_neuron_names = []
-        for node_name in get_degree:
-            if self.kill_neuron(probability):
-                dead_neuron_names.append(node_name)
+        # TODO: fold instead of for.
+        count = 0
+        for nodename in get_degree:
+            print(f"nodename={nodename}")
+            # for i,node_name in enumerate(get_degree):
+            if count in rand_indices:
+                dead_neuron_names.append(nodename)
+            count = count + 1
+
+        print(f"dead_neuron_names={dead_neuron_names}")
+        # for node_name in get_degree:
+        # if self.kill_neuron(probability):
+        # dead_neuron_names.append(node_name)
         return dead_neuron_names
 
     def kill_neuron(self, probability):

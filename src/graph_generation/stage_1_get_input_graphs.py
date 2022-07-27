@@ -46,10 +46,10 @@ def get_used_graphs(run_config: dict) -> dict:
 
     if has_radiation(run_config):
         graphs["rad_snn_algo_graph"] = get_radiation_graph(
-            graphs["snn_algo_graph"], run_config
+            graphs["snn_algo_graph"], run_config, run_config["seed"]
         )
         graphs["rad_adapted_snn_graph"] = get_radiation_graph(
-            graphs["adapted_snn_graph"], run_config
+            graphs["adapted_snn_graph"], run_config, run_config["seed"]
         )
 
     return graphs
@@ -184,7 +184,7 @@ def get_redundant_graph(
     )
 
 
-def get_radiation_graph(snn_graph, run_config: dict):
+def get_radiation_graph(snn_graph, run_config: dict, seed):
     """Makes a deep copy of the incoming graph and applies radiation to it.
 
     Then returns the graph with the radiation, as well as a list of
@@ -217,7 +217,7 @@ def get_radiation_graph(snn_graph, run_config: dict):
             rad_dam = Radiation_damage(probability=radiation_setting)
             radiation_graph = copy.deepcopy(snn_graph)
             dead_neuron_names = rad_dam.inject_simulated_radiation(
-                radiation_graph, rad_dam.neuron_death_probability
+                radiation_graph, rad_dam.neuron_death_probability, seed
             )
             print(f"dead_neuron_names={dead_neuron_names}")
             # TODO: verify radiation is injected with V1000

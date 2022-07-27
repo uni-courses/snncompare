@@ -102,6 +102,7 @@ def plot_coordinated_graph(
     desired_properties,
     show=False,
     filename="no_filename",
+    title=None,
 ):
     """
 
@@ -143,6 +144,10 @@ def plot_coordinated_graph(
     axis = plt.gca()
     axis.set_xlim([1.2 * x for x in axis.get_xlim()])
     axis.set_ylim([1.2 * y for y in axis.get_ylim()])
+
+    # Set a title in the image.
+    if title is not None:
+        plt.suptitle(title, fontsize=14)
 
     add_neuron_properties_to_plot(axis, desired_properties, G, G.nodes, pos)
 

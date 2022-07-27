@@ -123,6 +123,10 @@ def output_files_stage_2(
     :param graphs_stage_2:
     :param run_config:
     """
+
+    # TODO: eliminate this hotfix.
+    # Remove image outputs.
+
     run_config_to_filename(run_config)
     # TODO: Ensure output file exists.
     # TODO: Verify the correct graphs is passed by checking the graph tag.
@@ -442,24 +446,27 @@ def plot_stage_2_graph_behaviours(
 
     for graph_name, graph_list in graphs.items():
         for i, graph in enumerate(graph_list):
-            if graph_name == "rad_snn_algo_graph":
-                # TODO: include check for only rad dead things.
-                print(f"i={i}")
-                print(f"graph_name={graph_name}")
-                print(f"filepath={filepath}")
-                print("Dead neurons:")
-                print_dead_neuron_names(graph)
-                print("")
-                # TODO plot a single graph.
+            # if graph_name == "rad_snn_algo_graph":
+            # TODO: include check for only rad dead things.
+            print(f"i={i}")
+            print(f"graph_name={graph_name}")
+            print(f"filepath={filepath}")
+            print("Dead neurons:")
+            print_dead_neuron_names(graph)
+            print("")
+            # TODO plot a single graph.
 
-                # pylint: disable=R0913
-                # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-                plot_coordinated_graph(
-                    graph,
-                    desired_props,
-                    False,
-                    f"{graph_name}_{filepath}_{i}",
-                )
+            # pylint: disable=R0913
+            # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+            plot_coordinated_graph(
+                graph,
+                desired_props,
+                False,
+                f"{graph_name}_{filepath}_{i}",
+                title=create_custom_plot_titles(
+                    graph_name, i, run_config["seed"]
+                ),
+            )
 
 
 def print_dead_neuron_names(some_graph: nx.DiGraph):
@@ -469,3 +476,104 @@ def print_dead_neuron_names(some_graph: nx.DiGraph):
             # if nodename in dead_neuron_names:
             if some_graph.nodes[nodename]["rad_death"]:
                 print(nodename)
+
+
+# pylint: disable=R0912
+# pylint: disable=R0915
+def create_custom_plot_titles(graph_name, t: int, seed: int):
+    """Creates custom titles for the SNN graphs for seed = 42."""
+    if seed == 42:
+        title = None
+        if graph_name == "snn_algo_graph":
+            if t == 0:
+                title = (
+                    "Initialisation:\n spike_once and random neurons spike, "
+                    + "selector starts."
+                )
+            if t == 1:
+                title = (
+                    "Selector neurons continue exciting\n degree_receivers "
+                    + "(WTA-circuits)."
+                )
+            if t == 21:
+                title = "Selector about to create degree_receiver winner."
+            if t == 22:
+                title = (
+                    "Degree_receiver neurons spike and inhibit selector,\n"
+                    + " excite counter neuron."
+                )
+            if t == 23:
+                title = "WTA circuits completed, score stored in counter."
+            if t == 24:
+                title = "Remaining WTA circuit being completed."
+            if t == 25:
+                title = (
+                    "Algorithm completed, counter neuron amperage read out."
+                )
+            if t == 26:
+                title = "."
+
+        if graph_name == "adapted_snn_graph":
+            if t == 0:
+                title = (
+                    "Initialisation Adapted SNN:\n All neurons have a "
+                    + "redundant neuron."
+                )
+            if t == 1:
+                title = (
+                    "Selector neurons have inhibited redundant selector"
+                    + " neurons."
+                )
+            if t == 21:
+                title = "Selector about to create degree_receiver winner."
+            if t == 22:
+                title = (
+                    "Degree_receiver neurons spike and inhibit selector,\n"
+                    + "excite counter neuron."
+                )
+            if t == 23:
+                title = "WTA circuits completed, score stored in counter."
+            if t == 24:
+                title = "Remaining WTA circuit being completed."
+            if t == 25:
+                title = (
+                    "Algorithm completed, counter neuron amperage read out."
+                )
+            if t == 26:
+                title = "."
+
+        if graph_name == "rad_adapted_snn_graph":
+            if t == 0:
+                title = (
+                    "Simulated Radiation Damage:\n Red neurons died, "
+                    + "(don't spike)."
+                )
+            if t == 1:
+                title = (
+                    "Redundant spike_once and selector neurons take over.\n "
+                    + "Working neurons inhibited redundant neurons (having "
+                    + "delay=1)."
+                )
+            if t == 20:
+                title = "Selector_2_0 about to create degree_receiver winner."
+            if t == 21:
+                title = (
+                    "Degree_receiver_2_1_0 neuron spike and inhibits selector"
+                    + ",\n excites counter neuron."
+                )
+            if t == 22:
+                title = (
+                    "First WTA circuits completed, score stored in counter. "
+                    + "2nd WTA\n circuit is has winner, inhibits selectors, "
+                    + "stores result in counter."
+                )
+            if t == 23:
+                title = "Third WTA circuit has winner."
+            if t == 24:
+                title = (
+                    "Algorithm completed, counter neuron amperage read out.\n"
+                    + " Redundancy saved the day."
+                )
+            if t == 25:
+                title = "."
+    return title

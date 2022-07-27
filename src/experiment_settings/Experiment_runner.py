@@ -29,6 +29,7 @@ from src.export_results.Output import (
     output_files_stage_2,
     performed_stage,
 )
+from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.simulation.stage2_sim import sim_graphs
 
@@ -92,6 +93,7 @@ class Experiment_runner:
                 # Run first stage of experiment, get input graph.
                 stage_1_graphs: dict = get_used_graphs(run_config)
                 output_files_stage_1(experi_config, run_config, stage_1_graphs)
+                Radiation_damage(0.2)
             if to_run["stage_2"]:
                 # Run simulation on networkx or lava backend.
                 stage_2_graphs: dict = sim_graphs(stage_1_graphs, run_config)
