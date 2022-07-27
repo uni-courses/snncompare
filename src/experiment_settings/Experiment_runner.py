@@ -24,6 +24,7 @@ from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import (
     create_results_directories,
     output_files_stage_1,
+    output_files_stage_2,
     performed_stage,
 )
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
@@ -87,11 +88,13 @@ class Experiment_runner:
             print(f"to_run={to_run}")
             if to_run["stage_1"]:
                 # Run first stage of experiment, get input graph.
-                snn_graphs: dict = get_used_graphs(run_config)
-                output_files_stage_1(experi_config, run_config, snn_graphs)
+                stage_1_graphs: dict = get_used_graphs(run_config)
+                output_files_stage_1(experi_config, run_config, stage_1_graphs)
             if to_run["stage_2"]:
-                # TODO: run simulation on networkx or lava backend.
-                sim_graphs(snn_graphs, run_config)
+                # Run simulation on networkx or lava backend.
+                stage_2_graphs: dict = sim_graphs(stage_1_graphs, run_config)
+                output_files_stage_2(experi_config, run_config, stage_2_graphs)
+
             if to_run["stage_3"]:
                 # TODO: Generate output graph plots of propagated graphs.
 

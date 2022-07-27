@@ -1,6 +1,5 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
-from typing import List
 
 import networkx as nx
 
@@ -21,13 +20,14 @@ from src.simulation.verify_graph_is_snn import (
 def sim_graphs(
     snn_graphs: dict,
     run_config: dict,
-) -> List[nx.DiGraph]:
+) -> dict:
     """Simulates the snn graphs and makes a deep copy for each timestep.
 
     :param snn_graphs: dict:
     :param run_config: dict:
     """
     print(run_config)
+    stage_2_graphs = {}
     for graph_name, snn_graph in snn_graphs.items():
         if graph_name != "input_graph":
 
@@ -35,10 +35,10 @@ def sim_graphs(
             some_conversion(snn_graph)
 
             # TODO: compute actual inhibition and mval
-            graphs = run_snn_on_networkx(
+            stage_2_graphs[graph_name] = run_snn_on_networkx(
                 snn_graph, get_sim_duration(snn_graph, run_config)
             )
-    return graphs
+    return stage_2_graphs
 
 
 def get_sim_duration(

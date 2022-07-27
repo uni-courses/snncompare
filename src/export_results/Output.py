@@ -127,6 +127,7 @@ def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
             run_config,
             2,
         )
+        # TODO: output graph behaviour.
 
     elif run_config["simulator"] == "lava":
         # TODO: terminate simulation.
@@ -365,14 +366,21 @@ def get_nr_of_simulation_steps(relative_output_dir, filename) -> int:
 
 
 def merge_experiment_and_run_config_with_graphs(
-    experiment_config: dict, run_config: dict, graphs: dict
+    experiment_config: dict, run_config: dict, graphs: dict, stage_index: int
 ) -> dict:
     """Adds the networkx graphs of the graphs dictionary into the run config
     dictionary."""
     # Convert incoming graphs to dictionary.
     graphs_dict = {}
-    for graph_name, graph in graphs.items():
-        graphs_dict[graph_name] = digraph_to_json(graph)
+    for graph_name, graph_container in graphs.items():
+        if stage_index == 1:
+            graphs_dict[graph_name] = digraph_to_json(graph_container)
+        elif stage_index == 2:
+            graph_container = []
+
+            for graph in graph_container:
+                graph_container.append(digraph_to_json(graph))
+                graphs_dict[graph_name] = graph_container
 
     output_dict = {
         "experiment_config": experiment_config,
@@ -387,17 +395,17 @@ def output_stage_json(
     graphs_of_stage: dict,
     filename: str,
     run_config: dict,
-    stage: int,
+    stage_index: int,
 ) -> None:
     """Merges the experiment config, run config and graphs of stage 1 into a
     single dict and exports that dict to a json file."""
     # TODO: include stage index
     output_dict = merge_experiment_and_run_config_with_graphs(
-        experiment_config, run_config, graphs_of_stage
+        experiment_config, run_config, graphs_of_stage, stage_index
     )
 
     # TODO: Optional: ensure output files exists.
-    output_filepath = f"results/stage_{stage}/{filename}.json"
+    output_filepath = f"results/stage_{stage_index}/{filename}.json"
     write_dict_to_json(output_filepath, output_dict)
 
     # TODO: Ensure output file exists.
