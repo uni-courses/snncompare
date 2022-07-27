@@ -97,72 +97,6 @@ def retry_create_degree_synapses(G, get_degree, m, rand_ceil):
     return get_degree
 
 
-def plot_neuron_behaviour_over_time(
-    filename,
-    G,
-    t,
-    show=False,
-    current=True,
-):
-    """Plots the neuron behaviour at a specific step of the SNN simulation.
-
-    :param adaptation: indicates if test uses brain adaptation or not.
-    :param filename:
-    :param G: The original graph on which the MDSA algorithm is ran.
-    param iteration: The initialisation iteration that is used.
-    :param seed: The value of the random seed used for this test.
-    :param size: Nr of nodes in the original graph on which test is ran.
-    :param m: The amount of approximation iterations used in the MDSA
-     approximation.
-    :param t:
-    :param show:  (Default value = False)
-    :param current:  (Default value = True)
-    """
-    # TODO: remove unused function.
-    # options = {"edgecolors": "red"}
-    options = {}
-    color_map, spiking_edges, _ = set_node_colours(G, t)
-    edge_color_map = set_edge_colours(G, spiking_edges)
-
-    nx.draw(
-        G,
-        nx.get_node_attributes(G, "pos"),
-        with_labels=True,
-        node_size=8,
-        font_size=5,
-        width=0.2,
-        node_color=color_map,
-        edge_color=edge_color_map,
-        **options,
-    )
-    node_labels = get_labels(G, current)
-    pos = {
-        node: (x, y)
-        for (node, (x, y)) in nx.get_node_attributes(G, "pos").items()
-    }
-    nx.draw_networkx_labels(G, pos, labels=node_labels)
-    edge_labels = nx.get_edge_attributes(G, "weight")
-    nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
-
-    plt.axis("off")
-    axis = plt.gca()
-    axis.set_xlim([1.2 * x for x in axis.get_xlim()])
-    axis.set_ylim([1.2 * y for y in axis.get_ylim()])
-
-    if show:
-        plt.show()
-
-    plot_export = Plot_to_tex()
-    plot_export.export_plot(
-        plt,
-        # f"test_object_seed_adapt_{adaptation}_{seed}_size{size}_m{m}_iter{iteration}_t{t}",
-        filename,
-    )
-    # plt.savefig()
-    plt.clf()
-    plt.close()
-
-
 def plot_coordinated_graph(
     G,
     desired_properties,
@@ -184,11 +118,12 @@ def plot_coordinated_graph(
     color_map, spiking_edges = set_nx_node_colours(G)
     edge_color_map = set_edge_colours(G, spiking_edges)
     # Width=edge width.
+    print(f"color_map={color_map}")
     nx.draw(
         G,
         nx.get_node_attributes(G, "pos"),
         with_labels=True,
-        node_size=10,
+        node_size=360,
         font_size=6,
         width=0.2,
         node_color=color_map,

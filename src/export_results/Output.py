@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import List
 
 import jsons
+import networkx as nx
 
 from src.export_results.export_json_results import (
     digraph_to_json,
@@ -441,15 +442,30 @@ def plot_stage_2_graph_behaviours(
 
     for graph_name, graph_list in graphs.items():
         for i, graph in enumerate(graph_list):
-            print(f"i={i}, graph_name={graph_name}, filepath={filepath}")
-            print("")
-            # TODO plot a single graph.
+            if graph_name == "rad_snn_algo_graph":
+                # TODO: include check for only rad dead things.
+                print(f"i={i}")
+                print(f"graph_name={graph_name}")
+                print(f"filepath={filepath}")
+                print("Dead neurons:")
+                print_dead_neuron_names(graph)
+                print("")
+                # TODO plot a single graph.
 
-            # pylint: disable=R0913
-            # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-            plot_coordinated_graph(
-                graph,
-                desired_props,
-                False,
-                f"{graph_name}_{filepath}_{i}",
-            )
+                # pylint: disable=R0913
+                # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+                plot_coordinated_graph(
+                    graph,
+                    desired_props,
+                    False,
+                    f"{graph_name}_{filepath}_{i}",
+                )
+
+
+def print_dead_neuron_names(some_graph: nx.DiGraph):
+    """Prints the dead neuron names."""
+    for nodename in some_graph:
+        if "rad_death" in some_graph.nodes[nodename].keys():
+            # if nodename in dead_neuron_names:
+            if some_graph.nodes[nodename]["rad_death"]:
+                print(nodename)
