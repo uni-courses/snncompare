@@ -49,9 +49,9 @@ class Radiation_settings:
         }
         self.with_radiation = {
             "neuron_death": [
-                0.01,
-                0.05,
-                0.1,
+                # 0.01,
+                # 0.05,
+                # 0.1,
                 0.2,
                 0.25,
             ],

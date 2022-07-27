@@ -45,6 +45,8 @@ class Radiation_damage:
         # Get random neurons from list.
         dead_neuron_names = self.get_random_neurons(get_degree, probability)
 
+        store_dead_neuron_names_in_graph(get_degree, dead_neuron_names)
+
         # Kill neurons.
         self.kill_neurons(get_degree, dead_neuron_names)
 
@@ -166,9 +168,17 @@ def verify_radiation_is_applied(
 ):
     """Goes through the dead neuron names, and verifies the radiation is
     applied correctly."""
+
+    # TODO: include check to see if store_dead_neuron_names_in_graph is
+    # executed correctly by checking whether the:G.nodes[nodename]["rad_death"]
+    # = True
     if rad_type == "neuron_death":
         for nodename in some_graph:
             if nodename in dead_neuron_names:
+                if not some_graph.nodes[nodename]["rad_death"]:
+                    raise Exception(
+                        'Error, G.nodes[nodename]["rad_death"] not set'
+                    )
                 if some_graph.nodes[nodename]["vth"] != 9999:
                     raise Exception(
                         "Error, radiation is not applied to:{nodename}, even"
