@@ -215,6 +215,7 @@ def digraph_to_json(G):
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
+    TODO: remove if not used.
 
     """
     if G is not None:

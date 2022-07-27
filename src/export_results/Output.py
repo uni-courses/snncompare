@@ -12,11 +12,16 @@ import json
 from pathlib import Path
 from typing import List
 
+import jsons
+
 from src.export_results.export_json_results import (
     digraph_to_json,
     write_dict_to_json,
 )
 from src.export_results.helper import run_config_to_filename
+from src.export_results.load_pickles_get_results import (
+    get_desired_properties_for_graph_printing,
+)
 from src.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
     create_target_dir_if_not_exists,
@@ -25,6 +30,9 @@ from src.export_results.verify_stage_1_graphs import verify_stage_1_graphs
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
 from src.export_results.verify_stage_3_graphs import verify_stage_3_graphs
 from src.export_results.verify_stage_4_graphs import verify_stage_4_graphs
+from src.graph_generation.helper_network_structure import (
+    plot_coordinated_graph,
+)
 
 # pylint: disable=W0613 # work in progress.
 
@@ -90,7 +98,9 @@ def output_files_stage_1(
     )
 
 
-def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
+def output_files_stage_2(
+    experiment_config: dict, run_config: dict, graphs_stage_2: dict
+):
     """Merges the experiment configuration dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
     are passed into this method.
@@ -127,7 +137,9 @@ def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
             run_config,
             2,
         )
+
         # TODO: output graph behaviour.
+        plot_stage_2_graph_behaviours(filename, graphs_stage_2, run_config)
 
     elif run_config["simulator"] == "lava":
         # TODO: terminate simulation.
@@ -376,11 +388,11 @@ def merge_experiment_and_run_config_with_graphs(
         if stage_index == 1:
             graphs_dict[graph_name] = digraph_to_json(graph_container)
         elif stage_index == 2:
-            graph_container = []
+            graphs_per_type = []
 
             for graph in graph_container:
-                graph_container.append(digraph_to_json(graph))
-                graphs_dict[graph_name] = graph_container
+                graphs_per_type.append(digraph_to_json(graph))
+            graphs_dict[graph_name] = graphs_per_type
 
     output_dict = {
         "experiment_config": experiment_config,
@@ -406,7 +418,7 @@ def output_stage_json(
 
     # TODO: Optional: ensure output files exists.
     output_filepath = f"results/stage_{stage_index}/{filename}.json"
-    write_dict_to_json(output_filepath, output_dict)
+    write_dict_to_json(output_filepath, jsons.dump(output_dict))
 
     # TODO: Ensure output file exists.
     # TODO: Verify the correct graphs is passed by checking the graph tag.
@@ -415,3 +427,29 @@ def output_stage_json(
     # TODO: Write run_config to file (pprint(dict), or json)
     # TODO: Write graphs to file (pprint(dict), or json)
     # TODO: append tags to output file.
+
+
+def plot_stage_2_graph_behaviours(
+    filepath: str, graphs: dict, run_config: dict
+):
+    """Exports the plots of the graphs per time step of the run
+    configuration."""
+
+    desired_props = get_desired_properties_for_graph_printing()
+
+    # Loop over the graph types
+
+    for graph_name, graph_list in graphs.items():
+        for i, graph in enumerate(graph_list):
+            print(f"i={i}, graph_name={graph_name}, filepath={filepath}")
+            print("")
+            # TODO plot a single graph.
+
+            # pylint: disable=R0913
+            # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+            plot_coordinated_graph(
+                graph,
+                desired_props,
+                False,
+                f"{graph_name}_{filepath}_{i}",
+            )
