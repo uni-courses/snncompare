@@ -7,6 +7,7 @@ network to simulate it, one neuron at a time.
 
 # Import external libraries.
 import copy
+from typing import List
 
 import networkx as nx
 
@@ -63,14 +64,13 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
     return G
 
 
-def run_snn_on_networkx(G: nx.DiGraph, t: int) -> nx.DiGraph:
+def run_snn_on_networkx(G: nx.DiGraph, t: int) -> List[nx.DiGraph]:
     """Runs the simulation for t timesteps using networkx, not lava.
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param t: int:
     """
     verify_networkx_snn_spec(G)
-
     G_behaviour = []
     for _ in range(t):
         run_simulation_with_networkx_for_1_timestep(G)

@@ -4,6 +4,8 @@
 """
 
 
+from pprint import pprint
+
 from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
@@ -23,8 +25,13 @@ from src.experiment_settings.verify_experiment_settings import (
 from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import (
     create_results_directories,
+    output_files_stage_1,
+    output_files_stage_2,
     performed_stage,
 )
+from src.graph_generation.radiation.Radiation_damage import Radiation_damage
+from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
+from src.simulation.stage2_sim import sim_graphs
 
 
 class Experiment_runner:
@@ -46,6 +53,7 @@ class Experiment_runner:
         self.supp_experi_setts = Supported_experiment_settings()
 
         # Verify the experiment experi_config are complete and valid.
+        # pylint: disable=R0801
         verify_experiment_config(
             self.supp_experi_setts,
             experi_config,
@@ -78,17 +86,28 @@ class Experiment_runner:
         # Generate run configurations.
         run_configs = experiment_config_to_run_configs(experi_config)
 
-        to_run = determine_what_to_run(run_configs)
+        for run_config in run_configs:
+            to_run = determine_what_to_run(run_config)
+            print(f"to_run={to_run}")
+            if to_run["stage_1"]:
+                # Run first stage of experiment, get input graph.
+                stage_1_graphs: dict = get_used_graphs(run_config)
+                output_files_stage_1(experi_config, run_config, stage_1_graphs)
+                Radiation_damage(0.2)
+            if to_run["stage_2"]:
+                # Run simulation on networkx or lava backend.
+                stage_2_graphs: dict = sim_graphs(stage_1_graphs, run_config)
+                output_files_stage_2(experi_config, run_config, stage_2_graphs)
 
-        if to_run["stage_1"]:
+            if to_run["stage_3"]:
+                # TODO: Generate output graph plots of propagated graphs.
 
-            pass
-        if to_run["stage_2"]:
-            pass
-        if to_run["stage_3"]:
-            pass
-        if to_run["stage_4"]:
-            pass
+                # TODO: Generate output json dicts of propagated graphs.
+                pass
+            if to_run["stage_4"]:
+                # TODO: compute results per graph type and export performance
+                # to json dict.
+                pass
 
 
 def experiment_config_to_run_configs(experi_config: dict):
@@ -107,36 +126,43 @@ def experiment_config_to_run_configs(experi_config: dict):
     for algorithm_name, algo_setts_dict in experi_config["algorithms"].items():
         for algo_config in convert_algorithm_to_setting_list(algo_setts_dict):
             algorithm = {algorithm_name: algo_config}
-            for key, value in experi_config["adaptations"].items():
-                adaptation = {
-                    key: value,
-                }
-                for radiation_name, radiation_setts_list in experi_config[
-                    "radiations"
-                ].items():
-                    # TODO: verify it is of type list.
-                    for rad_config in radiation_setts_list:
-                        radiation = {radiation_name: rad_config}
-                        for iteration in experi_config["iterations"]:
-                            for size_and_max_graph in experi_config[
-                                "size_and_max_graphs"
-                            ]:
-                                for simulator in experi_config["simulators"]:
-                                    for graph_nr in range(
-                                        0, size_and_max_graph[1]
-                                    ):
-                                        run_configs.append(
-                                            run_parameters_to_dict(
-                                                adaptation,
-                                                algorithm,
-                                                iteration,
-                                                size_and_max_graph,
-                                                graph_nr,
-                                                radiation,
-                                                experi_config,
-                                                simulator,
+            for adaptation_name, adaptation_setts_list in experi_config[
+                "adaptations"
+            ].items():
+                for adaptation_config in adaptation_setts_list:
+                    adaptation = {adaptation_name: adaptation_config}
+
+                    for radiation_name, radiation_setts_list in experi_config[
+                        "radiations"
+                    ].items():
+                        # TODO: verify it is of type list.
+                        for rad_config in radiation_setts_list:
+                            pprint(radiation_setts_list)
+                            radiation = {radiation_name: rad_config}
+                            print(f"radiation={radiation}")
+
+                            for iteration in experi_config["iterations"]:
+                                for size_and_max_graph in experi_config[
+                                    "size_and_max_graphs"
+                                ]:
+                                    for simulator in experi_config[
+                                        "simulators"
+                                    ]:
+                                        for graph_nr in range(
+                                            0, size_and_max_graph[1]
+                                        ):
+                                            run_configs.append(
+                                                run_parameters_to_dict(
+                                                    adaptation,
+                                                    algorithm,
+                                                    iteration,
+                                                    size_and_max_graph,
+                                                    graph_nr,
+                                                    radiation,
+                                                    experi_config,
+                                                    simulator,
+                                                )
                                             )
-                                        )
 
     for run_config in run_configs:
         verify_run_config(
@@ -195,6 +221,7 @@ def determine_what_to_run(run_config) -> dict:
     # Determine which of the 4 stages have been performed and which stages
     # still have to be completed.
 
+    # Check if the input graphs exist, (the graphs that can still be adapted.)
     if (
         not performed_stage(
             run_config,
@@ -207,15 +234,23 @@ def determine_what_to_run(run_config) -> dict:
         # the sim results, but it is assumed this means re-do the
         # simulation).
         to_run["stage_1"] = True
+
+    # Check if the incoming graphs have been supplemented with adaptation
+    # and/or radiation.
     if (
         not performed_stage(run_config, 2)
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
+
+    # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not performed_stage(run_config, 3)
         or run_config["overwrite_visualisation"]
     ):
+        # TODO: include preliminary check to see if output of stage 1 and 2
+        # exists.
+
         # Note this allows the user to create inconsistent simulation
         # results and visualisation. E.g. the simulated behaviour may
         # have changed due to code changes, yet the visualisation would
@@ -235,6 +270,9 @@ def determine_what_to_run(run_config) -> dict:
             + "not match with what the graphs actually do. We suggest you "
             + "try this again with:overwrite_visualisation=True"
         )
+
+    # Check if the results of the simulation with respect to alipour need to be
+    # completed.
     if (
         not performed_stage(run_config, 4)
         or run_config["overwrite_sim_results"]
@@ -255,24 +293,26 @@ def example_experi_config():
     with_adaptation_with_radiation = {
         "algorithms": {
             "MDSA": {
-                "m_vals": list(range(0, 4, 1)),
+                "m_vals": list(range(0, 2, 1)),
             }
         },
         "adaptations": verify_adap_and_rad_settings(
             supp_experi_setts, adap_sets.with_adaptation, "adaptations"
         ),
-        "iterations": list(range(0, 3, 1)),
+        # "iterations": list(range(0, 3, 1)),
+        "iterations": list(range(0, 1, 1)),
         "min_max_graphs": 1,
         "max_max_graphs": 15,
         "min_graph_size": 3,
         "max_graph_size": 20,
-        "overwrite_sim_results": True,
+        "overwrite_sim_results": False,
         "overwrite_visualisation": True,
         "radiations": verify_adap_and_rad_settings(
             supp_experi_setts, rad_sets.with_radiation, "radiations"
         ),
         "seed": 42,
-        "size_and_max_graphs": [(3, 15), (4, 15)],
+        # "size_and_max_graphs": [(3, 1), (4, 3)],
+        "size_and_max_graphs": [(3, 1)],
         "simulators": ["nx"],
     }
     return with_adaptation_with_radiation

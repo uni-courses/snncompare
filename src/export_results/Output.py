@@ -1,19 +1,28 @@
 """Contains the output of an experiment run at 4 different stages.
 
 Input: Experiment configuration.
-    SubInput: Run configuration within an experiment.
-        Stage 1: The networkx graphs that will be propagated.
-        Stage 2: The propagated networkx graphs (at least one per timestep).
-        Stage 3: Visaualisation of the networkx graphs over time.
-        Stage 4: Post-processed performance data of algorithm and adaptation
-        mechanism.
+SubInput: Run configuration within an experiment.
+    Stage 1: The networkx graphs that will be propagated.
+    Stage 2: The propagated networkx graphs (at least one per timestep).
+    Stage 3: Visaualisation of the networkx graphs over time.
+    Stage 4: Post-processed performance data of algorithm and adaptation
+    mechanism.
 """
-# pylint: disable=W0613 # work in progress.
 import json
 from pathlib import Path
 from typing import List
 
+import jsons
+import networkx as nx
+
+from src.export_results.export_json_results import (
+    digraph_to_json,
+    write_dict_to_json,
+)
 from src.export_results.helper import run_config_to_filename
+from src.export_results.load_pickles_get_results import (
+    get_desired_properties_for_graph_printing,
+)
 from src.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
     create_target_dir_if_not_exists,
@@ -22,6 +31,12 @@ from src.export_results.verify_stage_1_graphs import verify_stage_1_graphs
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
 from src.export_results.verify_stage_3_graphs import verify_stage_3_graphs
 from src.export_results.verify_stage_4_graphs import verify_stage_4_graphs
+from src.graph_generation.helper_network_structure import (
+    plot_coordinated_graph,
+)
+
+# pylint: disable=W0613 # work in progress.
+
 
 with_adaptation_with_radiation = {
     "adaptation": {"redundancy": 1.0},
@@ -56,7 +71,9 @@ def create_results_directories():
     # TODO: assert directory: <repo root dir>/results/stage_1" exists
 
 
-def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
+def output_files_stage_1(
+    experiment_config: dict, run_config: dict, graphs_stage_1: dict
+):
     """Merges the experiment configuration dict, run configuration dict and
     graphs into a single dict. This method assumes only the graphs that are to
     be exported are passed into this method.
@@ -72,17 +89,19 @@ def output_files_stage_1(experiment_config, run_config, graphs_stage_1):
     :param graphs_stage_1:
     :param run_config:
     """
-    run_config_to_filename(run_config)
-    # TODO: Ensure output file exists.
-    # TODO: Verify the correct graphs is passed by checking the graph tag.
-    # TODO: merge experiment config, run_config and graphs into single dict.
-    # TODO: Write experiment_config to file (pprint(dict), or json)
-    # TODO: Write run_config to file (pprint(dict), or json)
-    # TODO: Write graphs to file (pprint(dict), or json)
-    # TODO: append tags to output file.
+    filename = run_config_to_filename(run_config)
+    output_stage_json(
+        experiment_config,
+        graphs_stage_1,
+        filename,
+        run_config,
+        1,
+    )
 
 
-def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
+def output_files_stage_2(
+    experiment_config: dict, run_config: dict, graphs_stage_2: dict
+):
     """Merges the experiment configuration dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
     are passed into this method.
@@ -104,19 +123,33 @@ def output_files_stage_2(experiment_config, run_config, graphs_stage_2):
     :param graphs_stage_2:
     :param run_config:
     """
+
+    # TODO: eliminate this hotfix.
+    # Remove image outputs.
+
     run_config_to_filename(run_config)
     # TODO: Ensure output file exists.
     # TODO: Verify the correct graphs is passed by checking the graph tag.
 
     # TODO: merge experiment config, run_config into single dict.
     if run_config["simulator"] == "nx":
-        # TODO: append graphs to dict.
+        # Output the json dictionary of the files.
+        filename = run_config_to_filename(run_config)
+        output_stage_json(
+            experiment_config,
+            graphs_stage_2,
+            filename,
+            run_config,
+            2,
+        )
 
-        pass
+        # TODO: output graph behaviour.
+        plot_stage_2_graph_behaviours(filename, graphs_stage_2, run_config)
+
     elif run_config["simulator"] == "lava":
         # TODO: terminate simulation.
         # TODO: write simulated lava graphs to pickle.
-        pass
+        raise Exception("Error, lava export method not yet implemented.")
     else:
         raise Exception("Simulator not supported.")
     # TODO: write merged dict to file.
@@ -171,8 +204,6 @@ def output_files_stage_4(
     """
 
     run_config_to_filename(run_config)
-    # TODO: Optional: ensure output files exists.
-
     # TODO: ensure the run parameters are in a legend
     # TODO: loop over the graphs (t), and output them.
     # TODO: append tags to output file(s).
@@ -273,31 +304,39 @@ def get_extensions_list(run_config, stage_index) -> list:
     :param run_config: param stage_index:
     :param stage_index:
 
-    """
     extensions = list(get_extensions_dict(run_config, stage_index).values())
-    print(f"extensions={extensions}")
+    """
     return list(get_extensions_dict(run_config, stage_index).values())
 
 
-def performed_stage(run_config, stage_index):
+def performed_stage(run_config, stage_index: int) -> bool:
     """Verifies the required output files exist for a given simulation.
 
     :param run_config: param stage_index:
     :param stage_index:
     """
+    print("")
     expected_filenames = []
 
     filename = run_config_to_filename(run_config)
-    relative_output_dir = "results/stage_{stage_index}/"
+    relative_output_dir = f"results/stage_{stage_index}/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
         if stage_index in [1, 2, 4]:
+
             expected_filenames.append(
                 relative_output_dir + filename + extension
             )
+            # TODO: append expected_filepath to run_config per stage.
 
-        # Before
         if stage_index == 3:
+
+            # Check if output file(s) of stage 2 exist, otherwise return False.
+            if not Path(relative_output_dir + filename + extension).is_file():
+                return False
+
+            # If the expected output files containing the adapted graphs exist,
+            # get the number of simulation steps.
             nr_of_simulation_steps = get_nr_of_simulation_steps(
                 relative_output_dir, filename
             )
@@ -317,12 +356,14 @@ def performed_stage(run_config, stage_index):
 def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
     """Loads the stage_2 output dictionary from a file.
 
-    # TODO: decide json output or dict output.
+    # TODO: Determine why the file does not yet exist at this positinoc.
+    # TODO: Output dict to json format.
 
     :param relative_output_dir: param filename:
     :param filename:
     """
     stage_2_output_dict_filepath = relative_output_dir + filename
+    print(f"stage_2_output_dict_filepath={stage_2_output_dict_filepath}")
     with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
         stage_2_output_dict = json.load(json_file)
     return stage_2_output_dict
@@ -339,3 +380,200 @@ def get_nr_of_simulation_steps(relative_output_dir, filename) -> int:
     )
     run_config = stage_2_output_dict["run_config"]
     return run_config["duration"]
+
+
+def merge_experiment_and_run_config_with_graphs(
+    experiment_config: dict, run_config: dict, graphs: dict, stage_index: int
+) -> dict:
+    """Adds the networkx graphs of the graphs dictionary into the run config
+    dictionary."""
+    # Convert incoming graphs to dictionary.
+    graphs_dict = {}
+    for graph_name, graph_container in graphs.items():
+        if stage_index == 1:
+            graphs_dict[graph_name] = digraph_to_json(graph_container)
+        elif stage_index == 2:
+            graphs_per_type = []
+
+            for graph in graph_container:
+                graphs_per_type.append(digraph_to_json(graph))
+            graphs_dict[graph_name] = graphs_per_type
+
+    output_dict = {
+        "experiment_config": experiment_config,
+        "run_config": run_config,
+        "graphs_dict": graphs_dict,
+    }
+    return output_dict
+
+
+def output_stage_json(
+    experiment_config: dict,
+    graphs_of_stage: dict,
+    filename: str,
+    run_config: dict,
+    stage_index: int,
+) -> None:
+    """Merges the experiment config, run config and graphs of stage 1 into a
+    single dict and exports that dict to a json file."""
+    # TODO: include stage index
+    output_dict = merge_experiment_and_run_config_with_graphs(
+        experiment_config, run_config, graphs_of_stage, stage_index
+    )
+
+    # TODO: Optional: ensure output files exists.
+    output_filepath = f"results/stage_{stage_index}/{filename}.json"
+    write_dict_to_json(output_filepath, jsons.dump(output_dict))
+
+    # TODO: Ensure output file exists.
+    # TODO: Verify the correct graphs is passed by checking the graph tag.
+    # TODO: merge experiment config, run_config and graphs into single dict.
+    # TODO: Write experiment_config to file (pprint(dict), or json)
+    # TODO: Write run_config to file (pprint(dict), or json)
+    # TODO: Write graphs to file (pprint(dict), or json)
+    # TODO: append tags to output file.
+
+
+def plot_stage_2_graph_behaviours(
+    filepath: str, graphs: dict, run_config: dict
+):
+    """Exports the plots of the graphs per time step of the run
+    configuration."""
+
+    desired_props = get_desired_properties_for_graph_printing()
+
+    # Loop over the graph types
+
+    for graph_name, graph_list in graphs.items():
+        for i, graph in enumerate(graph_list):
+            # if graph_name == "rad_snn_algo_graph":
+            # TODO: include check for only rad dead things.
+            print(f"i={i}")
+            print(f"graph_name={graph_name}")
+            print(f"filepath={filepath}")
+            print("Dead neurons:")
+            print_dead_neuron_names(graph)
+            print("")
+            # TODO plot a single graph.
+
+            # pylint: disable=R0913
+            # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+            plot_coordinated_graph(
+                graph,
+                desired_props,
+                False,
+                f"{graph_name}_{filepath}_{i}",
+                title=create_custom_plot_titles(
+                    graph_name, i, run_config["seed"]
+                ),
+            )
+
+
+def print_dead_neuron_names(some_graph: nx.DiGraph):
+    """Prints the dead neuron names."""
+    for nodename in some_graph:
+        if "rad_death" in some_graph.nodes[nodename].keys():
+            # if nodename in dead_neuron_names:
+            if some_graph.nodes[nodename]["rad_death"]:
+                print(nodename)
+
+
+# pylint: disable=R0912
+# pylint: disable=R0915
+def create_custom_plot_titles(graph_name, t: int, seed: int):
+    """Creates custom titles for the SNN graphs for seed = 42."""
+    if seed == 42:
+        title = None
+        if graph_name == "snn_algo_graph":
+            if t == 0:
+                title = (
+                    "Initialisation:\n spike_once and random neurons spike, "
+                    + "selector starts."
+                )
+            if t == 1:
+                title = (
+                    "Selector neurons continue exciting\n degree_receivers "
+                    + "(WTA-circuits)."
+                )
+            if t == 21:
+                title = "Selector about to create degree_receiver winner."
+            if t == 22:
+                title = (
+                    "Degree_receiver neurons spike and inhibit selector,\n"
+                    + " excite counter neuron."
+                )
+            if t == 23:
+                title = "WTA circuits completed, score stored in counter."
+            if t == 24:
+                title = "Remaining WTA circuit being completed."
+            if t == 25:
+                title = (
+                    "Algorithm completed, counter neuron amperage read out."
+                )
+            if t == 26:
+                title = "."
+
+        if graph_name == "adapted_snn_graph":
+            if t == 0:
+                title = (
+                    "Initialisation Adapted SNN:\n All neurons have a "
+                    + "redundant neuron."
+                )
+            if t == 1:
+                title = (
+                    "Selector neurons have inhibited redundant selector"
+                    + " neurons."
+                )
+            if t == 21:
+                title = "Selector about to create degree_receiver winner."
+            if t == 22:
+                title = (
+                    "Degree_receiver neurons spike and inhibit selector,\n"
+                    + "excite counter neuron."
+                )
+            if t == 23:
+                title = "WTA circuits completed, score stored in counter."
+            if t == 24:
+                title = "Remaining WTA circuit being completed."
+            if t == 25:
+                title = (
+                    "Algorithm completed, counter neuron amperage read out."
+                )
+            if t == 26:
+                title = "."
+
+        if graph_name == "rad_adapted_snn_graph":
+            if t == 0:
+                title = (
+                    "Simulated Radiation Damage:\n Red neurons died, "
+                    + "(don't spike)."
+                )
+            if t == 1:
+                title = (
+                    "Redundant spike_once and selector neurons take over.\n "
+                    + "Working neurons inhibited redundant neurons (having "
+                    + "delay=1)."
+                )
+            if t == 20:
+                title = "Selector_2_0 about to create degree_receiver winner."
+            if t == 21:
+                title = (
+                    "Degree_receiver_2_1_0 neuron spike and inhibits selector"
+                    + ",\n excites counter neuron."
+                )
+            if t == 22:
+                title = (
+                    "First WTA circuits completed, score stored in counter. "
+                    + "2nd WTA\n circuit is has winner, inhibits selectors, "
+                    + "stores result in counter."
+                )
+            if t == 23:
+                title = "Third WTA circuit has winner."
+            if t == 24:
+                title = (
+                    "Algorithm completed, counter neuron amperage read out.\n"
+                    + " Redundancy saved the day."
+                )
+            if t == 25:
+                title = "."
+    return title

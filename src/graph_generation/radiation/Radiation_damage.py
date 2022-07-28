@@ -6,6 +6,9 @@ current MDSA approximation). TODO: include other radiation effects such
 as "unexpected/random" changes in neuronal and synaptic properties.
 """
 import random
+from typing import List
+
+import networkx as nx
 
 
 class Radiation_damage:
@@ -29,7 +32,7 @@ class Radiation_damage:
         print(randomlist)
         return randomlist
 
-    def inject_simulated_radiation(self, get_degree, probability):
+    def inject_simulated_radiation(self, get_degree, probability, seed):
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -40,14 +43,20 @@ class Radiation_damage:
         # dead_neurons = self.get_list_of_dead_neurons(get_degree)
 
         # Get random neurons from list.
-        dead_neuron_names = self.get_random_neurons(get_degree, probability)
+        dead_neuron_names = self.get_random_neurons(
+            get_degree, probability, seed
+        )
+
+        store_dead_neuron_names_in_graph(get_degree, dead_neuron_names)
 
         # Kill neurons.
         self.kill_neurons(get_degree, dead_neuron_names)
 
         return dead_neuron_names
 
-    def get_random_neurons(self, get_degree, probability):
+    def get_random_neurons(
+        self, get_degree: nx.DiGraph, probability: float, seed: int
+    ):
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -55,10 +64,34 @@ class Radiation_damage:
         :param adaptation_only:  (Default value = False)
 
         """
+
+        # TODO: restore the probabilitiy  of firing instead of getting fraction
+        # of neurons.
+        nr_of_dead_neurons = int(len(get_degree) * probability)
+        print(f"seed={seed}")
+        random.seed(seed)
+        # Get a list of length nr_of_dead_neurons with random integers
+        # These integers indicate which neurons die.
+
+        rand_indices = random.sample(
+            range(0, len(get_degree)), nr_of_dead_neurons
+        )
+        print(rand_indices)
+
         dead_neuron_names = []
-        for node_name in get_degree:
-            if self.kill_neuron(probability):
-                dead_neuron_names.append(node_name)
+        # TODO: fold instead of for.
+        count = 0
+        for nodename in get_degree:
+            print(f"nodename={nodename}")
+            # for i,node_name in enumerate(get_degree):
+            if count in rand_indices:
+                dead_neuron_names.append(nodename)
+            count = count + 1
+
+        print(f"dead_neuron_names={dead_neuron_names}")
+        # for node_name in get_degree:
+        # if self.kill_neuron(probability):
+        # dead_neuron_names.append(node_name)
         return dead_neuron_names
 
     def kill_neuron(self, probability):
@@ -156,3 +189,30 @@ def store_dead_neuron_names_in_graph(G, dead_neuron_names):
             print(G.nodes[nodename]["rad_death"])
         else:
             G.nodes[nodename]["rad_death"] = False
+
+
+def verify_radiation_is_applied(
+    some_graph: nx.DiGraph, dead_neuron_names: List[str], rad_type: str
+):
+    """Goes through the dead neuron names, and verifies the radiation is
+    applied correctly."""
+
+    # TODO: include check to see if store_dead_neuron_names_in_graph is
+    # executed correctly by checking whether the:G.nodes[nodename]["rad_death"]
+    # = True
+    if rad_type == "neuron_death":
+        for nodename in some_graph:
+            if nodename in dead_neuron_names:
+                if not some_graph.nodes[nodename]["rad_death"]:
+                    raise Exception(
+                        'Error, G.nodes[nodename]["rad_death"] not set'
+                    )
+                if some_graph.nodes[nodename]["vth"] != 9999:
+                    raise Exception(
+                        "Error, radiation is not applied to:{nodename}, even"
+                        + f" though it is in:{dead_neuron_names}"
+                    )
+    else:
+        raise Exception(
+            f"Error, radiation type: {rad_type} is not yet supported."
+        )

@@ -1,5 +1,6 @@
 """Contains helper functions for exporting simulation results."""
 import collections
+import copy
 
 
 def flatten(d, parent_key="", sep="_"):
@@ -18,7 +19,7 @@ def flatten(d, parent_key="", sep="_"):
 # {'a': 1, 'c_a': 2, 'c_b_x': 5, 'd': [1, 2, 3], 'c_b_y': 10}
 
 
-def run_config_to_filename(run_config):
+def run_config_to_filename(run_config: dict) -> str:
     """Converts a run_config dictionary into a filename.
 
     Does that by flattining the dictionary (and all its child-
@@ -27,8 +28,23 @@ def run_config_to_filename(run_config):
     # TODO: order dictionaries by alphabetical order by default.
     # TODO: allow user to specify a custom order of parameters.
 
-    # Don't, that makes it more difficult to load the dict again.
+    stripped_run_config = copy.deepcopy(run_config)
+    stripped_run_config.pop("unique_id")  # Unique Id will be added as tag
+    stripped_run_config.pop("overwrite_sim_results")  # Irrellevant
+    stripped_run_config.pop("overwrite_visualisation")  # Irrellevant
+    stripped_run_config.pop("show_snns")  # Irrellevant
+    stripped_run_config.pop("export_snns")  # Irrellevant
+    # instead (To reduce filename length).
+    filename = str(flatten(stripped_run_config))
+
     # Remove the ' symbols.
     # Don't, that makes it more difficult to load the dict again.
+    # filename=filename.replace("'","")
+
+    # Don't, that makes it more difficult to load the dict again.
     # Remove the spaces.
-    return flatten(run_config)
+    filename = filename.replace(" ", "")
+
+    if len(filename) > 256:
+        raise Exception(f"Filename={filename} is too long:{len(filename)}")
+    return filename

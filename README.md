@@ -28,13 +28,29 @@ First generate the `.pickle` files with:
 1. The MDSA SNN networkx graph with adaptation mechanism and radiation.
    depending on the experiment configuration.
 
-You do this with command:
+### Experiment Stages
+
+The experiment is ran in multiple stages, these are:
+Input: Experiment configuration. Which consists of:
+SubInput: Run configuration within an experiment.
+Stage 1: Create networkx graphs that will be propagated.
+Stage 2: Create propagated networkx graphs (at least one per timestep).
+Stage 3: Visaualisation of the networkx graphs over time.
+Stage 4: Post-processed performance data of algorithm and adaptation
+mechanism.
+
+You can run the experiment with command (to run the experiment using the
+networkx backend):
+
+```
+python -m src --nx
+```
+
+And run tests with:
 
 ```
 python -m pytest --capture=tee-sys tests/test_get_results.py
 ```
-
-(Note this should not be a test.)
 
 Then you can run the experiment by simulating the respective graphs.
 This can be done with command:

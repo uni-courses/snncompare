@@ -1,11 +1,24 @@
 """Exports the test results to a json file."""
 import json
 import pickle  # nosec - User is trusted not to load malicious pickle files.
+from pathlib import Path
 
 import networkx as nx
 from networkx.readwrite import json_graph
 
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
+
+
+def write_dict_to_json(output_filepath: str, some_dict: dict) -> None:
+    """Writes a dict file to a .json file."""
+    print(f"output_filepath={output_filepath}")
+    with open(output_filepath, "w", encoding="utf-8") as fp:
+        json.dump(some_dict, fp, indent=4, sort_keys=True)
+
+    # Verify the file exists.
+    if not Path(output_filepath).is_file():
+        raise Exception("Error, filepath:{filepath} was not created.")
+    # TODO: verify the file content is valid.
 
 
 def export_end_results(
@@ -29,7 +42,7 @@ def export_end_results(
     sim_time,
     unique_hash,
 ):
-    """
+    """Exports the results of the run to a json file and to a pickle file.
 
     :param dead_neuron_names:
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -52,7 +65,6 @@ def export_end_results(
     :param selected_nodes:
     :param sim_time: Nr. of timesteps for which the experiment is ran.
     :param unique_hash:
-
     """
     # pylint: disable=R0913
     # pylint: disable=R0914
@@ -61,6 +73,7 @@ def export_end_results(
 
     create_root_dir_if_not_exists("results")
 
+    # Specify output filename for both json and pickle files.
     output_name = (
         f"_death_prob{neuron_death_probability}_adapt_{has_adaptation}_raddam"
         + f"{has_radiation}__seed{seed}_size{len(G)}_m{m}"
@@ -109,7 +122,7 @@ def export_results_as_json(
     selected_nodes,
     sim_time,
 ):
-    """
+    """Ensures the graphs can be exported to json format.
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param dead_neuron_names:
@@ -125,7 +138,6 @@ def export_results_as_json(
     :param seed: The value of the random seed used for this test.
     :param selected_nodes:
     :param sim_time: Nr. of timesteps for which the experiment is ran.
-
     """
     # pylint: disable=R0913
     # One could perform work to cluster the properties into different objects.
@@ -147,6 +159,9 @@ def export_results_as_json(
 
     with open(f"results/{output_name}.json", "w", encoding="utf-8") as fp:
         json.dump(test_results_dict, fp)
+
+    # TODO: verify the file exists.
+    # TODO: verify the file content is valid.
 
 
 def export_graphs_as_pickle(
@@ -200,6 +215,7 @@ def digraph_to_json(G):
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
+    TODO: remove if not used.
 
     """
     if G is not None:
