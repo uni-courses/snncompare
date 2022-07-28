@@ -17,18 +17,8 @@ module is given by:
 - *Input*: Networkx graphs specifying a spiking neural network (SNN).
 - *Output*: Runnable Lava SNNs consisting of LIF neurons and synapses.
 
-## Running Experiment
 
-Temporary instructions, will be updated after refactoring.
-First generate the `.pickle` files with:
-
-1. The original graph on which the algorithm is ran.
-1. The MDSA SNN networkx graph.
-1. The MDSA SNN networkx graph with adaptation mechanism.
-1. The MDSA SNN networkx graph with adaptation mechanism and radiation.
-   depending on the experiment configuration.
-
-### Experiment Stages
+## Experiment Stages
 
 The experiment is ran in multiple stages, these are:
 Input: Experiment configuration. Which consists of:
@@ -38,6 +28,9 @@ Stage 2: Create propagated networkx graphs (at least one per timestep).
 Stage 3: Visaualisation of the networkx graphs over time.
 Stage 4: Post-processed performance data of algorithm and adaptation
 mechanism.
+
+
+## Running Experiment
 
 You can run the experiment with command (to run the experiment using the
 networkx backend):
@@ -49,18 +42,14 @@ python -m src --nx
 And run tests with:
 
 ```
-python -m pytest --capture=tee-sys tests/test_get_results.py
+python -m pytest
 ```
 
-Then you can run the experiment by simulating the respective graphs.
-This can be done with command:
-
+Get help with:
 ```
-python -m src --pkl
+python -m src --halp
 ```
-
-This should simulate the graphs that are loaded from the `.pkl` file(s) in
-`/pickles/` and export the experiment results to `/results/...json`.
+This generates the graphs from the default experiment configurations, and outputs the graphs in json format to the `results/` directory, and outputs the graph behaviour to: `latex/Images/graphs/`
 
 ## Usage
 
