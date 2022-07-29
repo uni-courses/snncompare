@@ -315,7 +315,6 @@ def performed_stage(run_config, stage_index: int) -> bool:
     :param run_config: param stage_index:
     :param stage_index:
     """
-    print("")
     expected_filepaths = []
 
     filename = run_config_to_filename(run_config)
@@ -349,7 +348,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
-            print(f"filepath={filepath} not found")
+            print(f"filepath={filepath} not found for stage:{stage_index}")
             return False
     return True
 
@@ -364,7 +363,6 @@ def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
     :param filename:
     """
     stage_2_output_dict_filepath = relative_output_dir + filename
-    print(f"stage_2_output_dict_filepath={stage_2_output_dict_filepath}")
     with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
         stage_2_output_dict = json.load(json_file)
     return stage_2_output_dict
@@ -449,12 +447,7 @@ def plot_stage_2_graph_behaviours(
         for i, graph in enumerate(graph_list):
             # if graph_name == "rad_snn_algo_graph":
             # TODO: include check for only rad dead things.
-            print(f"i={i}")
-            print(f"graph_name={graph_name}")
-            print(f"filepath={filepath}")
-            print("Dead neurons:")
-            print_dead_neuron_names(graph)
-            print("")
+
             # TODO plot a single graph.
 
             # pylint: disable=R0913

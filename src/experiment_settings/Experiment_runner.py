@@ -4,8 +4,6 @@
 """
 
 
-from pprint import pprint
-
 from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
@@ -141,9 +139,7 @@ def experiment_config_to_run_configs(experi_config: dict):
                     ].items():
                         # TODO: verify it is of type list.
                         for rad_config in radiation_setts_list:
-                            pprint(radiation_setts_list)
                             radiation = {radiation_name: rad_config}
-                            print(f"radiation={radiation}")
 
                             for iteration in experi_config["iterations"]:
                                 for size_and_max_graph in experi_config[

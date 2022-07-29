@@ -53,8 +53,6 @@ def load_results_stage_1(run_config: dict) -> dict:
         raise Exception("Error, wrong run config was loaded.")
 
     # Verify the graph names are as expected for the graph name.
-    # stage_1_dict["graphs_dict"]
-    pprint(stage_1_dict["graphs_dict"])
     assert_graphs_are_in_dict(run_config, stage_1_dict["graphs_dict"], 1)
 
     for graph_name, some_graph in stage_1_dict["graphs_dict"].items():

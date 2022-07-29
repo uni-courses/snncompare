@@ -4,7 +4,6 @@ Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
 import copy
-from pprint import pprint
 
 import networkx as nx
 
@@ -198,7 +197,6 @@ def get_radiation_graph(snn_graph, run_config: dict, seed):
     # TODO: Check different radiation simulation times.
 
     # Apply radiation simulation.
-    pprint(run_config)
 
     for radiation_name, radiation_setting in run_config["radiation"].items():
 
