@@ -1,8 +1,10 @@
 """Verifies 2 nodes are included in the networkx graph."""
-import json
 import pickle  # nosec - User is trusted not to load malicious pickle files.
 import unittest
 
+from src.export_results.import_results.stage_1_load_input_graphs import (
+    load_json_file_into_dict,
+)
 from src.process_results.process_results import get_run_results
 
 
@@ -23,7 +25,7 @@ class Test_process_results(unittest.TestCase):
         pickle_filepath = f"tests/{filename}.pkl"
         json_filepath = f"tests/{filename}.json"
         self.load_test_pickle(pickle_filepath)
-        self.load_json_dict(json_filepath)
+        self.the_dict = load_json_file_into_dict(json_filepath)
 
         # Get last graphs of SNN graph behaviour.
         self.G_mdsa = self.G_behaviour_mdsa[-1]
@@ -55,15 +57,6 @@ class Test_process_results(unittest.TestCase):
                 # pickle files.
                 pickle_off
             )
-
-    def load_json_dict(self, json_filepath):
-        """
-
-        :param json_filepath:
-
-        """
-        with open(json_filepath, encoding="utf-8") as json_file:
-            self.the_dict = json.load(json_file)
 
     def test_identical_results_are_returned_as_equal(self):
         """TODO: verify whether results that are identical if they are loaded

@@ -31,6 +31,7 @@ from src.export_results.Output import (
 )
 from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
+from src.import_results.stage_1_load_input_graphs import load_results_stage_1
 from src.simulation.stage2_sim import sim_graphs
 
 
@@ -90,11 +91,14 @@ class Experiment_runner:
             to_run = determine_what_to_run(run_config)
             print(f"to_run={to_run}")
             if to_run["stage_1"]:
+
                 # Run first stage of experiment, get input graph.
                 stage_1_graphs: dict = get_used_graphs(run_config)
                 output_files_stage_1(experi_config, run_config, stage_1_graphs)
                 Radiation_damage(0.2)
             if to_run["stage_2"]:
+                if not to_run["stage_1"]:
+                    stage_1_graphs = load_results_stage_1(run_config)
                 # Run simulation on networkx or lava backend.
                 stage_2_graphs: dict = sim_graphs(stage_1_graphs, run_config)
                 output_files_stage_2(experi_config, run_config, stage_2_graphs)
@@ -242,7 +246,8 @@ def determine_what_to_run(run_config) -> dict:
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
-
+    print(f'to_run["stage_2"]={to_run["stage_2"]}')
+    # exit()
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not performed_stage(run_config, 3)
@@ -293,7 +298,7 @@ def example_experi_config():
     with_adaptation_with_radiation = {
         "algorithms": {
             "MDSA": {
-                "m_vals": list(range(0, 2, 1)),
+                "m_vals": list(range(2, 3, 1)),
             }
         },
         "adaptations": verify_adap_and_rad_settings(
@@ -306,7 +311,7 @@ def example_experi_config():
         "min_graph_size": 3,
         "max_graph_size": 20,
         "overwrite_sim_results": False,
-        "overwrite_visualisation": True,
+        "overwrite_visualisation": False,
         "radiations": verify_adap_and_rad_settings(
             supp_experi_setts, rad_sets.with_radiation, "radiations"
         ),

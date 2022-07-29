@@ -218,7 +218,7 @@ class Stage_1_graphs:
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs_stage_1 = graphs_stage_1
+        self.graphs_stage_1: dict = graphs_stage_1
         verify_stage_1_graphs(
             experiment_config, run_config, self.graphs_stage_1
         )
@@ -284,17 +284,17 @@ def get_extensions_dict(run_config, stage_index) -> dict:
 
     """
     if stage_index == 1:
-        return {"config_and_graphs": ".txt"}
+        return {"config_and_graphs": ".json"}
     if stage_index == 2:
         if run_config["simulator"] == "lava":
-            return {"config": ".txt", "graphs": ".pkl"}
+            return {"config": ".json", "graphs": ".png"}
 
         return {"config_and_graphs": ".txt"}
     if stage_index == 3:
         # TODO: support .eps and/or .pdf.
         return {"graphs": ".png"}
     if stage_index == 4:
-        return {"config_and_results": ".txt"}
+        return {"config_and_results": ".json"}
     raise Exception("Unsupported experiment stage.")
 
 
@@ -316,7 +316,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     :param stage_index:
     """
     print("")
-    expected_filenames = []
+    expected_filepaths = []
 
     filename = run_config_to_filename(run_config)
     relative_output_dir = f"results/stage_{stage_index}/"
@@ -324,7 +324,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     for extension in extensions:
         if stage_index in [1, 2, 4]:
 
-            expected_filenames.append(
+            expected_filepaths.append(
                 relative_output_dir + filename + extension
             )
             # TODO: append expected_filepath to run_config per stage.
@@ -342,13 +342,14 @@ def performed_stage(run_config, stage_index: int) -> bool:
             )
             for t in range(0, nr_of_simulation_steps):
                 # Generate graph filenames
-                expected_filenames.append(
+                expected_filepaths.append(
                     relative_output_dir + filename + f"t_{t}" + extension
                 )
 
     # Check if the expected output files already exist.
-    for filename in expected_filenames:
-        if not Path(relative_output_dir + filename).is_file():
+    for filepath in expected_filepaths:
+        if not Path(filepath).is_file():
+            print(f"filepath={filepath} not found")
             return False
     return True
 

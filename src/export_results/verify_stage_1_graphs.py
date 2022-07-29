@@ -12,7 +12,17 @@ Input: Experiment configuration.
 
 
 # pylint: disable=W0613
-def verify_stage_1_graphs(experiment_config, run_config, graphs):
+from typing import List
+
+from src.graph_generation.stage_1_get_input_graphs import (
+    has_adaptation,
+    has_radiation,
+)
+
+
+def verify_stage_1_graphs(
+    experiment_config: dict, run_config: dict, graphs: dict
+):
     """Verifies the generated graphs are compliant and complete for the
     specified run configuration.
 
@@ -20,8 +30,50 @@ def verify_stage_1_graphs(experiment_config, run_config, graphs):
     """
     # TODO: Verify run_config is valid "subset" of experiment config.
 
-    # Compute which graphs are expected, based on run config.
-
     # Verify the graphs that are required for the run_config are generated.
+    assert_graphs_are_in_dict(run_config, graphs, 1)
 
     # TODO: verify the properties required by the run config are in the graphs.
+
+
+def get_expected_graphs_stage_1(run_config: dict) -> List[str]:
+    """Parses the run config and returns a list with the graph names that are
+    expected at the end of stage 1."""
+
+    # TODO: make into hash
+    expected_graphs = ["input_graph", "snn_algo_graph"]
+    if has_adaptation(run_config):
+        expected_graphs.append("adapted_snn_graph")
+
+    if has_radiation(run_config):
+        expected_graphs.append("rad_snn_algo_graph")
+        expected_graphs.append("rad_adapted_snn_graph")
+    return expected_graphs
+
+
+def expected_graphs_are_in_dict(
+    run_config: dict, graphs: dict, stage: int
+) -> bool:
+    """Gets the graphs that are expected in the dict, and returns True if they
+    are found in the list of graphs."""
+
+    if stage == 1:
+        # Compute which graphs are expected, based on run config.
+        expected_graphs = get_expected_graphs_stage_1(run_config)
+    else:
+        # TODO: implement.
+        raise Exception(f"Stage {stage} not yet implemented.")
+
+    for expected_graph_name in expected_graphs:
+        if expected_graph_name not in graphs:
+            return False
+    return True
+
+
+def assert_graphs_are_in_dict(
+    run_config: dict, graphs: dict, stage: int
+) -> None:
+    """Throws error if the not all the expected graphs are in the list of
+    graphs."""
+    if not expected_graphs_are_in_dict(run_config, graphs, stage):
+        raise Exception(f"Error, graph is missing:{graphs},stage:{stage}")
