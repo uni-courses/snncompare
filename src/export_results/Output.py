@@ -89,14 +89,15 @@ def output_files_stage_1(
     :param graphs_stage_1:
     :param run_config:
     """
-    filename = run_config_to_filename(run_config)
-    output_stage_json(
-        experiment_config,
-        graphs_stage_1,
-        filename,
-        run_config,
-        1,
-    )
+    if run_config["export_snns"]:
+        filename = run_config_to_filename(run_config)
+        output_stage_json(
+            experiment_config,
+            graphs_stage_1,
+            filename,
+            run_config,
+            1,
+        )
 
 
 def output_files_stage_2(
@@ -124,27 +125,29 @@ def output_files_stage_2(
     :param run_config:
     """
 
-    # TODO: eliminate this hotfix.
-    # Remove image outputs.
-
     run_config_to_filename(run_config)
     # TODO: Ensure output file exists.
     # TODO: Verify the correct graphs is passed by checking the graph tag.
 
     # TODO: merge experiment config, run_config into single dict.
     if run_config["simulator"] == "nx":
-        # Output the json dictionary of the files.
-        filename = run_config_to_filename(run_config)
-        output_stage_json(
-            experiment_config,
-            graphs_stage_2,
-            filename,
-            run_config,
-            2,
-        )
 
-        # TODO: output graph behaviour.
-        plot_stage_2_graph_behaviours(filename, graphs_stage_2, run_config)
+        if run_config["export_snns"]:
+            # Output the json dictionary of the files.
+            filename = run_config_to_filename(run_config)
+
+            output_stage_json(
+                experiment_config,
+                graphs_stage_2,
+                filename,
+                run_config,
+                2,
+            )
+
+        # TODO: Check if plots should be generated.
+        if run_config["show_snns"]:
+            # Output graph behaviour for stage 2.
+            plot_stage_2_graph_behaviours(filename, graphs_stage_2, run_config)
 
     elif run_config["simulator"] == "lava":
         # TODO: terminate simulation.

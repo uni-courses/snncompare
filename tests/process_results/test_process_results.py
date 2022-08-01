@@ -2,7 +2,7 @@
 import pickle  # nosec - User is trusted not to load malicious pickle files.
 import unittest
 
-from src.export_results.import_results.stage_1_load_input_graphs import (
+from src.import_results.stage_1_load_input_graphs import (
     load_json_file_into_dict,
 )
 from src.process_results.process_results import get_run_results

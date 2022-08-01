@@ -97,15 +97,13 @@ class Experiment_runner:
             if to_run["stage_2"]:
                 if not to_run["stage_1"]:
                     stage_1_graphs = load_results_stage_1(run_config)
+
                 # Run simulation on networkx or lava backend.
                 stage_2_graphs: dict = sim_graphs(stage_1_graphs, run_config)
-                output_files_stage_2(experi_config, run_config, stage_2_graphs)
 
             if to_run["stage_3"]:
-                # TODO: Generate output graph plots of propagated graphs.
-
-                # TODO: Generate output json dicts of propagated graphs.
-                pass
+                # Generate output json dicts (and plots) of propagated graphs.
+                output_files_stage_2(experi_config, run_config, stage_2_graphs)
             if to_run["stage_4"]:
                 # TODO: compute results per graph type and export performance
                 # to json dict.
