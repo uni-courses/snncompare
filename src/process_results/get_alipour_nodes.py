@@ -1,6 +1,8 @@
 """Computes which nodes are selected by the MDSA algorithm presented by Alipour
 et al."""
 
+import networkx as nx
+
 from src.helper import (
     compute_mark,
     compute_marks_for_m_larger_than_one,
@@ -9,8 +11,8 @@ from src.helper import (
 
 
 def get_alipour_nodes(
-    G,
-    m,
+    G: nx.Graph,
+    m_val: int,
     rand_props,
 ):
     """
@@ -21,11 +23,11 @@ def get_alipour_nodes(
     :param rand_props:
 
     """
-    delta = rand_props.delta
-    inhibition = rand_props.inhibition
-    rand_ceil = rand_props.rand_ceil
+    delta = rand_props["delta"]
+    inhibition = rand_props["inhibition"]
+    rand_ceil = rand_props["rand_ceil"]
     # TODO: resolve this naming discrepancy.
-    rand_nrs = rand_props.initial_rand_current
+    rand_nrs = rand_props["initial_rand_current"]
 
     # Reverse engineer uninhibited spread rand nrs:
     # TODO: read out from rand_props object.
@@ -44,15 +46,20 @@ def get_alipour_nodes(
         G,
         inhibition,
         None,
-        m,
+        m_val,
         None,
         None,
         rand_ceil,
         export=False,
         show=False,
     )
-    counter_marks = []
-    for node in G.nodes:
-        counter_marks.append(G.nodes[node]["countermarks"])
-        print(f'node:{node}, ali-mark:{G.nodes[node]["countermarks"]}')
+    counter_marks = {}
+    for node_index in G.nodes:
+        counter_marks[f"counter_{node_index}_{m_val}"] = G.nodes[node_index][
+            "countermarks"
+        ]
+        print(
+            f"node_index:{node_index}, ali-mark:"
+            + f'{G.nodes[node_index]["countermarks"]}'
+        )
     return counter_marks

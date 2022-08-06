@@ -9,9 +9,6 @@ from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
     example_experi_config,
 )
-from src.export_results.load_pickles_get_results import (
-    run_experiment_on_pickles,
-)
 from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
 from src.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
@@ -24,7 +21,7 @@ from .arg_parser import parse_cli_args
 # Import code from this project.
 
 experi_config = example_experi_config()
-show_snns = True
+show_snns = False
 export_snns = True
 Experiment_runner(experi_config, show_snns=show_snns, export_snns=export_snns)
 
@@ -49,5 +46,3 @@ elif args.run_on_lava:
         print(f'node={node},u={G.nodes[node]["lava_LIF"].u.get()}')
     # Terminate Loihi simulation.
     G.nodes[starter_node_name]["lava_LIF"].stop()
-elif args.run_on_pickles:
-    run_experiment_on_pickles()

@@ -24,12 +24,13 @@ from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import (
     create_results_directories,
     output_files_stage_1,
-    output_files_stage_2,
+    output_stage_files,
     performed_stage,
 )
 from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.stage_1_load_input_graphs import load_results_stage_1
+from src.process_results.process_results import export_results, get_results
 from src.simulation.stage2_sim import sim_graphs
 
 
@@ -103,11 +104,20 @@ class Experiment_runner:
 
             if to_run["stage_3"]:
                 # Generate output json dicts (and plots) of propagated graphs.
-                output_files_stage_2(experi_config, run_config, stage_2_graphs)
+                print("Generating plots for stage 3.")
+                # TODO: pass the stage index and re-use it to export the
+                # stage 4 graphs
+                output_stage_files(
+                    experi_config, run_config, stage_2_graphs, 2
+                )
+                print('"Done generating output plots for stage 3.')
             if to_run["stage_4"]:
                 # TODO: compute results per graph type and export performance
                 # to json dict.
-                pass
+                results = get_results(run_config, stage_2_graphs)
+                export_results(
+                    experi_config, results, run_config, stage_2_graphs
+                )
 
 
 def experiment_config_to_run_configs(experi_config: dict):

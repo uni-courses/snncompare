@@ -588,18 +588,6 @@ def file_exists(string):
     return my_file.is_file()
 
 
-def get_counter_neurons(G):
-    """Returns a list with the counter neuron node names.
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    """
-    counter_neurons = []
-    for nodename in G.nodes:
-        if nodename[:7] == "counter":
-            counter_neurons.append(nodename)
-    return counter_neurons
-
-
 def compute_marks_for_m_larger_than_one(
     delta,
     G,

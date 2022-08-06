@@ -100,8 +100,11 @@ def output_files_stage_1(
         )
 
 
-def output_files_stage_2(
-    experiment_config: dict, run_config: dict, graphs_stage_2: dict
+def output_stage_files(
+    experiment_config: dict,
+    run_config: dict,
+    graphs_stage_2: dict,
+    stage_index: int,
 ):
     """Merges the experiment configuration dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
@@ -141,12 +144,13 @@ def output_files_stage_2(
                 graphs_stage_2,
                 filename,
                 run_config,
-                2,
+                stage_index,
             )
 
-        # TODO: Check if plots should be generated.
+        # TODO: Check if plots are already generated and if they must be
+        # overwritten.
         if run_config["show_snns"]:
-            # Output graph behaviour for stage 2.
+            # Output graph behaviour for stage stage_index.
             plot_stage_2_graph_behaviours(filename, graphs_stage_2, run_config)
 
     elif run_config["simulator"] == "lava":
@@ -396,9 +400,15 @@ def merge_experiment_and_run_config_with_graphs(
             graphs_dict[graph_name] = digraph_to_json(graph_container)
         elif stage_index == 2:
             graphs_per_type = []
-
-            for graph in graph_container:
-                graphs_per_type.append(digraph_to_json(graph))
+            if isinstance(graph_container, (nx.DiGraph, nx.Graph)):
+                graphs_per_type.append(digraph_to_json(graph_container))
+            elif isinstance(graph_container, List):
+                for graph in graph_container:
+                    graphs_per_type.append(digraph_to_json(graph))
+            else:
+                raise Exception(
+                    f"Error, unsupported type:{type(graph_container)}"
+                )
             graphs_dict[graph_name] = graphs_per_type
 
     output_dict = {

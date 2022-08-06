@@ -119,7 +119,6 @@ def plot_coordinated_graph(
     color_map, spiking_edges = set_nx_node_colours(G)
     edge_color_map = set_edge_colours(G, spiking_edges)
     # Width=edge width.
-    print(f"color_map={color_map}")
     nx.draw(
         G,
         nx.get_node_attributes(G, "pos"),
@@ -159,7 +158,6 @@ def plot_coordinated_graph(
         plt.show()
 
     plot_export = Plot_to_tex()
-    print(f"export to:{filename}")
     plot_export.export_plot(plt, filename)
     # plt.savefig()
     plt.clf()

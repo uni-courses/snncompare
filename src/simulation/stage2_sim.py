@@ -18,17 +18,16 @@ from src.simulation.verify_graph_is_snn import (
 
 
 def sim_graphs(
-    snn_graphs: dict,
+    stage_1_graphs: dict,
     run_config: dict,
 ) -> dict:
     """Simulates the snn graphs and makes a deep copy for each timestep.
 
-    :param snn_graphs: dict:
+    :param stage_1_graphs: dict:
     :param run_config: dict:
     """
-    print(run_config)
-    stage_2_graphs = {}
-    for graph_name, snn_graph in snn_graphs.items():
+    stage_2_graphs = {"input_graph": stage_1_graphs["input_graph"]}
+    for graph_name, snn_graph in stage_1_graphs.items():
         if graph_name != "input_graph":
 
             # TODO: add lava neurons if run config demands lava.
@@ -68,7 +67,6 @@ def some_conversion(G: nx.DiGraph):
     """
     # Assert each edge has a weight.
     for edge in G.edges:
-
         assert_synaptic_edgeweight_type_is_correct(G, edge)
 
     # Assert no duplicate edges exist.
