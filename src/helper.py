@@ -7,6 +7,7 @@ import time
 import traceback
 from datetime import datetime
 from pathlib import Path
+from typing import List
 
 import networkx as nx
 import pylab as plt
@@ -587,18 +588,6 @@ def file_exists(string):
     return my_file.is_file()
 
 
-def get_counter_neurons(G):
-    """Returns a list with the counter neuron node names.
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    """
-    counter_neurons = []
-    for nodename in G.nodes:
-        if nodename[:7] == "counter":
-            counter_neurons.append(nodename)
-    return counter_neurons
-
-
 def compute_marks_for_m_larger_than_one(
     delta,
     G,
@@ -665,3 +654,35 @@ def set_node_default_values(
         + G.nodes[node]["random_number"]
     )
     G.nodes[node]["inhibited_weight"] = G.nodes[node]["weight"] - inhibition
+
+
+def is_identical(
+    original: dict, other: dict, excluded_keys: List[str]
+) -> bool:
+    """Compares dictionaries whether the left dict contains the same keys, as
+    the right keys, for each key verifies the values are identical.
+
+    The keys and values in excluded_keys do not need to be similar.
+    TODO: specify whether the keys need to be at least in the dict or not.
+    """
+
+    # Check whether all values in original dict are in the excluded keys
+    for key, val in original.items():
+        if key not in other.keys():
+            if key not in excluded_keys:
+                print(f"key={key} missing.")
+                return False
+
+        # Check if the values are identical for the given key.
+        else:
+            if isinstance(other[key], type(original[key])):
+                if other[key] != original[key]:
+                    if key not in excluded_keys:
+                        print(
+                            f"key={key} original val:{original[key]}, other "
+                            + f"val:{other[key]}, actual val:{val}."
+                        )
+                        return False
+            else:
+                return False
+    return True

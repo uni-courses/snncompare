@@ -4,8 +4,6 @@
 """
 
 
-from pprint import pprint
-
 from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
@@ -26,11 +24,13 @@ from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import (
     create_results_directories,
     output_files_stage_1,
-    output_files_stage_2,
+    output_stage_files,
     performed_stage,
 )
 from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
+from src.import_results.stage_1_load_input_graphs import load_results_stage_1
+from src.process_results.process_results import export_results, get_results
 from src.simulation.stage2_sim import sim_graphs
 
 
@@ -90,24 +90,34 @@ class Experiment_runner:
             to_run = determine_what_to_run(run_config)
             print(f"to_run={to_run}")
             if to_run["stage_1"]:
+
                 # Run first stage of experiment, get input graph.
                 stage_1_graphs: dict = get_used_graphs(run_config)
                 output_files_stage_1(experi_config, run_config, stage_1_graphs)
                 Radiation_damage(0.2)
             if to_run["stage_2"]:
+                if not to_run["stage_1"]:
+                    stage_1_graphs = load_results_stage_1(run_config)
+
                 # Run simulation on networkx or lava backend.
                 stage_2_graphs: dict = sim_graphs(stage_1_graphs, run_config)
-                output_files_stage_2(experi_config, run_config, stage_2_graphs)
 
             if to_run["stage_3"]:
-                # TODO: Generate output graph plots of propagated graphs.
-
-                # TODO: Generate output json dicts of propagated graphs.
-                pass
+                # Generate output json dicts (and plots) of propagated graphs.
+                print("Generating plots for stage 3.")
+                # TODO: pass the stage index and re-use it to export the
+                # stage 4 graphs
+                output_stage_files(
+                    experi_config, run_config, stage_2_graphs, 2
+                )
+                print('"Done generating output plots for stage 3.')
             if to_run["stage_4"]:
                 # TODO: compute results per graph type and export performance
                 # to json dict.
-                pass
+                results = get_results(run_config, stage_2_graphs)
+                export_results(
+                    experi_config, results, run_config, stage_2_graphs
+                )
 
 
 def experiment_config_to_run_configs(experi_config: dict):
@@ -137,9 +147,7 @@ def experiment_config_to_run_configs(experi_config: dict):
                     ].items():
                         # TODO: verify it is of type list.
                         for rad_config in radiation_setts_list:
-                            pprint(radiation_setts_list)
                             radiation = {radiation_name: rad_config}
-                            print(f"radiation={radiation}")
 
                             for iteration in experi_config["iterations"]:
                                 for size_and_max_graph in experi_config[
@@ -242,7 +250,8 @@ def determine_what_to_run(run_config) -> dict:
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
-
+    print(f'to_run["stage_2"]={to_run["stage_2"]}')
+    # exit()
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not performed_stage(run_config, 3)
@@ -293,7 +302,7 @@ def example_experi_config():
     with_adaptation_with_radiation = {
         "algorithms": {
             "MDSA": {
-                "m_vals": list(range(0, 2, 1)),
+                "m_vals": list(range(2, 3, 1)),
             }
         },
         "adaptations": verify_adap_and_rad_settings(
@@ -306,7 +315,7 @@ def example_experi_config():
         "min_graph_size": 3,
         "max_graph_size": 20,
         "overwrite_sim_results": False,
-        "overwrite_visualisation": True,
+        "overwrite_visualisation": False,
         "radiations": verify_adap_and_rad_settings(
             supp_experi_setts, rad_sets.with_radiation, "radiations"
         ),
