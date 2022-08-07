@@ -56,6 +56,7 @@ def export_results(
                 stage_4_graphs[graph_name], results["rad_snn_algo_graph"]
             )
         elif graph_name == "rad_adapted_snn_graph":
+
             add_result_to_last_graph(
                 stage_4_graphs[graph_name], results["rad_adapted_snn_graph"]
             )
@@ -75,7 +76,7 @@ def add_result_to_last_graph(snn_graphs, result_per_type: dict):
     if isinstance(snn_graphs, nx.DiGraph):
         snn_graphs["result"] = result_per_type
     elif isinstance(snn_graphs, List):
-        snn_graphs[-1]["result"] = result_per_type
+        snn_graphs[-1].graph["result"] = result_per_type
     else:
         raise Exception("Error, unsupported snn graph type.")
 
