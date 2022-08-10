@@ -30,7 +30,7 @@ def load_results_stage_1(run_config: dict) -> dict:
 
     # Get the json filename.
     filename = run_config_to_filename(run_config)
-    relative_output_dir = f"results/stage_{stage_index}/"
+    relative_output_dir = "results/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
         if extension == ".json":

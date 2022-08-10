@@ -23,10 +23,6 @@ from src.export_results.helper import run_config_to_filename
 from src.export_results.load_pickles_get_results import (
     get_desired_properties_for_graph_printing,
 )
-from src.export_results.plot_graphs import (
-    create_root_dir_if_not_exists,
-    create_target_dir_if_not_exists,
-)
 from src.export_results.verify_stage_1_graphs import verify_stage_1_graphs
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
 from src.export_results.verify_stage_3_graphs import verify_stage_3_graphs
@@ -56,19 +52,6 @@ with_adaptation_with_radiation = {
     "seed": 5,
     "simulator": "lava",
 }
-
-
-def create_results_directories():
-    """Results directory structure is: <repository root_dir>/results/stage_1.
-
-    <repository root_dir>/results/stage_2 <repository
-    root_dir>/results/stage_3 <repository root_dir>/results/stage_4
-    """
-    create_root_dir_if_not_exists("results")
-    for stage_index in range(1, 5):  # Indices 1 to 4
-        create_target_dir_if_not_exists("results/", f"stage_{stage_index}")
-
-    # TODO: assert directory: <repo root dir>/results/stage_1" exists
 
 
 def output_files_stage_1(
@@ -325,7 +308,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     expected_filepaths = []
 
     filename = run_config_to_filename(run_config)
-    relative_output_dir = f"results/stage_{stage_index}/"
+    relative_output_dir = "results/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
         if stage_index in [1, 2, 4]:
@@ -433,8 +416,9 @@ def output_stage_json(
         experiment_config, run_config, graphs_of_stage, stage_index
     )
 
+    print(f"filename={filename}")
     # TODO: Optional: ensure output files exists.
-    output_filepath = f"results/stage_{stage_index}/{filename}.json"
+    output_filepath = f"results/{filename}.json"
     write_dict_to_json(output_filepath, jsons.dump(output_dict))
 
     # TODO: Ensure output file exists.
