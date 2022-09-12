@@ -52,12 +52,16 @@ def assert_synaptic_edgeweight_type_is_correct(
 
         # TODO: determine why a float is expected when the edge weights are
         # specified as ints.
+        # TODO: make sure just 1 datatype, float is supported and used.
         # if not isinstance(G.edges[edge]["weight"], float):
-        if not isinstance(G.edges[edge]["weight"], int):
+        if not isinstance(G.edges[edge]["weight"], float) and not isinstance(
+            G.edges[edge]["weight"], int
+        ):
             raise Exception(
                 f"Weight of edge {edge} is not a"
                 + " float. It is"
-                + f'a: {G.edges[edge]["weight"]}'
+                + f': {G.edges[edge]["weight"]} of type:'
+                f'{type(G.edges[edge]["weight"])}'
             )
     else:
         raise Exception(

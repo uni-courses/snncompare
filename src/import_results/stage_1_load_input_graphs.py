@@ -38,6 +38,15 @@ def load_results_stage_1(run_config: dict) -> dict:
 
     # Load the json dictionary of results.
     stage_1_dict: dict = load_json_file_into_dict(json_filepath)
+    if "graphs_dict" not in stage_1_dict:
+        raise Exception(
+            "Error, the graphs dict key was not in the stage_1_dict:"
+            + f"{stage_1_dict}"
+        )
+    if stage_1_dict["graphs_dict"] == {}:
+        raise Exception("Error, the graphs dict was an empty dict.")
+    pprint(stage_1_dict)
+
     # Split the dictionary into three separate dicts.
     # print("stage_1_dict")
     # pprint(stage_1_dict)
@@ -48,7 +57,9 @@ def load_results_stage_1(run_config: dict) -> dict:
     # TODO: Verify passing the same dict to get hash with popped unique id
     # returns the same id.
     if not is_identical(run_config, loaded_run_config, ["unique_id"]):
+        print("run_config")
         pprint(run_config)
+        print("Yet loaded_run_config is:")
         pprint(loaded_run_config)
         raise Exception("Error, wrong run config was loaded.")
 

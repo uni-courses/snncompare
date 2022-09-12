@@ -55,7 +55,7 @@ with_adaptation_with_radiation = {
 
 
 def output_files_stage_1(
-    experiment_config: dict, run_config: dict, graphs_stage_1: dict
+    experiment_config: dict, run_config: dict, stage_1_graphs: dict
 ):
     """Merges the experiment configuration dict, run configuration dict and
     graphs into a single dict. This method assumes only the graphs that are to
@@ -69,14 +69,14 @@ def output_files_stage_1(
     runs to manually inspect the results.
 
     :param experiment_config: param run_config:
-    :param graphs_stage_1:
+    :param stage_1_graphs:
     :param run_config:
     """
     if run_config["export_snns"]:
         filename = run_config_to_filename(run_config)
         output_stage_json(
             experiment_config,
-            graphs_stage_1,
+            stage_1_graphs,
             filename,
             run_config,
             1,
@@ -204,13 +204,13 @@ class Stage_1_graphs:
     """Stage 1: The networkx graphs that will be propagated."""
 
     def __init__(
-        self, experiment_config: dict, graphs_stage_1: dict, run_config: dict
+        self, experiment_config: dict, stage_1_graphs: dict, run_config: dict
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.graphs_stage_1: dict = graphs_stage_1
+        self.stage_1_graphs: dict = stage_1_graphs
         verify_stage_1_graphs(
-            experiment_config, run_config, self.graphs_stage_1
+            experiment_config, run_config, self.stage_1_graphs
         )
         # G_original
         # G_SNN_input
@@ -379,6 +379,8 @@ def merge_experiment_and_run_config_with_graphs(
     # Convert incoming graphs to dictionary.
     graphs_dict = {}
     for graph_name, graph_container in graphs.items():
+        print(f"graph_name={graph_name}")
+        print(f"stage_index={stage_index}")
         if stage_index == 1:
             graphs_dict[graph_name] = digraph_to_json(graph_container)
         elif stage_index == 2:

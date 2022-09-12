@@ -138,6 +138,14 @@ def delete_files_in_folder(folder):
     os.makedirs(folder, exist_ok=False)
 
 
+def delete_file_if_exists(filepath):
+    """Deletes a file if it exists."""
+    try:
+        os.remove(filepath)
+    except OSError:
+        pass
+
+
 def export_get_degree_graph(
     has_adaptation,
     has_radiation,
