@@ -1,6 +1,5 @@
 """Takes an input graph and generates an SNN that solves the MDSA algorithm by
 Alipour et al."""
-from pprint import pprint
 from typing import List
 
 import networkx as nx
@@ -22,7 +21,6 @@ def specify_mdsa_network_properties(
     input_graph.graph["alg_props"] = Alipour_properties(
         input_graph, seed
     ).__dict__
-    pprint(input_graph.graph["alg_props"])
 
     # TODO: Rename all rand_nrs usages.
     rand_nrs = input_graph.graph["alg_props"]["initial_rand_current"]

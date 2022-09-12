@@ -250,8 +250,6 @@ def determine_what_to_run(run_config) -> dict:
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
-    print(f'to_run["stage_2"]={to_run["stage_2"]}')
-    # exit()
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not performed_stage(run_config, 3)

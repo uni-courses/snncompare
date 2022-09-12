@@ -418,7 +418,6 @@ def output_stage_json(
         experiment_config, run_config, graphs_of_stage, stage_index
     )
 
-    print(f"filename={filename}")
     # TODO: Optional: ensure output files exists.
     output_filepath = f"results/{filename}.json"
     write_dict_to_json(output_filepath, jsons.dump(output_dict))
@@ -464,6 +463,7 @@ def plot_stage_2_graph_behaviours(
 
 def print_dead_neuron_names(some_graph: nx.DiGraph):
     """Prints the dead neuron names."""
+    print("Dead neuron names:")
     for nodename in some_graph:
         if "rad_death" in some_graph.nodes[nodename].keys():
             # if nodename in dead_neuron_names:

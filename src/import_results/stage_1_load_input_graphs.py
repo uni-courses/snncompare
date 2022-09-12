@@ -45,11 +45,10 @@ def load_results_stage_1(run_config: dict) -> dict:
         )
     if stage_1_dict["graphs_dict"] == {}:
         raise Exception("Error, the graphs dict was an empty dict.")
+    print("stage_1_dict")
     pprint(stage_1_dict)
 
     # Split the dictionary into three separate dicts.
-    # print("stage_1_dict")
-    # pprint(stage_1_dict)
     loaded_run_config = stage_1_dict["run_config"]
 
     # Verify the run_dict is valid.

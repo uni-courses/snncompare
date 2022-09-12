@@ -4,7 +4,6 @@ Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
 import copy
-from pprint import pprint
 
 import networkx as nx
 
@@ -62,8 +61,6 @@ def get_input_graph(run_config: dict) -> nx.DiGraph:
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
-    print("run_config")
-    pprint(run_config)
     input_graph = get_the_input_graphs(run_config)
 
     # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
