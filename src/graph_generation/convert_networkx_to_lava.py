@@ -68,7 +68,9 @@ def convert_networkx_to_lava_snn(
             lhs_neuron,
             neurons,
             lhs_nodename,
-        ) = create_neuron_from_node(G, converted_nodes, neurons, lhs_nodename)
+        ) = create_neuron_from_node(
+            G, converted_nodes, neurons, lhs_nodename, t=0
+        )
     else:
         lhs_neuron = get_neuron_belonging_to_node_from_list(
             neurons, lhs_nodename, converted_nodes
@@ -90,7 +92,7 @@ def convert_networkx_to_lava_snn(
                     neurons,
                     _,
                 ) = create_neuron_from_node(
-                    G, converted_nodes, neurons, neighbour
+                    G, converted_nodes, neurons, neighbour, t=0
                 )
             else:
                 # pylint: disable=R0801
@@ -165,8 +167,9 @@ def node_is_converted(converted_nodes, nodename):
     return nodename in converted_nodes
 
 
+# pylint: disable=R0913
 def create_neuron_from_node(
-    G, converted_nodes, neurons, nodename, old_code=False
+    G, converted_nodes, neurons, nodename, old_code=False, t=0
 ):
     """Creates a lava LIF neuron object based on the settings of a node
     specified in the SNN graph setting.
@@ -191,7 +194,7 @@ def create_neuron_from_node(
     if old_code:
         bias, du, dv, vth = get_neuron_properties_old(G, nodename)
     else:
-        bias, du, dv, vth = get_neuron_properties(G, nodename)
+        bias, du, dv, vth = get_neuron_properties(G, nodename, t)
 
     neuron = LIF(bias=bias, du=du, dv=dv, vth=vth)
 
@@ -218,7 +221,7 @@ def add_recurrent_edge(G, nodename, neuron):
         create_recurrent_synapse(neuron, weight)
 
 
-def get_neuron_properties(G, nodename):
+def get_neuron_properties(G: nx.DiGraph, nodename: str, t: int):
     """Returns the bias,du,dv and vth of a node of the MDSA SNN graph.
 
     :param G: The original graph on which the MDSA algorithm is ran. Networkx
@@ -226,10 +229,10 @@ def get_neuron_properties(G, nodename):
     :param nodename: Node of the name of a networkx graph. Name of the node of
      the networkx graph.
     """
-    bias = G.nodes[nodename]["nx_LIF"].bias.get()
-    du = G.nodes[nodename]["nx_LIF"].du.get()
-    dv = G.nodes[nodename]["nx_LIF"].dv.get()
-    vth = G.nodes[nodename]["nx_LIF"].vth.get()
+    bias = G.nodes[nodename]["nx_LIF"][t].bias.get()
+    du = G.nodes[nodename]["nx_LIF"][t].du.get()
+    dv = G.nodes[nodename]["nx_LIF"][t].dv.get()
+    vth = G.nodes[nodename]["nx_LIF"][t].vth.get()
     return bias, du, dv, vth
 
 

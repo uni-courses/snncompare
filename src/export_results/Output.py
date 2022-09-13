@@ -538,6 +538,11 @@ def plot_stage_2_graph_behaviours(
     # Loop over the graph types
 
     for graph_name, graph_list in graphs.items():
+        print(f"type(graph_list)={type(graph_list)}")
+        if isinstance(graph_list, list):
+            raise Exception("Error, expected single graph, iso graph list.")
+        # TODO: change to loop over neurons per timestep, instead of
+        # over graphs.
         for i, graph in enumerate(graph_list):
             # if graph_name == "rad_snn_algo_graph":
             # TODO: include check for only rad dead things.
@@ -549,6 +554,7 @@ def plot_stage_2_graph_behaviours(
             plot_coordinated_graph(
                 graph,
                 desired_props,
+                i,
                 False,
                 f"{graph_name}_{filepath}_{i}",
                 title=create_custom_plot_titles(

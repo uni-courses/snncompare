@@ -53,14 +53,14 @@ def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
     )
 
     # Create networkx neuron that simulates LIF neuron from lava.
-    graph.nodes[0]["nx_LIF"] = LIF_neuron(
-        name=0, bias=3.0, du=0.0, dv=0.0, vth=2.0
-    )
+    graph.nodes[0]["nx_LIF"] = [
+        LIF_neuron(name=0, bias=3.0, du=0.0, dv=0.0, vth=2.0)
+    ]
 
     # Create networkx neuron that simulates LIF neuron from lava.
-    graph.nodes[1]["nx_LIF"] = LIF_neuron(
-        name=1, bias=0.0, du=0.0, dv=0.0, vth=10.0
-    )
+    graph.nodes[1]["nx_LIF"] = [
+        LIF_neuron(name=1, bias=0.0, du=0.0, dv=0.0, vth=10.0)
+    ]
     return graph
 
 
@@ -197,13 +197,15 @@ def set_rand_neuron_properties(
 
     # Create a LIF neuron object.
     for node in G.nodes:
-        G.nodes[node]["nx_LIF"] = LIF_neuron(
-            name=node,
-            bias=biases[node],
-            du=dus[node],
-            dv=dvs[node],
-            vth=v_thresholds[node],
-        )
+        G.nodes[node]["nx_LIF"] = [
+            LIF_neuron(
+                name=node,
+                bias=biases[node],
+                du=dus[node],
+                dv=dvs[node],
+                vth=v_thresholds[node],
+            )
+        ]
 
 
 def get_list_with_rand_ints_in_range(min_val, max_val, length, seed):

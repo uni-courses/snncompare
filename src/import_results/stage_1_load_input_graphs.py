@@ -73,7 +73,6 @@ def load_results_stage_1(run_config: dict) -> dict:
         "stage_1"
     ].items():
         print(f"graph_name={graph_name}")
-        print(f"some_graph={some_graph}")
         print(f"some_graph={type(some_graph)}")
         stage_1_graphs[graph_name] = json_to_digraph(some_graph)
     return stage_1_graphs

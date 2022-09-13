@@ -80,20 +80,20 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                 assert_no_duplicate_edges_exist(G)
 
                 # Assert all neuron properties are specified.
-                verify_networkx_snn_spec(G)
+                verify_networkx_snn_spec(G, t=0)
 
                 # Generate networkx network.
-                add_nx_neurons_to_networkx_graph(G)
+                add_nx_neurons_to_networkx_graph(G, t=0)
 
                 # Generate lava network.
-                add_lava_neurons_to_networkx_graph(G)
+                add_lava_neurons_to_networkx_graph(G, t=0)
 
                 # Verify the simulations produce identical static
                 # neuron properties.
                 print("")
-                compare_static_snn_properties(self, G)
+                compare_static_snn_properties(self, G, t=0)
 
-                print_neuron_properties_per_graph(G, True)
+                print_neuron_properties_per_graph(G, True, t=0)
 
                 plot_circular_graph(
                     -1,
@@ -106,14 +106,14 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                 self, G, starter_neuron, sim_duration=20
             )
 
-    def compare_dynamic_snn_properties(self, G):
+    def compare_dynamic_snn_properties(self, G, t):
         """Performs comparison of static neuron properties at each timestep.
 
         :param G: The original graph on which the MDSA algorithm is ran.
         """
         for node in G.nodes:
             lava_neuron = G.nodes[node]["lava_LIF"]
-            nx_neuron = G.nodes[node]["nx_LIF"]
+            nx_neuron = G.nodes[node]["nx_LIF"][t]
 
             # Assert u is equal.
             self.assertEqual(lava_neuron.u.get(), nx_neuron.u.get())
@@ -135,22 +135,22 @@ def run_simulation_for_t_steps(
         simulate_snn_on_lava(G, starter_neuron, 1)
 
         print(f"After t={t+1} simulation steps.")
-        print_neuron_properties_per_graph(G, False)
+        print_neuron_properties_per_graph(G, False, t)
         # Verify dynamic neuron properties.
-        test_object.compare_dynamic_snn_properties(G)
+        test_object.compare_dynamic_snn_properties(G, t)
 
     # Terminate Loihi simulation.
     G.nodes[starter_neuron]["lava_LIF"].stop()
 
 
-def compare_static_snn_properties(test_object, G):
+def compare_static_snn_properties(test_object, G, t=0):
     """Performs comparison of static neuron properties at each timestep.
 
     :param G: The original graph on which the MDSA algorithm is ran.
     """
     for node in G.nodes:
         lava_neuron = G.nodes[node]["lava_LIF"]
-        nx_neuron = G.nodes[node]["nx_LIF"]
+        nx_neuron = G.nodes[node]["nx_LIF"][t]
 
         # Assert bias is equal.
         test_object.assertEqual(lava_neuron.bias.get(), nx_neuron.bias.get())

@@ -71,6 +71,7 @@ def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
         plot_coordinated_graph(
             G_behaviour[t],
             desired_properties,
+            t,
             False,
             filename=f"{output_name}_t={t}",
         )
@@ -83,14 +84,16 @@ def old_graph_to_new_graph_properties(G):
 
     """
     for nodename in G.nodes:
-        G.nodes[nodename]["nx_LIF"] = LIF_neuron(
-            name=nodename,
-            bias=float(G.nodes[nodename]["bias"]),
-            du=float(G.nodes[nodename]["du"]),
-            dv=float(G.nodes[nodename]["dv"]),
-            vth=float(G.nodes[nodename]["vth"]),
-        )
-    verify_networkx_snn_spec(G)
+        G.nodes[nodename]["nx_LIF"] = [
+            LIF_neuron(
+                name=nodename,
+                bias=float(G.nodes[nodename]["bias"]),
+                du=float(G.nodes[nodename]["du"]),
+                dv=float(G.nodes[nodename]["dv"]),
+                vth=float(G.nodes[nodename]["vth"]),
+            )
+        ]
+    verify_networkx_snn_spec(G, t=0)
 
 
 def simulate_graph(G, sim_time):

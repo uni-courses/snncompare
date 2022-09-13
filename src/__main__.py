@@ -28,7 +28,6 @@ Experiment_runner(experi_config, show_snns=show_snns, export_snns=export_snns)
 # Parse command line interface arguments to determine what this script does.
 args = parse_cli_args()
 
-
 # Get a standard graph for illustratory purposes.
 G = get_networkx_graph_of_2_neurons()
 
@@ -38,7 +37,7 @@ if args.run_on_networkx:
     run_snn_on_networkx(G, 2)
 elif args.run_on_lava:
     # Convert the networkx specification to lava SNN.
-    add_lava_neurons_to_networkx_graph(G)
+    add_lava_neurons_to_networkx_graph(G, t=0)
     starter_node_name = 0
     simulate_snn_on_lava(G, starter_node_name, 2)
 
