@@ -8,7 +8,6 @@ respective SNN graph.
 """
 
 import copy
-from typing import List
 
 import networkx as nx
 
@@ -74,11 +73,14 @@ def add_result_to_last_graph(snn_graphs, result_per_type: dict):
     list.
     """
     if isinstance(snn_graphs, nx.DiGraph):
-        snn_graphs["result"] = result_per_type
-    elif isinstance(snn_graphs, List):
-        snn_graphs[-1].graph["result"] = result_per_type
+        snn_graphs.graph["result"] = result_per_type
+    # elif isinstance(snn_graphs, List):
+    #    raise Exception("Unexpected snn graphs type: list.")
+    #    snn_graphs[-1].graph["result"] = result_per_type
     else:
-        raise Exception("Error, unsupported snn graph type.")
+        raise Exception(
+            "Error, unsupported snn graph type:" + f"{type(snn_graphs)}"
+        )
 
 
 # def query_results(graph_type: str, passed: bool, stage_4_graphs: dict):

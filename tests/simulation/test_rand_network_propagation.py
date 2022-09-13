@@ -93,20 +93,20 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             assert_no_duplicate_edges_exist(G)
 
                             # Assert all neuron properties are specified.
-                            verify_networkx_snn_spec(G)
+                            verify_networkx_snn_spec(G, t=0)
 
                             # Generate networkx network.
-                            add_nx_neurons_to_networkx_graph(G)
+                            add_nx_neurons_to_networkx_graph(G, t=0)
 
                             # Generate lava network.
-                            add_lava_neurons_to_networkx_graph(G)
+                            add_lava_neurons_to_networkx_graph(G, t=0)
 
                             # Verify the simulations produce identical static
                             # neuron properties.
                             print("")
                             compare_static_snn_properties(self, G)
 
-                            print_neuron_properties_per_graph(G, True)
+                            print_neuron_properties_per_graph(G, True, t=0)
 
                             # TODO: determine why you can't make a deep copy
                             # of this graph. Probably because it runs Lava
@@ -115,14 +115,14 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             #    self, G, starter_neuron, sim_duration=20
                             # )
 
-    def compare_dynamic_snn_properties(self, G):
+    def compare_dynamic_snn_properties(self, G, t):
         """Performs comparison of static neuron properties at each timestep.
 
         :param G: The original graph on which the MDSA algorithm is ran.
         """
         for node in G.nodes:
             lava_neuron = G.nodes[node]["lava_LIF"]
-            nx_neuron = G.nodes[node]["nx_LIF"]
+            nx_neuron = G.nodes[node]["nx_LIF"][t]
 
             # Assert u is equal.
             self.assertEqual(lava_neuron.u.get(), nx_neuron.u.get())

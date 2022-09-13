@@ -9,7 +9,6 @@ and the SNN match.
 These results are returned in the form of a dict.
 """
 from pprint import pprint
-from typing import List
 
 import networkx as nx
 
@@ -30,17 +29,21 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
     )
 
     # Compute SNN results
-    for graph_name, graph in stage_2_graphs.items():
-        if isinstance(graph, List):
-            latest_snn_graph = graph[-1]
-        print(f"graph_name={graph_name}")
+    for graph_name, snn_graph in stage_2_graphs.items():
+        # Verify the SNN graphs have completed simulation stage 2.
+        if stage_2_graphs[graph_name].graph["stage"] != 2:
+            raise Exception(
+                "Error, the stage 2 simulation is not yet"
+                + f" completed for: {graph_name}"
+            )
+
         if graph_name == "snn_algo_graph":
             results["snn_algo_result"] = get_snn_results(
                 alipour_counter_marks,
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=False,
-                snn_graph=latest_snn_graph,
+                snn_graph=snn_graph,
             )
         elif graph_name == "adapted_snn_graph":
             results["adapted_snn_algo_result"] = get_snn_results(
@@ -48,7 +51,7 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=True,
-                snn_graph=latest_snn_graph,
+                snn_graph=snn_graph,
             )
         elif graph_name == "rad_snn_algo_graph":
             results["rad_snn_algo_graph"] = get_snn_results(
@@ -56,7 +59,7 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=False,
-                snn_graph=latest_snn_graph,
+                snn_graph=snn_graph,
             )
         elif graph_name == "rad_adapted_snn_graph":
             results["rad_adapted_snn_graph"] = get_snn_results(
@@ -64,7 +67,7 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=True,
-                snn_graph=latest_snn_graph,
+                snn_graph=snn_graph,
             )
     pprint(results)
     return results
@@ -79,15 +82,16 @@ def get_snn_results(
     the code automatically selects the working node, and returns its
     count in the list.
     """
+    last_timestep = snn_graph.graph["stage"]
 
     snn_counter_marks = {}
     if not redundant:
         snn_counter_marks = get_nx_LIF_count_without_redundancy(
-            input_graph, snn_graph, m_val
+            input_graph, snn_graph, m_val, last_timestep
         )
     else:
         snn_counter_marks = get_nx_LIF_count_with_redundancy(
-            input_graph, snn_graph, m_val
+            input_graph, snn_graph, m_val, last_timestep
         )
 
     # Compare the two performances.
@@ -99,7 +103,7 @@ def get_snn_results(
 
 
 def get_nx_LIF_count_without_redundancy(
-    input_graph: nx.DiGraph, nx_SNN_G: nx.DiGraph, m_val: int
+    input_graph: nx.DiGraph, nx_SNN_G: nx.DiGraph, m_val: int, t: int
 ):
     """Creates a dictionary with the node name and the the current as node
     count.
@@ -118,12 +122,15 @@ def get_nx_LIF_count_without_redundancy(
     for node_index in range(0, len(input_graph)):
         node_counts[f"counter_{node_index}_{m_val}"] = nx_SNN_G.nodes[
             f"counter_{node_index}_{m_val}"
-        ]["nx_LIF"].u.get()
+        ]["nx_LIF"][t].u.get()
     return node_counts
 
 
 def get_nx_LIF_count_with_redundancy(
-    input_graph: nx.DiGraph, adapted_nx_snn_graph: nx.DiGraph, m_val: int
+    input_graph: nx.DiGraph,
+    adapted_nx_snn_graph: nx.DiGraph,
+    m_val: int,
+    t: int,
 ):
     """Creates a dictionary with the node name and the the current as node
     count.
@@ -154,6 +161,8 @@ def get_nx_LIF_count_with_redundancy(
             f"{prefix}counter_{node_index}_{m_val}"
         ][
             "nx_LIF"
+        ][
+            t
         ].u.get()
     return node_counts
 

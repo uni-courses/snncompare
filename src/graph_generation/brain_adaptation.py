@@ -130,7 +130,7 @@ def implement_adaptation_mechanism(
 
     # Visualise new graph.
     if plot_graph:
-        plot_coordinated_graph(get_degree, None, show=False)
+        plot_coordinated_graph(get_degree, None, t=0, show=False)
     return dead_neuron_names
 
 

@@ -17,7 +17,6 @@ module is given by:
 - *Input*: Networkx graphs specifying a spiking neural network (SNN).
 - *Output*: Runnable Lava SNNs consisting of LIF neurons and synapses.
 
-
 ## Experiment Stages
 
 The experiment is ran in multiple stages, these are:
@@ -28,7 +27,6 @@ Stage 2: Create propagated networkx graphs (at least one per timestep).
 Stage 3: Visaualisation of the networkx graphs over time.
 Stage 4: Post-processed performance data of algorithm and adaptation
 mechanism.
-
 
 ## Running Experiment
 
@@ -46,10 +44,14 @@ python -m pytest
 ```
 
 Get help with:
+
 ```
 python -m src --halp
 ```
-This generates the graphs from the default experiment configurations, and outputs the graphs in json format to the `results/` directory, and outputs the graph behaviour to: `latex/Images/graphs/`
+
+This generates the graphs from the default experiment configurations, and
+outputs the graphs in json format to the `results/` directory, and outputs
+the graph behaviour to: `latex/Images/graphs/`.
 
 ## Usage
 

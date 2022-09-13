@@ -97,9 +97,11 @@ def retry_create_degree_synapses(G, get_degree, m, rand_ceil):
     return get_degree
 
 
+# pylint: disable=R0913
 def plot_coordinated_graph(
     G,
     desired_properties,
+    t,
     show=False,
     filename="no_filename",
     title=None,
@@ -116,7 +118,7 @@ def plot_coordinated_graph(
     """
     if desired_properties is None:
         desired_properties = []
-    color_map, spiking_edges = set_nx_node_colours(G)
+    color_map, spiking_edges = set_nx_node_colours(G, t)
     edge_color_map = set_edge_colours(G, spiking_edges)
     # Width=edge width.
     nx.draw(
@@ -148,7 +150,7 @@ def plot_coordinated_graph(
     if title is not None:
         plt.suptitle(title, fontsize=14)
 
-    add_neuron_properties_to_plot(axis, desired_properties, G, G.nodes, pos)
+    add_neuron_properties_to_plot(axis, desired_properties, G, G.nodes, pos, t)
 
     # f = plt.figure()
     # f.set_figwidth(10)
@@ -164,7 +166,10 @@ def plot_coordinated_graph(
     plt.close()
 
 
-def add_neuron_properties_to_plot(axis, desired_properties, G, nodenames, pos):
+# pylint: disable=R0913
+def add_neuron_properties_to_plot(
+    axis, desired_properties, G, nodenames, pos, t: int
+):
     """Adds a text (annotation) to each neuron with the desired neuron
     properties.
 
@@ -183,7 +188,9 @@ def add_neuron_properties_to_plot(axis, desired_properties, G, nodenames, pos):
         else:
             shift_right = 0
 
-        annotation_text = get_annotation_text(desired_properties, G, nodename)
+        annotation_text = get_annotation_text(
+            desired_properties, G, nodename, t
+        )
         # Include text in plot.
         axis.text(
             pos[nodename][0] + shift_right,
@@ -194,7 +201,7 @@ def add_neuron_properties_to_plot(axis, desired_properties, G, nodenames, pos):
         )
 
 
-def get_annotation_text(desired_properties, G, nodename):
+def get_annotation_text(desired_properties, G, nodename, t):
     """Returns a string with the annotation text.
 
     :param desired_properties:
@@ -204,27 +211,32 @@ def get_annotation_text(desired_properties, G, nodename):
     annotation = ""
     if "bias" in desired_properties:
         annotation = (
-            annotation + f'bias={G.nodes[nodename]["nx_LIF"].bias.get()}\n'
+            annotation + f'bias={G.nodes[nodename]["nx_LIF"][t].bias.get()}\n'
         )
     if "du" in desired_properties:
         annotation = (
-            annotation + f'du={G.nodes[nodename]["nx_LIF"].du.get()}\n'
+            annotation + f'du={G.nodes[nodename]["nx_LIF"][t].du.get()}\n'
         )
     if "dv" in desired_properties:
         annotation = (
-            annotation + f'dv={G.nodes[nodename]["nx_LIF"].dv.get()}\n'
+            annotation + f'dv={G.nodes[nodename]["nx_LIF"][t].dv.get()}\n'
         )
     if "u" in desired_properties:
-        annotation = annotation + f'u={G.nodes[nodename]["nx_LIF"].u.get()}\n'
+        annotation = (
+            annotation + f'u={G.nodes[nodename]["nx_LIF"][t].u.get()}\n'
+        )
     if "v" in desired_properties:
-        annotation = annotation + f'v={G.nodes[nodename]["nx_LIF"].v.get()}\n'
+        annotation = (
+            annotation + f'v={G.nodes[nodename]["nx_LIF"][t].v.get()}\n'
+        )
     if "vth" in desired_properties:
         annotation = (
-            annotation + f'vth={G.nodes[nodename]["nx_LIF"].vth.get()}\n'
+            annotation + f'vth={G.nodes[nodename]["nx_LIF"][t].vth.get()}\n'
         )
     if "a_in_next" in desired_properties:
         annotation = (
-            annotation + f'a_in_next={G.nodes[nodename]["nx_LIF"].a_in_next}\n'
+            annotation
+            + f'a_in_next={G.nodes[nodename]["nx_LIF"][t].a_in_next}\n'
         )
 
     return annotation
@@ -249,7 +261,7 @@ def plot_unstructured_graph(G, show=False):
     plt.close()
 
 
-def set_nx_node_colours(G):
+def set_nx_node_colours(G, t: int):
     """Returns a list of node colours in order of G.nodes.
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -263,9 +275,9 @@ def set_nx_node_colours(G):
             if "rad_death" in G.nodes[node_name].keys():
                 if G.nodes[node_name]["rad_death"]:
                     colour_dict[node_name] = "red"
-                    if G.nodes[node_name]["nx_LIF"].spikes:
+                    if G.nodes[node_name]["nx_LIF"][t].spikes:
                         raise Exception("Dead neuron can't spike.")
-            if G.nodes[node_name]["nx_LIF"].spikes:
+            if G.nodes[node_name]["nx_LIF"][t].spikes:
                 colour_dict[node_name] = "green"
                 for neighbour in nx.all_neighbors(G, node_name):
                     spiking_edges.append((node_name, neighbour))

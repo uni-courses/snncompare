@@ -5,7 +5,7 @@ neuron and synapse properties specified."""
 import networkx as nx
 
 
-def verify_networkx_snn_spec(G: nx.DiGraph) -> None:
+def verify_networkx_snn_spec(G: nx.DiGraph, t: int) -> None:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -14,27 +14,29 @@ def verify_networkx_snn_spec(G: nx.DiGraph) -> None:
     """
     for nodename in G.nodes:
         if nodename != "connecting_node":
-            verify_neuron_properties_are_specified(G.nodes[nodename])
+            verify_neuron_properties_are_specified(G.nodes[nodename], t=t)
 
     # TODO: verify synapse properties
     for edge in G.edges:
         assert_synapse_properties_are_specified(G, edge)
 
 
-def verify_neuron_properties_are_specified(node: nx.DiGraph.nodes) -> None:
+def verify_neuron_properties_are_specified(
+    node: nx.DiGraph.nodes, t: int
+) -> None:
     """
 
     :param node: nx.DiGraph.nodes:
     :param node: nx.DiGraph.nodes:
 
     """
-    if not isinstance(node["nx_LIF"].bias.get(), float):
+    if not isinstance(node["nx_LIF"][t].bias.get(), float):
         raise Exception("Bias is not a float.")
-    if not isinstance(node["nx_LIF"].du.get(), float):
+    if not isinstance(node["nx_LIF"][t].du.get(), float):
         raise Exception("du is not a float.")
-    if not isinstance(node["nx_LIF"].dv.get(), float):
+    if not isinstance(node["nx_LIF"][t].dv.get(), float):
         raise Exception("dv is not a float.")
-    if not isinstance(node["nx_LIF"].vth.get(), float):
+    if not isinstance(node["nx_LIF"][t].vth.get(), float):
         raise Exception("vth is not a float.")
 
 

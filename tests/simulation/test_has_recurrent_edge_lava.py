@@ -30,7 +30,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
-        add_lava_neurons_to_networkx_graph(G)
+        add_lava_neurons_to_networkx_graph(G, t=0)
         self.assertEqual(len(G), 2)
 
         # Assert the graph has only 1 edge.
@@ -59,7 +59,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
-        add_lava_neurons_to_networkx_graph(G)
+        add_lava_neurons_to_networkx_graph(G, t=0)
 
         # Verify the graph can run on Networkx.
         simulate_snn_on_lava(G, self.starter_node_name, 30)
@@ -100,7 +100,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
-        add_lava_neurons_to_networkx_graph(G)
+        add_lava_neurons_to_networkx_graph(G, t=0)
 
         # Assert static properties of neuron 0.
         self.assertEqual(G.nodes[0]["lava_LIF"].bias.get(), 3)
@@ -149,7 +149,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
 
         # Get graph without edge to self.
         G = get_networkx_graph_of_2_neurons()
-        add_lava_neurons_to_networkx_graph(G)
+        add_lava_neurons_to_networkx_graph(G, t=0)
 
         # Assert static properties of neuron 0.
         self.assertEqual(G.nodes[0]["lava_LIF"].bias.get(), 3)
@@ -227,7 +227,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
         G = get_networkx_graph_of_2_neurons()
         # Add the recurrent edge.
         G.add_edge(0, 0, weight=-20.0)
-        add_lava_neurons_to_networkx_graph(G)
+        add_lava_neurons_to_networkx_graph(G, t=0)
 
         # Assert static properties of neuron 0 at t=0.
         self.assertEqual(G.nodes[0]["lava_LIF"].bias.get(), 3)

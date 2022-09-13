@@ -20,24 +20,27 @@ from src.simulation.verify_graph_is_snn import (
 def sim_graphs(
     stage_1_graphs: dict,
     run_config: dict,
-) -> dict:
+) -> None:
     """Simulates the snn graphs and makes a deep copy for each timestep.
 
     :param stage_1_graphs: dict:
     :param run_config: dict:
     """
-    stage_2_graphs = {"input_graph": stage_1_graphs["input_graph"]}
     for graph_name, snn_graph in stage_1_graphs.items():
         if graph_name != "input_graph":
 
             # TODO: add lava neurons if run config demands lava.
-            some_conversion(snn_graph)
+            convert_graph_snn_to_nx_snn(snn_graph)
+
+            stage_1_graphs[graph_name].graph[
+                "sim_duration"
+            ] = get_sim_duration(snn_graph, run_config)
 
             # TODO: compute actual inhibition and mval
-            stage_2_graphs[graph_name] = run_snn_on_networkx(
+            run_snn_on_networkx(
                 snn_graph, get_sim_duration(snn_graph, run_config)
             )
-    return stage_2_graphs
+        stage_1_graphs[graph_name].graph["stage"] = 2
 
 
 def get_sim_duration(
@@ -60,7 +63,7 @@ def get_sim_duration(
     raise Exception("Error, the simulation time was not found.")
 
 
-def some_conversion(G: nx.DiGraph):
+def convert_graph_snn_to_nx_snn(G: nx.DiGraph):
     """Converts the SNN graph specfification to a networkx SNN that can be ran.
 
     :param G: nx.DiGraph:
@@ -77,10 +80,10 @@ def some_conversion(G: nx.DiGraph):
     old_graph_to_new_graph_properties(G)
 
     # Assert all neuron properties are specified.
-    verify_networkx_snn_spec(G)
+    verify_networkx_snn_spec(G, t=0)
 
     # Generate networkx network.
-    add_nx_neurons_to_networkx_graph(G)
+    add_nx_neurons_to_networkx_graph(G, t=0)
 
     # TODO: add lava neurons if run config demands lava.
     # Generate lava network.
