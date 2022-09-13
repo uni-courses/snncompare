@@ -379,9 +379,13 @@ def merge_experiment_and_run_config_with_graphs(
     # Convert incoming graphs to dictionary.
     graphs_dict = {}
     for graph_name, graph_container in graphs.items():
-        print(f"graph_name={graph_name}")
-        print(f"stage_index={stage_index}")
         if stage_index == 1:
+            if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
+                raise Exception(
+                    f"stage_index={stage_index}, Error, for graph:"
+                    + f"{graph_name}, the graph is not a"
+                    + f"nx.Digraph(). Instead, it is:{type(graph_container)}"
+                )
             graphs_dict[graph_name] = digraph_to_json(graph_container)
         elif stage_index == 2:
             graphs_per_type = []

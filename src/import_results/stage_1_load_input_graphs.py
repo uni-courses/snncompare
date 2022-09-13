@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from pprint import pprint
 
 from networkx.readwrite import json_graph
 
@@ -45,8 +44,9 @@ def load_results_stage_1(run_config: dict) -> dict:
         )
     if stage_1_dict["graphs_dict"] == {}:
         raise Exception("Error, the graphs dict was an empty dict.")
-    print("stage_1_dict")
-    pprint(stage_1_dict)
+
+    for key in stage_1_dict.keys():
+        print(f"stage_1_dict.key={key}")
 
     # Split the dictionary into three separate dicts.
     loaded_run_config = stage_1_dict["run_config"]
@@ -57,15 +57,17 @@ def load_results_stage_1(run_config: dict) -> dict:
     # returns the same id.
     if not is_identical(run_config, loaded_run_config, ["unique_id"]):
         print("run_config")
-        pprint(run_config)
+        # pprint(run_config)
         print("Yet loaded_run_config is:")
-        pprint(loaded_run_config)
+        # pprint(loaded_run_config)
         raise Exception("Error, wrong run config was loaded.")
 
     # Verify the graph names are as expected for the graph name.
     assert_graphs_are_in_dict(run_config, stage_1_dict["graphs_dict"], 1)
 
     for graph_name, some_graph in stage_1_dict["graphs_dict"].items():
+        print(f"graph_name={graph_name}")
+        print(f"some_graph={type(some_graph)}")
         stage_1_dict["graphs_dict"][graph_name] = json_to_digraph(some_graph)
 
     # TODO: convert dict back into graph.
