@@ -23,8 +23,10 @@ def load_json_file_into_dict(json_filepath):
 
 
 def load_results_stage_1(run_config: dict) -> dict:
-    """Loads the experiment config, run config and graphs from the json
-    file."""
+    """Loads the experiment config, run config and graphs from the json file.
+
+    # TODO: ensure it only loads the graphs of stage 1.
+    """
     stage_index = 1
 
     # Get the json filename.
@@ -65,13 +67,16 @@ def load_results_stage_1(run_config: dict) -> dict:
     # Verify the graph names are as expected for the graph name.
     assert_graphs_are_in_dict(run_config, stage_1_dict["graphs_dict"], 1)
 
-    for graph_name, some_graph in stage_1_dict["graphs_dict"].items():
+    stage_1_graphs = {}
+    # Converting back into graphs
+    for graph_name, some_graph in stage_1_dict["graphs_dict"][
+        "stage_1"
+    ].items():
         print(f"graph_name={graph_name}")
+        print(f"some_graph={some_graph}")
         print(f"some_graph={type(some_graph)}")
-        stage_1_dict["graphs_dict"][graph_name] = json_to_digraph(some_graph)
-
-    # TODO: convert dict back into graph.
-    return stage_1_dict["graphs_dict"]
+        stage_1_graphs[graph_name] = json_to_digraph(some_graph)
+    return stage_1_graphs
 
 
 def json_to_digraph(json_data):

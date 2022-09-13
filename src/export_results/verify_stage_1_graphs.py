@@ -75,5 +75,7 @@ def assert_graphs_are_in_dict(
 ) -> None:
     """Throws error if the not all the expected graphs are in the list of
     graphs."""
-    if not expected_graphs_are_in_dict(run_config, graphs, stage):
+    if not expected_graphs_are_in_dict(
+        run_config, graphs[f"stage_{stage}"], stage
+    ):
         raise Exception(f"Error, graph is missing:{graphs},stage:{stage}")

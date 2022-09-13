@@ -1,7 +1,7 @@
 """Performs tests that verifies the json files created in stage 1 are valid."""
 
 import json
-import pathlib as pl
+import pathlib
 import unittest
 
 from src.experiment_settings.Experiment_runner import (
@@ -44,7 +44,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         Throws error if a file does not exist.
         """
-        if not pl.Path(path).resolve().is_file():
+        if not pathlib.Path(path).resolve().is_file():
             # pylint: disable=C0209
             raise AssertionError("File does not exist: %s" % str(path))
 
@@ -53,7 +53,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         Throws error if the file does exist.
         """
-        if pl.Path(path).resolve().is_file():
+        if pathlib.Path(path).resolve().is_file():
             # pylint: disable=C0209
             raise AssertionError("File exist: %s" % str(path))
 
@@ -61,7 +61,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         """Tests whether the output function creates a json that can be read as
         a dict that contains an experi_config, a graphs_dict, and a
         run_config."""
-        filepath = pl.Path(self.json_filepath)
+        filepath = pathlib.Path(self.json_filepath)
 
         # Delete the expected/tested output files.
         delete_file_if_exists(self.json_filepath)
