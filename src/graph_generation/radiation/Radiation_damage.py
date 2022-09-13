@@ -29,7 +29,7 @@ class Radiation_damage:
         for _ in range(int(0), int(n)):
             n = random.randint(0, max_val)  # nosec - using a random seed.
         randomlist.append(n)
-        print(randomlist)
+
         return randomlist
 
     def inject_simulated_radiation(self, get_degree, probability, seed):
@@ -68,7 +68,7 @@ class Radiation_damage:
         # TODO: restore the probabilitiy  of firing instead of getting fraction
         # of neurons.
         nr_of_dead_neurons = int(len(get_degree) * probability)
-        print(f"seed={seed}")
+
         random.seed(seed)
         # Get a list of length nr_of_dead_neurons with random integers
         # These integers indicate which neurons die.
@@ -76,19 +76,17 @@ class Radiation_damage:
         rand_indices = random.sample(
             range(0, len(get_degree)), nr_of_dead_neurons
         )
-        print(rand_indices)
 
         dead_neuron_names = []
         # TODO: fold instead of for.
         count = 0
         for nodename in get_degree:
-            print(f"nodename={nodename}")
+
             # for i,node_name in enumerate(get_degree):
             if count in rand_indices:
                 dead_neuron_names.append(nodename)
             count = count + 1
 
-        print(f"dead_neuron_names={dead_neuron_names}")
         # for node_name in get_degree:
         # if self.kill_neuron(probability):
         # dead_neuron_names.append(node_name)
@@ -186,7 +184,6 @@ def store_dead_neuron_names_in_graph(G, dead_neuron_names):
     for nodename in G.nodes:
         if nodename in dead_neuron_names:
             G.nodes[nodename]["rad_death"] = True
-            print(G.nodes[nodename]["rad_death"])
         else:
             G.nodes[nodename]["rad_death"] = False
 

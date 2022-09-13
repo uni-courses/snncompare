@@ -220,7 +220,7 @@ def digraph_to_json(G):
     if G is not None:
         return json_graph.node_link_data(G)
         # return json_graph.dumps(G)
-    return None
+    raise Exception("Error, incoming graph was None.")
 
 
 def get_unique_hash(

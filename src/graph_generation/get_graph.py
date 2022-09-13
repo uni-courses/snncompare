@@ -89,8 +89,6 @@ def gnp_random_connected_graph(
     for _, node_edges in groupby(edges, key=lambda x: x[0]):
         node_edges = list(node_edges)
 
-        print(f"node_edges={node_edges}")
-
         random_edge = random.choice(node_edges)  # nosec - using a random seed.
         G.add_edge(*random_edge)
         for e in node_edges:
@@ -242,7 +240,6 @@ def get_list_with_rand_floats_in_range(min_val, max_val, length, seed):
 
     # Get list with random edge weights.
     rand_floats = np.random.uniform(low=min_val, high=max_val, size=length)
-    print(f"rand_floats={rand_floats}")
     return rand_floats
 
 

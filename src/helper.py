@@ -138,6 +138,14 @@ def delete_files_in_folder(folder):
     os.makedirs(folder, exist_ok=False)
 
 
+def delete_file_if_exists(filepath):
+    """Deletes a file if it exists."""
+    try:
+        os.remove(filepath)
+    except OSError:
+        pass
+
+
 def export_get_degree_graph(
     has_adaptation,
     has_radiation,
@@ -252,8 +260,6 @@ def get_counter_neurons_from_dict(expected_nr_of_neurons, neuron_dict, m):
                 counter_neurons.append(
                     get_neuron_from_dict(neuron_dict, neurons, neuron_name)
                 )
-
-    # pprint(f'neuron_names={neuron_names}')
 
     if expected_nr_of_neurons != len(counter_neurons):
         raise Exception(
@@ -450,9 +456,6 @@ def full_alipour(
 
     # Reverse engineer actual rand nrs:
     uninhibited_rand_nrs = [(x + inhibition) for x in rand_nrs]
-    print(f"uninhibited_rand_nrs={uninhibited_rand_nrs}")
-    print(f"m={m}")
-
     for node in G.nodes:
         set_node_default_values(
             delta, G, inhibition, node, rand_ceil, uninhibited_rand_nrs

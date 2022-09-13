@@ -22,11 +22,11 @@ from src.experiment_settings.verify_experiment_settings import (
 )
 from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import (
-    create_results_directories,
     output_files_stage_1,
     output_stage_files,
     performed_stage,
 )
+from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.stage_1_load_input_graphs import load_results_stage_1
@@ -44,7 +44,7 @@ class Experiment_runner:
     ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
-        create_results_directories()
+        create_root_dir_if_not_exists("results")
 
         # Store the experiment configuration settings.
         self.experi_config = experi_config
@@ -93,8 +93,15 @@ class Experiment_runner:
 
                 # Run first stage of experiment, get input graph.
                 stage_1_graphs: dict = get_used_graphs(run_config)
+                for key, value in stage_1_graphs.items():
+                    print(f"key={key}")
+                    print(f"value={value}")
                 output_files_stage_1(experi_config, run_config, stage_1_graphs)
+
+                # Set the radiation damage level.
+                # TODO: Verify this setting has any effect.
                 Radiation_damage(0.2)
+
             if to_run["stage_2"]:
                 if not to_run["stage_1"]:
                     stage_1_graphs = load_results_stage_1(run_config)
@@ -250,8 +257,6 @@ def determine_what_to_run(run_config) -> dict:
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
-    print(f'to_run["stage_2"]={to_run["stage_2"]}')
-    # exit()
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not performed_stage(run_config, 3)
