@@ -93,19 +93,15 @@ class Experiment_runner:
 
                 # Run first stage of experiment, get input graph.
                 stage_1_graphs: dict = get_used_graphs(run_config)
-                for key, value in stage_1_graphs.items():
-                    print(f"key={key}")
-                    print(f"value={value}")
+                # for key, value in stage_1_graphs.items():
                 output_files_stage_1(experi_config, run_config, stage_1_graphs)
 
                 # Set the radiation damage level.
                 # TODO: Verify this setting has any effect.
                 Radiation_damage(0.2)
-
+            if not to_run["stage_1"]:
+                stage_1_graphs = load_results_stage_1(run_config)
             if to_run["stage_2"]:
-                if not to_run["stage_1"]:
-                    stage_1_graphs = load_results_stage_1(run_config)
-
                 # Run simulation on networkx or lava backend.
                 sim_graphs(stage_1_graphs, run_config)
 

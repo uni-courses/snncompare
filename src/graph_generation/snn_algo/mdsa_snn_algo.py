@@ -1,5 +1,6 @@
 """Takes an input graph and generates an SNN that solves the MDSA algorithm by
 Alipour et al."""
+import copy
 from typing import List
 
 import networkx as nx
@@ -77,7 +78,7 @@ def input_graph_to_mdsa_snn_graph(
 
     # Initialise the new graph object, and copy the graph attributes.
     mdsa_snn_graph = nx.DiGraph()
-    mdsa_snn_graph.graph = input_graph.graph
+    mdsa_snn_graph.graph = copy.deepcopy(input_graph.graph)
 
     # Define list of m mappings for sets of tuples containing synapses
     left: List = [{} for _ in range(shifted_m)]

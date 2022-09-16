@@ -24,12 +24,19 @@ from src.export_results.helper import run_config_to_filename
 from src.export_results.load_pickles_get_results import (
     get_desired_properties_for_graph_printing,
 )
-from src.export_results.verify_stage_1_graphs import verify_stage_1_graphs
+from src.export_results.verify_stage_1_graphs import (
+    get_expected_stage_1_graphs,
+    verify_stage_1_graphs,
+)
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
 from src.export_results.verify_stage_3_graphs import verify_stage_3_graphs
 from src.export_results.verify_stage_4_graphs import verify_stage_4_graphs
 from src.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
+)
+from src.helper import get_extensions_list
+from src.import_results.stage_1_load_input_graphs import (
+    load_json_file_into_dict,
 )
 
 # pylint: disable=W0613 # work in progress.
@@ -266,40 +273,6 @@ class Stage_4_graphs:
         )
 
 
-def get_extensions_dict(run_config, stage_index) -> dict:
-    """Returns the file extensions of the output types.
-    TODO: support .json as well as .txt for the dictionaries.
-
-    :param run_config: param stage_index:
-    :param stage_index:
-
-    """
-    if stage_index == 1:
-        return {"config_and_graphs": ".json"}
-    if stage_index == 2:
-        if run_config["simulator"] == "lava":
-            return {"config": ".json", "graphs": ".png"}
-
-        return {"config_and_graphs": ".txt"}
-    if stage_index == 3:
-        # TODO: support .eps and/or .pdf.
-        return {"graphs": ".png"}
-    if stage_index == 4:
-        return {"config_and_results": ".json"}
-    raise Exception("Unsupported experiment stage.")
-
-
-def get_extensions_list(run_config, stage_index) -> list:
-    """
-
-    :param run_config: param stage_index:
-    :param stage_index:
-
-    extensions = list(get_extensions_dict(run_config, stage_index).values())
-    """
-    return list(get_extensions_dict(run_config, stage_index).values())
-
-
 def performed_stage(run_config, stage_index: int) -> bool:
     """Verifies the required output files exist for a given simulation.
 
@@ -318,6 +291,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
                 relative_output_dir + filename + extension
             )
             # TODO: append expected_filepath to run_config per stage.
+            print(f"expected_filepaths={expected_filepaths}")
 
         if stage_index == 3:
 
@@ -339,7 +313,50 @@ def performed_stage(run_config, stage_index: int) -> bool:
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
-            print(f"filepath={filepath} not found for stage:{stage_index}")
+            return False
+        if filepath[:-4] == "json":
+            # TODO: load graph from file and check if it contains the desired
+            # stage index for the desired graphs.
+            # "stage": 2
+
+            the_dict = load_json_file_into_dict(filepath)
+            # Determine the expected graphs
+            if "graphs_dict" not in the_dict:
+                return False
+            if not graph_dict_completed_stage(
+                run_config, the_dict, stage_index
+            ):
+                return False
+    return True
+
+
+def graph_dict_completed_stage(
+    run_config: dict, the_dict: dict, stage_index: int
+) -> bool:
+    """Checks whether all expected graphs have been completed for the stages:
+
+    <stage_index>. This check is performed by loading the graph dict
+    from the graph dict, and checking whether the graph dict contains a
+    list with the completed stages, and checking this list whether it
+    contains the required stage number.
+    """
+
+    # Loop through expected graph names for this run_config.
+    for graph_name in get_expected_stage_1_graphs(run_config):
+        if graph_name not in the_dict["graphs_dict"]:
+            return False
+        if ("completed_stages") not in the_dict["graphs_dict"][graph_name]:
+            return False
+        if not isinstance(
+            list, the_dict["graphs_dict"][graph_name]["completed_stages"]
+        ):
+            raise Exception(
+                "Error, completed stages parameter type is not a list."
+            )
+        if (
+            stage_index
+            not in the_dict["graphs_dict"][graph_name]["completed_stages"]
+        ):
             return False
     return True
 
@@ -385,7 +402,6 @@ def merge_stage_1_graphs(graphs):
                 + f"nx.Digraph(). Instead, it is:{type(graph_container)}"
             )
         graphs_dict_stage_1[graph_name] = digraph_to_json(graph_container)
-        print(f"1, added:{graph_name}")
     if not graphs_dict_stage_1:  # checks if dict not empty like: {}
         raise Exception(
             f"Error, len(graphs)={len(graphs)} stage=1, graphs_dict_stage_1"
@@ -408,7 +424,6 @@ def merge_stage_2_graphs(graphs):
         else:
             raise Exception(f"Error, unsupported type:{type(graph_container)}")
         graphs_dict_stage_2[graph_name] = graphs_per_type
-        print(f"2, added:{graph_name}")
     if not graphs_dict_stage_2:  # checks if dict not empty like: {}
         raise Exception(
             f"Error, len(graphs)={len(graphs)} stage=2, graphs_dict_stage_2"

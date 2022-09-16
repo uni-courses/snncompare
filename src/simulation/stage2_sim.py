@@ -6,6 +6,7 @@ import networkx as nx
 from src.export_results.load_pickles_get_results import (
     old_graph_to_new_graph_properties,
 )
+from src.helper import add_stage_completion_to_graph, get_sim_duration
 from src.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
@@ -40,27 +41,8 @@ def sim_graphs(
             run_snn_on_networkx(
                 snn_graph, get_sim_duration(snn_graph, run_config)
             )
-        stage_1_graphs[graph_name].graph["stage"] = 2
-
-
-def get_sim_duration(
-    snn_graph: nx.DiGraph,
-    run_config: dict,
-) -> int:
-    """Compute the simulation duration for a given algorithm and graph."""
-    for algo_name, algo_settings in run_config["algorithm"].items():
-        if algo_name == "MDSA":
-
-            # TODO: determine why +10 is required.
-            # TODO: Move into stage_1 get input graphs.
-            sim_time = (
-                snn_graph.graph["alg_props"]["inhibition"]
-                * (algo_settings["m_val"] + 1)
-                + 10
-            )
-            return sim_time
-        raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
-    raise Exception("Error, the simulation time was not found.")
+        print(f"Stage 2, adding:{graph_name}")
+        add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
 
 
 def convert_graph_snn_to_nx_snn(G: nx.DiGraph):

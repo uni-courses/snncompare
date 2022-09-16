@@ -46,7 +46,7 @@ class Supported_run_settings:
             "duration": int,
             "export_snns": bool,
             "show_snns": bool,
-            "stage": int,
+            "stage": int,  # TODO: remove this parameter.
             "unique_id": int,
         }
 

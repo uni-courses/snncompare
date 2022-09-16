@@ -6,9 +6,8 @@ from pathlib import Path
 from networkx.readwrite import json_graph
 
 from src.export_results.helper import run_config_to_filename
-from src.export_results.Output import get_extensions_list
 from src.export_results.verify_stage_1_graphs import assert_graphs_are_in_dict
-from src.helper import is_identical
+from src.helper import get_extensions_list, is_identical
 
 
 def load_json_file_into_dict(json_filepath):
