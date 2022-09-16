@@ -19,6 +19,8 @@ from src.export_results.Plot_to_tex import Plot_to_tex
 from src.graph_generation.radiation.Radiation_damage import (
     store_dead_neuron_names_in_graph,
 )
+from src.simulation.LIF_neuron import LIF_neuron
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def fill_dictionary(
@@ -769,3 +771,22 @@ def get_sim_duration(
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
     raise Exception("Error, the simulation time was not found.")
+
+
+def old_graph_to_new_graph_properties(G):
+    """
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+
+    """
+    for nodename in G.nodes:
+        G.nodes[nodename]["nx_LIF"] = [
+            LIF_neuron(
+                name=nodename,
+                bias=float(G.nodes[nodename]["bias"]),
+                du=float(G.nodes[nodename]["du"]),
+                dv=float(G.nodes[nodename]["dv"]),
+                vth=float(G.nodes[nodename]["vth"]),
+            )
+        ]
+    verify_networkx_snn_spec(G, t=0)

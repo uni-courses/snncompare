@@ -3,10 +3,11 @@ timestep."""
 
 import networkx as nx
 
-from src.export_results.load_pickles_get_results import (
+from src.helper import (
+    add_stage_completion_to_graph,
+    get_sim_duration,
     old_graph_to_new_graph_properties,
 )
-from src.helper import add_stage_completion_to_graph, get_sim_duration
 from src.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,

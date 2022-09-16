@@ -4,11 +4,10 @@ import pickle  # nosec - User is trusted not to load malicious pickle files.
 from src.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
 )
+from src.helper import old_graph_to_new_graph_properties
 
 # from src.process_results.process_results import get_run_results
-from src.simulation.LIF_neuron import LIF_neuron
 from src.simulation.run_on_networkx import run_snn_on_networkx
-from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def get_desired_properties_for_graph_printing():
@@ -75,25 +74,6 @@ def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
             False,
             filename=f"{output_name}_t={t}",
         )
-
-
-def old_graph_to_new_graph_properties(G):
-    """
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-
-    """
-    for nodename in G.nodes:
-        G.nodes[nodename]["nx_LIF"] = [
-            LIF_neuron(
-                name=nodename,
-                bias=float(G.nodes[nodename]["bias"]),
-                du=float(G.nodes[nodename]["du"]),
-                dv=float(G.nodes[nodename]["dv"]),
-                vth=float(G.nodes[nodename]["vth"]),
-            )
-        ]
-    verify_networkx_snn_spec(G, t=0)
 
 
 def simulate_graph(G, sim_time):

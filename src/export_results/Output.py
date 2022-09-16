@@ -34,7 +34,7 @@ from src.export_results.verify_stage_4_graphs import verify_stage_4_graphs
 from src.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
 )
-from src.helper import get_extensions_list
+from src.helper import get_extensions_list, get_sim_duration
 from src.import_results.stage_1_load_input_graphs import (
     load_json_file_into_dict,
 )
@@ -80,6 +80,8 @@ def output_files_stage_1(
     :param stage_1_graphs:
     :param run_config:
     """
+    # TODO: make it clear that export_snns means export the images of the
+    # graphs. The graphs should always be exported if they do not yet exist.
     if run_config["export_snns"]:
         filename = run_config_to_filename(run_config)
         output_stage_json(
@@ -129,6 +131,7 @@ def output_stage_files(
         if run_config["export_snns"]:
             # Output the json dictionary of the files.
             filename = run_config_to_filename(run_config)
+            print(f"Exporting image:{filename}\n")
 
             output_stage_json(
                 experiment_config,
@@ -140,9 +143,10 @@ def output_stage_files(
 
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
-        if run_config["show_snns"]:
+        # TODO: Distinguish between showing snns and outputting snns.
+        if run_config["export_snns"]:
             # Output graph behaviour for stage stage_index.
-            plot_stage_2_graph_behaviours(filename, graphs_stage_2, run_config)
+            plot_graph_behaviours(filename, graphs_stage_2, run_config)
 
     elif run_config["simulator"] == "lava":
         # TODO: terminate simulation.
@@ -314,11 +318,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
             return False
-        if filepath[:-4] == "json":
-            # TODO: load graph from file and check if it contains the desired
-            # stage index for the desired graphs.
-            # "stage": 2
-
+        if filepath[:-5] == ".json":
             the_dict = load_json_file_into_dict(filepath)
             # Determine the expected graphs
             if "graphs_dict" not in the_dict:
@@ -542,23 +542,28 @@ def output_stage_json(
     # TODO: append tags to output file.
 
 
-def plot_stage_2_graph_behaviours(
-    filepath: str, graphs: dict, run_config: dict
-):
+def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
     """Exports the plots of the graphs per time step of the run
     configuration."""
 
+    # TODO: get this from the experiment settings/run configuration.
     desired_props = get_desired_properties_for_graph_printing()
 
     # Loop over the graph types
-
-    for graph_name, graph_list in graphs.items():
-        print(f"type(graph_list)={type(graph_list)}")
-        if isinstance(graph_list, list):
-            raise Exception("Error, expected single graph, iso graph list.")
+    for graph_name, graph in graphs.items():
+        if not isinstance(graph, nx.DiGraph):
+            raise Exception(
+                "Error, expected single DiGraph, yet found:" f"{type(graph)}"
+            )
         # TODO: change to loop over neurons per timestep, instead of
         # over graphs.
-        for i, graph in enumerate(graph_list):
+        for t in range(
+            0,
+            get_sim_duration(
+                graph,
+                run_config,
+            ),
+        ):
             # if graph_name == "rad_snn_algo_graph":
             # TODO: include check for only rad dead things.
 
@@ -569,11 +574,11 @@ def plot_stage_2_graph_behaviours(
             plot_coordinated_graph(
                 graph,
                 desired_props,
-                i,
+                t,
                 False,
-                f"{graph_name}_{filepath}_{i}",
+                f"{graph_name}_{filepath}_{t}",
                 title=create_custom_plot_titles(
-                    graph_name, i, run_config["seed"]
+                    graph_name, t, run_config["seed"]
                 ),
             )
 
