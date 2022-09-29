@@ -763,11 +763,20 @@ def get_sim_duration(
 
             # TODO: determine why +10 is required.
             # TODO: Move into stage_1 get input graphs.
-            sim_time = (
+            sim_time: int = (
                 snn_graph.graph["alg_props"]["inhibition"]
                 * (algo_settings["m_val"] + 1)
                 + 10
             )
+            if not isinstance(sim_time, int):
+                raise Exception(
+                    "Error, sim_time is not an int."
+                    + 'snn_graph.graph["alg_props"]["inhibition"]='
+                    + f'{snn_graph.graph["alg_props"]["inhibition"]}'
+                    + '(algo_settings["m_val"] + 1)='
+                    + f'{(algo_settings["m_val"] + 1)}'
+                )
+            print(f"sim_time={sim_time}")
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
     raise Exception("Error, the simulation time was not found.")

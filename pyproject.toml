@@ -51,7 +51,8 @@ disable=[
 [tool.pytest.ini_options]
 # Runs coverage.py through use of the pytest-cov plugin
 # An xml report is generated and results are output to the terminal
-addopts = "--cov --cov-report xml:cov.xml --cov-report term"
+# TODO: Disable this line to disable CLI coverage reports when running tests.
+#addopts = "--cov --cov-report xml:cov.xml --cov-report term"
 # Sets the minimum allowed pytest version
 minversion = 5.0
 # Sets the path where test files are located (Speeds up Test Discovery)

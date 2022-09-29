@@ -104,6 +104,7 @@ class Experiment_runner:
             if to_run["stage_2"]:
                 # Run simulation on networkx or lava backend.
                 sim_graphs(stage_1_graphs, run_config)
+                output_files_stage_1(experi_config, run_config, stage_1_graphs)
 
             if to_run["stage_3"]:
                 # Generate output json dicts (and plots) of propagated graphs.
@@ -111,7 +112,7 @@ class Experiment_runner:
                 # TODO: pass the stage index and re-use it to export the
                 # stage 4 graphs
                 output_stage_files(
-                    experi_config, run_config, stage_1_graphs, 2
+                    experi_config, run_config, stage_1_graphs, 3
                 )
                 print('"Done generating output plots for stage 3.')
             if to_run["stage_4"]:

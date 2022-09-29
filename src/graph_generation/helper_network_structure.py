@@ -1,5 +1,6 @@
 """Assists the conversion from the input graph to an SNN graph that performs
 the MDSA approximation."""
+
 import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 
@@ -121,6 +122,8 @@ def plot_coordinated_graph(
         desired_properties = []
     color_map, spiking_edges = set_nx_node_colours(G, t)
     edge_color_map = set_edge_colours(G, spiking_edges)
+
+    # pprint(G)
     # Width=edge width.
     nx.draw(
         G,
@@ -213,8 +216,8 @@ def get_annotation_text(desired_properties, G, nodename, t):
     :param G: The original graph on which the MDSA algorithm is ran.
     :param nodename: Node of the name of a networkx graph.
     """
-    print(f"G={G.graph}")
-    print(f"G.nodes[nodename]={G.nodes[nodename]}")
+    # print(f"G={G.graph}")
+    # print(f"G.nodes[{nodename}]={G.nodes[nodename]}")
     annotation = ""
     if "bias" in desired_properties:
         annotation = (
@@ -282,12 +285,13 @@ def set_nx_node_colours(G, t: int):
             if "rad_death" in G.nodes[node_name].keys():
                 if G.nodes[node_name]["rad_death"]:
                     colour_dict[node_name] = "red"
-                    if G.nodes[node_name]["nx_LIF"][t].spikes:
+                    # print(f'G.nodes[node_name]["nx_LIF"][t]={G.nodes[node_name]["nx_LIF"][t]}')
+                    if G.nodes[node_name]["nx_LIF"][t]["spikes"]:
                         raise Exception("Dead neuron can't spike.")
-            print(
-                f'G.nodes[node_name]["nx_LIF"={G.nodes[node_name]["nx_LIF"]}'
-            )
-            if G.nodes[node_name]["nx_LIF"][t].spikes:
+            print(f"t={t}")
+            print(f'at [t]={t},={G.nodes[node_name]["nx_LIF"][t]}')
+            # TODO: determine whether to use s_out = 1 or, spikes=False.
+            if G.nodes[node_name]["nx_LIF"][t]["spikes"]:
                 colour_dict[node_name] = "green"
                 for neighbour in nx.all_neighbors(G, node_name):
                     spiking_edges.append((node_name, neighbour))

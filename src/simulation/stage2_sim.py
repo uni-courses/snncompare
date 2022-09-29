@@ -44,6 +44,7 @@ def sim_graphs(
             )
         print(f"Stage 2, adding:{graph_name}")
         add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
+        # TODO: export graphs to file.
 
 
 def convert_graph_snn_to_nx_snn(G: nx.DiGraph):

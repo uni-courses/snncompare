@@ -65,7 +65,8 @@ with_adaptation_with_radiation = {
 def output_files_stage_1(
     experiment_config: dict, run_config: dict, stage_1_graphs: dict
 ):
-    """Merges the experiment configuration dict, run configuration dict and
+    """TODO: generalise to stage 1 and/or stage2.
+    Merges the experiment configuration dict, run configuration dict and
     graphs into a single dict. This method assumes only the graphs that are to
     be exported are passed into this method.
 
@@ -107,14 +108,18 @@ def output_stage_files(
     convertible into dicts. This merged dict is then written to file. If
     the lava simulator is used, the graphs cannot (easily) be converted
     into dicts, hence in that case, only the experiment and run settings
-    are merged into a single dict that is exported. The lava graphs will
-    be terminated and exported as pickle. If the graphs are not
-    exported, pickle throws an error because some
-    pipe/connection/something is still open. The unique_id of the
-    experiment is added to the file as a filetag, as well as the
-    unique_id of the run. Furthermore, all run parameter values are
+    are merged into a single dict that is exported.
+
+    % TODO: The lava graphs will be terminated and exported as pickle.
+    If the graphs are not exported, pickle throws an error because some
+    pipe/connection/something is still open.
+
+    The unique_id of the experiment is added to the file as a filetag, as well
+    as the unique_id of the run. Furthermore, all run parameter values are
     added as file tags, to make it easier to filter certain runs to
     manually inspect the results.
+
+    Also exports the images of the graph behaviour.
 
     :param experiment_config: param run_config:
     :param graphs_stage_2:
@@ -144,7 +149,7 @@ def output_stage_files(
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
         # TODO: Distinguish between showing snns and outputting snns.
-        if run_config["export_snns"]:
+        if run_config["export_snns"] and stage_index == 3:
             # Output graph behaviour for stage stage_index.
             plot_graph_behaviours(filename, graphs_stage_2, run_config)
 
@@ -159,24 +164,24 @@ def output_stage_files(
     # TODO: append tags to output file(s).
 
 
-def output_files_stage_3(experiment_config, run_config, graphs_stage_3):
-    """This only outputs the visualisation of the desired graphs.
+# def output_files_stage_3(experiment_config, run_config, graphs_stage_3):
+# This only outputs the visualisation of the desired graphs.
 
-    If the graphs are simulated for 50 timesteps, 50 pictures per graph
-    will be outputted. For naming scheme and taging, see documentation
-    of function output_files_stage_1 or output_files_stage_2.
+# If the graphs are simulated for 50 timesteps, 50 pictures per graph
+# will be outputted. For naming scheme and taging, see documentation
+# of function output_files_stage_1 or output_files_stage_2.
 
-    :param experiment_config: param run_config:
-    :param graphs_stage_3:
-    :param run_config:
-    """
-    run_config_to_filename(run_config)
-    # TODO: Optional: ensure output files exists.
+# :param experiment_config: param run_config:
+# :param graphs_stage_3:
+# :param run_config:
+# """
+# run_config_to_filename(run_config)
+# TODO: Optional: ensure output files exists.
 
-    # TODO: loop through graphs and create visualisation.
-    # TODO: ensure the run parameters are in a legend
-    # TODO: loop over the graphs (t), and output them.
-    # TODO: append tags to output file(s).
+# TODO: loop through graphs and create visualisation.
+# TODO: ensure the run parameters are in a legend
+# TODO: loop over the graphs (t), and output them.
+# TODO: append tags to output file(s).
 
 
 def output_files_stage_4(
@@ -551,18 +556,22 @@ def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
 
     # Loop over the graph types
     for graph_name, graph in graphs.items():
-        if not isinstance(graph, nx.DiGraph):
-            raise Exception(
-                "Error, expected single DiGraph, yet found:" f"{type(graph)}"
-            )
+        print(f"graph_name={graph_name}")
+        # if not isinstance(graph, nx.DiGraph):
+        #    raise Exception(
+        #        "Error, expected single DiGraph, yet found:" f"{type(graph)}"
+        #    )
         # TODO: change to loop over neurons per timestep, instead of
         # over graphs.
+
+        sim_duration = get_sim_duration(
+            graph,
+            run_config,
+        )
+        print(f"sim_duration={sim_duration}")
         for t in range(
             0,
-            get_sim_duration(
-                graph,
-                run_config,
-            ),
+            sim_duration,
         ):
             # if graph_name == "rad_snn_algo_graph":
             # TODO: include check for only rad dead things.

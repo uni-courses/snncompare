@@ -27,14 +27,13 @@ def get_desired_properties_for_graph_printing():
 def generate_output_graphs(
     graphs, identifiers, desired_properties, output_name
 ):
-    """
+    """Generates the output graphs of the SNNs over time.
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param graphs:
     :param identifiers:
     :param desired_properties:
     :param output_name:
-
     """
     # pylint: disable=R0913
     # TODO: reduce the amount of arguments from 6/5 to at most 5/5.

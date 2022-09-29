@@ -12,6 +12,7 @@ from src.export_results.helper import run_config_to_filename
 from src.export_results.Output import output_files_stage_1
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.helper import delete_file_if_exists
+from tests.tests_helper import assertIsFile, assertIsNotFile
 
 
 # pylint: disable=R0902:
@@ -39,24 +40,6 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.json_filepath = f"results/{self.filename}.json"
         self.stage_index: int = 1
 
-    def assertIsFile(self, path):
-        """Asserts a file exists.
-
-        Throws error if a file does not exist.
-        """
-        if not pathlib.Path(path).resolve().is_file():
-            # pylint: disable=C0209
-            raise AssertionError("File does not exist: %s" % str(path))
-
-    def assertIsNotFile(self, path):
-        """Asserts a file does not exists.
-
-        Throws error if the file does exist.
-        """
-        if pathlib.Path(path).resolve().is_file():
-            # pylint: disable=C0209
-            raise AssertionError("File exist: %s" % str(path))
-
     def test_output_json_contains_(self):
         """Tests whether the output function creates a json that can be read as
         a dict that contains an experi_config, a graphs_dict, and a
@@ -67,7 +50,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         delete_file_if_exists(self.json_filepath)
 
         # Verify the output files are deleted.
-        self.assertIsNotFile(filepath)
+        assertIsNotFile(filepath)
 
         # Run function that is being tested.
         output_files_stage_1(
@@ -75,7 +58,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         )
 
         # Verify output JSON file exists.
-        self.assertIsFile(filepath)
+        assertIsFile(filepath)
 
         # Read output JSON file into dict.
         with open(self.json_filepath, encoding="utf-8") as json_file:
