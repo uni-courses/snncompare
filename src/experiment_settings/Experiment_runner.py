@@ -74,7 +74,7 @@ class Experiment_runner:
         self.experi_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
-        self.__perform_run(self.experi_config)
+        self.run_configs = self.__perform_run(self.experi_config)
 
     # pylint: disable=W0238
     def __perform_run(self, experi_config):
@@ -122,6 +122,7 @@ class Experiment_runner:
                 export_results(
                     experi_config, results, run_config, stage_1_graphs
                 )
+        return run_configs
 
 
 def experiment_config_to_run_configs(experi_config: dict):

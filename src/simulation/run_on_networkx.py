@@ -68,7 +68,7 @@ def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t):
     for node in G.nodes:
 
         G.nodes[node]["nx_LIF"].append(G.nodes[node]["nx_LIF"][t])
-        print(f'Appended for:{node}, len={len(G.nodes[node]["nx_LIF"])}')
+        # print(f'Appended for:{node}, len={len(G.nodes[node]["nx_LIF"])}')
 
 
 def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph, t) -> None:

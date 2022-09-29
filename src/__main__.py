@@ -2,10 +2,17 @@
 that invokes this script."""
 
 # Import code belonging to this project.
+import os
+import shutil
+
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
     example_experi_config,
 )
+
+# Remove results directory if it exists.
+if os.path.exists("results"):
+    shutil.rmtree("results")
 
 # Run experiment example run.
 # TODO: do this as a consequence of parsing the CLI arguments.

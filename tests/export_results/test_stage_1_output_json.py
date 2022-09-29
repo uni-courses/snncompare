@@ -1,12 +1,14 @@
 """Performs tests that verifies the json files created in stage 1 are valid."""
 
 import json
+import os
 import pathlib
+import shutil
 import unittest
 
 from src.experiment_settings.Experiment_runner import (
+    Experiment_runner,
     example_experi_config,
-    experiment_config_to_run_configs,
 )
 from src.export_results.helper import run_config_to_filename
 from src.export_results.Output import output_files_stage_1
@@ -24,17 +26,20 @@ class Test_stage_1_output_json(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Initialise:
-        self.experi_config: dict = example_experi_config()
-        # Run minimum steps to produce valid output graph.
-        self.experi_config["show_snns"] = False
-        self.experi_config["export_snns"] = True
+        # Remove results directory if it exists.
+        if os.path.exists("results"):
+            shutil.rmtree("results")
 
-        self.run_configs: dict = experiment_config_to_run_configs(
-            self.experi_config
+        # Initialise experiment settings, and run experiment.
+        self.experi_config: dict = example_experi_config()
+        experiment_runner = Experiment_runner(
+            self.experi_config, show_snns=False, export_snns=False
         )
-        # Pick first run config.
-        self.first_run_config = self.run_configs[0]
+        # TODO: verify the to_run is computed correctly.
+
+        # Pick (first) run config and get the output locations for testing.
+        # TODO: make random, and make it loop through all/random run configs.
+        self.first_run_config = experiment_runner.run_configs[0]
         self.stage_1_graphs: dict = get_used_graphs(self.first_run_config)
         self.filename: str = run_config_to_filename(self.first_run_config)
         self.json_filepath = f"results/{self.filename}.json"
@@ -67,3 +72,10 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.assertIn("experiment_config", stage_1_output_dict)
         self.assertIn("run_config", stage_1_output_dict)
         self.assertIn("graphs_dict", stage_1_output_dict)
+
+        # TODO: Assert the right graphs are within the graphs_dict.
+        print(f'stage_1_output_dict={stage_1_output_dict["graphs_dict"]}')
+        for key in stage_1_output_dict["graphs_dict"].keys():
+            print(f"key={key}")
+
+        # TODO: Assert graphs in graphs_dict contain correct stage_index.

@@ -573,23 +573,21 @@ def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
             0,
             sim_duration,
         ):
-            # if graph_name == "rad_snn_algo_graph":
-            # TODO: include check for only rad dead things.
+            # TODO: include circular input graph output.
+            if graph_name != "input_graph":
 
-            # TODO plot a single graph.
-
-            # pylint: disable=R0913
-            # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-            plot_coordinated_graph(
-                graph,
-                desired_props,
-                t,
-                False,
-                f"{graph_name}_{filepath}_{t}",
-                title=create_custom_plot_titles(
-                    graph_name, t, run_config["seed"]
-                ),
-            )
+                # pylint: disable=R0913
+                # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+                plot_coordinated_graph(
+                    graph,
+                    desired_props,
+                    t,
+                    False,
+                    f"{graph_name}_{filepath}_{t}",
+                    title=create_custom_plot_titles(
+                        graph_name, t, run_config["seed"]
+                    ),
+                )
 
 
 def print_dead_neuron_names(some_graph: nx.DiGraph):
