@@ -1,6 +1,5 @@
 """Performs tests that verifies the json files created in stage 1 are valid."""
 
-import json
 import os
 import pathlib
 import shutil
@@ -12,6 +11,7 @@ from src.experiment_settings.Experiment_runner import (
 )
 from src.export_results.helper import run_config_to_filename
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
+from src.import_results.stage_1_load_input_graphs import load_results_from_json
 from tests.tests_helper import assertIsFile
 
 
@@ -53,8 +53,9 @@ class Test_stage_1_output_json(unittest.TestCase):
         assertIsFile(filepath)
 
         # Read output JSON file into dict.
-        with open(self.json_filepath, encoding="utf-8") as json_file:
-            stage_1_output_dict = json.load(json_file)
+        # with open(self.json_filepath, encoding="utf-8") as json_file:
+        #    stage_1_output_dict = json.load(json_file)
+        stage_1_output_dict = load_results_from_json(self.json_filepath)
 
         self.assertIn("experiment_config", stage_1_output_dict)
         self.assertIn("run_config", stage_1_output_dict)
@@ -63,6 +64,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         # TODO: Assert the right graphs are within the graphs_dict.
         print(f'stage_1_output_dict={stage_1_output_dict["graphs_dict"]}')
         for key in stage_1_output_dict["graphs_dict"].keys():
+            # g = nx.DiGraph(d)
             print(f"key={key}")
 
         # TODO: Assert graphs in graphs_dict contain correct stage_index.

@@ -36,7 +36,7 @@ def verify_stage_1_graphs(
     # TODO: verify the properties required by the run config are in the graphs.
 
 
-def get_expected_stage_1_graphs(run_config: dict) -> List[str]:
+def get_expected_stage_1_graph_names(run_config: dict) -> List[str]:
     """Parses the run config and returns a list with the graph names that are
     expected at the end of stage 1."""
 
@@ -59,7 +59,7 @@ def expected_graphs_are_in_dict(
 
     if stage == 1:
         # Compute which graphs are expected, based on run config.
-        expected_graphs = get_expected_stage_1_graphs(run_config)
+        expected_graphs = get_expected_stage_1_graph_names(run_config)
     else:
         # TODO: implement.
         raise Exception(f"Stage {stage} not yet implemented.")

@@ -25,7 +25,7 @@ from src.export_results.load_pickles_get_results import (
     get_desired_properties_for_graph_printing,
 )
 from src.export_results.verify_stage_1_graphs import (
-    get_expected_stage_1_graphs,
+    get_expected_stage_1_graph_names,
     verify_stage_1_graphs,
 )
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
@@ -291,6 +291,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     expected_filepaths = []
 
     filename = run_config_to_filename(run_config)
+
     relative_output_dir = "results/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
@@ -325,7 +326,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
             return False
         if filepath[:-5] == ".json":
             the_dict = load_json_file_into_dict(filepath)
-            # Determine the expected graphs
+            # Check if the graphs are in the files and included correctly.
             if "graphs_dict" not in the_dict:
                 return False
             if not graph_dict_completed_stage(
@@ -347,7 +348,7 @@ def graph_dict_completed_stage(
     """
 
     # Loop through expected graph names for this run_config.
-    for graph_name in get_expected_stage_1_graphs(run_config):
+    for graph_name in get_expected_stage_1_graph_names(run_config):
         if graph_name not in the_dict["graphs_dict"]:
             return False
         if ("completed_stages") not in the_dict["graphs_dict"][graph_name]:
