@@ -21,15 +21,14 @@ from src.experiment_settings.verify_experiment_settings import (
     verify_has_unique_id,
 )
 from src.experiment_settings.verify_run_settings import verify_run_config
-from src.export_results.Output import (
-    output_files_stage_1,
-    output_stage_files,
-    performed_stage,
-)
+from src.export_results.Output import output_files_stage_1, output_stage_files
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
-from src.import_results.stage_1_load_input_graphs import load_results_stage_1
+from src.import_results.stage_1_load_input_graphs import (
+    load_results_stage_1,
+    performed_stage,
+)
 from src.process_results.process_results import export_results, get_results
 from src.simulation.stage2_sim import sim_graphs
 

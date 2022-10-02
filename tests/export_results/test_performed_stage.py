@@ -10,11 +10,13 @@ from src.experiment_settings.Experiment_runner import (
     example_experi_config,
 )
 from src.export_results.helper import run_config_to_filename
-from src.export_results.Output import performed_stage
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.import_results.stage_1_load_input_graphs import load_results_from_json
+from src.import_results.stage_1_load_input_graphs import (
+    load_results_from_json,
+    performed_stage,
+)
 from tests.tests_helper import (
     create_result_file_for_testing,
     get_n_random_run_configs,
