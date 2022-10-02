@@ -39,7 +39,9 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         # Initialise experiment settings, and run experiment.
         self.experi_config: dict = example_experi_config()
-        self.export_snns = False
+
+        self.expected_completed_stages = [1, 2]
+        self.export_snns = True
         self.experiment_runner = Experiment_runner(
             self.experi_config, show_snns=False, export_snns=self.export_snns
         )
@@ -66,12 +68,13 @@ class Test_stage_1_output_json(unittest.TestCase):
                 f"results/{run_config_to_filename(run_config)}.json"
             )
 
-            expected_completed_stages = [1]
             # TODO: determine per stage per run config which graph names are
             # expected.
             stage_1_graph_names = get_expected_stage_1_graph_names(run_config)
             create_result_file_for_testing(
-                json_filepath, stage_1_graph_names, expected_completed_stages
+                json_filepath,
+                stage_1_graph_names,
+                self.expected_completed_stages,
             )
 
             # Read output JSON file into dict.
@@ -94,7 +97,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                     stage_1_output_dict["graphs_dict"][graph_name].graph[
                         "completed_stages"
                     ],
-                    expected_completed_stages,
+                    self.expected_completed_stages,
                 )
 
             # Test whether the performed_stage function returns True for the
@@ -105,7 +108,7 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertTrue(performed_stage(run_config, 1))
 
             # Test for stage 1, 2, and 4.
-            self.assertFalse(performed_stage(run_config, 2))
+            self.assertTrue(performed_stage(run_config, 2))
             self.assertEqual(performed_stage(run_config, 3), self.export_snns)
             self.assertFalse(performed_stage(run_config, 4))
 
