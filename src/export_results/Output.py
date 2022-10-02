@@ -323,16 +323,22 @@ def performed_stage(run_config, stage_index: int) -> bool:
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
+            print("Result file not found.")
             return False
-        if filepath[:-5] == ".json":
+        if filepath[-5:] == ".json":
             the_dict = load_json_file_into_dict(filepath)
             # Check if the graphs are in the files and included correctly.
             if "graphs_dict" not in the_dict:
+                print("Results dont contain graphs_dict")
                 return False
             if not graph_dict_completed_stage(
                 run_config, the_dict, stage_index
             ):
+                print(f"Did not complete stage:{stage_index}")
                 return False
+        else:
+            print(f"filepath does not end in json:{filepath}")
+            print(f"filepath[-5:]:{filepath[-5:]}")
     return True
 
 
@@ -350,18 +356,30 @@ def graph_dict_completed_stage(
     # Loop through expected graph names for this run_config.
     for graph_name in get_expected_stage_1_graph_names(run_config):
         if graph_name not in the_dict["graphs_dict"]:
+            print(f"graph_name:{graph_name} not in dict")
             return False
-        if ("completed_stages") not in the_dict["graphs_dict"][graph_name]:
+        if ("completed_stages") not in the_dict["graphs_dict"][graph_name][
+            "graph"
+        ]:
+            print(f"graph_name={graph_name}")
+            print(
+                'the_dict["graphs_dict"][graph_name] '
+                + "did not contain completed_stages"
+            )
+            print(the_dict["graphs_dict"][graph_name])
             return False
         if not isinstance(
-            list, the_dict["graphs_dict"][graph_name]["completed_stages"]
+            the_dict["graphs_dict"][graph_name]["graph"]["completed_stages"],
+            List,
         ):
             raise Exception(
                 "Error, completed stages parameter type is not a list."
             )
         if (
             stage_index
-            not in the_dict["graphs_dict"][graph_name]["completed_stages"]
+            not in the_dict["graphs_dict"][graph_name]["graph"][
+                "completed_stages"
+            ]
         ):
             return False
     return True

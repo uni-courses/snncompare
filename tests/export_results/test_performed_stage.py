@@ -10,6 +10,7 @@ from src.experiment_settings.Experiment_runner import (
     example_experi_config,
 )
 from src.export_results.helper import run_config_to_filename
+from src.export_results.Output import performed_stage
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
@@ -36,8 +37,9 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         # Initialise experiment settings, and run experiment.
         self.experi_config: dict = example_experi_config()
+        self.export_snns = False
         self.experiment_runner = Experiment_runner(
-            self.experi_config, show_snns=False, export_snns=False
+            self.experi_config, show_snns=False, export_snns=self.export_snns
         )
         # TODO: verify the to_run is computed correctly.
 
@@ -73,19 +75,18 @@ class Test_stage_1_output_json(unittest.TestCase):
             # Read output JSON file into dict.
             stage_1_output_dict = load_results_from_json(json_filepath)
 
+            # Verify the 3 dicts are in the result dict.
             self.assertIn("experiment_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
 
-            # Test: Including a results file that contains the expected graphs
-            #  and the completed index, then verify the performed_stage
-            # function returns True for that stage. (And False for the others.)
-            # TODO: Assert the right graphs are within the graphs_dict.
+            # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:
                 self.assertIn(
                     graph_name, stage_1_output_dict["graphs_dict"].keys()
                 )
 
+            # Verify each graph has the right completed stages attribute.
             for graph_name in stage_1_output_dict["graphs_dict"].keys():
                 self.assertEqual(
                     stage_1_output_dict["graphs_dict"][graph_name].graph[
@@ -94,6 +95,16 @@ class Test_stage_1_output_json(unittest.TestCase):
                     expected_completed_stages,
                 )
 
+            # Test whether the performed_stage function returns True for the
+            # completed stages in the graphs.
+
+            # Test whether the performed stage function returns False for the
+            # uncompleted stages in the graphs.
+            self.assertTrue(performed_stage(run_config, 1))
+
             # Test for stage 1, 2, and 4.
+            self.assertFalse(performed_stage(run_config, 2))
+            self.assertEqual(performed_stage(run_config, 3), self.export_snns)
+            self.assertFalse(performed_stage(run_config, 4))
 
             # TODO: write test for stage 3.
