@@ -84,6 +84,7 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     back into a nx.Digraph object."""
     # Load the json dictionary of results.
     stage_1_dict: dict = load_json_file_into_dict(json_filepath)
+    # pprint(stage_1_dict)
 
     # Verify the dict contains a key for the graph dict.
     if "graphs_dict" not in stage_1_dict:
@@ -240,10 +241,10 @@ def get_expected_image_filenames_stage_3(
     json_filepath = f"results/{run_config_to_filename(run_config)}.json"
     run_results = load_results_from_json(json_filepath, run_config)
 
-    for graph_name, graph in run_results["graphs_dict"]:
+    for graph_name in run_results["graphs_dict"].keys():
         # TODO: get graph length from graph object.
         sim_duration = get_sim_duration(
-            graph,
+            run_results["graphs_dict"]["input_graph"],
             run_config,
         )
 

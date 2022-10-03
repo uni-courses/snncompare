@@ -440,7 +440,7 @@ def plot_graph_behaviours(
     # Loop over the graph types
     for graph_name, graph in stage_2_graphs.items():
         sim_duration = get_sim_duration(
-            graph,
+            stage_2_graphs["input_graph"],
             run_config,
         )
         for t in range(

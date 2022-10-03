@@ -81,6 +81,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
+                run_config,
             )
 
             # Read output JSON file into dict.
@@ -92,6 +93,10 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertIn("experiment_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
+            self.assertIn(
+                "alg_props",
+                stage_1_output_dict["graphs_dict"]["input_graph"].graph,
+            )
 
             # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:

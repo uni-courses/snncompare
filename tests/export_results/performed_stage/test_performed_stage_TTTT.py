@@ -75,6 +75,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
+                run_config,
             )
 
             # Read output JSON file into dict.

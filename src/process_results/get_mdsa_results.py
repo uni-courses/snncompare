@@ -97,7 +97,7 @@ def get_snn_results(
     """
     # Determine why the duration is used here to get a time step.
     sim_duration = get_sim_duration(
-        snn_graph,
+        input_graph,
         run_config,
     )
     # get runtime

@@ -754,7 +754,7 @@ def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
 
 
 def get_sim_duration(
-    snn_graph: nx.DiGraph,
+    input_graph: nx.DiGraph,
     run_config: dict,
 ) -> int:
     """Compute the simulation duration for a given algorithm and graph."""
@@ -763,8 +763,9 @@ def get_sim_duration(
 
             # TODO: determine why +10 is required.
             # TODO: Move into stage_1 get input graphs.
+
             sim_time: int = (
-                snn_graph.graph["alg_props"]["inhibition"]
+                input_graph.graph["alg_props"]["inhibition"]
                 * (algo_settings["m_val"] + 1)
                 + 10
             )
@@ -772,7 +773,7 @@ def get_sim_duration(
                 raise Exception(
                     "Error, sim_time is not an int."
                     + 'snn_graph.graph["alg_props"]["inhibition"]='
-                    + f'{snn_graph.graph["alg_props"]["inhibition"]}'
+                    + f'{input_graph.graph["alg_props"]["inhibition"]}'
                     + '(algo_settings["m_val"] + 1)='
                     + f'{(algo_settings["m_val"] + 1)}'
                 )

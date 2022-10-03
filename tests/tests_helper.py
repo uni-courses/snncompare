@@ -7,6 +7,7 @@ import jsons
 
 from src.export_results.export_json_results import write_dict_to_json
 from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
+from src.graph_generation.snn_algo.mdsa_snn_algo import Alipour_properties
 
 
 def get_n_random_run_configs(run_configs, n: int, seed: int = None):
@@ -39,7 +40,10 @@ def assertIsNotFile(path):
 
 
 def create_result_file_for_testing(
-    json_filepath: str, graph_names: List[str], completed_stages: List[str]
+    json_filepath: str,
+    graph_names: List[str],
+    completed_stages: List[str],
+    run_config: dict,
 ):
     """Creates a dummy result file that can be used to test functions that
     recognise which stages have been computed already or not.
@@ -49,7 +53,7 @@ def create_result_file_for_testing(
 
     # TODO: create the output results file with the respective graphs.
     dummy_result: dict = create_results_dict_for_testing(
-        graph_names, completed_stages
+        graph_names, completed_stages, run_config
     )
 
     # TODO: Optional: ensure output files exists.
@@ -58,20 +62,28 @@ def create_result_file_for_testing(
     # Verify output JSON file exists.
     filepath = pathlib.Path(json_filepath)
     assertIsFile(filepath)
-    # pprint(dummy_result)
 
 
 def create_results_dict_for_testing(
-    graph_names: List[str], completed_stages: List[str]
+    graph_names: List[str], completed_stages: List[str], run_config: dict
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
     graphs."""
     graphs_dict = {}
+
     for graph_name in graph_names:
-        # Get random nx.DiGraph graph.
-        graphs_dict[graph_name] = get_networkx_graph_of_2_neurons()
-        # Add the completed stages as graph attribute.
+        if graph_name == "input_graph":
+            # Add MDSA algorithm properties to input graph.
+            graphs_dict["input_graph"] = get_networkx_graph_of_2_neurons()
+            graphs_dict["input_graph"].graph["alg_props"] = Alipour_properties(
+                graphs_dict["input_graph"], run_config["seed"]
+            ).__dict__
+        else:
+            # Get random nx.DiGraph graph.
+            graphs_dict[graph_name] = get_networkx_graph_of_2_neurons()
+            # Add the completed stages as graph attribute.
         graphs_dict[graph_name].graph["completed_stages"] = completed_stages
+
         # Convert the nx.DiGraph object to dict.
         graphs_dict[graph_name] = graphs_dict[graph_name].__dict__
 
