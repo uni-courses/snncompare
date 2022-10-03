@@ -183,7 +183,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     relative_output_dir = "results/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
-        if stage_index in [1, 2, 3, 4]:
+        if stage_index in [1, 2, 4]:  # json is checked in: stage_index == 3.
 
             expected_filepaths.append(
                 relative_output_dir + filename + extension
@@ -198,7 +198,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
                     f"results/{run_config_to_filename(run_config)}.json"
                 )
                 run_results = load_results_from_json(json_filepath, run_config)
-                expected_filepaths.append(
+                expected_filepaths.extend(
                     get_expected_image_paths_stage_3(
                         run_results["graphs_dict"].keys(),
                         run_results["graphs_dict"]["input_graph"],
@@ -317,14 +317,15 @@ def get_expected_image_paths_stage_3(
     )
     image_dir = "latex/Images/graphs/"
     for extension in extensions:
+        print(f"extension={extension}")
         for graph_name in graph_names:
             if graph_name == "input_graph":
                 image_filepaths.append(
-                    f"results/{graph_name}_{filename}.{extension}"
+                    f"results/{graph_name}_{filename}{extension}"
                 )
             else:
                 for t in range(0, sim_duration):
                     image_filepaths.append(
-                        image_dir + f"{graph_name}_{filename}_{t}.{extension}"
+                        image_dir + f"{graph_name}_{filename}_{t}{extension}"
                     )
     return image_filepaths

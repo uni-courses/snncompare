@@ -20,7 +20,7 @@ from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
-from src.helper import get_extensions_dict
+from src.helper import get_extensions_list
 from src.import_results.stage_1_load_input_graphs import (
     load_results_from_json,
     performed_stage,
@@ -96,7 +96,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 stage_1_graph_names,
                 self.input_graph,
                 run_config,
-                get_extensions_dict(run_config, 3)["graphs"],
+                get_extensions_list(run_config, 3),
             )
 
             # Read output JSON file into dict.
