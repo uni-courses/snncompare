@@ -194,12 +194,15 @@ def performed_stage(run_config, stage_index: int) -> bool:
         if stage_index == 3:
             json_filepath = f"results/{filename}.json"
             if file_exists(json_filepath):
-                get_expected_image_filenames_stage_3(
-                    expected_filepaths,
-                    extension,
-                    filename,
-                    relative_output_dir,
+                json_filepath = (
+                    f"results/{run_config_to_filename(run_config)}.json"
+                )
+                run_results = load_results_from_json(json_filepath, run_config)
+                get_expected_image_paths_stage_3(
+                    run_results["graphs_dict"].keys(),
+                    run_results["graphs_dict"]["input_graph"],
                     run_config,
+                    extensions,
                 )
             else:
                 return False
@@ -225,38 +228,6 @@ def performed_stage(run_config, stage_index: int) -> bool:
             print(f"filepath does not end in json:{filepath}")
             print(f"filepath[-5:]:{filepath[-5:]}")
     return True
-
-
-def get_expected_image_filenames_stage_3(
-    expected_filepaths: List,
-    extension: str,
-    filename: str,
-    relative_output_dir: str,
-    run_config: dict,
-) -> List:
-    """Gets the output image filenames of the graphs that are plotted in stage
-    3. Then adds these to the list of expected output files and returns the
-    list of expected output files"""
-    # TODO: Get graph objects from stage 2 json output file.
-    json_filepath = f"results/{run_config_to_filename(run_config)}.json"
-    run_results = load_results_from_json(json_filepath, run_config)
-
-    for graph_name in run_results["graphs_dict"].keys():
-        # TODO: get graph length from graph object.
-        sim_duration = get_sim_duration(
-            run_results["graphs_dict"]["input_graph"],
-            run_config,
-        )
-
-        # Generate the list of output filenames
-        for t in range(0, sim_duration):
-            run_name = run_config_to_filename(run_config)
-            filename = f"{graph_name}_{run_name}_{t}"
-            # Generate graph filenames
-            expected_filepaths.append(
-                relative_output_dir + filename + f"t_{t}" + extension
-            )
-    return ["names"]
 
 
 def graph_dict_completed_stage(
@@ -324,3 +295,34 @@ def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
     with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
         stage_2_output_dict = json.load(json_file)
     return stage_2_output_dict
+
+
+def get_expected_image_paths_stage_3(
+    graph_names: List[str],
+    input_graph: nx.DiGraph,
+    run_config: dict,
+    extensions,
+) -> List:
+    """Returns the expected image filepaths for stage 3.
+
+    (If export is on).
+    """
+    image_filepaths = []
+    filename: str = run_config_to_filename(run_config)
+    sim_duration = get_sim_duration(
+        input_graph,
+        run_config,
+    )
+    image_dir = "latex/Images/graphs/"
+    for extension in extensions:
+        for graph_name in graph_names:
+            if graph_name == "input_graph":
+                image_filepaths.append(
+                    f"results/{graph_name}_{filename}.{extension}"
+                )
+            else:
+                for t in range(0, sim_duration):
+                    image_filepaths.append(
+                        image_dir + f"{graph_name}_{filename}_{t}.{extension}"
+                    )
+    return image_filepaths

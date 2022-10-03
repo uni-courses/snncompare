@@ -15,6 +15,7 @@ from src.experiment_settings.Experiment_runner import (
     example_experi_config,
 )
 from src.export_results.helper import run_config_to_filename
+from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
@@ -44,6 +45,9 @@ class Test_stage_1_output_json(unittest.TestCase):
         # Remove results directory if it exists.
         if os.path.exists("results"):
             shutil.rmtree("results")
+        if os.path.exists("latex"):
+            shutil.rmtree("latex")
+        create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
         self.experi_config: dict = example_experi_config()

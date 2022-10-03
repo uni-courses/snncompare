@@ -7,9 +7,10 @@ import jsons
 import networkx as nx
 
 from src.export_results.export_json_results import write_dict_to_json
-from src.export_results.helper import run_config_to_filename
 from src.graph_generation.snn_algo.mdsa_snn_algo import Alipour_properties
-from src.helper import get_sim_duration
+from src.import_results.stage_1_load_input_graphs import (
+    get_expected_image_paths_stage_3,
+)
 
 
 def get_n_random_run_configs(run_configs, n: int, seed: int = None):
@@ -110,26 +111,10 @@ def create_dummy_output_images_stage_3(
 ) -> None:
     """Creates the dummy output images that would be created as output for
     stage 3, if exporting is on."""
-    image_filepaths = []
-    filename: str = run_config_to_filename(run_config)
-    sim_duration = get_sim_duration(
-        input_graph,
-        run_config,
+
+    image_filepaths = get_expected_image_paths_stage_3(
+        graph_names, input_graph, run_config, extensions
     )
-    for extension in extensions:
-        for graph_name in graph_names:
-            if graph_name == "input_graph":
-                image_filepaths.append(
-                    f"results/{graph_name}_{filename}.{extension}"
-                )
-            else:
-
-                for t in range(0, sim_duration):
-                    image_filepaths.append(
-                        "latex/Images/graphs/"
-                        + f"{graph_name}_{filename}_{t}.{extension}"
-                    )
-
     for image_filepath in image_filepaths:
         # ensure output images exist.
         with open(image_filepath, "w", encoding="utf-8"):
