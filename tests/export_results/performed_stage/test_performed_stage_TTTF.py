@@ -1,5 +1,10 @@
 """Performs tests check whether the performed_stage function correctly
-determines which stages have been completed and not."""
+determines which stages have been completed and not for:
+Stage1=Done
+Stage2=Done
+Stage3=Done
+Stage4=TODO
+."""
 
 import os
 import shutil
@@ -41,7 +46,8 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.experi_config: dict = example_experi_config()
 
         self.expected_completed_stages = [1, 2]
-        self.export_snns = True
+        self.export_snns = False  # Expect the test to export snn pictures.
+        # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
             self.experi_config, show_snns=False, export_snns=self.export_snns
         )
@@ -100,16 +106,13 @@ class Test_stage_1_output_json(unittest.TestCase):
                     self.expected_completed_stages,
                 )
 
-            # Test whether the performed_stage function returns True for the
-            # completed stages in the graphs.
-
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
             self.assertTrue(performed_stage(run_config, 1))
 
             # Test for stage 1, 2, and 4.
             self.assertTrue(performed_stage(run_config, 2))
-            self.assertEqual(performed_stage(run_config, 3), self.export_snns)
+            self.assertTrue(performed_stage(run_config, 3))
             self.assertFalse(performed_stage(run_config, 4))
 
             # TODO: write test for stage 3.

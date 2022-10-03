@@ -7,7 +7,11 @@ network to simulate it, one neuron at a time.
 
 # Import external libraries.
 
+from typing import List
+
 import networkx as nx
+
+from src.simulation.LIF_neuron import LIF_neuron
 
 # Import local project functions and classes.
 from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
@@ -59,6 +63,9 @@ def run_snn_on_networkx(G: nx.DiGraph, sim_duration: int) -> None:
         verify_networkx_snn_spec(G, t + 1)
         run_simulation_with_networkx_for_1_timestep(G, t + 1)
 
+    # Verify the network dimensions. (Ensure sufficient nodes are added.)
+    verify_networkx_graph_dimensions(G, sim_duration)
+
 
 def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t):
     """Creates a new neuron for the next timestep, by copying the old neuron.
@@ -69,6 +76,45 @@ def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t):
 
         G.nodes[node]["nx_LIF"].append(G.nodes[node]["nx_LIF"][t])
         # print(f'Appended for:{node}, len={len(G.nodes[node]["nx_LIF"])}')
+
+
+def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration):
+    """Ensures the graph contains at least sim_duration SNN neurons of a single
+    name. This is because each neuron, with a single name, needs to be
+    simulated for sim_duration timesteps. This simulation is done by storing
+    copies of the SNN neuron in a list, one for each simulated timestep.
+
+    The graph is expected to adhere to the following structure:
+    G.nodes[nodename] stores a single node, representing a neuron over
+    time. Then that node should contain a list of nx_LIF neurons over
+    time in: G.nodes[node]["nx_LIF"] which is of type: List. Then each
+    element in that list must be of type: nx_LIF() neuron.
+    """
+    print(f"Verifying with sim_duration:{sim_duration}")
+    for nodename in G.nodes:
+        # Assert node has nx_LIF neuron object of type list.
+        if not isinstance(G.nodes[nodename]["nx_LIF"], List):
+            raise Exception(
+                "Error, {nodename} nx_LIF is not of type list."
+                + f'instead, it is of type:{type(G.nodes[nodename]["nx_LIF"])}'
+            )
+
+        # TODO: remove the artifact last neuron, (remove the +1), it is not
+        # needed.
+        if not len(G.nodes[nodename]["nx_LIF"]) == sim_duration + 1:
+            raise Exception(
+                f"Error, neuron:{nodename} did not have len:"
+                + f"{sim_duration+1}. Instead, it had len:"
+                + f'{len(G.nodes[nodename]["nx_LIF"])}'
+            )
+
+        for t, neuron_at_time_t in enumerate(G.nodes[nodename]["nx_LIF"]):
+            if not isinstance(neuron_at_time_t, LIF_neuron):
+                raise Exception(
+                    f"Error, {nodename} does not have a neuron of"
+                    + f"type:{LIF_neuron} at t={t}. Instead, it is of type:"
+                    + f"{type(neuron_at_time_t)}"
+                )
 
 
 def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph, t) -> None:

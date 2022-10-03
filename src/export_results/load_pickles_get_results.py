@@ -4,10 +4,8 @@ import pickle  # nosec - User is trusted not to load malicious pickle files.
 from src.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
 )
-from src.helper import old_graph_to_new_graph_properties
 
 # from src.process_results.process_results import get_run_results
-from src.simulation.run_on_networkx import run_snn_on_networkx
 
 
 def get_desired_properties_for_graph_printing():
@@ -45,18 +43,6 @@ def generate_output_graphs(
         )
 
 
-def get_graph_behaviour(G, sim_time):
-    """
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param sim_time: Nr. of timesteps for which the experiment is ran.
-
-    """
-    old_graph_to_new_graph_properties(G)
-    G_behaviour = simulate_graph(G, sim_time)
-    return G_behaviour
-
-
 def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
     """
 
@@ -73,22 +59,6 @@ def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
             False,
             filename=f"{output_name}_t={t}",
         )
-
-
-def simulate_graph(G, sim_time):
-    """
-
-    :param counter_neurons: Neuron objects at the counter position.
-    Type unknown.
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param sim_time: Nr. of timesteps for which the experiment is ran.
-
-    """
-
-    G_behaviour = []
-    for _ in range(sim_time + 2):
-        G_behaviour.extend(run_snn_on_networkx(G, 1))
-    return G_behaviour
 
 
 def get_neurons(G, sim_type, neuron_types):

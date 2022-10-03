@@ -68,8 +68,8 @@ def load_results_stage_1(run_config: dict) -> dict:
     for graph_name, some_graph in stage_1_dict["graphs_dict"][
         "stage_1"
     ].items():
-        print(f"graph_name={graph_name}")
-        print(f"some_graph={type(some_graph)}")
+        # print(f"graph_name={graph_name}")
+        # print(f"some_graph={type(some_graph)}")
         stage_1_graphs[graph_name] = json_to_digraph(some_graph)
     return stage_1_graphs
 
@@ -142,7 +142,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     relative_output_dir = "results/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
-        if stage_index in [1, 2, 4]:
+        if stage_index in [1, 2, 3, 4]:
 
             expected_filepaths.append(
                 relative_output_dir + filename + extension
@@ -151,10 +151,6 @@ def performed_stage(run_config, stage_index: int) -> bool:
             print(f"expected_filepaths={expected_filepaths}")
 
         if stage_index == 3:
-
-            # Check if output file(s) of stage 2 exist, otherwise return False.
-            if not Path(relative_output_dir + filename + extension).is_file():
-                return False
 
             # TODO: get graph length from graph object.
             nr_of_simulation_steps = 100000
@@ -215,7 +211,28 @@ def graph_dict_completed_stage(
             )
         if stage_index not in graph.graph["completed_stages"]:
             return False
+        verify_completed_stages_list(graph.graph["completed_stages"])
     return True
+
+
+def verify_completed_stages_list(completed_stages: List) -> None:
+    """Verifies the completed stages list is a list of consecutive positive
+    integers.
+
+    TODO: test this function.
+    """
+    start_stage = completed_stages[0]
+    for next_stage in completed_stages[1:]:
+        if start_stage != next_stage - 1:
+            raise Exception(
+                f"Stage indices are not consecutive:{completed_stages}."
+            )
+    for stage in completed_stages:
+        if stage < 1:
+            raise Exception(
+                "completed_stages contained non positive integer:"
+                + f"{completed_stages}"
+            )
 
 
 def load_stage_2_output_dict(relative_output_dir, filename) -> dict:

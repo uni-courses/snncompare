@@ -40,9 +40,9 @@ def sim_graphs(
 
             # TODO: compute actual inhibition and mval
             run_snn_on_networkx(
-                snn_graph, get_sim_duration(snn_graph, run_config)
+                snn_graph, stage_1_graphs[graph_name].graph["sim_duration"]
             )
-        print(f"Stage 2, adding:{graph_name}")
+        # print(f"Stage 2, adding:{graph_name}")
         add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
         # TODO: export graphs to file.
 
@@ -75,5 +75,5 @@ def convert_graph_snn_to_nx_snn(G: nx.DiGraph):
 
     # Verify the simulations produce identical static
     # neuron properties.
-    print("")
+    # print("")
     # compare_static_snn_properties(self, G)

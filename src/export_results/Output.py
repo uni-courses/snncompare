@@ -129,7 +129,7 @@ def output_stage_files(
         if run_config["export_snns"]:
             # Output the json dictionary of the files.
             filename = run_config_to_filename(run_config)
-            print(f"Exporting image:{filename}\n")
+            # print(f"Exporting image:{filename}\n")
 
             output_stage_json(
                 experiment_config,
@@ -279,7 +279,7 @@ def merge_stage_1_graphs(graphs):
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
-        print(f"graph_name={graph_name}")
+        # print(f"graph_name={graph_name}")
 
         if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             raise Exception(
@@ -300,7 +300,7 @@ def merge_stage_2_graphs(graphs):
     """Puts all the graphs of stage 2 into a single graph."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():
-        print(f"graph_name={graph_name}")
+        # print(f"graph_name={graph_name}")
         graphs_per_type = []
         if isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             graphs_per_type.append(digraph_to_json(graph_container))
@@ -437,7 +437,7 @@ def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
 
     # Loop over the graph types
     for graph_name, graph in graphs.items():
-        print(f"graph_name={graph_name}")
+        # print(f"graph_name={graph_name}")
         # if not isinstance(graph, nx.DiGraph):
         #    raise Exception(
         #        "Error, expected single DiGraph, yet found:" f"{type(graph)}"
@@ -456,7 +456,7 @@ def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
         ):
             # TODO: include circular input graph output.
             if graph_name != "input_graph":
-
+                print(f"plot_coordinated_graph graph_name={graph_name}")
                 # pylint: disable=R0913
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
                 plot_coordinated_graph(
@@ -473,12 +473,13 @@ def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
 
 def print_dead_neuron_names(some_graph: nx.DiGraph):
     """Prints the dead neuron names."""
-    print("Dead neuron names:")
+    # print("Dead neuron names:")
     for nodename in some_graph:
         if "rad_death" in some_graph.nodes[nodename].keys():
             # if nodename in dead_neuron_names:
             if some_graph.nodes[nodename]["rad_death"]:
-                print(nodename)
+                # print(nodename)
+                pass
 
 
 # pylint: disable=R0912

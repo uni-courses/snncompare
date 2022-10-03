@@ -100,9 +100,6 @@ class Test_stage_1_output_json(unittest.TestCase):
                     self.expected_completed_stages,
                 )
 
-            # Test whether the performed_stage function returns True for the
-            # completed stages in the graphs.
-
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
             self.assertTrue(performed_stage(run_config, 1))

@@ -287,8 +287,7 @@ def set_nx_node_colours(G, t: int):
                     colour_dict[node_name] = "red"
                     if G.nodes[node_name]["nx_LIF"][t].spikes:
                         raise Exception("Dead neuron can't spike.")
-            print(f"t={t}")
-            print(f'at [t]={t},LIF_neuron={G.nodes[node_name]["nx_LIF"][t]}')
+
             # TODO: determine whether to use s_out = 1 or, spikes=False.
             if G.nodes[node_name]["nx_LIF"][t].spikes:
                 colour_dict[node_name] = "green"
