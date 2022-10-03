@@ -53,7 +53,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.experi_config: dict = example_experi_config()
         self.input_graph = get_networkx_graph_of_2_neurons()
 
-        self.expected_completed_stages = [1, 2]
+        self.expected_completed_stages = [1, 2, 3]
         self.export_snns = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(

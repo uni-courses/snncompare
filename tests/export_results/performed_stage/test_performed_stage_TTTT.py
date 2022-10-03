@@ -1,5 +1,10 @@
 """Performs tests check whether the performed_stage function correctly
-determines which stages have been completed and not."""
+determines which stages have been completed and not for:
+Stage1=Done
+Stage2=Done
+Stage3=Done
+Stage4=TODO
+."""
 
 import os
 import shutil
@@ -10,14 +15,18 @@ from src.experiment_settings.Experiment_runner import (
     example_experi_config,
 )
 from src.export_results.helper import run_config_to_filename
+from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
+from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
+from src.helper import get_extensions_list
 from src.import_results.stage_1_load_input_graphs import (
     load_results_from_json,
     performed_stage,
 )
 from tests.tests_helper import (
+    create_dummy_output_images_stage_3,
     create_result_file_for_testing,
     get_n_random_run_configs,
 )
@@ -36,12 +45,17 @@ class Test_stage_1_output_json(unittest.TestCase):
         # Remove results directory if it exists.
         if os.path.exists("results"):
             shutil.rmtree("results")
+        if os.path.exists("latex"):
+            shutil.rmtree("latex")
+        create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
         self.experi_config: dict = example_experi_config()
+        self.input_graph = get_networkx_graph_of_2_neurons()
 
-        self.expected_completed_stages = [1, 2]
-        self.export_snns = True
+        self.expected_completed_stages = [1, 2, 3, 4]
+        self.export_snns = False  # Expect the test to export snn pictures.
+        # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
             self.experi_config, show_snns=False, export_snns=self.export_snns
         )
@@ -75,7 +89,14 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
+                self.input_graph,
                 run_config,
+            )
+            create_dummy_output_images_stage_3(
+                stage_1_graph_names,
+                self.input_graph,
+                run_config,
+                get_extensions_list(run_config, 3),
             )
 
             # Read output JSON file into dict.
@@ -87,6 +108,10 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertIn("experiment_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
+            self.assertIn(
+                "alg_props",
+                stage_1_output_dict["graphs_dict"]["input_graph"].graph,
+            )
 
             # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:
@@ -109,7 +134,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test for stage 1, 2, and 4.
             self.assertTrue(performed_stage(run_config, 2))
-            self.assertEqual(performed_stage(run_config, 3), self.export_snns)
+            self.assertTrue(performed_stage(run_config, 3))
             self.assertFalse(performed_stage(run_config, 4))
 
             # TODO: write test for stage 3.
