@@ -252,7 +252,6 @@ def get_expected_image_filenames_stage_3(
         for t in range(0, sim_duration):
             run_name = run_config_to_filename(run_config)
             filename = f"{graph_name}_{run_name}_{t}"
-            print(f"stage3 plot extension={extension}")
             # Generate graph filenames
             expected_filepaths.append(
                 relative_output_dir + filename + f"t_{t}" + extension

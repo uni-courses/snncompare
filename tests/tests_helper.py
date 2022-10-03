@@ -4,10 +4,12 @@ import random
 from typing import List
 
 import jsons
+import networkx as nx
 
 from src.export_results.export_json_results import write_dict_to_json
-from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
+from src.export_results.helper import run_config_to_filename
 from src.graph_generation.snn_algo.mdsa_snn_algo import Alipour_properties
+from src.helper import get_sim_duration
 
 
 def get_n_random_run_configs(run_configs, n: int, seed: int = None):
@@ -43,17 +45,18 @@ def create_result_file_for_testing(
     json_filepath: str,
     graph_names: List[str],
     completed_stages: List[str],
+    input_graph: nx.DiGraph,
     run_config: dict,
 ):
-    """Creates a dummy result file that can be used to test functions that
-    recognise which stages have been computed already or not.
+    """Creates a dummy .json result file that can be used to test functions
+    that recognise which stages have been computed already or not.
 
     In particular, the performed_stage() function is tested with this.
     """
 
     # TODO: create the output results file with the respective graphs.
     dummy_result: dict = create_results_dict_for_testing(
-        graph_names, completed_stages, run_config
+        graph_names, completed_stages, input_graph, run_config
     )
 
     # TODO: Optional: ensure output files exists.
@@ -65,7 +68,10 @@ def create_result_file_for_testing(
 
 
 def create_results_dict_for_testing(
-    graph_names: List[str], completed_stages: List[str], run_config: dict
+    graph_names: List[str],
+    completed_stages: List[str],
+    input_graph: nx.DiGraph,
+    run_config: dict,
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
     graphs."""
@@ -74,13 +80,13 @@ def create_results_dict_for_testing(
     for graph_name in graph_names:
         if graph_name == "input_graph":
             # Add MDSA algorithm properties to input graph.
-            graphs_dict["input_graph"] = get_networkx_graph_of_2_neurons()
+            graphs_dict["input_graph"] = input_graph
             graphs_dict["input_graph"].graph["alg_props"] = Alipour_properties(
                 graphs_dict["input_graph"], run_config["seed"]
             ).__dict__
         else:
             # Get random nx.DiGraph graph.
-            graphs_dict[graph_name] = get_networkx_graph_of_2_neurons()
+            graphs_dict[graph_name] = input_graph
             # Add the completed stages as graph attribute.
         graphs_dict[graph_name].graph["completed_stages"] = completed_stages
 
@@ -94,3 +100,41 @@ def create_results_dict_for_testing(
         "graphs_dict": graphs_dict,
     }
     return dummy_result
+
+
+def create_dummy_output_images_stage_3(
+    graph_names: List[str],
+    input_graph: nx.DiGraph,
+    run_config: dict,
+    extensions,
+) -> None:
+    """Creates the dummy output images that would be created as output for
+    stage 3, if exporting is on."""
+    image_filepaths = []
+    filename: str = run_config_to_filename(run_config)
+    sim_duration = get_sim_duration(
+        input_graph,
+        run_config,
+    )
+    for extension in extensions:
+        for graph_name in graph_names:
+            if graph_name == "input_graph":
+                image_filepaths.append(
+                    f"results/{graph_name}_{filename}.{extension}"
+                )
+            else:
+
+                for t in range(0, sim_duration):
+                    image_filepaths.append(
+                        "latex/Images/graphs/"
+                        + f"{graph_name}_{filename}_{t}.{extension}"
+                    )
+
+    for image_filepath in image_filepaths:
+        # ensure output images exist.
+        with open(image_filepath, "w", encoding="utf-8"):
+            pass
+
+        # Verify output JSON file exists.
+        filepath = pathlib.Path(image_filepath)
+        assertIsFile(filepath)

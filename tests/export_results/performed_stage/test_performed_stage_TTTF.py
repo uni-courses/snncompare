@@ -18,11 +18,14 @@ from src.export_results.helper import run_config_to_filename
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
+from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
+from src.helper import get_extensions_dict
 from src.import_results.stage_1_load_input_graphs import (
     load_results_from_json,
     performed_stage,
 )
 from tests.tests_helper import (
+    create_dummy_output_images_stage_3,
     create_result_file_for_testing,
     get_n_random_run_configs,
 )
@@ -44,6 +47,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         # Initialise experiment settings, and run experiment.
         self.experi_config: dict = example_experi_config()
+        self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2]
         self.export_snns = False  # Expect the test to export snn pictures.
@@ -81,7 +85,14 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
+                self.input_graph,
                 run_config,
+            )
+            create_dummy_output_images_stage_3(
+                stage_1_graph_names,
+                self.input_graph,
+                run_config,
+                get_extensions_dict(run_config, 3)["graphs"],
             )
 
             # Read output JSON file into dict.
