@@ -12,7 +12,12 @@ from src.export_results.verify_stage_1_graphs import (
     assert_graphs_are_in_dict,
     get_expected_stage_1_graph_names,
 )
-from src.helper import get_extensions_list, get_sim_duration, is_identical
+from src.helper import (
+    file_exists,
+    get_extensions_list,
+    get_sim_duration,
+    is_identical,
+)
 
 
 def load_json_file_into_dict(json_filepath):
@@ -186,13 +191,17 @@ def performed_stage(run_config, stage_index: int) -> bool:
             print(f"expected_filepaths={expected_filepaths}")
 
         if stage_index == 3:
-            get_expected_image_filenames_stage_3(
-                expected_filepaths,
-                extension,
-                filename,
-                relative_output_dir,
-                run_config,
-            )
+            json_filepath = f"results/{filename}.json"
+            if file_exists(json_filepath):
+                get_expected_image_filenames_stage_3(
+                    expected_filepaths,
+                    extension,
+                    filename,
+                    relative_output_dir,
+                    run_config,
+                )
+            else:
+                return False
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
