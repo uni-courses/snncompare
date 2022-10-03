@@ -447,6 +447,7 @@ def plot_graph_behaviours(
             0,
             sim_duration,
         ):
+            print(f"Plotting graph:{graph_name}, t={t}")
             # TODO: include circular input graph output.
             if graph_name != "input_graph":
 

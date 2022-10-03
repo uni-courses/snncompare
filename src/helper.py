@@ -776,7 +776,6 @@ def get_sim_duration(
                     + '(algo_settings["m_val"] + 1)='
                     + f'{(algo_settings["m_val"] + 1)}'
                 )
-            print(f"sim_time={sim_time}")
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
     raise Exception("Error, the simulation time was not found.")
