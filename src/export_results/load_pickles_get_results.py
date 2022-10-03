@@ -1,10 +1,6 @@
 """Loads pickle test result files ."""
 import pickle  # nosec - User is trusted not to load malicious pickle files.
 
-from src.graph_generation.helper_network_structure import (
-    plot_coordinated_graph,
-)
-
 # from src.process_results.process_results import get_run_results
 
 
@@ -22,43 +18,43 @@ def get_desired_properties_for_graph_printing():
     return desired_properties
 
 
-def generate_output_graphs(
-    graphs, identifiers, desired_properties, output_name
-):
-    """Generates the output graphs of the SNNs over time.
+# def generate_output_graphs(
+#    graphs, identifiers, desired_properties, output_name
+# ):
+#    """Generates the output graphs of the SNNs over time.
+#
+#    :param G: The original graph on which the MDSA algorithm is ran.
+#    :param graphs:
+#    :param identifiers:
+#    :param desired_properties:
+#    :param output_name:
+#    """
+#    # pylint: disable=R0913
+#    # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+#    for i in enumerate(graphs):
+#        plot_graph_behaviour(
+#            graphs[i],
+#            desired_properties,
+#            f"{identifiers[i]}_{output_name}",
+#        )
+#
 
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param graphs:
-    :param identifiers:
-    :param desired_properties:
-    :param output_name:
-    """
-    # pylint: disable=R0913
-    # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-    for i in enumerate(graphs):
-        plot_graph_behaviour(
-            graphs[i],
-            desired_properties,
-            f"{identifiers[i]}_{output_name}",
-        )
-
-
-def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
-    """
-
-    :param G_behaviour:
-    :param desired_properties:
-    :param output_name:
-
-    """
-    for t in enumerate(G_behaviour):
-        plot_coordinated_graph(
-            G_behaviour[t],
-            desired_properties,
-            t,
-            False,
-            filename=f"{output_name}_t={t}",
-        )
+# def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
+#    """
+#
+#    :param G_behaviour:
+#    :param desired_properties:
+#    :param output_name:
+#
+#    """
+#    for t in enumerate(G_behaviour):
+#        plot_coordinated_graph(
+#            G_behaviour[t],
+#            desired_properties,
+#            t,
+#            False,
+#            filename=f"{output_name}_t={t}",
+#        )
 
 
 def get_neurons(G, sim_type, neuron_types):

@@ -78,7 +78,9 @@ class Test_stage_1_output_json(unittest.TestCase):
             )
 
             # Read output JSON file into dict.
-            stage_1_output_dict = load_results_from_json(json_filepath)
+            stage_1_output_dict = load_results_from_json(
+                json_filepath, run_config
+            )
 
             # Verify the 3 dicts are in the result dict.
             self.assertIn("experiment_config", stage_1_output_dict)

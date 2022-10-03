@@ -12,7 +12,7 @@ from src.export_results.verify_stage_1_graphs import (
     assert_graphs_are_in_dict,
     get_expected_stage_1_graph_names,
 )
-from src.helper import get_extensions_list, is_identical
+from src.helper import get_extensions_list, get_sim_duration, is_identical
 
 
 def load_json_file_into_dict(json_filepath):
@@ -44,7 +44,7 @@ def load_results_stage_1(run_config: dict) -> dict:
         if extension == ".json":
             filepath = relative_output_dir + filename + extension
 
-    stage_1_dict = load_results_from_json(filepath)
+    stage_1_dict = load_results_from_json(filepath, run_config)
 
     # Split the dictionary into three separate dicts.
     loaded_run_config = stage_1_dict["run_config"]
@@ -74,7 +74,7 @@ def load_results_stage_1(run_config: dict) -> dict:
     return stage_1_graphs
 
 
-def load_results_from_json(json_filepath) -> dict:
+def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.Digraph object."""
     # Load the json dictionary of results.
@@ -92,7 +92,42 @@ def load_results_from_json(json_filepath) -> dict:
         raise Exception("Error, the graphs dict was an empty dict.")
 
     set_graph_attributes(stage_1_dict["graphs_dict"])
+    verify_loaded_results_from_json(stage_1_dict, run_config)
     return stage_1_dict
+
+
+def verify_loaded_results_from_json(run_result: dict, run_config: dict):
+    """Verifies the results that are loaded from json file are of the expected
+    format."""
+    stage_1_graph_names = get_expected_stage_1_graph_names(run_config)
+    # Verify the 3 dicts are in the result dict.
+    if "experiment_config" not in run_result.keys():
+        raise Exception(
+            f"Error, experiment_config not in run_result keys:{run_result}"
+        )
+
+    if "run_config" not in run_result.keys():
+        raise Exception(
+            f"Error, run_config not in run_result keys:{run_result}"
+        )
+    if "graphs_dict" not in run_result.keys():
+        raise Exception(
+            f"Error, graphs_dict not in run_result keys:{run_result}"
+        )
+
+    # Verify the right graphs are within the graphs_dict.
+    for graph_name in stage_1_graph_names:
+        if graph_name not in run_result["graphs_dict"].keys():
+            raise Exception(
+                f"Error, {graph_name} not in run_result keys:{run_result}"
+            )
+
+    # Verify each graph has the right completed stages attribute.
+    for graph_name in run_result["graphs_dict"].keys():
+        verify_completed_stages_list(
+            run_result["graphs_dict"][graph_name].graph["completed_stages"]
+        )
+        # TODO: verify the stage index is in completed_stages.
 
 
 def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
@@ -151,14 +186,13 @@ def performed_stage(run_config, stage_index: int) -> bool:
             print(f"expected_filepaths={expected_filepaths}")
 
         if stage_index == 3:
-
-            # TODO: get graph length from graph object.
-            nr_of_simulation_steps = 100000
-            for t in range(0, nr_of_simulation_steps):
-                # Generate graph filenames
-                expected_filepaths.append(
-                    relative_output_dir + filename + f"t_{t}" + extension
-                )
+            get_expected_image_filenames_stage_3(
+                expected_filepaths,
+                extension,
+                filename,
+                relative_output_dir,
+                run_config,
+            )
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
@@ -166,7 +200,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
             print("Result file not found.")
             return False
         if filepath[-5:] == ".json":
-            the_dict = load_results_from_json(filepath)
+            the_dict = load_results_from_json(filepath, run_config)
             print(f"type{the_dict}={type(the_dict)}")
             # Check if the graphs are in the files and included correctly.
             if "graphs_dict" not in the_dict:
@@ -181,6 +215,39 @@ def performed_stage(run_config, stage_index: int) -> bool:
             print(f"filepath does not end in json:{filepath}")
             print(f"filepath[-5:]:{filepath[-5:]}")
     return True
+
+
+def get_expected_image_filenames_stage_3(
+    expected_filepaths: List,
+    extension: str,
+    filename: str,
+    relative_output_dir: str,
+    run_config: dict,
+) -> List:
+    """Gets the output image filenames of the graphs that are plotted in stage
+    3. Then adds these to the list of expected output files and returns the
+    list of expected output files"""
+    # TODO: Get graph objects from stage 2 json output file.
+    json_filepath = f"results/{run_config_to_filename(run_config)}.json"
+    run_results = load_results_from_json(json_filepath, run_config)
+
+    for graph_name, graph in run_results["graphs_dict"]:
+        # TODO: get graph length from graph object.
+        sim_duration = get_sim_duration(
+            graph,
+            run_config,
+        )
+
+        # Generate the list of output filenames
+        for t in range(0, sim_duration):
+            run_name = run_config_to_filename(run_config)
+            filename = f"{graph_name}_{run_name}_{t}"
+            print(f"stage3 plot extension={extension}")
+            # Generate graph filenames
+            expected_filepaths.append(
+                relative_output_dir + filename + f"t_{t}" + extension
+            )
+    return ["names"]
 
 
 def graph_dict_completed_stage(
