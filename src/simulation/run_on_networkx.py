@@ -11,6 +11,7 @@ from typing import List
 
 import networkx as nx
 
+from src.helper import get_sim_duration
 from src.simulation.LIF_neuron import LIF_neuron
 
 # Import local project functions and classes.
@@ -76,6 +77,18 @@ def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t):
 
         G.nodes[node]["nx_LIF"].append(G.nodes[node]["nx_LIF"][t])
         # print(f'Appended for:{node}, len={len(G.nodes[node]["nx_LIF"])}')
+
+
+def extra_verification(graphs_dict: dict, run_config: dict):
+    """TODO: remove this function."""
+    for graphname, graph in graphs_dict.items():
+        if graphname != "input_graph":
+            sim_duration = get_sim_duration(
+                graph,
+                run_config,
+            )
+            print("Second verification.")
+            verify_networkx_graph_dimensions(graph, sim_duration)
 
 
 def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration):

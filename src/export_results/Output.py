@@ -31,6 +31,10 @@ from src.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
 )
 from src.helper import get_sim_duration
+from src.simulation.run_on_networkx import (
+    extra_verification,
+    verify_networkx_graph_dimensions,
+)
 
 # pylint: disable=W0613 # work in progress.
 
@@ -428,7 +432,9 @@ def output_stage_json(
     # TODO: append tags to output file.
 
 
-def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
+def plot_graph_behaviours(
+    filepath: str, stage_2_graphs: dict, run_config: dict
+):
     """Exports the plots of the graphs per time step of the run
     configuration."""
 
@@ -436,26 +442,24 @@ def plot_graph_behaviours(filepath: str, graphs: dict, run_config: dict):
     desired_props = get_desired_properties_for_graph_printing()
 
     # Loop over the graph types
-    for graph_name, graph in graphs.items():
-        # print(f"graph_name={graph_name}")
-        # if not isinstance(graph, nx.DiGraph):
-        #    raise Exception(
-        #        "Error, expected single DiGraph, yet found:" f"{type(graph)}"
-        #    )
-        # TODO: change to loop over neurons per timestep, instead of
-        # over graphs.
-
+    for graph_name, graph in stage_2_graphs.items():
         sim_duration = get_sim_duration(
             graph,
             run_config,
         )
-        print(f"sim_duration={sim_duration}")
+        print(
+            f"graph_name={graph_name}, sim_duration={sim_duration}.EXTRA:\n\n"
+        )
+        extra_verification(stage_2_graphs, run_config)
         for t in range(
             0,
             sim_duration,
         ):
             # TODO: include circular input graph output.
             if graph_name != "input_graph":
+
+                # TODO: Include verify that graph len remains unmodified.
+                verify_networkx_graph_dimensions(graph, sim_duration)
                 print(f"plot_coordinated_graph graph_name={graph_name}")
                 # pylint: disable=R0913
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
