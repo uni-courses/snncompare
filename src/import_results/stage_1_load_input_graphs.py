@@ -200,6 +200,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
                 )
                 run_results = load_results_from_json(json_filepath, run_config)
             else:
+                print("AAAA")
                 return False
         if stage_index == 3:
 
@@ -213,8 +214,8 @@ def performed_stage(run_config, stage_index: int) -> bool:
             )
 
         if stage_index == 4:
-            # TODO: write test to assert results are stored correctly.
-            return stage_4_results_exist(run_results)
+            if not stage_4_results_exist(run_results):
+                return False
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
@@ -233,9 +234,6 @@ def performed_stage(run_config, stage_index: int) -> bool:
             ):
                 print(f"Did not complete stage:{stage_index}")
                 return False
-        else:
-            print(f"filepath does not end in json:{filepath}")
-            print(f"filepath[-5:]:{filepath[-5:]}")
     return True
 
 
@@ -344,11 +342,11 @@ def stage_4_results_exist(run_results: dict) -> bool:
     objects."""
     for graph_name, graph in run_results["graphs_dict"].items():
         if graph_name != "input_graph":
-            if "result" not in graph.graph.keys():
+            if "results" not in graph.graph.keys():
                 return False
-            if not isinstance(graph.graph["result"], dict):
+            if not isinstance(graph.graph["results"], dict):
                 raise Exception(
                     "Error, unexpected result type in graph. "
-                    + f'Expected dict, yet got:{type(graph.graph["result"])}'
+                    + f'Expected dict, yet got:{type(graph.graph["results"])}'
                 )
     return True

@@ -88,7 +88,12 @@ def create_results_dict_for_testing(
         else:
             # Get random nx.DiGraph graph.
             graphs_dict[graph_name] = input_graph
-            # Add the completed stages as graph attribute.
+
+            if 4 in completed_stages:
+                # Include dummy results in graph.
+                graphs_dict[graph_name].graph["results"] = {}
+
+        # Add the completed stages as graph attribute.
         graphs_dict[graph_name].graph["completed_stages"] = completed_stages
 
         # Convert the nx.DiGraph object to dict.
