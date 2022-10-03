@@ -23,7 +23,6 @@ from src.experiment_settings.verify_experiment_settings import (
 from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.Output import output_files_stage_1, output_stage_files
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
-from src.graph_generation.radiation.Radiation_damage import Radiation_damage
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.stage_1_load_input_graphs import (
     load_results_stage_1,
@@ -70,6 +69,7 @@ class Experiment_runner:
 
         # Append the export_snns and show_snns arguments.
         self.experi_config["export_snns"] = export_snns
+        print(f"export_snns={export_snns}")
         self.experi_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
@@ -97,7 +97,7 @@ class Experiment_runner:
 
                 # Set the radiation damage level.
                 # TODO: Verify this setting has any effect.
-                Radiation_damage(0.2)
+                # Radiation_damage(0.2)
             if not to_run["stage_1"]:
                 stage_1_graphs = load_results_stage_1(run_config)
             if to_run["stage_2"]:
@@ -257,17 +257,17 @@ def determine_what_to_run(run_config) -> dict:
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not performed_stage(run_config, 3)
-        or run_config["overwrite_visualisation"]
-    ):
-        # TODO: include preliminary check to see if output of stage 1 and 2
-        # exists.
-
+        and (run_config["export_snns"] or run_config["show_snns"])
+    ) or run_config["overwrite_visualisation"]:
         # Note this allows the user to create inconsistent simulation
         # results and visualisation. E.g. the simulated behaviour may
         # have changed due to code changes, yet the visualisation would
         # not be updated stage 3 has already been performed, with
         # overwrite_sim_results=True, and overwrite_visualisation=False.
         to_run["stage_3"] = True
+    else:
+        to_run["stage_3"] = False
+
     # Throw warning to user about potential discrepancy between graph
     # behaviour and old visualisation.
     if (

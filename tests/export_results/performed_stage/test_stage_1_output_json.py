@@ -31,7 +31,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         # Initialise experiment settings, and run experiment.
         self.experi_config: dict = example_experi_config()
         experiment_runner = Experiment_runner(
-            self.experi_config, show_snns=False, export_snns=False
+            self.experi_config, export_snns=False, show_snns=False
         )
         # TODO: verify the to_run is computed correctly.
 
@@ -55,7 +55,9 @@ class Test_stage_1_output_json(unittest.TestCase):
         # Read output JSON file into dict.
         # with open(self.json_filepath, encoding="utf-8") as json_file:
         #    stage_1_output_dict = json.load(json_file)
-        stage_1_output_dict = load_results_from_json(self.json_filepath)
+        stage_1_output_dict = load_results_from_json(
+            self.json_filepath, self.first_run_config
+        )
 
         self.assertIn("experiment_config", stage_1_output_dict)
         self.assertIn("run_config", stage_1_output_dict)

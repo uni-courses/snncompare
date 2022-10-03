@@ -59,10 +59,6 @@ def load_results_stage_1(run_config: dict) -> dict:
     # TODO: Verify passing the same dict to get hash with popped unique id
     # returns the same id.
     if not is_identical(run_config, loaded_run_config, ["unique_id"]):
-        print("run_config")
-        # pprint(run_config)
-        print("Yet loaded_run_config is:")
-        # pprint(loaded_run_config)
         raise Exception("Error, wrong run config was loaded.")
 
     # Verify the graph names are as expected for the graph name.
@@ -73,8 +69,6 @@ def load_results_stage_1(run_config: dict) -> dict:
     for graph_name, some_graph in stage_1_dict["graphs_dict"][
         "stage_1"
     ].items():
-        # print(f"graph_name={graph_name}")
-        # print(f"some_graph={type(some_graph)}")
         stage_1_graphs[graph_name] = json_to_digraph(some_graph)
     return stage_1_graphs
 
@@ -84,7 +78,6 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     back into a nx.Digraph object."""
     # Load the json dictionary of results.
     stage_1_dict: dict = load_json_file_into_dict(json_filepath)
-    # pprint(stage_1_dict)
 
     # Verify the dict contains a key for the graph dict.
     if "graphs_dict" not in stage_1_dict:
@@ -190,7 +183,6 @@ def performed_stage(run_config, stage_index: int) -> bool:
                 relative_output_dir + filename + extension
             )
             # TODO: append expected_filepath to run_config per stage.
-            print(f"expected_filepaths={expected_filepaths}")
 
         if stage_index in [3, 4]:
             json_filepath = f"results/{filename}.json"
@@ -200,7 +192,6 @@ def performed_stage(run_config, stage_index: int) -> bool:
                 )
                 run_results = load_results_from_json(json_filepath, run_config)
             else:
-                print("AAAA")
                 return False
         if stage_index == 3:
 
@@ -220,19 +211,15 @@ def performed_stage(run_config, stage_index: int) -> bool:
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
-            print(f"Result file:{filepath} not found.")
             return False
         if filepath[-5:] == ".json":
             the_dict = load_results_from_json(filepath, run_config)
-            print(f"type{the_dict}={type(the_dict)}")
             # Check if the graphs are in the files and included correctly.
             if "graphs_dict" not in the_dict:
-                print("Results dont contain graphs_dict")
                 return False
             if not graph_dict_completed_stage(
                 run_config, the_dict, stage_index
             ):
-                print(f"Did not complete stage:{stage_index}")
                 return False
     return True
 
@@ -252,7 +239,6 @@ def graph_dict_completed_stage(
     for graph_name in get_expected_stage_1_graph_names(run_config):
         graph = the_dict["graphs_dict"][graph_name]
         if graph_name not in the_dict["graphs_dict"]:
-            print(f"graph_name:{graph_name} not in dict")
             return False
         if ("completed_stages") not in graph.graph:
             return False
@@ -323,7 +309,6 @@ def get_expected_image_paths_stage_3(
     )
     image_dir = "latex/Images/graphs/"
     for extension in extensions:
-        print(f"extension={extension}")
         for graph_name in graph_names:
             if graph_name == "input_graph":
                 image_filepaths.append(

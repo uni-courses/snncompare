@@ -55,7 +55,9 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.export_snns = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
-            self.experi_config, show_snns=False, export_snns=self.export_snns
+            self.experi_config,
+            export_snns=self.export_snns,
+            show_snns=False,
         )
         # TODO: verify the to_run is computed correctly.
 
