@@ -6,7 +6,6 @@ import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 
 from src.export_results.Plot_to_tex import Plot_to_tex
-from src.helper import old_graph_to_new_graph_properties
 
 
 def create_synapses_and_spike_dicts(G, get_degree, left, m, rand_ceil, right):
@@ -121,7 +120,9 @@ def plot_coordinated_graph(
     """
     if desired_properties is None:
         desired_properties = []
+
     color_map, spiking_edges = set_nx_node_colours(G, t)
+
     edge_color_map = set_edge_colours(G, spiking_edges)
 
     # Width=edge width.
@@ -185,7 +186,7 @@ def add_neuron_properties_to_plot(
     """
     # First convert the node properties into a nx_LIF neuron.
     # TODO: Include check to see if nx or lava neurons are used.
-    old_graph_to_new_graph_properties(G)
+    # old_graph_to_new_graph_properties(G,t)
 
     for nodename in nodenames:
 

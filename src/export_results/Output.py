@@ -31,10 +31,6 @@ from src.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
 )
 from src.helper import get_sim_duration
-from src.simulation.run_on_networkx import (
-    extra_verification,
-    verify_networkx_graph_dimensions,
-)
 
 # pylint: disable=W0613 # work in progress.
 
@@ -447,10 +443,6 @@ def plot_graph_behaviours(
             graph,
             run_config,
         )
-        print(
-            f"graph_name={graph_name}, sim_duration={sim_duration}.EXTRA:\n\n"
-        )
-        extra_verification(stage_2_graphs, run_config)
         for t in range(
             0,
             sim_duration,
@@ -459,8 +451,6 @@ def plot_graph_behaviours(
             if graph_name != "input_graph":
 
                 # TODO: Include verify that graph len remains unmodified.
-                verify_networkx_graph_dimensions(graph, sim_duration)
-                print(f"plot_coordinated_graph graph_name={graph_name}")
                 # pylint: disable=R0913
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
                 plot_coordinated_graph(

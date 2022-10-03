@@ -783,10 +783,10 @@ def get_sim_duration(
 
 
 def old_graph_to_new_graph_properties(G):
-    """
+    """Converts the old graph properties of the first template neuron into the
+    new template neuron.
 
     :param G: The original graph on which the MDSA algorithm is ran.
-
     """
     for nodename in G.nodes:
         G.nodes[nodename]["nx_LIF"] = [
