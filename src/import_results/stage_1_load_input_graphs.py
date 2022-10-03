@@ -198,11 +198,13 @@ def performed_stage(run_config, stage_index: int) -> bool:
                     f"results/{run_config_to_filename(run_config)}.json"
                 )
                 run_results = load_results_from_json(json_filepath, run_config)
-                get_expected_image_paths_stage_3(
-                    run_results["graphs_dict"].keys(),
-                    run_results["graphs_dict"]["input_graph"],
-                    run_config,
-                    extensions,
+                expected_filepaths.append(
+                    get_expected_image_paths_stage_3(
+                        run_results["graphs_dict"].keys(),
+                        run_results["graphs_dict"]["input_graph"],
+                        run_config,
+                        extensions,
+                    )
                 )
             else:
                 return False
@@ -210,7 +212,7 @@ def performed_stage(run_config, stage_index: int) -> bool:
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
-            print("Result file not found.")
+            print(f"Result file:{filepath} not found.")
             return False
         if filepath[-5:] == ".json":
             the_dict = load_results_from_json(filepath, run_config)
