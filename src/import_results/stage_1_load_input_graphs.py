@@ -170,6 +170,7 @@ def json_to_digraph(json_data):
     raise Exception("Error, did not find json_data.")
 
 
+# pylint: disable=R0912
 def performed_stage(run_config, stage_index: int) -> bool:
     """Verifies the required output files exist for a given simulation.
 
@@ -191,27 +192,29 @@ def performed_stage(run_config, stage_index: int) -> bool:
             # TODO: append expected_filepath to run_config per stage.
             print(f"expected_filepaths={expected_filepaths}")
 
-        if stage_index == 3:
+        if stage_index in [3, 4]:
             json_filepath = f"results/{filename}.json"
             if file_exists(json_filepath):
                 json_filepath = (
                     f"results/{run_config_to_filename(run_config)}.json"
                 )
                 run_results = load_results_from_json(json_filepath, run_config)
-                expected_filepaths.extend(
-                    get_expected_image_paths_stage_3(
-                        run_results["graphs_dict"].keys(),
-                        run_results["graphs_dict"]["input_graph"],
-                        run_config,
-                        extensions,
-                    )
-                )
             else:
                 return False
+        if stage_index == 3:
+
+            expected_filepaths.extend(
+                get_expected_image_paths_stage_3(
+                    run_results["graphs_dict"].keys(),
+                    run_results["graphs_dict"]["input_graph"],
+                    run_config,
+                    extensions,
+                )
+            )
 
         if stage_index == 4:
             # TODO: write test to assert results are stored correctly.
-            pass
+            return stage_4_results_exist(run_results)
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
@@ -334,3 +337,18 @@ def get_expected_image_paths_stage_3(
                         image_dir + f"{graph_name}_{filename}_{t}{extension}"
                     )
     return image_filepaths
+
+
+def stage_4_results_exist(run_results: dict) -> bool:
+    """Verifies the stage 4 results are stored in the expected graph
+    objects."""
+    for graph_name, graph in run_results["graphs_dict"].items():
+        if graph_name != "input_graph":
+            if "result" not in graph.graph.keys():
+                return False
+            if not isinstance(graph.graph["result"], dict):
+                raise Exception(
+                    "Error, unexpected result type in graph. "
+                    + f'Expected dict, yet got:{type(graph.graph["result"])}'
+                )
+    return True

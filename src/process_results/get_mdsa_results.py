@@ -94,10 +94,13 @@ def get_snn_results(
     If the simulation is ran with adaptation in the form of redundancy,
     the code automatically selects the working node, and returns its
     count in the list.
+    TODO: make it more biologically plausible by using majority voting.
+    TODO: determine what to do in a draw: random pick. Allow specifying
+    picking heuristic.
     """
     # Determine why the duration is used here to get a time step.
     sim_duration = get_sim_duration(
-        input_graph,
+        snn_graph,
         run_config,
     )
     # get runtime

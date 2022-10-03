@@ -37,6 +37,7 @@ def export_results(
     results dictionary (again) into the stage 4 folder."""
 
     # Create new independent graphs dict to include the results.
+    # TODO: determine why/don't duplicate.
     stage_4_graphs = copy.deepcopy(stage_2_graphs)
 
     # Embed results into snn graphs
