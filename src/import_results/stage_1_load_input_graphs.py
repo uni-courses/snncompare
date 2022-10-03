@@ -209,6 +209,10 @@ def performed_stage(run_config, stage_index: int) -> bool:
             else:
                 return False
 
+        if stage_index == 4:
+            # TODO: write test to assert results are stored correctly.
+            pass
+
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():

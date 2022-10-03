@@ -135,6 +135,6 @@ class Test_stage_1_output_json(unittest.TestCase):
             # Test for stage 1, 2, and 4.
             self.assertTrue(performed_stage(run_config, 2))
             self.assertTrue(performed_stage(run_config, 3))
-            self.assertFalse(performed_stage(run_config, 4))
+            self.assertTrue(performed_stage(run_config, 4))
 
             # TODO: write test for stage 3.
