@@ -18,54 +18,61 @@ channels:
 dependencies:
 # Specify specific python version.
   - python=3.8
-# Run python tests.
-  - pytest-cov
-# Generate plots.
+  # Generate plots.
   - matplotlib
 # Run graph software quickly.
   - networkx
+  
+# Pre-commit packages for code quality:
+# Run python tests.
+  - pytest-cov
+# Turns relative import paths into absolute import paths.
+  - absolufy-imports
+# Auto format Python code to make it flake8 compliant.
+  - autoflake
+# Scan Python code for security issues.
+  - bandit
+# Code formatting compliance.
+  - black
+# Correct code misspellings.
+  - codespell
+# Verify percentage of code that has at least 1 test.
+  - coverage
+# Auto formats the Python documentation written in the code.
+  - docformatter
+# Auto generate docstrings.
+  - flake8
+# Auto sort the import statements.
+  - isort
+# Auto format Markdown files.
+  - mdformat
+# Auto check static typing.
+  - mypy
+# Another static type checker for python like mypy.
+  - pyright
+# Include GitHub pre-commit hook.
+  - pre-commit
+# Automatically upgrades Python syntax to the new Python version syntax.
+  - pyupgrade
+# Auto generate docstrings.
+  - pyment
+# Auto check programming style aspects.
+  - pylint
+# Auto check static typing.
+  - mypy
+# Auto format Markdown files.
+  - mdformat
+# Auto sort the import statements.
+  - isort
   - pip
   - pip:
-# Run pip install on .tar.gz file in GitHub repository (For lava-nc only).
+    # Run pip install on .tar.gz file in GitHub repository (For lava-nc only).
     - https://github.com/lava-nc/lava/releases/download/v0.3.0/lava-nc-0.3.0.tar.gz
-# Turns relative import paths into absolute import paths.
-    - absolufy-imports
-# Auto format Python code to make it flake8 compliant.
-    - autoflake
-# Scan Python code for security issues.
-    - bandit
-# Code formatting compliance.
-    - black
-# Correct code misspellings.
-    - codespell
-# Verify percentage of code that has at least 1 test.
-    - coverage
-# Auto formats the Python documentation written in the code.
-    - docformatter
-# Auto generate docstrings.
-    - flake8
-# Auto sort the import statements.
-    - isort
-# Auto format Markdown files.
-    - mdformat
-# Auto check static typing.
-    - mypy
-# Auto generate documentation.
+    # Auto generate documentation.
     - pdoc3
-# Auto check programming style aspects.
-    - pylint
-# Auto generate docstrings.
-    - pyment
-# Identify and remove dead code.
-    - vulture
-# Include GitHub pre-commit hook.
-    - pre-commit
-# TODO: identify exact function(and usage).
-# Seems to be an autoformatter like black, but installed using npm instead of pip.
+    # Seems to be an autoformatter like black, but installed using npm instead of pip.
     - prettier
-# Automatically upgrades Python syntax to the new Python version syntax.
-    - pyupgrade
-# Another static type checker for python like mypy.
-    - pyright
-# Tag files using Python.
+    # Tag files using Python.
     - pytaggit
+    # Identify and remove dead code.
+    - vulture
