@@ -22,7 +22,7 @@ dependencies:
   - matplotlib
 # Run graph software quickly.
   - networkx
-  
+
 # Pre-commit packages for code quality:
 # Run python tests.
   - pytest-cov
