@@ -10,7 +10,6 @@ SubInput: Run configuration within an experiment.
 """
 import json
 import pathlib
-from pathlib import Path
 from typing import List
 
 import jsons
@@ -31,6 +30,7 @@ from src.export_results.verify_stage_4_graphs import verify_stage_4_graphs
 from src.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
 )
+from src.helper import get_sim_duration
 
 # pylint: disable=W0613 # work in progress.
 
@@ -58,7 +58,10 @@ with_adaptation_with_radiation = {
 def output_files_stage_1(
     experiment_config: dict, run_config: dict, stage_1_graphs: dict
 ):
-    """Merges the experiment configuration dict, run configuration dict and
+    """This method converts nx.Digraphs in ["graphs_dict"] to a dict.
+
+    TODO: generalise to stage 1 and/or stage2.
+    Merges the experiment configuration dict, run configuration dict and
     graphs into a single dict. This method assumes only the graphs that are to
     be exported are passed into this method.
 
@@ -73,15 +76,15 @@ def output_files_stage_1(
     :param stage_1_graphs:
     :param run_config:
     """
-    if run_config["export_snns"]:
-        filename = run_config_to_filename(run_config)
-        output_stage_json(
-            experiment_config,
-            stage_1_graphs,
-            filename,
-            run_config,
-            1,
-        )
+    filename = run_config_to_filename(run_config)
+    results: dict = output_stage_json(
+        experiment_config,
+        stage_1_graphs,
+        filename,
+        run_config,
+        1,
+    )
+    return results
 
 
 def output_stage_files(
@@ -98,14 +101,18 @@ def output_stage_files(
     convertible into dicts. This merged dict is then written to file. If
     the lava simulator is used, the graphs cannot (easily) be converted
     into dicts, hence in that case, only the experiment and run settings
-    are merged into a single dict that is exported. The lava graphs will
-    be terminated and exported as pickle. If the graphs are not
-    exported, pickle throws an error because some
-    pipe/connection/something is still open. The unique_id of the
-    experiment is added to the file as a filetag, as well as the
-    unique_id of the run. Furthermore, all run parameter values are
+    are merged into a single dict that is exported.
+
+    % TODO: The lava graphs will be terminated and exported as pickle.
+    If the graphs are not exported, pickle throws an error because some
+    pipe/connection/something is still open.
+
+    The unique_id of the experiment is added to the file as a filetag, as well
+    as the unique_id of the run. Furthermore, all run parameter values are
     added as file tags, to make it easier to filter certain runs to
     manually inspect the results.
+
+    Also exports the images of the graph behaviour.
 
     :param experiment_config: param run_config:
     :param graphs_stage_2:
@@ -122,6 +129,7 @@ def output_stage_files(
         if run_config["export_snns"]:
             # Output the json dictionary of the files.
             filename = run_config_to_filename(run_config)
+            # print(f"Exporting image:{filename}\n")
 
             output_stage_json(
                 experiment_config,
@@ -133,9 +141,10 @@ def output_stage_files(
 
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
-        if run_config["show_snns"]:
+        # TODO: Distinguish between showing snns and outputting snns.
+        if run_config["export_snns"] and stage_index == 3:
             # Output graph behaviour for stage stage_index.
-            plot_stage_2_graph_behaviours(filename, graphs_stage_2, run_config)
+            plot_graph_behaviours(filename, graphs_stage_2, run_config)
 
     elif run_config["simulator"] == "lava":
         # TODO: terminate simulation.
@@ -148,24 +157,24 @@ def output_stage_files(
     # TODO: append tags to output file(s).
 
 
-def output_files_stage_3(experiment_config, run_config, graphs_stage_3):
-    """This only outputs the visualisation of the desired graphs.
+# def output_files_stage_3(experiment_config, run_config, graphs_stage_3):
+# This only outputs the visualisation of the desired graphs.
 
-    If the graphs are simulated for 50 timesteps, 50 pictures per graph
-    will be outputted. For naming scheme and taging, see documentation
-    of function output_files_stage_1 or output_files_stage_2.
+# If the graphs are simulated for 50 timesteps, 50 pictures per graph
+# will be outputted. For naming scheme and taging, see documentation
+# of function output_files_stage_1 or output_files_stage_2.
 
-    :param experiment_config: param run_config:
-    :param graphs_stage_3:
-    :param run_config:
-    """
-    run_config_to_filename(run_config)
-    # TODO: Optional: ensure output files exists.
+# :param experiment_config: param run_config:
+# :param graphs_stage_3:
+# :param run_config:
+# """
+# run_config_to_filename(run_config)
+# TODO: Optional: ensure output files exists.
 
-    # TODO: loop through graphs and create visualisation.
-    # TODO: ensure the run parameters are in a legend
-    # TODO: loop over the graphs (t), and output them.
-    # TODO: append tags to output file(s).
+# TODO: loop through graphs and create visualisation.
+# TODO: ensure the run parameters are in a legend
+# TODO: loop over the graphs (t), and output them.
+# TODO: append tags to output file(s).
 
 
 def output_files_stage_4(
@@ -266,117 +275,11 @@ class Stage_4_graphs:
         )
 
 
-def get_extensions_dict(run_config, stage_index) -> dict:
-    """Returns the file extensions of the output types.
-    TODO: support .json as well as .txt for the dictionaries.
-
-    :param run_config: param stage_index:
-    :param stage_index:
-
-    """
-    if stage_index == 1:
-        return {"config_and_graphs": ".json"}
-    if stage_index == 2:
-        if run_config["simulator"] == "lava":
-            return {"config": ".json", "graphs": ".png"}
-
-        return {"config_and_graphs": ".txt"}
-    if stage_index == 3:
-        # TODO: support .eps and/or .pdf.
-        return {"graphs": ".png"}
-    if stage_index == 4:
-        return {"config_and_results": ".json"}
-    raise Exception("Unsupported experiment stage.")
-
-
-def get_extensions_list(run_config, stage_index) -> list:
-    """
-
-    :param run_config: param stage_index:
-    :param stage_index:
-
-    extensions = list(get_extensions_dict(run_config, stage_index).values())
-    """
-    return list(get_extensions_dict(run_config, stage_index).values())
-
-
-def performed_stage(run_config, stage_index: int) -> bool:
-    """Verifies the required output files exist for a given simulation.
-
-    :param run_config: param stage_index:
-    :param stage_index:
-    """
-    expected_filepaths = []
-
-    filename = run_config_to_filename(run_config)
-    relative_output_dir = "results/"
-    extensions = get_extensions_list(run_config, stage_index)
-    for extension in extensions:
-        if stage_index in [1, 2, 4]:
-
-            expected_filepaths.append(
-                relative_output_dir + filename + extension
-            )
-            # TODO: append expected_filepath to run_config per stage.
-
-        if stage_index == 3:
-
-            # Check if output file(s) of stage 2 exist, otherwise return False.
-            if not Path(relative_output_dir + filename + extension).is_file():
-                return False
-
-            # If the expected output files containing the adapted graphs exist,
-            # get the number of simulation steps.
-            nr_of_simulation_steps = get_nr_of_simulation_steps(
-                relative_output_dir, filename
-            )
-            for t in range(0, nr_of_simulation_steps):
-                # Generate graph filenames
-                expected_filepaths.append(
-                    relative_output_dir + filename + f"t_{t}" + extension
-                )
-
-    # Check if the expected output files already exist.
-    for filepath in expected_filepaths:
-        if not Path(filepath).is_file():
-            print(f"filepath={filepath} not found for stage:{stage_index}")
-            return False
-    return True
-
-
-def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
-    """Loads the stage_2 output dictionary from a file.
-
-    # TODO: Determine why the file does not yet exist at this positinoc.
-    # TODO: Output dict to json format.
-
-    :param relative_output_dir: param filename:
-    :param filename:
-    """
-    stage_2_output_dict_filepath = relative_output_dir + filename
-    with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
-        stage_2_output_dict = json.load(json_file)
-    return stage_2_output_dict
-
-
-def get_nr_of_simulation_steps(relative_output_dir, filename) -> int:
-    """Reads the amount of simulation steps from the stage2 run configuration.
-
-    :param relative_output_dir: param filename:
-    :param filename:
-    """
-    stage_2_output_dict = load_stage_2_output_dict(
-        relative_output_dir, filename
-    )
-    run_config = stage_2_output_dict["run_config"]
-    return run_config["duration"]
-
-
 def merge_stage_1_graphs(graphs):
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
-        print(f"graph_name={graph_name}")
+        # print(f"graph_name={graph_name}")
 
         if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             raise Exception(
@@ -385,7 +288,6 @@ def merge_stage_1_graphs(graphs):
                 + f"nx.Digraph(). Instead, it is:{type(graph_container)}"
             )
         graphs_dict_stage_1[graph_name] = digraph_to_json(graph_container)
-        print(f"1, added:{graph_name}")
     if not graphs_dict_stage_1:  # checks if dict not empty like: {}
         raise Exception(
             f"Error, len(graphs)={len(graphs)} stage=1, graphs_dict_stage_1"
@@ -398,7 +300,7 @@ def merge_stage_2_graphs(graphs):
     """Puts all the graphs of stage 2 into a single graph."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():
-        print(f"graph_name={graph_name}")
+        # print(f"graph_name={graph_name}")
         graphs_per_type = []
         if isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             graphs_per_type.append(digraph_to_json(graph_container))
@@ -408,7 +310,6 @@ def merge_stage_2_graphs(graphs):
         else:
             raise Exception(f"Error, unsupported type:{type(graph_container)}")
         graphs_dict_stage_2[graph_name] = graphs_per_type
-        print(f"2, added:{graph_name}")
     if not graphs_dict_stage_2:  # checks if dict not empty like: {}
         raise Exception(
             f"Error, len(graphs)={len(graphs)} stage=2, graphs_dict_stage_2"
@@ -428,9 +329,11 @@ def merge_experiment_and_run_config_with_graphs(
     # Convert incoming graphs to dictionary.
 
     if stage_index == 1:
-        graphs_dict["stage_1"] = merge_stage_1_graphs(graphs)
+        # TODO: change this
+        # raise Exception("ERROR FIX IT")
+        graphs_dict = merge_stage_1_graphs(graphs)
     elif stage_index == 2:
-        graphs_dict["stage_2"] = merge_stage_2_graphs(graphs)
+        graphs_dict = merge_stage_2_graphs(graphs)
     if stage_index == 3:
         pass
     # Convert into single output dict.
@@ -482,11 +385,7 @@ def load_graphs_from_json(run_config, stages) -> dict:
     if "graphs_dict" not in output_dict:
         raise Exception("Error, key: graphs_dict not in output_dict.")
 
-    for stage in stages:
-        if f"stage_{stage}" in output_dict["graphs_dict"]:
-            restored_graphs_dict[f"stage_{stage}"] = output_dict[
-                "graphs_dict"
-            ][f"stage_{stage}"]
+    restored_graphs_dict = output_dict["graphs_dict"]
     return restored_graphs_dict
 
 
@@ -496,10 +395,9 @@ def output_stage_json(
     filename: str,
     run_config: dict,
     stage_index: int,
-) -> None:
+) -> dict:
     """Merges the experiment config, run config and graphs of stage 1 into a
     single dict and exports that dict to a json file."""
-    # TODO: include stage index
 
     if graphs_of_stage == {}:
         raise Exception(
@@ -507,13 +405,13 @@ def output_stage_json(
             + f"{stage_index} was an empty dict."
         )
 
-    output_dict = merge_experiment_and_run_config_with_graphs(
+    results: dict = merge_experiment_and_run_config_with_graphs(
         experiment_config, run_config, graphs_of_stage, stage_index
     )
 
     # TODO: Optional: ensure output files exists.
     output_filepath = f"results/{filename}.json"
-    write_dict_to_json(output_filepath, jsons.dump(output_dict))
+    write_dict_to_json(output_filepath, jsons.dump(results))
 
     # Ensure output file exists.
     if not pathlib.Path(pathlib.Path(output_filepath)).resolve().is_file():
@@ -525,52 +423,56 @@ def output_stage_json(
     # TODO: Write run_config to file (pprint(dict), or json)
     # TODO: Write graphs to file (pprint(dict), or json)
     # TODO: append tags to output file.
+    return results
 
 
-def plot_stage_2_graph_behaviours(
-    filepath: str, graphs: dict, run_config: dict
+def plot_graph_behaviours(
+    filepath: str, stage_2_graphs: dict, run_config: dict
 ):
     """Exports the plots of the graphs per time step of the run
     configuration."""
 
+    # TODO: get this from the experiment settings/run configuration.
     desired_props = get_desired_properties_for_graph_printing()
 
     # Loop over the graph types
+    for graph_name, graph in stage_2_graphs.items():
+        sim_duration = get_sim_duration(
+            stage_2_graphs["input_graph"],
+            run_config,
+        )
+        for t in range(
+            0,
+            sim_duration,
+        ):
+            print(f"Plotting graph:{graph_name}, t={t}")
+            # TODO: include circular input graph output.
+            if graph_name != "input_graph":
 
-    for graph_name, graph_list in graphs.items():
-        print(f"type(graph_list)={type(graph_list)}")
-        if isinstance(graph_list, list):
-            raise Exception("Error, expected single graph, iso graph list.")
-        # TODO: change to loop over neurons per timestep, instead of
-        # over graphs.
-        for i, graph in enumerate(graph_list):
-            # if graph_name == "rad_snn_algo_graph":
-            # TODO: include check for only rad dead things.
-
-            # TODO plot a single graph.
-
-            # pylint: disable=R0913
-            # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-            plot_coordinated_graph(
-                graph,
-                desired_props,
-                i,
-                False,
-                f"{graph_name}_{filepath}_{i}",
-                title=create_custom_plot_titles(
-                    graph_name, i, run_config["seed"]
-                ),
-            )
+                # TODO: Include verify that graph len remains unmodified.
+                # pylint: disable=R0913
+                # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+                plot_coordinated_graph(
+                    graph,
+                    desired_props,
+                    t,
+                    False,
+                    f"{graph_name}_{filepath}_{t}",
+                    title=create_custom_plot_titles(
+                        graph_name, t, run_config["seed"]
+                    ),
+                )
 
 
 def print_dead_neuron_names(some_graph: nx.DiGraph):
     """Prints the dead neuron names."""
-    print("Dead neuron names:")
+    # print("Dead neuron names:")
     for nodename in some_graph:
         if "rad_death" in some_graph.nodes[nodename].keys():
             # if nodename in dead_neuron_names:
             if some_graph.nodes[nodename]["rad_death"]:
-                print(nodename)
+                # print(nodename)
+                pass
 
 
 # pylint: disable=R0912

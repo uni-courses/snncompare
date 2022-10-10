@@ -1,14 +1,7 @@
 """Loads pickle test result files ."""
 import pickle  # nosec - User is trusted not to load malicious pickle files.
 
-from src.graph_generation.helper_network_structure import (
-    plot_coordinated_graph,
-)
-
 # from src.process_results.process_results import get_run_results
-from src.simulation.LIF_neuron import LIF_neuron
-from src.simulation.run_on_networkx import run_snn_on_networkx
-from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def get_desired_properties_for_graph_printing():
@@ -25,91 +18,43 @@ def get_desired_properties_for_graph_printing():
     return desired_properties
 
 
-def generate_output_graphs(
-    graphs, identifiers, desired_properties, output_name
-):
-    """
+# def generate_output_graphs(
+#    graphs, identifiers, desired_properties, output_name
+# ):
+#    """Generates the output graphs of the SNNs over time.
+#
+#    :param G: The original graph on which the MDSA algorithm is ran.
+#    :param graphs:
+#    :param identifiers:
+#    :param desired_properties:
+#    :param output_name:
+#    """
+#    # pylint: disable=R0913
+#    # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+#    for i in enumerate(graphs):
+#        plot_graph_behaviour(
+#            graphs[i],
+#            desired_properties,
+#            f"{identifiers[i]}_{output_name}",
+#        )
+#
 
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param graphs:
-    :param identifiers:
-    :param desired_properties:
-    :param output_name:
-
-    """
-    # pylint: disable=R0913
-    # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-    for i in enumerate(graphs):
-        plot_graph_behaviour(
-            graphs[i],
-            desired_properties,
-            f"{identifiers[i]}_{output_name}",
-        )
-
-
-def get_graph_behaviour(G, sim_time):
-    """
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param sim_time: Nr. of timesteps for which the experiment is ran.
-
-    """
-    old_graph_to_new_graph_properties(G)
-    G_behaviour = simulate_graph(G, sim_time)
-    return G_behaviour
-
-
-def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
-    """
-
-    :param G_behaviour:
-    :param desired_properties:
-    :param output_name:
-
-    """
-    for t in enumerate(G_behaviour):
-        plot_coordinated_graph(
-            G_behaviour[t],
-            desired_properties,
-            t,
-            False,
-            filename=f"{output_name}_t={t}",
-        )
-
-
-def old_graph_to_new_graph_properties(G):
-    """
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-
-    """
-    for nodename in G.nodes:
-        G.nodes[nodename]["nx_LIF"] = [
-            LIF_neuron(
-                name=nodename,
-                bias=float(G.nodes[nodename]["bias"]),
-                du=float(G.nodes[nodename]["du"]),
-                dv=float(G.nodes[nodename]["dv"]),
-                vth=float(G.nodes[nodename]["vth"]),
-            )
-        ]
-    verify_networkx_snn_spec(G, t=0)
-
-
-def simulate_graph(G, sim_time):
-    """
-
-    :param counter_neurons: Neuron objects at the counter position.
-    Type unknown.
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param sim_time: Nr. of timesteps for which the experiment is ran.
-
-    """
-
-    G_behaviour = []
-    for _ in range(sim_time + 2):
-        G_behaviour.extend(run_snn_on_networkx(G, 1))
-    return G_behaviour
+# def plot_graph_behaviour(G_behaviour, desired_properties, output_name):
+#    """
+#
+#    :param G_behaviour:
+#    :param desired_properties:
+#    :param output_name:
+#
+#    """
+#    for t in enumerate(G_behaviour):
+#        plot_coordinated_graph(
+#            G_behaviour[t],
+#            desired_properties,
+#            t,
+#            False,
+#            filename=f"{output_name}_t={t}",
+#        )
 
 
 def get_neurons(G, sim_type, neuron_types):

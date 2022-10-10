@@ -1,5 +1,7 @@
 """Assists the conversion from the input graph to an SNN graph that performs
 the MDSA approximation."""
+
+
 import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 
@@ -118,8 +120,11 @@ def plot_coordinated_graph(
     """
     if desired_properties is None:
         desired_properties = []
+
     color_map, spiking_edges = set_nx_node_colours(G, t)
+
     edge_color_map = set_edge_colours(G, spiking_edges)
+
     # Width=edge width.
     nx.draw(
         G,
@@ -179,6 +184,10 @@ def add_neuron_properties_to_plot(
     :param nodenames:
     :param pos:
     """
+    # First convert the node properties into a nx_LIF neuron.
+    # TODO: Include check to see if nx or lava neurons are used.
+    # old_graph_to_new_graph_properties(G,t)
+
     for nodename in nodenames:
 
         # Shift the x-coordinates of the redundant neurons to right for
@@ -208,6 +217,8 @@ def get_annotation_text(desired_properties, G, nodename, t):
     :param G: The original graph on which the MDSA algorithm is ran.
     :param nodename: Node of the name of a networkx graph.
     """
+    # print(f"G={G.graph}")
+    # print(f"G.nodes[{nodename}]={G.nodes[nodename]}")
     annotation = ""
     if "bias" in desired_properties:
         annotation = (
@@ -277,6 +288,7 @@ def set_nx_node_colours(G, t: int):
                     colour_dict[node_name] = "red"
                     if G.nodes[node_name]["nx_LIF"][t].spikes:
                         raise Exception("Dead neuron can't spike.")
+            # TODO: determine whether to use s_out = 1 or, spikes=False.
             if G.nodes[node_name]["nx_LIF"][t].spikes:
                 colour_dict[node_name] = "green"
                 for neighbour in nx.all_neighbors(G, node_name):

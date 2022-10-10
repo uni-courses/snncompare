@@ -48,6 +48,7 @@ class Supported_experiment_settings:
         }
         self.optional_parameters = {
             "show_snns": bool,
+            # TODO: make clear export_snns means export the snn images.
             "export_snns": bool,
             "unique_id": int,
         }

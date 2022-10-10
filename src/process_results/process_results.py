@@ -21,7 +21,7 @@ def get_results(run_config: dict, stage_2_graphs: dict) -> dict:
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
                 return get_mdsa_snn_results(
-                    algo_settings["m_val"], stage_2_graphs
+                    algo_settings["m_val"], run_config, stage_2_graphs
                 )
             raise Exception("Error, m_val setting is not of type int.")
         raise Exception(
@@ -37,6 +37,7 @@ def export_results(
     results dictionary (again) into the stage 4 folder."""
 
     # Create new independent graphs dict to include the results.
+    # TODO: determine why/don't duplicate.
     stage_4_graphs = copy.deepcopy(stage_2_graphs)
 
     # Embed results into snn graphs
