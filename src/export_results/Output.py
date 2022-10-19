@@ -10,6 +10,7 @@ SubInput: Run configuration within an experiment.
 """
 import json
 import pathlib
+from pprint import pprint
 from typing import List
 
 import jsons
@@ -275,12 +276,11 @@ class Stage_4_graphs:
         )
 
 
-def merge_stage_1_graphs(graphs):
+def convert_stage_1_digraphs_to_json(graphs):
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
-        # print(f"graph_name={graph_name}")
-
+        print(f"graph_name={graph_name}")
         if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             raise Exception(
                 "stage_index=1, Error, for graph:"
@@ -296,7 +296,7 @@ def merge_stage_1_graphs(graphs):
     return graphs_dict_stage_1
 
 
-def merge_stage_2_graphs(graphs):
+def convert_stage_2_digraphs_to_json(graphs):
     """Puts all the graphs of stage 2 into a single graph."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():
@@ -325,15 +325,20 @@ def merge_experiment_and_run_config_with_graphs(
     dictionary."""
 
     # Load existing graph dict if it already exists, and if overwrite is off.
-    graphs_dict = load_pre_existing_graph_dict(run_config, stage_index)
+    pprint(graphs)
+    graphs_dict: dict = load_pre_existing_graph_dict(run_config, stage_index)
+    for key in graphs_dict.keys():
+        print(f"key={key}")
+    print(f"graphs_dict={graphs_dict}")
+
     # Convert incoming graphs to dictionary.
 
     if stage_index == 1:
         # TODO: change this
         # raise Exception("ERROR FIX IT")
-        graphs_dict = merge_stage_1_graphs(graphs)
+        graphs_dict = convert_stage_1_digraphs_to_json(graphs)
     elif stage_index == 2:
-        graphs_dict = merge_stage_2_graphs(graphs)
+        graphs_dict = convert_stage_2_digraphs_to_json(graphs)
     if stage_index == 3:
         pass
     # Convert into single output dict.
@@ -345,14 +350,15 @@ def merge_experiment_and_run_config_with_graphs(
     return output_dict
 
 
-def load_pre_existing_graph_dict(run_config, stage_index):
+def load_pre_existing_graph_dict(run_config, stage_index) -> dict:
     """Returns the pre-existing graphs that were generated during earlier
     stages of the experiment.
 
     TODO: write tests to verify it returns the
     correct data.
     """
-    # If stage index ==1  you should always return an empty dict.
+    if stage_index == 1:  # you should always return an empty dict.
+        return {}
     if stage_index == 2:
         if not run_config["overwrite_sim_results"]:
             # Load graphs stages 1, 2, 3, 4
@@ -364,7 +370,7 @@ def load_pre_existing_graph_dict(run_config, stage_index):
         return load_graphs_from_json(run_config, [1, 2])
     if stage_index == 4:
         return load_graphs_from_json(run_config, [1, 2, 3, 4])
-    return {}
+    raise Exception("Eroro, unexpected stage_index.")
 
 
 def load_graphs_from_json(run_config, stages) -> dict:
