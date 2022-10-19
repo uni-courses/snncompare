@@ -59,9 +59,11 @@ with_adaptation_with_radiation = {
 def output_files_stage_1(
     experiment_config: dict, run_config: dict, stage_1_graphs: dict
 ):
+
     """This method converts nx.Digraphs in ["graphs_dict"] to a dict.
 
     TODO: generalise to stage 1 and/or stage2.
+
     Merges the experiment configuration dict, run configuration dict and
     graphs into a single dict. This method assumes only the graphs that are to
     be exported are passed into this method.
@@ -77,6 +79,7 @@ def output_files_stage_1(
     :param stage_1_graphs:
     :param run_config:
     """
+
     filename = run_config_to_filename(run_config)
     results: dict = output_stage_json(
         experiment_config,
@@ -86,7 +89,6 @@ def output_files_stage_1(
         1,
     )
     return results
-
 
 def output_stage_files(
     experiment_config: dict,
@@ -276,11 +278,13 @@ class Stage_4_graphs:
         )
 
 
+
 def convert_stage_1_digraphs_to_json(graphs):
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
         print(f"graph_name={graph_name}")
+
         if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             raise Exception(
                 "stage_index=1, Error, for graph:"

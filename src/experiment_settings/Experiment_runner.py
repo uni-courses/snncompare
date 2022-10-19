@@ -75,6 +75,7 @@ class Experiment_runner:
         self.experi_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
+]
         # TODO: see if self.run_configs can be removed.
         self.run_configs = self.__perform_run(self.experi_config)
 
@@ -197,6 +198,7 @@ class Experiment_runner:
             )
         # TODO: Verify stage 4 is completed.
         return results_stage_4
+
 
 
 def experiment_config_to_run_configs(experi_config: dict):
