@@ -4,6 +4,8 @@
 """
 
 
+from pprint import pprint
+
 from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
@@ -73,6 +75,8 @@ class Experiment_runner:
         self.experi_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
+]
+        # TODO: see if self.run_configs can be removed.
         self.run_configs = self.__perform_run(self.experi_config)
 
     # pylint: disable=W0238
@@ -88,40 +92,113 @@ class Experiment_runner:
         for run_config in run_configs:
             to_run = determine_what_to_run(run_config)
             print(f"to_run={to_run}")
-            if to_run["stage_1"]:
+            results_stage_1 = self.__perform_run_stage_1(
+                experi_config, run_config, to_run
+            )
+            results_stage_2 = self.__perform_run_stage_2(
+                experi_config, results_stage_1, run_config, to_run
+            )
+            self.__perform_run_stage_3(
+                experi_config, results_stage_2, run_config, to_run
+            )
+            _ = self.__perform_run_stage_4(
+                experi_config, results_stage_2, run_config, to_run
+            )
 
-                # Run first stage of experiment, get input graph.
-                stage_1_graphs: dict = get_used_graphs(run_config)
-                # for key, value in stage_1_graphs.items():
-                output_files_stage_1(experi_config, run_config, stage_1_graphs)
-
-                # Set the radiation damage level.
-                # TODO: Verify this setting has any effect.
-                # Radiation_damage(0.2)
-            if not to_run["stage_1"]:
-                stage_1_graphs = load_results_stage_1(run_config)
-            if to_run["stage_2"]:
-                # Run simulation on networkx or lava backend.
-                sim_graphs(stage_1_graphs, run_config)
-                output_files_stage_1(experi_config, run_config, stage_1_graphs)
-
-            if to_run["stage_3"]:
-                # Generate output json dicts (and plots) of propagated graphs.
-                print("Generating plots for stage 3.")
-                # TODO: pass the stage index and re-use it to export the
-                # stage 4 graphs
-                output_stage_files(
-                    experi_config, run_config, stage_1_graphs, 3
-                )
-                print('"Done generating output plots for stage 3.')
-            if to_run["stage_4"]:
-                # TODO: compute results per graph type and export performance
-                # to json dict.
-                results = get_results(run_config, stage_1_graphs)
-                export_results(
-                    experi_config, results, run_config, stage_1_graphs
-                )
         return run_configs
+
+    def __perform_run_stage_1(
+        self, experi_config: dict, run_config: dict, to_run: dict
+    ):
+        """Performs the run for stage 1 or loads the data from file depending
+        on the run configuration."""
+        if to_run["stage_1"]:
+
+            # Run first stage of experiment, get input graph.
+            stage_1_graphs: dict = get_used_graphs(run_config)
+            pprint(stage_1_graphs["input_graph"])
+
+            # Exports results, including graphs as dict.
+            results_stage_1: dict = output_files_stage_1(
+                experi_config, run_config, stage_1_graphs
+            )
+
+            # the graph dicts inside graphs_dict are converted
+            # back into nx.DiGraph objects.
+            # TODO, replace with generic conversion function at the cost of
+            # computation, saving 1 line of code.
+            results_stage_1["graphs_dict"] = stage_1_graphs
+            pprint(results_stage_1["graphs_dict"]["input_graph"])
+
+            # Set the radiation damage level.
+            # TODO: Verify this setting has any effect.
+            # Radiation_damage(0.2)
+        if not to_run["stage_1"]:
+            results_stage_1 = load_results_stage_1(run_config)
+        # TODO: ensure the graph dicts inside graphs_dict are converted
+        # back into nx.DiGraph objects.
+
+        # TODO: Verify stage 1 is completed.
+        return results_stage_1
+
+    def __perform_run_stage_2(
+        self,
+        experi_config: dict,
+        results_stage_1: dict,
+        run_config: dict,
+        to_run: dict,
+    ):
+        """Performs the run for stage 2 or loads the data from file depending
+        on the run configuration."""
+
+        if to_run["stage_2"]:
+            # Run simulation on networkx or lava backend.
+            # print(results_stage_1)
+            # pprint(results_stage_1)
+            sim_graphs(results_stage_1["graphs_dict"], run_config)
+            results_stage_2 = output_files_stage_1(
+                experi_config, run_config, results_stage_1
+            )
+        # TODO: Verify stage 2 is completed.
+        return results_stage_2
+
+    def __perform_run_stage_3(
+        self,
+        experi_config: dict,
+        results_stage_2: dict,
+        run_config: dict,
+        to_run: dict,
+    ):
+        """Performs the run for stage 3 or loads the data from file depending
+        on the run configuration."""
+        if to_run["stage_3"]:
+            # Generate output json dicts (and plots) of propagated graphs.
+            print("Generating plots for stage 3.")
+            # TODO: pass the stage index and re-use it to export the
+            # stage 4 graphs
+            output_stage_files(experi_config, run_config, results_stage_2, 3)
+            print('"Done generating output plots for stage 3.')
+        # TODO: Verify stage 3 is completed (if required).
+
+    def __perform_run_stage_4(
+        self,
+        experi_config: dict,
+        results_stage_2: dict,
+        run_config: dict,
+        to_run: dict,
+    ):
+        """Performs the run for stage 4 or loads the data from file depending
+        on the run configuration."""
+        if to_run["stage_4"]:
+            # TODO: compute results per graph type and export performance
+            # to json dict.
+            results_stage_4 = get_results(run_config, results_stage_2)
+            export_results(
+                experi_config, results_stage_4, run_config, results_stage_2
+            )
+        # TODO: Verify stage 4 is completed.
+        return results_stage_4
+
 
 
 def experiment_config_to_run_configs(experi_config: dict):

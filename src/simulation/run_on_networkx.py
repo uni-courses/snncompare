@@ -90,7 +90,6 @@ def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration):
     time in: G.nodes[node]["nx_LIF"] which is of type: List. Then each
     element in that list must be of type: nx_LIF() neuron.
     """
-    print(f"Verifying with sim_duration:{sim_duration}")
     for nodename in G.nodes:
         # Assert node has nx_LIF neuron object of type list.
         if not isinstance(G.nodes[nodename]["nx_LIF"], List):

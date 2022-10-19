@@ -782,7 +782,8 @@ def get_sim_duration(
     raise Exception("Error, the simulation time was not found.")
 
 
-def old_graph_to_new_graph_properties(G):
+
+def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
     """Converts the old graph properties of the first template neuron into the
     new template neuron.
 

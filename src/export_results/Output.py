@@ -10,6 +10,7 @@ SubInput: Run configuration within an experiment.
 """
 import json
 import pathlib
+from pprint import pprint
 from typing import List
 
 import jsons
@@ -58,7 +59,11 @@ with_adaptation_with_radiation = {
 def output_files_stage_1(
     experiment_config: dict, run_config: dict, stage_1_graphs: dict
 ):
-    """TODO: generalise to stage 1 and/or stage2.
+
+    """This method converts nx.Digraphs in ["graphs_dict"] to a dict.
+
+    TODO: generalise to stage 1 and/or stage2.
+
     Merges the experiment configuration dict, run configuration dict and
     graphs into a single dict. This method assumes only the graphs that are to
     be exported are passed into this method.
@@ -74,18 +79,16 @@ def output_files_stage_1(
     :param stage_1_graphs:
     :param run_config:
     """
-    # TODO: make it clear that export_snns means export the images of the
-    # graphs. The graphs should always be exported if they do not yet exist.
-    if run_config["export_snns"]:
-        filename = run_config_to_filename(run_config)
-        output_stage_json(
-            experiment_config,
-            stage_1_graphs,
-            filename,
-            run_config,
-            1,
-        )
 
+    filename = run_config_to_filename(run_config)
+    results: dict = output_stage_json(
+        experiment_config,
+        stage_1_graphs,
+        filename,
+        run_config,
+        1,
+    )
+    return results
 
 def output_stage_files(
     experiment_config: dict,
@@ -275,11 +278,12 @@ class Stage_4_graphs:
         )
 
 
-def merge_stage_1_graphs(graphs):
+
+def convert_stage_1_digraphs_to_json(graphs):
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
-        # print(f"graph_name={graph_name}")
+        print(f"graph_name={graph_name}")
 
         if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             raise Exception(
@@ -296,7 +300,7 @@ def merge_stage_1_graphs(graphs):
     return graphs_dict_stage_1
 
 
-def merge_stage_2_graphs(graphs):
+def convert_stage_2_digraphs_to_json(graphs):
     """Puts all the graphs of stage 2 into a single graph."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():
@@ -325,13 +329,20 @@ def merge_experiment_and_run_config_with_graphs(
     dictionary."""
 
     # Load existing graph dict if it already exists, and if overwrite is off.
-    graphs_dict = load_pre_existing_graph_dict(run_config, stage_index)
+    pprint(graphs)
+    graphs_dict: dict = load_pre_existing_graph_dict(run_config, stage_index)
+    for key in graphs_dict.keys():
+        print(f"key={key}")
+    print(f"graphs_dict={graphs_dict}")
+
     # Convert incoming graphs to dictionary.
 
     if stage_index == 1:
-        graphs_dict["stage_1"] = merge_stage_1_graphs(graphs)
+        # TODO: change this
+        # raise Exception("ERROR FIX IT")
+        graphs_dict = convert_stage_1_digraphs_to_json(graphs)
     elif stage_index == 2:
-        graphs_dict["stage_2"] = merge_stage_2_graphs(graphs)
+        graphs_dict = convert_stage_2_digraphs_to_json(graphs)
     if stage_index == 3:
         pass
     # Convert into single output dict.
@@ -343,14 +354,15 @@ def merge_experiment_and_run_config_with_graphs(
     return output_dict
 
 
-def load_pre_existing_graph_dict(run_config, stage_index):
+def load_pre_existing_graph_dict(run_config, stage_index) -> dict:
     """Returns the pre-existing graphs that were generated during earlier
     stages of the experiment.
 
     TODO: write tests to verify it returns the
     correct data.
     """
-    # If stage index ==1  you should always return an empty dict.
+    if stage_index == 1:  # you should always return an empty dict.
+        return {}
     if stage_index == 2:
         if not run_config["overwrite_sim_results"]:
             # Load graphs stages 1, 2, 3, 4
@@ -362,7 +374,7 @@ def load_pre_existing_graph_dict(run_config, stage_index):
         return load_graphs_from_json(run_config, [1, 2])
     if stage_index == 4:
         return load_graphs_from_json(run_config, [1, 2, 3, 4])
-    return {}
+    raise Exception("Eroro, unexpected stage_index.")
 
 
 def load_graphs_from_json(run_config, stages) -> dict:
@@ -383,11 +395,7 @@ def load_graphs_from_json(run_config, stages) -> dict:
     if "graphs_dict" not in output_dict:
         raise Exception("Error, key: graphs_dict not in output_dict.")
 
-    for stage in stages:
-        if f"stage_{stage}" in output_dict["graphs_dict"]:
-            restored_graphs_dict[f"stage_{stage}"] = output_dict[
-                "graphs_dict"
-            ][f"stage_{stage}"]
+    restored_graphs_dict = output_dict["graphs_dict"]
     return restored_graphs_dict
 
 
@@ -397,10 +405,9 @@ def output_stage_json(
     filename: str,
     run_config: dict,
     stage_index: int,
-) -> None:
+) -> dict:
     """Merges the experiment config, run config and graphs of stage 1 into a
     single dict and exports that dict to a json file."""
-    # TODO: include stage index
 
     if graphs_of_stage == {}:
         raise Exception(
@@ -408,13 +415,13 @@ def output_stage_json(
             + f"{stage_index} was an empty dict."
         )
 
-    output_dict = merge_experiment_and_run_config_with_graphs(
+    results: dict = merge_experiment_and_run_config_with_graphs(
         experiment_config, run_config, graphs_of_stage, stage_index
     )
 
     # TODO: Optional: ensure output files exists.
     output_filepath = f"results/{filename}.json"
-    write_dict_to_json(output_filepath, jsons.dump(output_dict))
+    write_dict_to_json(output_filepath, jsons.dump(results))
 
     # Ensure output file exists.
     if not pathlib.Path(pathlib.Path(output_filepath)).resolve().is_file():
@@ -426,6 +433,7 @@ def output_stage_json(
     # TODO: Write run_config to file (pprint(dict), or json)
     # TODO: Write graphs to file (pprint(dict), or json)
     # TODO: append tags to output file.
+    return results
 
 
 def plot_graph_behaviours(
