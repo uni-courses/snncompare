@@ -19,6 +19,8 @@ from src.export_results.Plot_to_tex import Plot_to_tex
 from src.graph_generation.radiation.Radiation_damage import (
     store_dead_neuron_names_in_graph,
 )
+from src.simulation.LIF_neuron import LIF_neuron
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def fill_dictionary(
@@ -689,3 +691,112 @@ def is_identical(
             else:
                 return False
     return True
+
+
+def get_extensions_list(run_config, stage_index) -> list:
+    """
+
+    :param run_config: param stage_index:
+    :param stage_index:
+
+    extensions = list(get_extensions_dict(run_config, stage_index).values())
+    """
+    return list(get_extensions_dict(run_config, stage_index).values())
+
+
+def get_extensions_dict(run_config, stage_index) -> dict:
+    """Returns the file extensions of the output types. The dictionary key
+    describes the content of the file, and the extension is given as the value.
+    Config_and_graphs means that the experiment or run config is included in
+    the file. Graphs means that the networkx graphs have been encoded.
+
+    :param run_config: param stage_index:
+    :param stage_index:
+    """
+    if stage_index == 1:
+        return {"config_and_graphs": ".json"}
+    if stage_index == 2:
+        if run_config["simulator"] == "lava":
+            return {"config": ".json"}
+        # The networkx simulator is used:
+        return {"config_and_graphs": ".json"}
+    if stage_index == 3:
+        # TODO: support .eps and/or .pdf.
+        return {"graphs": ".png"}
+    if stage_index == 4:
+        return {"config_graphs_and_results": ".json"}
+    raise Exception("Unsupported experiment stage.")
+
+
+def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
+    """Adds the completed stage to the list of completed stages for the
+    incoming graph."""
+    if stage_index == 1:
+        if "completed_stages" in some_graph.graph:
+            raise Exception(
+                "Error, the completed_stages parameter is"
+                + f"already created for stage 1{some_graph.graph}:"
+            )
+        some_graph.graph["completed_stages"] = [stage_index]
+    elif not isinstance(some_graph.graph["completed_stages"], list):
+        raise Exception(
+            "Error, the completed_stages parameter is not of type"
+            + "list. instead, it is of type:"
+            + f'{type(some_graph.graph["completed_stages"])}'
+        )
+    elif stage_index in some_graph.graph["completed_stages"]:
+        # TODO: check if overwrite is on before throwing this error.
+        raise Exception(
+            f"Error, stage:{stage_index} is already completed for"
+            + f' this graph:{some_graph.graph["completed_stages"]}.'
+        )
+    some_graph.graph["completed_stages"].append(stage_index)
+
+
+def get_sim_duration(
+    input_graph: nx.DiGraph,
+    run_config: dict,
+) -> int:
+    """Compute the simulation duration for a given algorithm and graph."""
+    for algo_name, algo_settings in run_config["algorithm"].items():
+        if algo_name == "MDSA":
+
+            # TODO: determine why +10 is required.
+            # TODO: Move into stage_1 get input graphs.
+
+            sim_time: int = (
+                input_graph.graph["alg_props"]["inhibition"]
+                * (algo_settings["m_val"] + 1)
+                + 10
+            )
+            if not isinstance(sim_time, int):
+                raise Exception(
+                    "Error, sim_time is not an int."
+                    + 'snn_graph.graph["alg_props"]["inhibition"]='
+                    + f'{input_graph.graph["alg_props"]["inhibition"]}'
+                    + '(algo_settings["m_val"] + 1)='
+                    + f'{(algo_settings["m_val"] + 1)}'
+                )
+            return sim_time
+        raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
+    raise Exception("Error, the simulation time was not found.")
+
+
+
+def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
+    """Converts the old graph properties of the first template neuron into the
+    new template neuron.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    """
+    for nodename in G.nodes:
+        G.nodes[nodename]["nx_LIF"] = [
+            LIF_neuron(
+                name=nodename,
+                bias=float(G.nodes[nodename]["bias"]),
+                du=float(G.nodes[nodename]["du"]),
+                dv=float(G.nodes[nodename]["dv"]),
+                vth=float(G.nodes[nodename]["vth"]),
+            )
+        ]
+    verify_networkx_snn_spec(G, t=0)

@@ -1,9 +1,13 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
 
+from pprint import pprint
+
 import networkx as nx
 
-from src.export_results.load_pickles_get_results import (
+from src.helper import (
+    add_stage_completion_to_graph,
+    get_sim_duration,
     old_graph_to_new_graph_properties,
 )
 from src.simulation.run_on_networkx import (
@@ -34,36 +38,23 @@ def sim_graphs(
 
             stage_1_graphs[graph_name].graph[
                 "sim_duration"
-            ] = get_sim_duration(snn_graph, run_config)
+            ] = get_sim_duration(stage_1_graphs["input_graph"], run_config)
 
             # TODO: compute actual inhibition and mval
+            print(f"Simulating and verifying graph_name={graph_name}")
             run_snn_on_networkx(
-                snn_graph, get_sim_duration(snn_graph, run_config)
+                snn_graph, stage_1_graphs[graph_name].graph["sim_duration"]
             )
-        stage_1_graphs[graph_name].graph["stage"] = 2
+
+        print(f"Stage 2, adding:{graph_name}")
+        print(f"Stage 2, adding with type:{type(stage_1_graphs[graph_name])}")
+        pprint(stage_1_graphs[graph_name])
+
+        add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
+        # TODO: export graphs to file.
 
 
-def get_sim_duration(
-    snn_graph: nx.DiGraph,
-    run_config: dict,
-) -> int:
-    """Compute the simulation duration for a given algorithm and graph."""
-    for algo_name, algo_settings in run_config["algorithm"].items():
-        if algo_name == "MDSA":
-
-            # TODO: determine why +10 is required.
-            # TODO: Move into stage_1 get input graphs.
-            sim_time = (
-                snn_graph.graph["alg_props"]["inhibition"]
-                * (algo_settings["m_val"] + 1)
-                + 10
-            )
-            return sim_time
-        raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
-    raise Exception("Error, the simulation time was not found.")
-
-
-def convert_graph_snn_to_nx_snn(G: nx.DiGraph):
+def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:
     """Converts the SNN graph specfification to a networkx SNN that can be ran.
 
     :param G: nx.DiGraph:
@@ -91,5 +82,5 @@ def convert_graph_snn_to_nx_snn(G: nx.DiGraph):
 
     # Verify the simulations produce identical static
     # neuron properties.
-    print("")
+    # print("")
     # compare_static_snn_properties(self, G)

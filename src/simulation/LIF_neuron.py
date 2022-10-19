@@ -50,7 +50,7 @@ class LIF_neuron:
         :param a_in: int:
         """
         self.set_compute_u(a_in)
-        self.set_compute_v()
+        self.set_compute_v()  # Also sets self.spikes
         return self.spikes
 
     # TODO: make this function only accessible to object itself.

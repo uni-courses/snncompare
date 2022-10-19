@@ -18,6 +18,7 @@ from src.graph_generation.snn_algo.mdsa_snn_algo import (
     specify_mdsa_network_properties,
 )
 from src.graph_generation.Used_graphs import Used_graphs
+from src.helper import add_stage_completion_to_graph
 
 
 def get_used_graphs(run_config: dict) -> dict:
@@ -51,6 +52,11 @@ def get_used_graphs(run_config: dict) -> dict:
             graphs["adapted_snn_graph"], run_config, run_config["seed"]
         )
 
+    # Indicate the graphs have completed stage 1.
+    for graph in graphs.values():
+        # print(f"Stage 1, adding:{graph_name}")
+        # pprint(f"graph={graph}")
+        add_stage_completion_to_graph(graph, 1)
     return graphs
 
 

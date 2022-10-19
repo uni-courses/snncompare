@@ -12,10 +12,13 @@ from pprint import pprint
 
 import networkx as nx
 
+from src.helper import get_sim_duration
 from src.process_results.get_alipour_nodes import get_alipour_nodes
 
 
-def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
+def get_mdsa_snn_results(
+    m_val: int, run_config: dict, stage_2_graphs: dict
+) -> dict:
     """Returns the nodes and counts per node that were computed by the SNN
     algorithm."""
     results = {}
@@ -31,7 +34,7 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
     # Compute SNN results
     for graph_name, snn_graph in stage_2_graphs.items():
         # Verify the SNN graphs have completed simulation stage 2.
-        if stage_2_graphs[graph_name].graph["stage"] != 2:
+        if 2 not in stage_2_graphs[graph_name].graph["completed_stages"]:
             raise Exception(
                 "Error, the stage 2 simulation is not yet"
                 + f" completed for: {graph_name}"
@@ -43,6 +46,7 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=False,
+                run_config=run_config,
                 snn_graph=snn_graph,
             )
         elif graph_name == "adapted_snn_graph":
@@ -51,6 +55,7 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=True,
+                run_config=run_config,
                 snn_graph=snn_graph,
             )
         elif graph_name == "rad_snn_algo_graph":
@@ -59,6 +64,7 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=False,
+                run_config=run_config,
                 snn_graph=snn_graph,
             )
         elif graph_name == "rad_adapted_snn_graph":
@@ -67,31 +73,46 @@ def get_mdsa_snn_results(m_val: int, stage_2_graphs: dict) -> dict:
                 stage_2_graphs["input_graph"],
                 m_val,
                 redundant=True,
+                run_config=run_config,
                 snn_graph=snn_graph,
             )
     pprint(results)
     return results
 
 
+# pylint: disable=R0913
 def get_snn_results(
-    alipour_counter_marks, input_graph, m_val, redundant, snn_graph
+    alipour_counter_marks,
+    input_graph,
+    m_val,
+    redundant,
+    run_config: dict,
+    snn_graph: nx.DiGraph,
 ):
     """Returns the marks per node that are selected by the snn simulation.
 
     If the simulation is ran with adaptation in the form of redundancy,
     the code automatically selects the working node, and returns its
     count in the list.
+    TODO: make it more biologically plausible by using majority voting.
+    TODO: determine what to do in a draw: random pick. Allow specifying
+    picking heuristic.
     """
-    last_timestep = snn_graph.graph["stage"]
+    # Determine why the duration is used here to get a time step.
+    sim_duration = get_sim_duration(
+        snn_graph,
+        run_config,
+    )
+    # get runtime
 
     snn_counter_marks = {}
     if not redundant:
         snn_counter_marks = get_nx_LIF_count_without_redundancy(
-            input_graph, snn_graph, m_val, last_timestep
+            input_graph, snn_graph, m_val, sim_duration
         )
     else:
         snn_counter_marks = get_nx_LIF_count_with_redundancy(
-            input_graph, snn_graph, m_val, last_timestep
+            input_graph, snn_graph, m_val, sim_duration
         )
 
     # Compare the two performances.
