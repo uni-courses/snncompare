@@ -11,9 +11,6 @@ from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 from src.helper import file_exists
-from src.import_results.check_completed_stages import (
-    json_graphs_contain_expected_stages,
-)
 
 
 def json_to_digraph(json_data):
@@ -47,7 +44,7 @@ def json_dicts_of_graph_results_exist(
     return False
 
 
-def load_pre_existing_graphs_from_json(
+def load_pre_existing_graphs_from_json_and_convert_to_nx_graphs(
     run_config: dict, stage_index: int
 ) -> dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
@@ -134,6 +131,22 @@ def load_json_graphs_from_json(run_config: dict) -> dict:
     return results_json_graphs["graphs_dict"]
 
 
+def json_graphs_contain_correct_stages(
+    results_json_graphs: dict, expected_stages: List[int]
+):
+    """Returns True if the json graphs are valid, False otherwise."""
+    try:
+        verify_results_json_graphs_contain_correct_stages(
+            results_json_graphs, expected_stages
+        )
+        return True
+    # pylint: disable=W0702
+    except KeyError:
+        return False
+    except ValueError:
+        return False
+
+
 def verify_results_json_graphs_contain_correct_stages(
     results_json_graphs: dict, expected_stages: List[int]
 ) -> None:
@@ -141,21 +154,45 @@ def verify_results_json_graphs_contain_correct_stages(
     stages for this stage of the experiment."""
 
     if "experiment_config" not in results_json_graphs:
-        raise Exception("Error, key: experiment_config not in output_dict.")
+        raise KeyError("Error, key: experiment_config not in output_dict.")
     if "run_config" not in results_json_graphs:
-        raise Exception("Error, key: run_config not in output_dict.")
+        raise KeyError("Error, key: run_config not in output_dict.")
     if "graphs_dict" not in results_json_graphs:
-        raise Exception("Error, key: graphs_dict not in output_dict.")
+        raise KeyError("Error, key: graphs_dict not in output_dict.")
 
     json_graphs = results_json_graphs["graphs_dict"]
     for expected_stage in expected_stages:
         for graph_name, graph in json_graphs.items():
-            if graph["completed_stages"]:
-                if expected_stage not in graph["completed_stages"]:
-                    raise Exception(
+            print(f"graph_name={graph_name}")
+            print(f"type={type(graph)}")
+            # pprint(graph)
+            if graph["graph"]["completed_stages"]:
+                if expected_stage not in graph["graph"]["completed_stages"]:
+                    raise ValueError(
                         "Error, for run_config: "
                         + f'{results_json_graphs["run_config"]}, the expected '
                         + f"stage:{expected_stage}, was not found in "
                         + f'the completed stages:{graph["completed_stages"]} '
                         + f"that were loaded from graph: {graph_name}."
                     )
+
+
+def json_graphs_contain_expected_stages(
+    json_graphs: dict,
+    expected_graph_names: List[str],
+    expected_stages: List[int],
+) -> bool:
+    """Verifies for each of the expected graph names is in the json_graphs
+    dict, and then verifies each of those graphs contain the completed
+    stages."""
+    for expected_graph_name in expected_graph_names:
+        if expected_graph_name not in json_graphs.keys():
+            return False
+        for expected_stage in expected_stages:
+            # More completed stages than expected is ok.
+            if (
+                expected_stage
+                not in json_graphs[expected_graph_name]["completed_stages"]
+            ):
+                return False
+    return True

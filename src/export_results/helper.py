@@ -5,6 +5,7 @@ from typing import List
 
 import networkx as nx
 
+from src.graph_generation.snn_algo.mdsa_snn_algo import Alipour_properties
 from src.helper import get_sim_duration
 
 
@@ -67,6 +68,12 @@ def get_expected_image_paths_stage_3(
     """
     image_filepaths = []
     filename: str = run_config_to_filename(run_config)
+
+    if "alg_props" not in input_graph.graph.keys():
+        print(f"run_config={run_config}")
+        input_graph.graph["alg_props"] = Alipour_properties(
+            input_graph, run_config["seed"]
+        ).__dict__
     sim_duration = get_sim_duration(
         input_graph,
         run_config,

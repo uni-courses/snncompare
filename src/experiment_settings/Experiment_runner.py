@@ -97,9 +97,7 @@ class Experiment_runner:
             )
             self.__perform_run_stage_2(results_nx_graphs, to_run)
             self.__perform_run_stage_3(results_nx_graphs, to_run)
-            results_nx_graphs = self.__perform_run_stage_4(
-                results_nx_graphs, to_run
-            )
+            results_nx_graphs = self.__perform_run_stage_4(results_nx_graphs)
 
         return run_configs
 
@@ -139,6 +137,7 @@ class Experiment_runner:
                 # TODO: check if the stage 2 graphs already are loaded from
                 # file correctly. If loaded incorrectly, raise exception, if
                 # not loaded, perform simulation.
+
                 # TODO: check if the graphs can be loaded from file,
                 has_outputted_stage(results_nx_graphs["run_config"], 2)
 
@@ -172,18 +171,17 @@ class Experiment_runner:
     def __perform_run_stage_4(
         self,
         results_nx_graphs: dict,
-        to_run: dict,
     ) -> dict:
         """Performs the run for stage 4 or loads the data from file depending
         on the run configuration."""
-        if to_run["stage_4"]:
-            # TODO: compute results per graph type and export performance
-            # to json dict.
-            results_stage_4 = get_results(
-                results_nx_graphs["run_config"],
-                results_nx_graphs["graphs_dict"],
-            )
-            export_results(results_nx_graphs, 4)
+        # TODO: Determine whether this should be done.
+        # TODO: compute results per graph type and export performance
+        # to json dict.
+        results_stage_4 = get_results(
+            results_nx_graphs["run_config"],
+            results_nx_graphs["graphs_dict"],
+        )
+        export_results(results_nx_graphs, 4)
         # TODO: Verify stage 4 is completed.
         return results_stage_4
 
@@ -350,14 +348,6 @@ def determine_what_to_run(run_config) -> dict:
             + "not match with what the graphs actually do. We suggest you "
             + "try this again with:overwrite_visualisation=True"
         )
-
-    # Check if the results of the simulation with respect to alipour need to be
-    # completed.
-    if (
-        not has_outputted_stage(run_config, 4)
-        or run_config["overwrite_sim_results"]
-    ):
-        to_run["stage_4"] = True
     return to_run
 
 

@@ -16,22 +16,22 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.Digraph object."""
     # Load the json dictionary of results.
-    stage_1_dict: dict = load_json_file_into_dict(json_filepath)
+    results_json_graphs: dict = load_json_file_into_dict(json_filepath)
 
     # Verify the dict contains a key for the graph dict.
-    if "graphs_dict" not in stage_1_dict:
+    if "graphs_dict" not in results_json_graphs:
         raise Exception(
             "Error, the graphs dict key was not in the stage_1_dict:"
-            + f"{stage_1_dict}"
+            + f"{results_json_graphs}"
         )
 
     # Verify the graphs dict is of type dict.
-    if stage_1_dict["graphs_dict"] == {}:
+    if results_json_graphs["graphs_dict"] == {}:
         raise Exception("Error, the graphs dict was an empty dict.")
 
-    set_graph_attributes(stage_1_dict["graphs_dict"])
-    verify_loaded_results_from_json(stage_1_dict, run_config)
-    return stage_1_dict
+    set_graph_attributes(results_json_graphs["graphs_dict"])
+    verify_loaded_results_from_json(results_json_graphs, run_config)
+    return results_json_graphs
 
 
 def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
