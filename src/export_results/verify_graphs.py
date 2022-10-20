@@ -46,12 +46,18 @@ def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
 
     # Verify each graph is of the networkx type.
     for graph_name, graph in results_nx_graphs["graphs_dict"].items():
-        if not isinstance(graph, nx.DiGraph):
-            raise ValueError(
-                "Error, the results_nx_graphs object contains a "
-                + f"graph:{graph_name} that is not of type: nx.DiGraph:"
-                + f"{type(graph)}"
-            )
+        if graph_name == "input_graph":
+            if not isinstance(graph, nx.Graph):
+                raise Exception(
+                    f"Error, input graph changed to type:{type(graph)}"
+                )
+        else:
+            if not isinstance(graph, nx.DiGraph):
+                raise ValueError(
+                    "Error, the results_nx_graphs object contains a "
+                    + f"graph:{graph_name} that is not of type: nx.DiGraph:"
+                    + f"{type(graph)}"
+                )
 
         # Verify each graph has the right completed stages attribute.
         verify_completed_stages_list(graph.graph["completed_stages"])

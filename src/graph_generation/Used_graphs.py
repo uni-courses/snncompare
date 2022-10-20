@@ -42,7 +42,7 @@ class Used_graphs:
             self.five_f(),
         ]
 
-    def three_a(self):
+    def three_a(self) -> nx.DiGraph:
         """Creates two different graphs of size 3."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -57,7 +57,7 @@ class Used_graphs:
         )
         return graph
 
-    def four_a(self):
+    def four_a(self) -> nx.DiGraph:
         """Straight line."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -73,7 +73,7 @@ class Used_graphs:
         )
         return graph
 
-    def four_b(self):
+    def four_b(self) -> nx.DiGraph:
         """Y"""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -89,7 +89,7 @@ class Used_graphs:
         )
         return graph
 
-    def four_c(self):
+    def four_c(self) -> nx.DiGraph:
         """Square."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -106,7 +106,7 @@ class Used_graphs:
         )
         return graph
 
-    def five_a(self):
+    def five_a(self) -> nx.DiGraph:
         """Straight line."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -123,7 +123,7 @@ class Used_graphs:
         )
         return graph
 
-    def five_b(self):
+    def five_b(self) -> nx.DiGraph:
         """Y-long-tail."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -140,7 +140,7 @@ class Used_graphs:
         )
         return graph
 
-    def five_c(self):
+    def five_c(self) -> nx.DiGraph:
         """Y with 3 arms."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -157,7 +157,7 @@ class Used_graphs:
         )
         return graph
 
-    def five_d(self):
+    def five_d(self) -> nx.DiGraph:
         """Pentagon."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -175,7 +175,7 @@ class Used_graphs:
         )
         return graph
 
-    def five_e(self):
+    def five_e(self) -> nx.DiGraph:
         """Square-with-tail."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -193,7 +193,7 @@ class Used_graphs:
         )
         return graph
 
-    def five_f(self):
+    def five_f(self) -> nx.DiGraph:
         """Square."""
         graph = nx.Graph()
         graph.add_nodes_from(

@@ -117,9 +117,17 @@ class Experiment_runner:
                 "run_config": run_config,
                 "graphs_dict": stage_1_graphs,
             }
+            print("instage1A")
+            verify_results_nx_graphs(
+                results_nx_graphs, results_nx_graphs["run_config"]
+            )
 
             # Exports results, including graphs as dict.
             output_files_stage_1_and_2(results_nx_graphs)
+            print("instage1B")
+            verify_results_nx_graphs(
+                results_nx_graphs, results_nx_graphs["run_config"]
+            )
         else:
             results_nx_graphs = load_results_stage_1(run_config)
 
