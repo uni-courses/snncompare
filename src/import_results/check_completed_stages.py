@@ -21,7 +21,6 @@ from src.helper import get_extensions_list
 def has_outputted_stage(
     run_config: dict,
     stage_index: int,
-    nx_graphs: dict = None,
 ) -> bool:
     """Checks whether the the required output files exist, for a given
     simulation and whether their content is valid. Returns True if the file
@@ -53,14 +52,6 @@ def has_outputted_stage(
                     extensions,
                 )
             )
-        if stage_index == 4:
-            if nx_graphs is None:
-                raise Exception(
-                    "To check if stage 3 is completed, the nx_graphs "
-                    + "graphs of stage 1 or 2 are needed."
-                )
-            if not stage_4_results_exist(nx_graphs):
-                return False
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
@@ -76,7 +67,10 @@ def has_outputted_stage(
             except ValueError:
                 print("NOT 6 VALUEERROR")
                 return False
-
+            if stage_index == 4:
+                # TODO: check if 4 is completed using
+                # load_pre_existing_graph_dict.
+                pass
     return True
 
 
