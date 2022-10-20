@@ -4,43 +4,57 @@ TODO: merge with from src.import_results.check_completed_stages
 """
 from typing import List
 
+import networkx as nx
+
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 
 
-def verify_loaded_results_from_json(run_result: dict, run_config: dict):
+def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
     """Verifies the results that are loaded from json file are of the expected
-    format."""
+    format.
+
+    Does not verify whether any expected stages have been completed.
+    """
     stage_1_graph_names = get_expected_stage_1_graph_names(run_config)
     # Verify the 3 dicts are in the result dict.
-    if "experiment_config" not in run_result.keys():
+    if "experiment_config" not in results_nx_graphs.keys():
         raise Exception(
-            f"Error, experiment_config not in run_result keys:{run_result}"
+            "Error, experiment_config not in run_result keys:"
+            + f"{results_nx_graphs}"
         )
 
-    if "run_config" not in run_result.keys():
+    if "run_config" not in results_nx_graphs.keys():
         raise Exception(
-            f"Error, run_config not in run_result keys:{run_result}"
+            "Error, run_config not in results_nx_graphs keys:"
+            + f"{results_nx_graphs}"
         )
-    if "graphs_dict" not in run_result.keys():
+    if "graphs_dict" not in results_nx_graphs.keys():
         raise Exception(
-            f"Error, graphs_dict not in run_result keys:{run_result}"
+            "Error, graphs_dict not in results_nx_graphs keys:"
+            + f"{results_nx_graphs}"
         )
 
     # Verify the right graphs are within the graphs_dict.
     for graph_name in stage_1_graph_names:
-        if graph_name not in run_result["graphs_dict"].keys():
+        if graph_name not in results_nx_graphs["graphs_dict"].keys():
             raise Exception(
-                f"Error, {graph_name} not in run_result keys:{run_result}"
+                f"Error, {graph_name} not in results_nx_graphs keys:"
+                + f"{results_nx_graphs}"
             )
 
-    # Verify each graph has the right completed stages attribute.
-    for graph_name in run_result["graphs_dict"].keys():
-        verify_completed_stages_list(
-            run_result["graphs_dict"][graph_name].graph["completed_stages"]
-        )
-        # TODO: verify the stage index is in completed_stages.
+    # Verify each graph is of the networkx type.
+    for graph_name, graph in results_nx_graphs["graphs_dict"].items():
+        if not isinstance(graph, nx.DiGraph):
+            raise ValueError(
+                "Error, the results_nx_graphs object contains a "
+                + f"graph:{graph_name} that is not of type: nx.DiGraph:"
+                + f"{type(graph)}"
+            )
+
+        # Verify each graph has the right completed stages attribute.
+        verify_completed_stages_list(graph.graph["completed_stages"])
 
 
 def verify_completed_stages_list(completed_stages: List) -> None:

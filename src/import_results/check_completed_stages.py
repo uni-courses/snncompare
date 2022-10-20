@@ -6,9 +6,7 @@ from src.export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
 )
-from src.export_results.json_to_nx_graph import (
-    json_graphs_contain_correct_stages,
-)
+from src.export_results.json_to_nx_graph import load_pre_existing_graph_dict
 from src.export_results.verify_graphs import verify_completed_stages_list
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
@@ -69,10 +67,15 @@ def has_outputted_stage(
         if not Path(filepath).is_file():
             return False
         if filepath[-5:] == ".json":
-
-            list(range(1, stage_index + 1))
-            if not json_graphs_contain_correct_stages:
+            # Load the json graphs from json file to see if they exist.
+            # TODO: separate loading and checking if it can be loaded.
+            try:
+                load_pre_existing_graph_dict(run_config, 2)
+            except KeyError:
                 return False
+            except ValueError:
+                return False
+
     return True
 
 

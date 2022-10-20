@@ -31,6 +31,13 @@ def sim_graphs(
     :param run_config: dict:
     """
     for graph_name, snn_graph in stage_1_graphs.items():
+        if not isinstance(snn_graph, nx.DiGraph):
+            print(f"graph_nameee={graph_name}")
+            print(f"input_graph={snn_graph}")
+            raise Exception(
+                "Error, the snn graph: is not a networkx graph anymore:"
+                f"{type(snn_graph)}"
+            )
         if graph_name != "input_graph":
 
             # TODO: add lava neurons if run config demands lava.
@@ -45,9 +52,11 @@ def sim_graphs(
             run_snn_on_networkx(
                 snn_graph, stage_1_graphs[graph_name].graph["sim_duration"]
             )
+        if not isinstance(stage_1_graphs[graph_name], nx.DiGraph):
+            print(f"graph_name={graph_name}")
+            print(f"type={type(graph_name)}")
 
         print(f"Stage 2, adding:{graph_name}")
-        print(f"Stage 2, adding with type:{type(stage_1_graphs[graph_name])}")
         pprint(stage_1_graphs[graph_name])
 
         add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
@@ -75,6 +84,12 @@ def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:
 
     # Generate networkx network.
     add_nx_neurons_to_networkx_graph(G, t=0)
+
+    if not isinstance(G, nx.DiGraph):
+        raise Exception(
+            "Error, the snn graph is not a networkx graph anymore:"
+            + f"{type(G)}"
+        )
 
     # TODO: add lava neurons if run config demands lava.
     # Generate lava network.

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import networkx as nx
 
-from src.export_results.verify_graphs import verify_loaded_results_from_json
+from src.export_results.verify_graphs import verify_results_nx_graphs
 
 
 def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
@@ -30,7 +30,7 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
         raise Exception("Error, the graphs dict was an empty dict.")
 
     set_graph_attributes(results_json_graphs["graphs_dict"])
-    verify_loaded_results_from_json(results_json_graphs, run_config)
+    verify_results_nx_graphs(results_json_graphs, run_config)
     return results_json_graphs
 
 

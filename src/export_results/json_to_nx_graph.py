@@ -133,13 +133,29 @@ def load_json_graphs_from_json(run_config: dict) -> dict:
     return results_json_graphs["graphs_dict"]
 
 
-def json_graphs_contain_correct_stages(
+def results_with_json_graphs_contain_correct_stages(
     results_json_graphs: dict, expected_stages: List[int]
 ):
     """Returns True if the json graphs are valid, False otherwise."""
     try:
         verify_results_json_graphs_contain_correct_stages(
             results_json_graphs, expected_stages
+        )
+        return True
+    # pylint: disable=W0702
+    except KeyError:
+        return False
+    except ValueError:
+        return False
+
+
+def json_graphs_contain_correct_stages(
+    json_graphs: dict, expected_stages: List[int], run_config: dict
+):
+    """Returns True if the json graphs are valid, False otherwise."""
+    try:
+        verify_json_graphs_dict_contain_correct_stages(
+            json_graphs, expected_stages, run_config
         )
         return True
     # pylint: disable=W0702
@@ -161,8 +177,18 @@ def verify_results_json_graphs_contain_correct_stages(
         raise KeyError("Error, key: run_config not in output_dict.")
     if "graphs_dict" not in results_json_graphs:
         raise KeyError("Error, key: graphs_dict not in output_dict.")
+    verify_json_graphs_dict_contain_correct_stages(
+        results_json_graphs["graphs_dict"],
+        expected_stages,
+        results_json_graphs["run_config"],
+    )
 
-    json_graphs = results_json_graphs["graphs_dict"]
+
+def verify_json_graphs_dict_contain_correct_stages(
+    json_graphs: dict, expected_stages: List[int], run_config: dict
+) -> None:
+    """Verifies the json graphs dict contains the expected stages in each
+    graph."""
     for expected_stage in expected_stages:
         for graph_name, graph in json_graphs.items():
             print(f"graph_name={graph_name}")
@@ -173,7 +199,7 @@ def verify_results_json_graphs_contain_correct_stages(
                 if expected_stage not in graph["graph"]["completed_stages"]:
                     raise ValueError(
                         "Error, for run_config: "
-                        + f'{results_json_graphs["run_config"]}, the expected '
+                        + f"{run_config}, the expected "
                         + f"stage:{expected_stage}, was not found in "
                         + "the completed stages:"
                         + f'{graph["graph"]["completed_stages"]} '
