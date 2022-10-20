@@ -83,16 +83,10 @@ def load_pre_existing_graph_dict(run_config, stage_index) -> dict:
     if stage_index == 2:
         if not run_config["overwrite_sim_results"]:
             # Load graphs stages 1, 2, 3, 4
-            return load_verified_json_graphs_from_json(
-                run_config, [1, 2, 3, 4]
-            )
+            return load_verified_json_graphs_from_json(run_config, [1, 2])
         return load_verified_json_graphs_from_json(run_config, [1])
     if stage_index == 3:
-        if not run_config["overwrite_visualisation"]:
-            return load_verified_json_graphs_from_json(
-                run_config, [1, 2, 3, 4]
-            )
-        return load_verified_json_graphs_from_json(run_config, [1, 2])
+        return load_verified_json_graphs_from_json(run_config, [1, 2, 3])
     if stage_index == 4:
         return load_verified_json_graphs_from_json(run_config, [1, 2, 3, 4])
     raise Exception("Eroro, unexpected stage_index.")

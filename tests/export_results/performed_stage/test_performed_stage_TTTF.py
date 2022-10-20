@@ -2,8 +2,8 @@
 determines which stages have been completed and not for:
 Stage1=Done
 Stage2=Done
-Stage3=Done
-Stage4=TODO
+Stage3=Not yet done.
+Stage4=Not yet done.
 ."""
 
 import os
@@ -73,9 +73,10 @@ class Test_stage_1_output_json(unittest.TestCase):
 
     # Test: Deleting all results says none of the stages have been performed.
     def test_output_json_contains_(self):
-        """Tests whether the output function creates a json that can be read as
-        a dict that contains an experiment_config, a graphs_dict, and a
-        run_config."""
+        """Tests whether deleting all results and creating an artificial json
+        with stages 1,2 and 3 completed, results in has_outputted_stage()
+        returning that only stages 1, 2 and 3 are completed, and that stages 4
+        is not yet completed."""
 
         for run_config in self.experiment_runner.run_configs:
             json_filepath = (

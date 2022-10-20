@@ -7,7 +7,7 @@ from src.export_results.helper import (
     run_config_to_filename,
 )
 from src.export_results.json_to_nx_graph import (
-    load_verified_json_graphs_from_json,
+    json_graphs_contain_correct_stages,
 )
 from src.export_results.verify_graphs import verify_completed_stages_list
 from src.export_results.verify_stage_1_graphs import (
@@ -70,8 +70,9 @@ def has_outputted_stage(
             return False
         if filepath[-5:] == ".json":
 
-            expected_stages = list(range(1, stage_index + 1))
-            load_verified_json_graphs_from_json(run_config, expected_stages)
+            list(range(1, stage_index + 1))
+            if not json_graphs_contain_correct_stages:
+                return False
     return True
 
 
