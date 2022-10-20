@@ -8,6 +8,9 @@ pickles/*
 results/*
 results.txt
 
+# Don't include code visualisation structure.
+pycallgraph.png
+
 # Exclude test coverage report from being synced.
 cov.xml
 

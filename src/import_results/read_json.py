@@ -49,7 +49,6 @@ def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
         graph_attributes = graphs_dict[graph_name]["graph"]
 
         # Convert the graph dict back into an nx.DiGraph object.
-        print(f"graphs_dict[graph_name]={graphs_dict[graph_name]}")
         graphs_dict[graph_name] = nx.DiGraph(graphs_dict[graph_name])
 
         # Add the graph attributes back to the nx.DiGraph object.

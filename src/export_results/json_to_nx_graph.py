@@ -62,7 +62,6 @@ def load_pre_existing_graphs_from_json(
     graphs_dict: dict = load_pre_existing_graph_dict(run_config, stage_index)
     for key in graphs_dict.keys():
         print(f"key={key}")
-    print(f"graphs_dict={graphs_dict}")
     return graphs_dict
 
 

@@ -11,6 +11,9 @@
 # sudo apt full-upgrade
 # yes | sudo apt install gcc
 
+# For code structure visualisation:
+# yes | sudo apt install graphviz
+
 # Conda configuration settings. (Specify which modules/packages are installed.)
 name: nx2lava
 channels:
@@ -52,6 +55,8 @@ dependencies:
   - pyright
 # Include GitHub pre-commit hook.
   - pre-commit
+# Visualise the structure of the code based on a command.
+  - pycallgraph2
 # Automatically upgrades Python syntax to the new Python version syntax.
   - pyupgrade
 # Auto generate docstrings.
