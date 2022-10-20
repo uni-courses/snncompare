@@ -70,7 +70,6 @@ def get_expected_image_paths_stage_3(
     filename: str = run_config_to_filename(run_config)
 
     if "alg_props" not in input_graph.graph.keys():
-        print(f"run_config={run_config}")
         input_graph.graph["alg_props"] = Alipour_properties(
             input_graph, run_config["seed"]
         ).__dict__

@@ -45,8 +45,6 @@ def output_stage_files_3_and_4(
         if results_nx_graphs["run_config"]["export_snns"]:
             # Output the json dictionary of the files.
             filename = run_config_to_filename(results_nx_graphs["run_config"])
-            # print(f"Exporting image:{filename}\n")
-
             output_stage_json(
                 results_nx_graphs,
                 filename,

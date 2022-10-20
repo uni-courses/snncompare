@@ -452,7 +452,6 @@ class Alipour_properties:
         :param rand_nrs: List of random numbers that are used.
         """
         spread_rand_nrs = [x * delta for x in rand_nrs]
-        print(f"spread_rand_nrs={spread_rand_nrs}")
         return spread_rand_nrs
 
     def get_inhibition(self, delta, G, rand_ceil):

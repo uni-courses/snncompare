@@ -672,10 +672,9 @@ def is_identical(
     """
 
     # Check whether all values in original dict are in the excluded keys
-    for key, val in original.items():
+    for key in original.keys():
         if key not in other.keys():
             if key not in excluded_keys:
-                print(f"key={key} missing.")
                 return False
 
         # Check if the values are identical for the given key.
@@ -683,10 +682,6 @@ def is_identical(
             if isinstance(other[key], type(original[key])):
                 if other[key] != original[key]:
                     if key not in excluded_keys:
-                        print(
-                            f"key={key} original val:{original[key]}, other "
-                            + f"val:{other[key]}, actual val:{val}."
-                        )
                         return False
             else:
                 return False

@@ -12,7 +12,6 @@ import pathlib
 from typing import List
 
 import jsons
-import networkx as nx
 
 from src.export_results.export_json_results import write_dict_to_json
 from src.export_results.helper import run_config_to_filename
@@ -238,17 +237,6 @@ def plot_graph_behaviours(
                         graph_name, t, run_config["seed"]
                     ),
                 )
-
-
-def print_dead_neuron_names(some_graph: nx.DiGraph):
-    """Prints the dead neuron names."""
-    # print("Dead neuron names:")
-    for nodename in some_graph:
-        if "rad_death" in some_graph.nodes[nodename].keys():
-            # if nodename in dead_neuron_names:
-            if some_graph.nodes[nodename]["rad_death"]:
-                # print(nodename)
-                pass
 
 
 # pylint: disable=R0912

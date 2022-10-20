@@ -55,8 +55,6 @@ def get_used_graphs(run_config: dict) -> dict:
 
     # Indicate the graphs have completed stage 1.
     for graph in graphs.values():
-        # print(f"Stage 1, adding:{graph_name}")
-        # pprint(f"graph={graph}")
         add_stage_completion_to_graph(graph, 1)
     return graphs
 
@@ -240,7 +238,6 @@ def get_radiation_graph(snn_graph, run_config: dict, seed) -> nx.DiGraph:
             dead_neuron_names = rad_dam.inject_simulated_radiation(
                 radiation_graph, rad_dam.neuron_death_probability, seed
             )
-            print(f"dead_neuron_names={dead_neuron_names}")
             # TODO: verify radiation is injected with V1000
             verify_radiation_is_applied(
                 radiation_graph, dead_neuron_names, radiation_name

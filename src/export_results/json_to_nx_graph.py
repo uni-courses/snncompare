@@ -191,10 +191,6 @@ def verify_json_graphs_dict_contain_correct_stages(
     graph."""
     for expected_stage in expected_stages:
         for graph_name, graph in json_graphs.items():
-            print(f"graph_name={graph_name}")
-            print(f"type={type(graph)}")
-            print(f'keys={graph["graph"].keys()}')
-            # pprint(graph)
             if graph["graph"]["completed_stages"]:
                 if expected_stage not in graph["graph"]["completed_stages"]:
                     raise ValueError(

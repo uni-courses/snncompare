@@ -74,7 +74,6 @@ class Experiment_runner:
 
         # Append the export_snns and show_snns arguments.
         self.experiment_config["export_snns"] = export_snns
-        print(f"export_snns={export_snns}")
         self.experiment_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
@@ -192,7 +191,7 @@ class Experiment_runner:
             results_nx_graphs["run_config"],
             results_nx_graphs["graphs_dict"],
         )
-        export_results(results_nx_graphs, 4)
+        export_results(results_nx_graphs)
         # TODO: Verify stage 4 is completed.
 
 

@@ -43,8 +43,6 @@ def convert_stage_1_digraphs_to_json(graphs):
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
-        print(f"graph_name={graph_name}")
-
         if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             raise Exception(
                 "stage_index=1, Error, for graph:"
@@ -64,7 +62,6 @@ def convert_stage_2_digraphs_to_json(graphs):
     """Puts all the graphs of stage 2 into a single graph."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():
-        # print(f"graph_name={graph_name}")
         graphs_per_type = []
         if isinstance(graph_container, (nx.DiGraph, nx.Graph)):
             graphs_per_type.append(digraph_to_json(graph_container))

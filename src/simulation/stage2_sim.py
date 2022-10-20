@@ -1,7 +1,6 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
 
-from pprint import pprint
 
 import networkx as nx
 
@@ -45,13 +44,6 @@ def sim_graphs(
             run_snn_on_networkx(
                 snn_graph, stage_1_graphs[graph_name].graph["sim_duration"]
             )
-        if not isinstance(stage_1_graphs[graph_name], nx.DiGraph):
-            print(f"graph_name={graph_name}")
-            print(f"type={type(graph_name)}")
-
-        print(f"Stage 2, adding:{graph_name}")
-        pprint(stage_1_graphs[graph_name])
-
         add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
         # TODO: export graphs to file.
 
@@ -90,5 +82,4 @@ def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:
 
     # Verify the simulations produce identical static
     # neuron properties.
-    # print("")
     # compare_static_snn_properties(self, G)

@@ -111,11 +111,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         # Add invalid key to configuration dictionary.
         experiment_config[self.invalid_adaptation_key] = "Filler"
-        # print(f'experiment_config={experiment_config}')
-        # verify_run_config(
-        #        self.supp_run_settings,
-        #        experiment_config, has_unique_id=False
-        #    )
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
