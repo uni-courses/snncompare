@@ -29,7 +29,7 @@ from src.export_results.verify_graphs import verify_results_nx_graphs
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_stage_1
-from src.process_results.process_results import export_results, get_results
+from src.process_results.process_results import export_results, set_results
 from src.simulation.stage2_sim import sim_graphs
 
 
@@ -99,7 +99,7 @@ class Experiment_runner:
             )
             self.__perform_run_stage_2(results_nx_graphs, to_run)
             self.__perform_run_stage_3(results_nx_graphs, to_run)
-            results_nx_graphs = self.__perform_run_stage_4(results_nx_graphs)
+            self.__perform_run_stage_4(results_nx_graphs)
 
         return run_configs
 
@@ -182,19 +182,18 @@ class Experiment_runner:
     def __perform_run_stage_4(
         self,
         results_nx_graphs: dict,
-    ) -> dict:
+    ) -> None:
         """Performs the run for stage 4 or loads the data from file depending
         on the run configuration."""
         # TODO: Determine whether this should be done.
         # TODO: compute results per graph type and export performance
         # to json dict.
-        results_stage_4 = get_results(
+        set_results(
             results_nx_graphs["run_config"],
             results_nx_graphs["graphs_dict"],
         )
         export_results(results_nx_graphs, 4)
         # TODO: Verify stage 4 is completed.
-        return results_stage_4
 
 
 def experiment_config_to_run_configs(experiment_config: dict):

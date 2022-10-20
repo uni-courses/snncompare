@@ -12,15 +12,15 @@ import copy
 import networkx as nx
 
 from src.export_results.Output_stage_34 import output_stage_files_3_and_4
-from src.process_results.get_mdsa_results import get_mdsa_snn_results
+from src.process_results.get_mdsa_results import set_mdsa_snn_results
 
 
-def get_results(run_config: dict, stage_2_graphs: dict) -> dict:
+def set_results(run_config: dict, stage_2_graphs: dict) -> None:
     """Gets the results for the algorithms that have been ran."""
     for algo_name, algo_settings in run_config["algorithm"].items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
-                return get_mdsa_snn_results(
+                set_mdsa_snn_results(
                     algo_settings["m_val"], run_config, stage_2_graphs
                 )
             raise Exception("Error, m_val setting is not of type int.")
@@ -44,7 +44,7 @@ def export_results(results_nx_graphs: dict, stage_index: int):
             # stage_4_graphs[graph_name]["results"] =results["snn_algo_result"]
             add_result_to_last_graph(
                 stage_4_graphs[graph_name],
-                results_nx_graphs["graphs_dict"]["snn_algo_result"],
+                results_nx_graphs["graphs_dict"][graph_name]["result"],
             )
         elif graph_name == "adapted_snn_graph":
             add_result_to_last_graph(
@@ -54,13 +54,13 @@ def export_results(results_nx_graphs: dict, stage_index: int):
         elif graph_name == "rad_snn_algo_graph":
             add_result_to_last_graph(
                 stage_4_graphs[graph_name],
-                results_nx_graphs["graphs_dict"]["rad_snn_algo_graph"],
+                results_nx_graphs["graphs_dict"][graph_name]["result"],
             )
         elif graph_name == "rad_adapted_snn_graph":
 
             add_result_to_last_graph(
                 stage_4_graphs[graph_name],
-                results_nx_graphs["graphs_dict"]["rad_adapted_snn_graph"],
+                results_nx_graphs["graphs_dict"][graph_name]["result"],
             )
 
     # Export graphs with embedded results to json.

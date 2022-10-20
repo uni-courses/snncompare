@@ -8,7 +8,6 @@ and the SNN match.
 
 These results are returned in the form of a dict.
 """
-from pprint import pprint
 
 import networkx as nx
 
@@ -16,12 +15,16 @@ from src.helper import get_sim_duration
 from src.process_results.get_alipour_nodes import get_alipour_nodes
 
 
-def get_mdsa_snn_results(
+def set_mdsa_snn_results(
     m_val: int, run_config: dict, stage_2_graphs: dict
-) -> dict:
+) -> None:
     """Returns the nodes and counts per node that were computed by the SNN
-    algorithm."""
-    results = {}
+    algorithm.
+
+    TODO: rewrite to store results in graphs directly.
+    """
+
+    # TODO: Verify stage 2 graphs.
 
     # Get Alipour count.
     # Compute the count for each node according to Alipour et al.'s algorithm.
@@ -41,7 +44,7 @@ def get_mdsa_snn_results(
             )
 
         if graph_name == "snn_algo_graph":
-            results["snn_algo_result"] = get_snn_results(
+            snn_graph.graph["results"] = get_snn_results(
                 alipour_counter_marks,
                 stage_2_graphs["input_graph"],
                 m_val,
@@ -50,7 +53,7 @@ def get_mdsa_snn_results(
                 snn_graph=snn_graph,
             )
         elif graph_name == "adapted_snn_graph":
-            results["adapted_snn_algo_result"] = get_snn_results(
+            snn_graph.graph["results"] = get_snn_results(
                 alipour_counter_marks,
                 stage_2_graphs["input_graph"],
                 m_val,
@@ -59,7 +62,7 @@ def get_mdsa_snn_results(
                 snn_graph=snn_graph,
             )
         elif graph_name == "rad_snn_algo_graph":
-            results["rad_snn_algo_graph"] = get_snn_results(
+            snn_graph.graph["results"] = get_snn_results(
                 alipour_counter_marks,
                 stage_2_graphs["input_graph"],
                 m_val,
@@ -68,7 +71,7 @@ def get_mdsa_snn_results(
                 snn_graph=snn_graph,
             )
         elif graph_name == "rad_adapted_snn_graph":
-            results["rad_adapted_snn_graph"] = get_snn_results(
+            snn_graph.graph["results"] = get_snn_results(
                 alipour_counter_marks,
                 stage_2_graphs["input_graph"],
                 m_val,
@@ -76,8 +79,7 @@ def get_mdsa_snn_results(
                 run_config=run_config,
                 snn_graph=snn_graph,
             )
-    pprint(results)
-    return results
+        # TODO: verify the results are set correctly.
 
 
 # pylint: disable=R0913
