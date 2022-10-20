@@ -44,15 +44,15 @@ class Test_min_graph_size_settings(unittest.TestCase):
         from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experi_config.pop("min_graph_size")
+        experiment_config.pop("min_graph_size")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -60,7 +60,7 @@ class Test_min_graph_size_settings(unittest.TestCase):
         self.assertEqual(
             # "'min_graph_size'",
             "Error:min_graph_size is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -73,15 +73,15 @@ class Test_min_graph_size_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_experi_setts.min_graph_size)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experi_config["min_graph_size"] = invalid_config_setting_value
+            experiment_config["min_graph_size"] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
-                experi_config,
+                experiment_config,
                 expected_type,
                 self,
             )
@@ -93,14 +93,14 @@ class Test_min_graph_size_settings(unittest.TestCase):
         value is lower than the supported range of min_graph_size values
         permits."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of min_graph_size in copy.
-        experi_config["min_graph_size"] = -2
+        experiment_config["min_graph_size"] = -2
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -117,14 +117,14 @@ class Test_min_graph_size_settings(unittest.TestCase):
         value is higher than the supported range of min_graph_size values
         permits."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of min_graph_size in copy.
-        experi_config["min_graph_size"] = 50
+        experiment_config["min_graph_size"] = 50
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )

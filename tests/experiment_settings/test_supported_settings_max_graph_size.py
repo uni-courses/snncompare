@@ -43,15 +43,15 @@ class Test_max_graph_size_settings(unittest.TestCase):
         from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experi_config.pop("max_graph_size")
+        experiment_config.pop("max_graph_size")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -59,7 +59,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
         self.assertEqual(
             # "'max_graph_size'",
             "Error:max_graph_size is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -71,14 +71,14 @@ class Test_max_graph_size_settings(unittest.TestCase):
         is expected).
         """
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        experi_config["max_graph_size"] = None
+        experiment_config["max_graph_size"] = None
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -94,14 +94,14 @@ class Test_max_graph_size_settings(unittest.TestCase):
         value is lower than the supported range of max_graph_size values
         permits."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        experi_config["max_graph_size"] = -2
+        experiment_config["max_graph_size"] = -2
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -117,22 +117,26 @@ class Test_max_graph_size_settings(unittest.TestCase):
         """To state the obvious, this also tests whether min_graph_size is
         larger than max_graph size throws an exception."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        experi_config["min_graph_size"] = experi_config["min_graph_size"] + 1
-        experi_config["max_graph_size"] = experi_config["min_graph_size"] - 1
+        experiment_config["min_graph_size"] = (
+            experiment_config["min_graph_size"] + 1
+        )
+        experiment_config["max_graph_size"] = (
+            experiment_config["min_graph_size"] - 1
+        )
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
 
         self.assertEqual(
-            f'Lower bound:{experi_config["min_graph_size"]} is larger than'
-            f' upper bound:{experi_config["max_graph_size"]}.',
+            f'Lower bound:{experiment_config["min_graph_size"]} is larger than'
+            f' upper bound:{experiment_config["max_graph_size"]}.',
             str(context.exception),
         )
 
@@ -141,14 +145,14 @@ class Test_max_graph_size_settings(unittest.TestCase):
         value is higher than the supported range of max_graph_size values
         permits."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        experi_config["max_graph_size"] = 50
+        experiment_config["max_graph_size"] = 50
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )

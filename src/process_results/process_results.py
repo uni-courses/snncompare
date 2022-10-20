@@ -11,7 +11,7 @@ import copy
 
 import networkx as nx
 
-from src.export_results.Output import output_stage_files
+from src.export_results.Output_stage_34 import output_stage_files_3_and_4
 from src.process_results.get_mdsa_results import get_mdsa_snn_results
 
 
@@ -30,39 +30,41 @@ def get_results(run_config: dict, stage_2_graphs: dict) -> dict:
     raise Exception("No supported algorithm found.")
 
 
-def export_results(
-    experi_config: dict, results: dict, run_config: dict, stage_2_graphs: dict
-):
+def export_results(results_nx_graphs: dict, stage_index: int):
     """Integrates the results per graph type into the graph, then export the
     results dictionary (again) into the stage 4 folder."""
-
+    print(f"stage_index={stage_index}")
     # Create new independent graphs dict to include the results.
     # TODO: determine why/don't duplicate.
-    stage_4_graphs = copy.deepcopy(stage_2_graphs)
+    stage_4_graphs = copy.deepcopy(results_nx_graphs["graphs_dict"])
 
     # Embed results into snn graphs
-    for graph_name in stage_2_graphs.keys():
+    for graph_name in results_nx_graphs["graphs_dict"].keys():
         if graph_name == "snn_algo_graph":
             # stage_4_graphs[graph_name]["results"] =results["snn_algo_result"]
             add_result_to_last_graph(
-                stage_4_graphs[graph_name], results["snn_algo_result"]
+                stage_4_graphs[graph_name],
+                results_nx_graphs["graphs_dict"]["snn_algo_result"],
             )
         elif graph_name == "adapted_snn_graph":
             add_result_to_last_graph(
-                stage_4_graphs[graph_name], results["adapted_snn_algo_result"]
+                stage_4_graphs[graph_name],
+                results_nx_graphs["graphs_dict"]["adapted_snn_algo_result"],
             )
         elif graph_name == "rad_snn_algo_graph":
             add_result_to_last_graph(
-                stage_4_graphs[graph_name], results["rad_snn_algo_graph"]
+                stage_4_graphs[graph_name],
+                results_nx_graphs["graphs_dict"]["rad_snn_algo_graph"],
             )
         elif graph_name == "rad_adapted_snn_graph":
 
             add_result_to_last_graph(
-                stage_4_graphs[graph_name], results["rad_adapted_snn_graph"]
+                stage_4_graphs[graph_name],
+                results_nx_graphs["graphs_dict"]["rad_adapted_snn_graph"],
             )
 
     # Export graphs with embedded results to json.
-    output_stage_files(experi_config, run_config, stage_4_graphs, 4)
+    output_stage_files_3_and_4(results_nx_graphs, 4)
 
 
 def add_result_to_last_graph(snn_graphs, result_per_type: dict):

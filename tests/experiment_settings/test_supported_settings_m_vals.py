@@ -44,15 +44,15 @@ class Test_m_vals_settings(unittest.TestCase):
         dictionary of the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Remove key and value of m.
-        experi_config["algorithms"]["MDSA"].pop("m_vals")
+        experiment_config["algorithms"]["MDSA"].pop("m_vals")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -71,17 +71,17 @@ class Test_m_vals_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_experi_setts.algorithms["MDSA"].m_vals)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experi_config["algorithms"]["MDSA"][
+            experiment_config["algorithms"]["MDSA"][
                 "m_vals"
             ] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
-                experi_config,
+                experiment_config,
                 expected_type,
                 self,
             )
@@ -91,15 +91,15 @@ class Test_m_vals_settings(unittest.TestCase):
         list without elements."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Set negative value of m in copy.
-        experi_config["algorithms"]["MDSA"]["m_vals"] = []
+        experiment_config["algorithms"]["MDSA"]["m_vals"] = []
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -115,15 +115,15 @@ class Test_m_vals_settings(unittest.TestCase):
         lower than the supported range of m_vals values permits."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Set negative value of m in copy.
-        experi_config["algorithms"]["MDSA"]["m_vals"] = [-2]
+        experiment_config["algorithms"]["MDSA"]["m_vals"] = [-2]
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -143,15 +143,15 @@ class Test_m_vals_settings(unittest.TestCase):
         higher than the supported range of m_vals values permits."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Set negative value of m in copy.
-        experi_config["algorithms"]["MDSA"]["m_vals"] = [50]
+        experiment_config["algorithms"]["MDSA"]["m_vals"] = [50]
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )

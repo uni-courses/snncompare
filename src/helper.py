@@ -581,7 +581,7 @@ def get_alipour_labels(G, configuration):
 
 
 # checks if file exists
-def file_exists(string):
+def file_exists(filepath: str) -> bool:
     """
 
     :param string:
@@ -589,7 +589,7 @@ def file_exists(string):
     """
     # TODO: Execute Path(string).is_file() directly instead of calling this
     # function.
-    my_file = Path(string)
+    my_file = Path(filepath)
     return my_file.is_file()
 
 
@@ -722,6 +722,7 @@ def get_extensions_dict(run_config, stage_index) -> dict:
         return {"config_and_graphs": ".json"}
     if stage_index == 3:
         # TODO: support .eps and/or .pdf.
+        # TODO: verify graphs, or graphs_dict
         return {"graphs": ".png"}
     if stage_index == 4:
         return {"config_graphs_and_results": ".json"}
@@ -780,7 +781,6 @@ def get_sim_duration(
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
     raise Exception("Error, the simulation time was not found.")
-
 
 
 def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:

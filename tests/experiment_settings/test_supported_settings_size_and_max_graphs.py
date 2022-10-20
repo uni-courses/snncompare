@@ -43,14 +43,14 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         missing from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
-        experi_config.pop("size_and_max_graphs")
+        experiment_config.pop("size_and_max_graphs")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -58,7 +58,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         self.assertEqual(
             # "'size_and_max_graphs'",
             "Error:size_and_max_graphs is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -71,15 +71,17 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_experi_setts.size_and_max_graphs)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experi_config["size_and_max_graphs"] = invalid_config_setting_value
+            experiment_config[
+                "size_and_max_graphs"
+            ] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
-                experi_config,
+                experiment_config,
                 expected_type,
                 self,
             )
@@ -88,14 +90,14 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         """Verifies an exception is thrown if the size_and_max_graphs
         dictionary value is a list without elements."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of size_and_max_graphs in copy.
-        experi_config["size_and_max_graphs"] = []
+        experiment_config["size_and_max_graphs"] = []
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -111,21 +113,21 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         dictionary value is lower than the supported range of
         size_and_max_graphs values permits."""
         # Create deepcopy of configuration settings.
-        experi_config_first = copy.deepcopy(
+        experiment_config_first = copy.deepcopy(
             self.with_adaptation_with_radiation
         )
-        experi_config_second = copy.deepcopy(
+        experiment_config_second = copy.deepcopy(
             self.with_adaptation_with_radiation
         )
         # Set negative value of size_and_max_graphs in copy.
-        experi_config_first["size_and_max_graphs"] = [
+        experiment_config_first["size_and_max_graphs"] = [
             (2, self.supp_experi_setts.max_max_graphs),
             (
                 self.supp_experi_setts.min_graph_size,
                 self.supp_experi_setts.max_max_graphs,
             ),
         ]
-        experi_config_second["size_and_max_graphs"] = [
+        experiment_config_second["size_and_max_graphs"] = [
             (
                 self.supp_experi_setts.min_graph_size,
                 self.supp_experi_setts.max_max_graphs,
@@ -136,7 +138,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config_first,
+                experiment_config_first,
                 has_unique_id=False,
                 strict=True,
             )
@@ -153,7 +155,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config_second,
+                experiment_config_second,
                 has_unique_id=False,
                 strict=True,
             )
@@ -170,23 +172,23 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         dictionary value is higher than the supported range of
         size_and_max_graphs values permits."""
         # Create deepcopy of configuration settings.
-        experi_config_first = copy.deepcopy(
+        experiment_config_first = copy.deepcopy(
             self.with_adaptation_with_radiation
         )
-        experi_config_second = copy.deepcopy(
+        experiment_config_second = copy.deepcopy(
             self.with_adaptation_with_radiation
         )
         # Set the desired graph size to 50, which is larger than allowed in
         # self.supp_experi_setts.max_graph_size. The max_graphs is set to the
         # maximum which is acceptable.
-        experi_config_first["size_and_max_graphs"] = [
+        experiment_config_first["size_and_max_graphs"] = [
             (50, self.supp_experi_setts.max_max_graphs),
             (
                 self.supp_experi_setts.min_graph_size,
                 self.supp_experi_setts.max_max_graphs,
             ),
         ]
-        experi_config_second["size_and_max_graphs"] = [
+        experiment_config_second["size_and_max_graphs"] = [
             (
                 self.supp_experi_setts.min_graph_size,
                 self.supp_experi_setts.max_max_graphs,
@@ -197,7 +199,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config_first,
+                experiment_config_first,
                 has_unique_id=False,
                 strict=True,
             )
@@ -214,7 +216,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config_second,
+                experiment_config_second,
                 has_unique_id=False,
                 strict=True,
             )

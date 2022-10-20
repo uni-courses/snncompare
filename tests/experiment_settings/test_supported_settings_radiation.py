@@ -42,15 +42,15 @@ class Test_radiations_settings(unittest.TestCase):
         dictionary of the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Remove key and value of m.
-        experi_config.pop("radiations")
+        experiment_config.pop("radiations")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -58,7 +58,7 @@ class Test_radiations_settings(unittest.TestCase):
         self.assertEqual(
             # "'radiations'",
             "Error:radiations is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -113,7 +113,7 @@ class Test_radiations_settings(unittest.TestCase):
         self.assertEqual(
             "Error, property dict: radiations was empty.",
             # "Error:radiations is not in the configuration"
-            # + f" settings:{experi_config.keys()}",
+            # + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 

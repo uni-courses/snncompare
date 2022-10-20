@@ -7,10 +7,8 @@ import jsons
 import networkx as nx
 
 from src.export_results.export_json_results import write_dict_to_json
+from src.export_results.helper import get_expected_image_paths_stage_3
 from src.graph_generation.snn_algo.mdsa_snn_algo import Alipour_properties
-from src.import_results.stage_1_load_input_graphs import (
-    get_expected_image_paths_stage_3,
-)
 
 
 def get_n_random_run_configs(run_configs, n: int, seed: int = None):
@@ -52,7 +50,8 @@ def create_result_file_for_testing(
     """Creates a dummy .json result file that can be used to test functions
     that recognise which stages have been computed already or not.
 
-    In particular, the performed_stage() function is tested with this.
+    In particular, the has_outputted_stage() function is tested with
+    this.
     """
 
     # TODO: create the output results file with the respective graphs.

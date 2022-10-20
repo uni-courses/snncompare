@@ -4,8 +4,8 @@ import pickle  # nosec - User is trusted not to load malicious pickle files.
 from pathlib import Path
 
 import networkx as nx
-from networkx.readwrite import json_graph
 
+from src.export_results.nx_graph_to_json import digraph_to_json
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
 
 
@@ -208,19 +208,6 @@ def export_graphs_as_pickle(
             ],
             fh,
         )
-
-
-def digraph_to_json(G):
-    """
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    TODO: remove if not used.
-
-    """
-    if G is not None:
-        return json_graph.node_link_data(G)
-        # return json_graph.dumps(G)
-    raise Exception("Error, incoming graph was None.")
 
 
 def get_unique_hash(

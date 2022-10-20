@@ -1,4 +1,4 @@
-"""Performs tests check whether the performed_stage function correctly
+"""Performs tests check whether the has_outputted_stage function correctly
 determines which stages have been completed and not for:
 Stage1=Done
 Stage2=Done
@@ -12,7 +12,7 @@ import unittest
 
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
-    example_experi_config,
+    example_experiment_config,
 )
 from src.export_results.helper import run_config_to_filename
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
@@ -21,10 +21,8 @@ from src.export_results.verify_stage_1_graphs import (
 )
 from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
 from src.helper import get_extensions_list
-from src.import_results.stage_1_load_input_graphs import (
-    load_results_from_json,
-    performed_stage,
-)
+from src.import_results.check_completed_stages import has_outputted_stage
+from src.import_results.stage_1_load_input_graphs import load_results_from_json
 from tests.tests_helper import (
     create_dummy_output_images_stage_3,
     create_result_file_for_testing,
@@ -50,14 +48,16 @@ class Test_stage_1_output_json(unittest.TestCase):
         create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
-        self.experi_config: dict = example_experi_config()
+        self.experiment_config: dict = example_experiment_config()
         self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2, 3, 4]
         self.export_snns = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
-            self.experi_config, export_snns=self.export_snns, show_snns=False
+            self.experiment_config,
+            export_snns=self.export_snns,
+            show_snns=False,
         )
         # TODO: verify the to_run is computed correctly.
 
@@ -74,7 +74,7 @@ class Test_stage_1_output_json(unittest.TestCase):
     # Test: Deleting all results says none of the stages have been performed.
     def test_output_json_contains_(self):
         """Tests whether the output function creates a json that can be read as
-        a dict that contains an experi_config, a graphs_dict, and a
+        a dict that contains an experiment_config, a graphs_dict, and a
         run_config."""
 
         for run_config in self.experiment_runner.run_configs:
@@ -130,9 +130,9 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
-            self.assertTrue(performed_stage(run_config, 1))
+            self.assertTrue(has_outputted_stage(run_config, 1))
 
             # Test for stage 1, 2, and 4.
-            self.assertTrue(performed_stage(run_config, 2))
-            self.assertTrue(performed_stage(run_config, 3))
-            self.assertTrue(performed_stage(run_config, 4))
+            self.assertTrue(has_outputted_stage(run_config, 2))
+            self.assertTrue(has_outputted_stage(run_config, 3))
+            self.assertTrue(has_outputted_stage(run_config, 4))

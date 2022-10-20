@@ -40,15 +40,15 @@ class Test_simulators_settings(unittest.TestCase):
         from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experi_config.pop("simulators")
+        experiment_config.pop("simulators")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -56,7 +56,7 @@ class Test_simulators_settings(unittest.TestCase):
         self.assertEqual(
             # "'simulators'",
             "Error:simulators is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -69,15 +69,15 @@ class Test_simulators_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_experi_setts.simulators)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experi_config["simulators"] = invalid_config_setting_value
+            experiment_config["simulators"] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
-                experi_config,
+                experiment_config,
                 expected_type,
                 self,
             )
@@ -86,14 +86,14 @@ class Test_simulators_settings(unittest.TestCase):
         """Verifies an exception is thrown if the simulators dictionary value
         is a list without elements."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of simulators in copy.
-        experi_config["simulators"] = []
+        experiment_config["simulators"] = []
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -108,9 +108,9 @@ class Test_simulators_settings(unittest.TestCase):
         """Verifies an exception is thrown if the simulators dictionary value
         is not supported by the permissible simulators values."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of simulators in copy.
-        experi_config["simulators"] = [
+        experiment_config["simulators"] = [
             "nx",
             "invalid_simulator_name",
             "lava",
@@ -119,7 +119,7 @@ class Test_simulators_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )

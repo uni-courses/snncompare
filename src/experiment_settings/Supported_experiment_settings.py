@@ -30,7 +30,7 @@ class Supported_experiment_settings:
         self,
     ) -> None:
 
-        # experi_config dictionary keys:
+        # experiment_config dictionary keys:
         self.parameters = {
             "adaptations": dict,
             "algorithms": dict,

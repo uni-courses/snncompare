@@ -7,7 +7,7 @@ import shutil
 
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
-    example_experi_config,
+    example_experiment_config,
 )
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
 
@@ -20,10 +20,12 @@ if os.path.exists("latex"):
 
 # Run experiment example run.
 # TODO: do this as a consequence of parsing the CLI arguments.
-experi_config = example_experi_config()
+experiment_config = example_experiment_config()
 show_snns = False
 export_snns = False
-Experiment_runner(experi_config, export_snns=export_snns, show_snns=show_snns)
+Experiment_runner(
+    experiment_config, export_snns=export_snns, show_snns=show_snns
+)
 # TODO: verify expected output results have been generated successfully.
 
 # Parse command line interface arguments to determine what this script does.

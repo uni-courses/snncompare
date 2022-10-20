@@ -44,15 +44,15 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experi_config.pop("max_max_graphs")
+        experiment_config.pop("max_max_graphs")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -60,7 +60,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         self.assertEqual(
             # "'max_max_graphs'",
             "Error:max_max_graphs is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -73,15 +73,15 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_experi_setts.max_max_graphs)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experi_config["max_max_graphs"] = invalid_config_setting_value
+            experiment_config["max_max_graphs"] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
-                experi_config,
+                experiment_config,
                 expected_type,
                 self,
             )
@@ -91,14 +91,14 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         value is lower than the supported range of max_max_graphs values
         permits."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
-        experi_config["max_max_graphs"] = -2
+        experiment_config["max_max_graphs"] = -2
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -114,22 +114,26 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         """Verifies an exception is thrown if the max_max_graphs value is
         smaller than the min_max_graphs value."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
-        experi_config["min_max_graphs"] = experi_config["min_max_graphs"] + 1
-        experi_config["max_max_graphs"] = experi_config["min_max_graphs"] - 1
+        experiment_config["min_max_graphs"] = (
+            experiment_config["min_max_graphs"] + 1
+        )
+        experiment_config["max_max_graphs"] = (
+            experiment_config["min_max_graphs"] - 1
+        )
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
 
         self.assertEqual(
-            f'Lower bound:{experi_config["min_max_graphs"]} is larger than'
-            f' upper bound:{experi_config["max_max_graphs"]}.',
+            f'Lower bound:{experiment_config["min_max_graphs"]} is larger than'
+            f' upper bound:{experiment_config["max_max_graphs"]}.',
             str(context.exception),
         )
 
@@ -138,14 +142,14 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         value is higher than the supported range of max_max_graphs values
         permits."""
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
-        experi_config["max_max_graphs"] = 50
+        experiment_config["max_max_graphs"] = 50
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )

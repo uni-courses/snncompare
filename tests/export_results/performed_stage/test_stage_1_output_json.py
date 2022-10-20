@@ -7,7 +7,7 @@ import unittest
 
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
-    example_experi_config,
+    example_experiment_config,
 )
 from src.export_results.helper import run_config_to_filename
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
@@ -29,9 +29,9 @@ class Test_stage_1_output_json(unittest.TestCase):
             shutil.rmtree("results")
 
         # Initialise experiment settings, and run experiment.
-        self.experi_config: dict = example_experi_config()
+        self.experiment_config: dict = example_experiment_config()
         experiment_runner = Experiment_runner(
-            self.experi_config, export_snns=False, show_snns=False
+            self.experiment_config, export_snns=False, show_snns=False
         )
         # TODO: verify the to_run is computed correctly.
 
@@ -45,7 +45,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
     def test_output_json_contains_(self):
         """Tests whether the output function creates a json that can be read as
-        a dict that contains an experi_config, a graphs_dict, and a
+        a dict that contains an experiment_config, a graphs_dict, and a
         run_config."""
 
         # Verify output JSON file exists.
