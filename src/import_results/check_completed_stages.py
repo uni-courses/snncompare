@@ -70,10 +70,11 @@ def has_outputted_stage(
             # Load the json graphs from json file to see if they exist.
             # TODO: separate loading and checking if it can be loaded.
             try:
-                load_pre_existing_graph_dict(run_config, 2)
+                load_pre_existing_graph_dict(run_config, stage_index)
             except KeyError:
                 return False
             except ValueError:
+                print("NOT 6 VALUEERROR")
                 return False
 
     return True

@@ -89,7 +89,7 @@ def load_pre_existing_graph_dict(run_config, stage_index) -> dict:
         return load_verified_json_graphs_from_json(run_config, [1, 2, 3])
     if stage_index == 4:
         return load_verified_json_graphs_from_json(run_config, [1, 2, 3, 4])
-    raise Exception("Eroro, unexpected stage_index.")
+    raise Exception("Error, unexpected stage_index.")
 
 
 def load_verified_json_graphs_from_json(
