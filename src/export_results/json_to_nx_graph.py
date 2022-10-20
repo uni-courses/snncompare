@@ -4,6 +4,7 @@ import json
 from pprint import pprint
 from typing import List
 
+import networkx as nx
 from networkx.readwrite import json_graph
 
 from src.export_results.helper import run_config_to_filename
@@ -44,7 +45,7 @@ def json_dicts_of_graph_results_exist(
     return False
 
 
-def load_pre_existing_graphs_from_json_and_convert_to_nx_graphs(
+def load_json_to_nx_graph_from_file(
     run_config: dict, stage_index: int
 ) -> dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
@@ -54,12 +55,19 @@ def load_pre_existing_graphs_from_json_and_convert_to_nx_graphs(
     the backend type. Then merges those nx_graphs into the results dict
     with the experiment_config and run_config.
     """
-
+    nx_graphs_dict = {}
     # Load existing graph dict if it already exists, and if overwrite is off.
-    graphs_dict: dict = load_pre_existing_graph_dict(run_config, stage_index)
-    for key in graphs_dict.keys():
-        print(f"key={key}")
-    return graphs_dict
+    json_graphs_dict: dict = load_pre_existing_graph_dict(
+        run_config, stage_index
+    )
+    for graph_name, graph in json_graphs_dict.keys():
+        expected_stages = list(range(1, stage_index + 1))
+        nx_graph = json_graph.node_link_graph(graph)
+        verify_nx_graph_contains_correct_stages(
+            graph_name, nx_graph, expected_stages
+        )
+        nx_graphs_dict[graph_name] = nx_graph
+    return nx_graphs_dict
 
 
 def load_pre_existing_graph_dict(run_config, stage_index) -> dict:
@@ -165,6 +173,7 @@ def verify_results_json_graphs_contain_correct_stages(
         for graph_name, graph in json_graphs.items():
             print(f"graph_name={graph_name}")
             print(f"type={type(graph)}")
+            print(f'keys={graph["graph"].keys()}')
             # pprint(graph)
             if graph["graph"]["completed_stages"]:
                 if expected_stage not in graph["graph"]["completed_stages"]:
@@ -172,9 +181,24 @@ def verify_results_json_graphs_contain_correct_stages(
                         "Error, for run_config: "
                         + f'{results_json_graphs["run_config"]}, the expected '
                         + f"stage:{expected_stage}, was not found in "
-                        + f'the completed stages:{graph["completed_stages"]} '
+                        + "the completed stages:"
+                        + f'{graph["graph"]["completed_stages"]} '
                         + f"that were loaded from graph: {graph_name}."
                     )
+
+
+def verify_nx_graph_contains_correct_stages(
+    graph_name: str, nx_graph: nx.DiGraph, expected_stages: List[int]
+) -> None:
+    """Verifies the networkx graph object contains the correct completed
+    stages."""
+    if "completed_stages" in nx_graph.graph.keys():
+        for expected_stage in expected_stages:
+            if expected_stage not in nx_graph.graph["completed_stages"]:
+                raise ValueError(
+                    f"Error, {graph_name} did not contain the expected "
+                    f"stages:{expected_stages}."
+                )
 
 
 def json_graphs_contain_expected_stages(

@@ -21,6 +21,7 @@ from src.experiment_settings.verify_experiment_settings import (
     verify_has_unique_id,
 )
 from src.experiment_settings.verify_run_settings import verify_run_config
+from src.export_results.json_to_nx_graph import load_json_to_nx_graph_from_file
 from src.export_results.Output_stage_12 import output_files_stage_1_and_2
 from src.export_results.Output_stage_34 import output_stage_files_3_and_4
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
@@ -139,7 +140,12 @@ class Experiment_runner:
                 # not loaded, perform simulation.
 
                 # TODO: check if the graphs can be loaded from file,
-                has_outputted_stage(results_nx_graphs["run_config"], 2)
+                if has_outputted_stage(results_nx_graphs["run_config"], 2):
+                    # Load results from file.
+                    nx_graphs_dict = load_json_to_nx_graph_from_file(
+                        results_nx_graphs["run_config"], 2
+                    )
+                    results_nx_graphs["graphs_dict"] = nx_graphs_dict
 
             # TODO: Verify the (incoming (and loaded)) graph types are as
             # expected.

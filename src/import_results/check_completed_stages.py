@@ -70,14 +70,12 @@ def has_outputted_stage(
             return False
         if filepath[-5:] == ".json":
 
-            expected_stages = list(range(1, stage_index))
-            print(f"expected_stages={expected_stages}")
+            expected_stages = list(range(1, stage_index + 1))
             load_verified_json_graphs_from_json(run_config, expected_stages)
-            return True
     return True
 
 
-def graph_dict_completed_stage(
+def nx_graphs_have_completed_stage(
     run_config: dict, results_nx_graphs: dict, stage_index: int
 ) -> bool:
     """Checks whether all expected graphs have been completed for the stages:
