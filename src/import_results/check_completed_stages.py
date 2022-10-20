@@ -61,7 +61,9 @@ def has_outputted_stage(
             # Load the json graphs from json file to see if they exist.
             # TODO: separate loading and checking if it can be loaded.
             try:
-                load_pre_existing_graph_dict(run_config, stage_index)
+                json_graphs = load_pre_existing_graph_dict(
+                    run_config, stage_index
+                )
             except KeyError:
                 return False
             except ValueError:
@@ -69,8 +71,7 @@ def has_outputted_stage(
                 return False
             if stage_index == 4:
                 # TODO: check if 4 is completed using
-                # load_pre_existing_graph_dict.
-                pass
+                return has_valid_json_results(json_graphs, run_config)
     return True
 
 
@@ -117,4 +118,40 @@ def stage_4_results_exist(nx_graphs: dict) -> bool:
                     "Error, unexpected result type in graph. "
                     + f'Expected dict, yet got:{type(graph.graph["results"])}'
                 )
+    return True
+
+
+# pylint: disable=R1702
+def has_valid_json_results(json_graphs: dict, run_config: dict) -> bool:
+    """Checks if the json_graphs contain the expected results.
+
+    TODO: support different algorithms.
+    """
+    for algo_name, algo_settings in run_config["algorithm"].items():
+        if algo_name == "MDSA":
+            if isinstance(algo_settings["m_val"], int):
+                graphnames_with_results = [
+                    "snn_algo_graph",
+                    "adapted_snn_graph",
+                    "rad_snn_algo_graph",
+                    "rad_adapted_snn_graph",
+                ]
+                if not set(graphnames_with_results).issubset(
+                    json_graphs.keys()
+                ):
+                    return False
+                for graph_name, graph in json_graphs.items():
+                    if graph_name in graphnames_with_results:
+                        if "results" not in graph.graph.keys():
+                            return False
+                return True
+            raise Exception(
+                "Error, m_val setting is not of type int:"
+                f'{type(algo_settings["m_val"])}'
+                f'm_val={algo_settings["m_val"]}'
+            )
+
+        raise Exception(
+            f"Error, algo_name:{algo_name} is not (yet) supported."
+        )
     return True
