@@ -738,7 +738,7 @@ def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
                 "Error, the completed_stages parameter is"
                 + f"already created for stage 1{some_graph.graph}:"
             )
-        some_graph.graph["completed_stages"] = [stage_index]
+        some_graph.graph["completed_stages"] = []
     elif not isinstance(some_graph.graph["completed_stages"], list):
         raise Exception(
             "Error, the completed_stages parameter is not of type"
@@ -750,6 +750,11 @@ def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
         raise Exception(
             f"Error, stage:{stage_index} is already completed for"
             + f' this graph:{some_graph.graph["completed_stages"]}.'
+        )
+    if stage_index in some_graph.graph["completed_stages"]:
+        raise Exception(
+            f"Error, the stage:{stage_index} is already in the completed_stage"
+            f's: {some_graph.graph["completed_stages"]}'
         )
     some_graph.graph["completed_stages"].append(stage_index)
 

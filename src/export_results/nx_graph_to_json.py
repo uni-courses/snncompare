@@ -1,5 +1,6 @@
 """Converts the nx graphs into json objects."""
 
+import copy
 from typing import List
 
 import networkx as nx
@@ -23,7 +24,7 @@ def convert_digraphs_to_json(
     results_nx_graphs: dict, stage_index: int
 ) -> dict:
     """Converts the digraph networkx objects to json dicts."""
-    results_json_graphs = results_nx_graphs
+    results_json_graphs = copy.deepcopy(results_nx_graphs)
     # Convert incoming graphs to dictionary.
     if stage_index == 1:
         results_json_graphs["graphs_dict"] = convert_stage_1_digraphs_to_json(

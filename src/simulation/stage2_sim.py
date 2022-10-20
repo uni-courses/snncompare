@@ -31,13 +31,6 @@ def sim_graphs(
     :param run_config: dict:
     """
     for graph_name, snn_graph in stage_1_graphs.items():
-        if not isinstance(snn_graph, nx.DiGraph):
-            print(f"graph_nameee={graph_name}")
-            print(f"input_graph={snn_graph}")
-            raise Exception(
-                "Error, the snn graph: is not a networkx graph anymore:"
-                f"{type(snn_graph)}"
-            )
         if graph_name != "input_graph":
 
             # TODO: add lava neurons if run config demands lava.
