@@ -56,6 +56,7 @@ def has_outputted_stage(
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
+            print(f'did not find:"{filepath}')
             return False
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.

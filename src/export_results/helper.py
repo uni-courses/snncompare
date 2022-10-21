@@ -77,6 +77,8 @@ def get_expected_image_paths_stage_3(
         input_graph,
         run_config,
     )
+    print(f"sim_duration={sim_duration}")
+    # TODO: move this into hardcoded setting.
     image_dir = "latex/Images/graphs/"
     for extension in extensions:
         for graph_name in graph_names:

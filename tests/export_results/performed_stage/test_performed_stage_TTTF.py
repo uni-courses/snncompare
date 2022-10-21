@@ -20,7 +20,8 @@ from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
-from src.helper import get_extensions_list
+from src.graph_generation.stage_1_get_input_graphs import get_input_graph
+from src.helper import get_extensions_list, get_sim_duration
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_from_json
 from tests.tests_helper import (
@@ -93,12 +94,6 @@ class Test_stage_1_output_json(unittest.TestCase):
                 self.input_graph,
                 run_config,
             )
-            create_dummy_output_images_stage_3(
-                stage_1_graph_names,
-                self.input_graph,
-                run_config,
-                get_extensions_list(run_config, 3),
-            )
 
             # Read output JSON file into dict.
             stage_1_output_dict = load_results_from_json(
@@ -129,12 +124,52 @@ class Test_stage_1_output_json(unittest.TestCase):
                     self.expected_completed_stages,
                 )
 
+            sim_duration = get_sim_duration(
+                stage_1_output_dict["graphs_dict"]["input_graph"],
+                run_config,
+            )
+            print(
+                "before dummy image creation, sim_duration="
+                + f"{sim_duration}"
+            )
+            sim_duration = get_sim_duration(
+                get_input_graph(run_config),
+                run_config,
+            )
+            print(
+                "retry before dummy image creation, sim_duration="
+                + f"{sim_duration}"
+            )
+
+            create_dummy_output_images_stage_3(
+                stage_1_graph_names,
+                self.input_graph,
+                run_config,
+                get_extensions_list(run_config, 3),
+            )
+
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
             self.assertTrue(has_outputted_stage(run_config, 1))
 
             # Test for stage 1, 2, and 4.
             self.assertTrue(has_outputted_stage(run_config, 2))
+            print("Performing check stage 3.")
+            sim_duration = get_sim_duration(
+                stage_1_output_dict["graphs_dict"]["input_graph"],
+                run_config,
+            )
+            print(
+                "After dummy image creation, sim_duration=" + f"{sim_duration}"
+            )
+            sim_duration = get_sim_duration(
+                get_input_graph(run_config),
+                run_config,
+            )
+            print(
+                "retry after dummy image creation, sim_duration="
+                + f"{sim_duration}"
+            )
             self.assertTrue(has_outputted_stage(run_config, 3))
             self.assertFalse(has_outputted_stage(run_config, 4))
 

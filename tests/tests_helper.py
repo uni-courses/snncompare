@@ -101,7 +101,7 @@ def create_results_dict_for_testing(
     # Merge graph and experiment and run config into a single result dict.
     dummy_result = {
         "experiment_config": None,
-        "run_config": None,
+        "run_config": run_config,
         "graphs_dict": graphs_dict,
     }
     return dummy_result
