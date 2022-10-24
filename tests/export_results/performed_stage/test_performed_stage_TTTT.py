@@ -2,8 +2,8 @@
 determines which stages have been completed and not for:
 Stage1=Done
 Stage2=Done
-Stage3=Not yet done.
-Stage4=Not yet done.
+Stage3=Done.
+Stage4=Done.
 ."""
 
 import os
@@ -19,7 +19,7 @@ from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
+from src.graph_generation.stage_1_get_input_graphs import get_input_graph
 from src.helper import get_extensions_list
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_from_json
@@ -49,7 +49,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         # Initialise experiment settings, and run experiment.
         self.experiment_config: dict = example_experiment_config()
-        self.input_graph = get_networkx_graph_of_2_neurons()
+        # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2, 3, 4]
         self.export_snns = False  # Expect the test to export snn pictures.
@@ -74,10 +74,11 @@ class Test_stage_1_output_json(unittest.TestCase):
     # Test: Deleting all results says none of the stages have been performed.
     def test_output_json_contains_(self):
         """Tests whether deleting all results and creating an artificial json
-        with stages 1, 2, 3  and 4 completed, results in has_outputted_stage()
+        with stages 1, 2, 3 and 4 completed, results in has_outputted_stage()
         returning that stages 1, 2, 3 and 4 are completed."""
 
         for run_config in self.experiment_runner.run_configs:
+            print("\n\n\n")
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
             )
@@ -89,14 +90,8 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
-                self.input_graph,
+                get_input_graph(run_config),
                 run_config,
-            )
-            create_dummy_output_images_stage_3(
-                stage_1_graph_names,
-                self.input_graph,
-                run_config,
-                get_extensions_list(run_config, 3),
             )
 
             # Read output JSON file into dict.
@@ -113,6 +108,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 stage_1_output_dict["graphs_dict"]["input_graph"].graph,
             )
 
+            # TODO: write the results to dict.
             # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:
                 self.assertIn(
@@ -128,11 +124,17 @@ class Test_stage_1_output_json(unittest.TestCase):
                     self.expected_completed_stages,
                 )
 
+            # TODO: verify the stage 4 graphs contain the results in the dict.
+            create_dummy_output_images_stage_3(
+                stage_1_graph_names,
+                get_input_graph(run_config),
+                run_config,
+                get_extensions_list(run_config, 3),
+            )
+
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
             self.assertTrue(has_outputted_stage(run_config, 1))
-
-            # Test for stage 1, 2, and 4.
             self.assertTrue(has_outputted_stage(run_config, 2))
             self.assertTrue(has_outputted_stage(run_config, 3))
             self.assertTrue(has_outputted_stage(run_config, 4))

@@ -92,7 +92,6 @@ class Experiment_runner:
 
         for run_config in run_configs:
             to_run = determine_what_to_run(run_config)
-            print(f"to_run={to_run}")
             results_nx_graphs = self.__perform_run_stage_1(
                 experiment_config, run_config, to_run
             )

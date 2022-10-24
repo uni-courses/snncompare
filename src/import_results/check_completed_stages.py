@@ -2,6 +2,8 @@
 from pathlib import Path
 from typing import List
 
+import networkx as nx
+
 from src.export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
@@ -68,7 +70,6 @@ def has_outputted_stage(
             except KeyError:
                 return False
             except ValueError:
-                print("NOT 6 VALUEERROR")
                 return False
             if stage_index == 4:
                 # TODO: check if 4 is completed using
@@ -143,6 +144,8 @@ def has_valid_json_results(json_graphs: dict, run_config: dict) -> bool:
                     return False
                 for graph_name, graph in json_graphs.items():
                     if graph_name in graphnames_with_results:
+                        if not isinstance(graph, (nx.DiGraph, nx.Graph)):
+                            return False
                         if "results" not in graph.graph.keys():
                             return False
                 return True

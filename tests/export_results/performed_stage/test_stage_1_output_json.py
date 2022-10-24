@@ -64,7 +64,6 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.assertIn("graphs_dict", stage_1_output_dict)
 
         # TODO: Assert the right graphs are within the graphs_dict.
-        print(f'stage_1_output_dict={stage_1_output_dict["graphs_dict"]}')
         for key in stage_1_output_dict["graphs_dict"].keys():
             # g = nx.DiGraph(d)
             print(f"key={key}")

@@ -19,7 +19,7 @@ from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
+from src.graph_generation.stage_1_get_input_graphs import get_input_graph
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_from_json
 from tests.tests_helper import (
@@ -47,7 +47,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         # Initialise experiment settings, and run experiment.
         self.experiment_config: dict = example_experiment_config()
-        self.input_graph = get_networkx_graph_of_2_neurons()
+        # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2]
         self.export_snns = False  # Expect the test to export snn pictures.
@@ -88,7 +88,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
-                self.input_graph,
+                get_input_graph(run_config),
                 run_config,
             )
 

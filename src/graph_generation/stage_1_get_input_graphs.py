@@ -16,6 +16,7 @@ from src.graph_generation.radiation.Radiation_damage import (
     verify_radiation_is_applied,
 )
 from src.graph_generation.snn_algo.mdsa_snn_algo import (
+    Alipour_properties,
     specify_mdsa_network_properties,
 )
 from src.graph_generation.Used_graphs import Used_graphs
@@ -86,6 +87,12 @@ def get_input_graphs(run_config: dict) -> List[nx.DiGraph]:
     )
     if len(input_graphs) > run_config["graph_nr"]:
         for input_graph in input_graphs:
+            # TODO: set alg_props:
+            if "alg_props" not in input_graph.graph.keys():
+                input_graph.graph["alg_props"] = Alipour_properties(
+                    input_graph, run_config["seed"]
+                ).__dict__
+
             if not isinstance(input_graph, nx.Graph):
                 raise Exception(
                     "Error, the input graph is not a networkx graph:"

@@ -770,6 +770,11 @@ def get_sim_duration(
                 * (algo_settings["m_val"] + 1)
                 + 10
             )
+            print(f"sim_time={sim_time}")
+            print(
+                'input_graph.graph["alg_props"]["inhibition"]='
+                + f'{input_graph.graph["alg_props"]["inhibition"]}'
+            )
             if not isinstance(sim_time, int):
                 raise Exception(
                     "Error, sim_time is not an int."

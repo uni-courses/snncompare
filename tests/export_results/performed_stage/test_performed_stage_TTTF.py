@@ -2,7 +2,7 @@
 determines which stages have been completed and not for:
 Stage1=Done
 Stage2=Done
-Stage3=Not yet done.
+Stage3=Done.
 Stage4=Not yet done.
 ."""
 
@@ -19,7 +19,6 @@ from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
 from src.graph_generation.stage_1_get_input_graphs import get_input_graph
 from src.helper import get_extensions_list, get_sim_duration
 from src.import_results.check_completed_stages import has_outputted_stage
@@ -50,7 +49,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         # Initialise experiment settings, and run experiment.
         self.experiment_config: dict = example_experiment_config()
-        self.input_graph = get_networkx_graph_of_2_neurons()
+        # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2, 3]
         self.export_snns = False  # Expect the test to export snn pictures.
@@ -80,6 +79,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         is not yet completed."""
 
         for run_config in self.experiment_runner.run_configs:
+            print("\n\n\n")
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
             )
@@ -91,7 +91,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
-                self.input_graph,
+                get_input_graph(run_config),
                 run_config,
             )
 
@@ -124,26 +124,9 @@ class Test_stage_1_output_json(unittest.TestCase):
                     self.expected_completed_stages,
                 )
 
-            sim_duration = get_sim_duration(
-                stage_1_output_dict["graphs_dict"]["input_graph"],
-                run_config,
-            )
-            print(
-                "before dummy image creation, sim_duration="
-                + f"{sim_duration}"
-            )
-            sim_duration = get_sim_duration(
-                get_input_graph(run_config),
-                run_config,
-            )
-            print(
-                "retry before dummy image creation, sim_duration="
-                + f"{sim_duration}"
-            )
-
             create_dummy_output_images_stage_3(
                 stage_1_graph_names,
-                self.input_graph,
+                get_input_graph(run_config),
                 run_config,
                 get_extensions_list(run_config, 3),
             )
@@ -154,16 +137,9 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test for stage 1, 2, and 4.
             self.assertTrue(has_outputted_stage(run_config, 2))
-            print("Performing check stage 3.")
+
             sim_duration = get_sim_duration(
                 stage_1_output_dict["graphs_dict"]["input_graph"],
-                run_config,
-            )
-            print(
-                "After dummy image creation, sim_duration=" + f"{sim_duration}"
-            )
-            sim_duration = get_sim_duration(
-                get_input_graph(run_config),
                 run_config,
             )
             print(

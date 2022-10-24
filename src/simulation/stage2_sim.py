@@ -40,7 +40,6 @@ def sim_graphs(
             ] = get_sim_duration(stage_1_graphs["input_graph"], run_config)
 
             # TODO: compute actual inhibition and mval
-            print(f"Simulating and verifying graph_name={graph_name}")
             run_snn_on_networkx(
                 snn_graph, stage_1_graphs[graph_name].graph["sim_duration"]
             )

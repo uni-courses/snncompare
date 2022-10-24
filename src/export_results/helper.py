@@ -5,7 +5,6 @@ from typing import List
 
 import networkx as nx
 
-from src.graph_generation.snn_algo.mdsa_snn_algo import Alipour_properties
 from src.helper import get_sim_duration
 
 
@@ -70,14 +69,18 @@ def get_expected_image_paths_stage_3(
     filename: str = run_config_to_filename(run_config)
 
     if "alg_props" not in input_graph.graph.keys():
-        input_graph.graph["alg_props"] = Alipour_properties(
-            input_graph, run_config["seed"]
-        ).__dict__
+        raise Exception("Error, algo_props is not set.")
+        # input_graph.graph["alg_props"] = Alipour_properties(
+        #    input_graph, run_config["seed"]
+        # ).__dict__
+
+    # print(f'input_graph=')
+    # pprint(input_graph.__dict__)
     sim_duration = get_sim_duration(
         input_graph,
         run_config,
     )
-    print(f"sim_duration={sim_duration}")
+    print(f"in check3 sim_duration={sim_duration}")
     # TODO: move this into hardcoded setting.
     image_dir = "latex/Images/graphs/"
     for extension in extensions:
@@ -87,6 +90,7 @@ def get_expected_image_paths_stage_3(
                     f"results/{graph_name}_{filename}{extension}"
                 )
             else:
+                print(f"graph_name={graph_name},sim_duration={sim_duration}")
                 for t in range(0, sim_duration):
                     image_filepaths.append(
                         image_dir + f"{graph_name}_{filename}_{t}{extension}"
