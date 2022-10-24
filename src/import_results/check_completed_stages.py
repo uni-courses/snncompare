@@ -2,8 +2,6 @@
 from pathlib import Path
 from typing import List
 
-import networkx as nx
-
 from src.export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
@@ -58,7 +56,6 @@ def has_outputted_stage(
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
-            print(f'did not find:"{filepath}')
             return False
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.
@@ -141,13 +138,20 @@ def has_valid_json_results(json_graphs: dict, run_config: dict) -> bool:
                 if not set(graphnames_with_results).issubset(
                     json_graphs.keys()
                 ):
+                    print("Graph name not set")
                     return False
-                for graph_name, graph in json_graphs.items():
+                for graph_name, json_graph in json_graphs.items():
                     if graph_name in graphnames_with_results:
-                        if not isinstance(graph, (nx.DiGraph, nx.Graph)):
+                        if "results" not in json_graph["graph"].keys():
+                            print(json_graph.keys())
+                            print(type(json_graph))
                             return False
-                        if "results" not in graph.graph.keys():
-                            return False
+                        # if not isinstance(graph, (nx.DiGraph, nx.Graph)):
+                        #    print('wrong type')
+                        #    return False
+                        # if "results" not in graph.graph.keys():
+                        #    print('not in keys type')
+                        #    return False
                 return True
             raise Exception(
                 "Error, m_val setting is not of type int:"

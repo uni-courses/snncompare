@@ -95,6 +95,9 @@ def create_results_dict_for_testing(
         # Add the completed stages as graph attribute.
         graphs_dict[graph_name].graph["completed_stages"] = completed_stages
 
+        if max(completed_stages) == 4:
+            graphs_dict[graph_name].graph["results"] = "Filler"
+
         # Convert the nx.DiGraph object to dict.
         graphs_dict[graph_name] = graphs_dict[graph_name].__dict__
 
