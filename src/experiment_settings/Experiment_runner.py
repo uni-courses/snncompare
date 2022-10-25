@@ -1,4 +1,5 @@
-"""Contains a single setting of the experiment configuration settings.
+"""Contains the object that runs the entire experiment. Also Contains a single
+setting of the experiment configuration settings.
 
 (The values of the settings may vary, yet the types should be the same.)
 """
@@ -20,6 +21,9 @@ from src.experiment_settings.verify_experiment_settings import (
     verify_experiment_config,
     verify_has_unique_id,
 )
+from src.experiment_settings.verify_run_completion import (
+    assert_stage_is_completed,
+)
 from src.experiment_settings.verify_run_settings import verify_run_config
 from src.export_results.json_to_nx_graph import load_json_to_nx_graph_from_file
 from src.export_results.Output_stage_12 import output_files_stage_1_and_2
@@ -29,12 +33,17 @@ from src.export_results.verify_graphs import verify_results_nx_graphs
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_stage_1
-from src.process_results.process_results import export_results, set_results
+from src.process_results.process_results import set_results
 from src.simulation.stage2_sim import sim_graphs
 
 
 class Experiment_runner:
-    """Stores the configuration of a single run."""
+    """Experiment manager.
+
+    First prepares the environment for running the experiment, and then
+    calls a private method that executes the experiment consisting of 4
+    stages.
+    """
 
     # pylint: disable=R0903
 
@@ -82,7 +91,7 @@ class Experiment_runner:
 
     # pylint: disable=W0238
     def __perform_run(self, experiment_config):
-        """Private method that runs the experiment.
+        """Private method that performs a run of the experiment.
 
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
@@ -105,7 +114,12 @@ class Experiment_runner:
         self, experiment_config: dict, run_config: dict, to_run: dict
     ):
         """Performs the run for stage 1 or loads the data from file depending
-        on the run configuration."""
+        on the run configuration.
+
+        Stage 1 applies a conversion that the user specified to run an
+        SNN algorithm. This is done by taking an input graph, and
+        generating an SNN (graph) that runs the intended algorithm.
+        """
         if to_run["stage_1"]:
 
             # Run first stage of experiment, get input graph.
@@ -121,7 +135,7 @@ class Experiment_runner:
         else:
             results_nx_graphs = load_results_stage_1(run_config)
 
-        # TODO: Verify stage 1 is completed.
+        assert_stage_is_completed(run_config, 1)
         return results_nx_graphs
 
     def __perform_run_stage_2(
@@ -130,7 +144,11 @@ class Experiment_runner:
         to_run: dict,
     ):
         """Performs the run for stage 2 or loads the data from file depending
-        on the run configuration."""
+        on the run configuration.
+
+        Stage two simulates the SNN graphs over time and, if desired,
+        exports each timestep of those SNN graphs to a json dictionary.
+        """
         # Verify incoming results dict.
         verify_results_nx_graphs(
             results_nx_graphs, results_nx_graphs["run_config"]
@@ -159,15 +177,27 @@ class Experiment_runner:
                 results_nx_graphs["run_config"],
             )
             output_files_stage_1_and_2(results_nx_graphs)
-        # TODO: Verify stage 2 is completed.
+        assert_stage_is_completed(results_nx_graphs["run_config"], 2)
 
     def __perform_run_stage_3(
         self,
         results_nx_graphs: dict,
         to_run: dict,
     ) -> None:
-        """Performs the run for stage 3 or loads the data from file depending
-        on the run configuration."""
+        """Performs the run for stage 3, which visualises the behaviour of the
+        SNN graphs over time. This behaviour is shown as a sequence of images.
+
+        The behaviour is described with:
+        - Green neuron: means a neuron spikes in that timestep.
+        - Green synapse: means the input neuron of that synapse spiked at that
+        timestep.
+        - Red neuron: radiation has damaged/killed the neuron, it won't spike.
+        - Red synapse: means the input neuron of that synapse has died and will
+        not spike at that timestep.
+        - White/transparent neuron: works as expected, yet does not spike at
+        that timestep.
+        - A circular synapse: a recurrent connection of a neuron into itself.
+        """
         if to_run["stage_3"]:
             # Generate output json dicts (and plots) of propagated graphs.
             print("Generating plots for stage 3.")
@@ -175,30 +205,34 @@ class Experiment_runner:
             # stage 4 graphs
             output_stage_files_3_and_4(results_nx_graphs, 3)
             print('"Done generating output plots for stage 3.')
-        # TODO: Verify stage 3 is completed (if required).
+            assert_stage_is_completed(results_nx_graphs["run_config"], 3)
 
     def __perform_run_stage_4(
         self,
         results_nx_graphs: dict,
     ) -> None:
-        """Performs the run for stage 4 or loads the data from file depending
-        on the run configuration."""
-        # TODO: Determine whether this should be done.
-        # TODO: compute results per graph type and export performance
-        # to json dict.
+        """Performs the run for stage 4.
+
+        Stage 4 computes the results of the SNN against the
+        default/Neumann implementation. Then stores this result in the
+        last entry of each graph.
+        """
         set_results(
             results_nx_graphs["run_config"],
             results_nx_graphs["graphs_dict"],
         )
-        export_results(results_nx_graphs)
-        # TODO: Verify stage 4 is completed.
+        for graph_name, graph in results_nx_graphs["graphs_dict"].items():
+            print(f"graph_name={graph_name}")
+            print(graph.graph.keys())
+        # export_results(results_nx_graphs)
+        assert_stage_is_completed(results_nx_graphs["run_config"], 4)
 
 
 def experiment_config_to_run_configs(experiment_config: dict):
     """Generates all the run_config dictionaries of a single experiment
-    configuration.
+    configuration. Then verifies whether each run_config is valid.
 
-    Verifies whether each run_config is valid.
+    TODO: Ensure this can be done modular, and lower the depth of the loop.
     """
     # pylint: disable=R0914
     supp_run_setts = Supported_run_settings()
@@ -299,14 +333,13 @@ def run_parameters_to_dict(
 def determine_what_to_run(run_config) -> dict:
     """Scans for existing output and then combines the run configuration
     settings to determine what still should be computed."""
+    # Initialise default: run everything.
     to_run = {
         "stage_1": False,
         "stage_2": False,
         "stage_3": False,
         "stage_4": False,
     }
-    # Determine which of the 4 stages have been performed and which stages
-    # still have to be completed.
 
     # Check if the input graphs exist, (the graphs that can still be adapted.)
     if (
@@ -360,7 +393,7 @@ def determine_what_to_run(run_config) -> dict:
 
 
 def example_experiment_config():
-    """Creates example experiment configuration settings."""
+    """Creates example experiment configuration setting."""
     # Create prerequisites
     supp_experi_setts = Supported_experiment_settings()
     adap_sets = Adaptations_settings()

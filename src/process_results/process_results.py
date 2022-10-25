@@ -67,6 +67,9 @@ def export_results(results_nx_graphs: dict):
             )
 
     # Export graphs with embedded results to json.
+    for graph_name, graph in results_nx_graphs["graphs_dict"].items():
+        print(f"graph_name={graph_name}")
+        print(graph.graph.keys())
     output_stage_files_3_and_4(results_nx_graphs, 4)
 
 

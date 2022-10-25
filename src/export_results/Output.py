@@ -19,6 +19,7 @@ from src.export_results.load_pickles_get_results import (
     get_desired_properties_for_graph_printing,
 )
 from src.export_results.nx_graph_to_json import convert_digraphs_to_json
+from src.export_results.verify_graphs import verify_results_nx_graphs
 from src.export_results.verify_stage_1_graphs import verify_stage_1_graphs
 from src.export_results.verify_stage_2_graphs import verify_stage_2_graphs
 from src.export_results.verify_stage_3_graphs import verify_stage_3_graphs
@@ -181,7 +182,10 @@ def output_stage_json(
             "Error, the graphs_of_stage of stage_index="
             + f"{stage_index} was an empty dict."
         )
-
+    print(f"verified incoming results_nx_graphs for outputting:{stage_index}")
+    verify_results_nx_graphs(
+        results_nx_graphs, results_nx_graphs["run_config"]
+    )
     results_json_graphs = convert_digraphs_to_json(
         results_nx_graphs, stage_index
     )

@@ -24,6 +24,7 @@ def convert_digraphs_to_json(
     results_nx_graphs: dict, stage_index: int
 ) -> dict:
     """Converts the digraph networkx objects to json dicts."""
+    print(f"stage_index={stage_index}")
     results_json_graphs = copy.deepcopy(results_nx_graphs)
     # Convert incoming graphs to dictionary.
     if stage_index == 1:
@@ -36,6 +37,10 @@ def convert_digraphs_to_json(
         )
     if stage_index == 3:
         pass
+    if stage_index == 4:
+        results_json_graphs["graphs_dict"] = convert_stage_2_digraphs_to_json(
+            results_nx_graphs["graphs_dict"]
+        )
     return results_json_graphs
 
 

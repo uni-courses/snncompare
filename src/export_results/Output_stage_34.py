@@ -33,16 +33,11 @@ def output_stage_files_3_and_4(
     :param graphs_stage_2:
     :param run_config:
     """
-
-    run_config_to_filename(results_nx_graphs["run_config"])
-    # TODO: Ensure output file exists.
-    # TODO: Verify the correct graphs is passed by checking the graph tag.
-
     # TODO: merge experiment config, results_nx_graphs['run_config'] into
     # single dict.
     if results_nx_graphs["run_config"]["simulator"] == "nx":
 
-        if results_nx_graphs["run_config"]["export_snns"]:
+        if results_nx_graphs["run_config"]["export_snns"] or stage_index == 4:
             # Output the json dictionary of the files.
             filename = run_config_to_filename(results_nx_graphs["run_config"])
             output_stage_json(
@@ -50,6 +45,8 @@ def output_stage_files_3_and_4(
                 filename,
                 stage_index,
             )
+        else:
+            raise Exception("Error export_snns should not be exported.")
 
         # TODO: Check if plots are already generated and if they must be
         # overwritten.

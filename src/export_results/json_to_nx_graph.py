@@ -60,7 +60,7 @@ def load_json_to_nx_graph_from_file(
     json_graphs_dict: dict = load_pre_existing_graph_dict(
         run_config, stage_index
     )
-    for graph_name, graph in json_graphs_dict.keys():
+    for graph_name, graph in json_graphs_dict.items():
         expected_stages = list(range(1, stage_index + 1))
         nx_graph = json_graph.node_link_graph(graph)
         verify_nx_graph_contains_correct_stages(
@@ -104,7 +104,6 @@ def load_verified_json_graphs_from_json(
     # Read output JSON file into dict.
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
-
     verify_results_json_graphs_contain_correct_stages(
         results_json_graphs, expected_stages
     )
@@ -191,6 +190,10 @@ def verify_json_graphs_dict_contain_correct_stages(
     graph."""
     for expected_stage in expected_stages:
         for graph_name, graph in json_graphs.items():
+            #            print(f'graph={graph}')
+            print(f"{graph_name}, type={type(graph)}")
+            # for elem in graph:
+            #    print(elem)
             if graph["graph"]["completed_stages"]:
                 if expected_stage not in graph["graph"]["completed_stages"]:
                     raise ValueError(
