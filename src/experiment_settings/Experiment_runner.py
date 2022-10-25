@@ -33,7 +33,7 @@ from src.export_results.verify_graphs import verify_results_nx_graphs
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_stage_1
-from src.process_results.process_results import set_results
+from src.process_results.process_results import export_results, set_results
 from src.simulation.stage2_sim import sim_graphs
 
 
@@ -224,7 +224,7 @@ class Experiment_runner:
         for graph_name, graph in results_nx_graphs["graphs_dict"].items():
             print(f"graph_name={graph_name}")
             print(graph.graph.keys())
-        # export_results(results_nx_graphs)
+        export_results(results_nx_graphs)
         assert_stage_is_completed(results_nx_graphs["run_config"], 4)
 
 

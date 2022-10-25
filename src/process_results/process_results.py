@@ -11,7 +11,13 @@ import copy
 
 import networkx as nx
 
+from src.export_results.json_to_nx_graph import (
+    verify_nx_graph_contains_correct_stages,
+)
 from src.export_results.Output_stage_34 import output_stage_files_3_and_4
+from src.import_results.check_completed_stages import (
+    nx_graphs_have_completed_stage,
+)
 from src.process_results.get_mdsa_results import set_mdsa_snn_results
 
 
@@ -66,10 +72,22 @@ def export_results(results_nx_graphs: dict):
                 results_nx_graphs["graphs_dict"][graph_name].graph["results"],
             )
 
+    # overwrite nx_graphs with stage_4_graphs
+    results_nx_graphs["graphs_dict"] = stage_4_graphs
+
+    # Verify the results_nx_graphs are valid.
+    nx_graphs_have_completed_stage(
+        results_nx_graphs["run_config"], results_nx_graphs, 4
+    )
+
     # Export graphs with embedded results to json.
-    for graph_name, graph in results_nx_graphs["graphs_dict"].items():
+    for graph_name, nx_graph in stage_4_graphs.items():
         print(f"graph_name={graph_name}")
-        print(graph.graph.keys())
+        print(nx_graph.graph.keys())
+        verify_nx_graph_contains_correct_stages(
+            graph_name, nx_graph, [1, 2, 3, 4]
+        )
+
     output_stage_files_3_and_4(results_nx_graphs, 4)
 
 
