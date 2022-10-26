@@ -49,7 +49,6 @@ def verify_json_graphs_dict_contain_correct_stages(
                 # The non input SNN graphs are lists of graphs, 1 per
                 # timestep, so get the completed stages property from the
                 # last one of that list.
-                print(f"graph_name={graph_name}")
                 completed_stages = json_graph[-1]["graph"]["completed_stages"]
             else:
                 raise Exception(

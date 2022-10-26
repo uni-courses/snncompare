@@ -4,8 +4,10 @@ experiment config, run config and json graphs, from a json dict.
 Appears to also be used to partially convert json graphs back into nx
 graphs.
 """
+import copy
 import json
 from pathlib import Path
+from typing import List
 
 import networkx as nx
 
@@ -29,8 +31,11 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     if results_json_graphs["graphs_dict"] == {}:
         raise Exception("Error, the graphs dict was an empty dict.")
 
-    set_graph_attributes(results_json_graphs["graphs_dict"])
-    verify_results_nx_graphs(results_json_graphs, run_config)
+    results_nx_graphs = copy.deepcopy(results_json_graphs)
+    results_nx_graphs["graphs_dict"] = set_graph_attributes(
+        results_json_graphs["graphs_dict"]
+    )
+    verify_results_nx_graphs(results_nx_graphs, run_config)
     return results_json_graphs
 
 
@@ -41,19 +46,46 @@ def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
     Then converts the nx.DiGraph that is encoded as a dict, back into a
     nx.DiGraph object.
     """
-
     # For each graph in the graphs dict, restore the graph attributes.
     for graph_name in graphs_dict.keys():
-
         # First load the graph attributes from the dict.
-        graph_attributes = graphs_dict[graph_name]["graph"]
+        if isinstance(graphs_dict[graph_name], List):
+            for i, json_graph in enumerate(graphs_dict[graph_name]):
+                graphs_dict[graph_name][
+                    i
+                ] = get_graph_attributes_from_dict_and_return_nx_graph(
+                    json_graph
+                )
+        elif isinstance(graphs_dict[graph_name], dict):
+            graphs_dict[
+                graph_name
+            ] = get_graph_attributes_from_dict_and_return_nx_graph(
+                graphs_dict[graph_name]
+            )
+        else:
+            raise Exception("Error, unexpected graph type.")
+    # TODO: assert all graphs are of type: nx.Graph,nx.DiGraph, or [nx.Graph]
+    # or [nx.DiGraph]
 
-        # Convert the graph dict back into an nx.DiGraph object.
-        graphs_dict[graph_name] = nx.DiGraph(graphs_dict[graph_name])
+    return graphs_dict
 
-        # Add the graph attributes back to the nx.DiGraph object.
-        for graph_attribute_name, value in graph_attributes.items():
-            graphs_dict[graph_name].graph[graph_attribute_name] = value
+
+def get_graph_attributes_from_dict_and_return_nx_graph(json_graph: dict):
+    """Takes a json input graph, which is a dictionary.
+
+    Then gets the graph attributes from that dict, converts the json
+    input graph dict into a networkx graph, and then adds the attributes
+    to the networkx graph.
+    """
+    graph_attributes = json_graph["graph"]
+
+    # Convert the graph dict back into an nx.DiGraph object.
+    nx_graph = nx.DiGraph(json_graph)
+
+    # Add the graph attributes back to the nx.DiGraph object.
+    for graph_attribute_name, value in graph_attributes.items():
+        nx_graph.graph[graph_attribute_name] = value
+    return nx_graph
 
 
 def load_json_file_into_dict(json_filepath):
