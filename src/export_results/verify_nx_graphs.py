@@ -27,11 +27,19 @@ def verify_results_nx_graphs_contain_expected_stages(
         )
 
 
+# pylint: disable=R0912
 def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
     """Verifies the results that are loaded from json file are of the expected
     format.
 
-    Does not verify whether any expected stages have been completed.
+    Does not verify whether any expected stages have been completed. #
+    TODO: include check on graph types based on the completed stages. If
+    a graph contains completed_stages==[1], then the type should be:
+    nx.Graph for graph_name=="input_graph", and nx.DiGraph otherwise. If
+    completed_stages of a graph is larger than 1, the value of the
+    results["graphs_dict"] should be of type list, with nx.Graph and
+    nx.Digraphs respectively. # TODO: break this check into separate
+    functions.
     """
     stage_1_graph_names = get_expected_stage_1_graph_names(run_config)
     # Verify the 3 dicts are in the result dict.
@@ -63,7 +71,14 @@ def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
     # Verify each graph is of the networkx type.
     for graph_name, nx_graph in results_nx_graphs["graphs_dict"].items():
         if graph_name == "input_graph":
-            if not isinstance(nx_graph, nx.Graph):
+            if isinstance(nx_graph, List):
+                for nx_graph_frame in nx_graph:
+                    if not isinstance(nx_graph_frame, nx.Graph):
+                        raise Exception(
+                            "Error, input nx_graph_frame changed to type:"
+                            + f"{type(nx_graph_frame)}"
+                        )
+            elif not isinstance(nx_graph, nx.Graph):
                 raise Exception(
                     f"Error, input nx_graph changed to type:{type(nx_graph)}"
                 )
@@ -76,15 +91,23 @@ def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
                             + f"graph:{graph_name} that is not of type: nx.DiG"
                             + f"raph,instead, it is:{type(nx_graph_frame)}"
                         )
+
+                    # Verify each graph has the right completed stages
+                    # attribute.
+                    verify_completed_stages_list(
+                        nx_graph_frame.graph["completed_stages"]
+                    )
+            elif isinstance(nx_graph, nx.DiGraph):
+                # Verify each graph has the right completed stages attribute.
+                verify_completed_stages_list(
+                    nx_graph.graph["completed_stages"]
+                )
             elif not isinstance(nx_graph, nx.DiGraph):
                 raise ValueError(
                     "Error, the results_nx_graphs object contains a "
                     + f"graph:{graph_name} that is not of type: nx.DiGraph:"
                     + f"instead, it is of type:{type(nx_graph)}"
                 )
-
-        # Verify each graph has the right completed stages attribute.
-        verify_completed_stages_list(nx_graph.graph["completed_stages"])
 
 
 def verify_nx_graph_contains_correct_stages(

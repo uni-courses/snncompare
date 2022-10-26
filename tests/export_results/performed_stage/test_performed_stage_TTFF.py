@@ -105,10 +105,11 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertIn("experiment_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
-            self.assertIn(
-                "alg_props",
-                stage_1_output_dict["graphs_dict"]["input_graph"].graph,
-            )
+            for nx_graph in stage_1_output_dict["graphs_dict"]["input_graph"]:
+                self.assertIn(
+                    "alg_props",
+                    nx_graph.graph,
+                )
 
             # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:
@@ -117,18 +118,22 @@ class Test_stage_1_output_json(unittest.TestCase):
                 )
 
             # Verify each graph has the right completed stages attribute.
-            for graph_name, json_graph in stage_1_output_dict[
+            for graph_name, nx_graph in stage_1_output_dict[
                 "graphs_dict"
             ].items():
-                self.assertEqual(
-                    stage_1_output_dict["graphs_dict"][graph_name].graph[
-                        "completed_stages"
-                    ],
-                    self.expected_completed_stages,
-                )
+                for nx_graph_frame in stage_1_output_dict["graphs_dict"][
+                    "input_graph"
+                ]:
+                    self.assertEqual(
+                        nx_graph_frame.graph["completed_stages"],
+                        self.expected_completed_stages,
+                    )
 
-                # Assert the types of the graphs is valid.
-                self.assertIsInstance(json_graph, (nx.Graph, nx.DiGraph))
+                    # Assert the types of the graphs is valid.
+                    if graph_name == "input_graph":
+                        self.assertIsInstance(nx_graph_frame, nx.Graph)
+                    else:
+                        self.assertIsInstance(nx_graph_frame, nx.DiGraph)
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
