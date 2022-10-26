@@ -186,6 +186,7 @@ def create_redundant_node(d, get_degree, node_name):
     )
 
 
+# pylint: disable=R0801
 def compute_vth_for_delay(get_degree, node_name):
     """Increases vth with 1 to realise a delay of t=1 for the redundant
     spike_once neurons, rand neurons and selector neurons.

@@ -727,6 +727,7 @@ def get_extensions_dict(run_config, stage_index) -> dict:
 def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
     """Adds the completed stage to the list of completed stages for the
     incoming graph."""
+    # Initialise the completed_stages key.
     if stage_index == 1:
         if "completed_stages" in some_graph.graph:
             raise Exception(
@@ -734,23 +735,24 @@ def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
                 + f"already created for stage 1{some_graph.graph}:"
             )
         some_graph.graph["completed_stages"] = []
+
+    # After stage 1, the completed_stages key should already be a list.
     elif not isinstance(some_graph.graph["completed_stages"], list):
         raise Exception(
             "Error, the completed_stages parameter is not of type"
             + "list. instead, it is of type:"
             + f'{type(some_graph.graph["completed_stages"])}'
         )
-    elif stage_index in some_graph.graph["completed_stages"]:
-        # TODO: check if overwrite is on before throwing this error.
-        raise Exception(
-            f"Error, stage:{stage_index} is already completed for"
-            + f' this graph:{some_graph.graph["completed_stages"]}.'
-        )
+
+    # At this point, the completed_stages key should not contain the current
+    # stage index already..
     if stage_index in some_graph.graph["completed_stages"]:
         raise Exception(
             f"Error, the stage:{stage_index} is already in the completed_stage"
             f's: {some_graph.graph["completed_stages"]}'
         )
+
+    # Add the completed stages key to the snn graph.
     some_graph.graph["completed_stages"].append(stage_index)
 
 

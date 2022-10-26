@@ -32,8 +32,19 @@ def sim_graphs(
     for graph_name, snn_graph in stage_1_graphs.items():
         if graph_name != "input_graph":
 
+            if not isinstance(snn_graph, nx.DiGraph):
+                raise Exception(
+                    "Error, snn_graph:{graph_name} was not of the"
+                    f"expected type, it was of:{type(snn_graph)}"
+                )
             # TODO: add lava neurons if run config demands lava.
             convert_graph_snn_to_nx_snn(snn_graph)
+            if not isinstance(snn_graph, nx.DiGraph):
+                raise Exception(
+                    "Error, snn_graph:{graph_name} was not of the"
+                    "expected type after conversion, it was of type:"
+                    f"{type(snn_graph)}"
+                )
 
             stage_1_graphs[graph_name].graph[
                 "sim_duration"
@@ -44,7 +55,6 @@ def sim_graphs(
                 snn_graph, stage_1_graphs[graph_name].graph["sim_duration"]
             )
         add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
-        # TODO: export graphs to file.
 
 
 def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:

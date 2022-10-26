@@ -5,7 +5,7 @@ from pathlib import Path
 
 import networkx as nx
 
-from src.export_results.nx_graph_to_json import digraph_to_json
+from src.export_results.export_nx_graph_to_json import digraph_to_json
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
 
 

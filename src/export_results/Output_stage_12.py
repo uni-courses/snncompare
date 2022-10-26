@@ -1,9 +1,10 @@
 """"Outputs the results for stage 1 and/or 2."""
+
 from src.export_results.helper import run_config_to_filename
 from src.export_results.Output import output_stage_json
 
 
-def output_files_stage_1_and_2(results_nx_graphs: dict):
+def output_files_stage_1_and_2(results_nx_graphs: dict, stage_index):
 
     """Converts the graphs of the incoming results dict into json dict graphs,
 
@@ -22,5 +23,8 @@ def output_files_stage_1_and_2(results_nx_graphs: dict):
     output_stage_json(
         results_nx_graphs,
         json_filename,
-        1,
+        stage_index,
     )
+    # Verifies while loading that the output dict contains the expected
+    # completed stages.
+    # load_json_to_nx_graph_from_file(results_nx_graphs["run_config"], 1)

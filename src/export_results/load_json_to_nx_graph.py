@@ -4,10 +4,18 @@ import json
 from pprint import pprint
 from typing import List
 
-import networkx as nx
 from networkx.readwrite import json_graph
 
+from src.export_results.check_nx_graphs import (
+    json_graphs_contain_expected_stages,
+)
 from src.export_results.helper import run_config_to_filename
+from src.export_results.verify_json_graphs import (
+    verify_results_json_graphs_contain_correct_stages,
+)
+from src.export_results.verify_nx_graphs import (
+    verify_results_nx_graphs_contain_expected_stages,
+)
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
@@ -61,12 +69,11 @@ def load_json_to_nx_graph_from_file(
         run_config, stage_index
     )
     for graph_name, graph in json_graphs_dict.items():
-        expected_stages = list(range(1, stage_index + 1))
         nx_graph = json_graph.node_link_graph(graph)
-        verify_nx_graph_contains_correct_stages(
-            graph_name, nx_graph, expected_stages
-        )
         nx_graphs_dict[graph_name] = nx_graph
+    verify_results_nx_graphs_contain_expected_stages(
+        {"graphs_dict": nx_graphs_dict}, stage_index
+    )
     return nx_graphs_dict
 
 
@@ -130,112 +137,3 @@ def load_json_graphs_from_json(run_config: dict) -> dict:
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
     return results_json_graphs["graphs_dict"]
-
-
-def results_with_json_graphs_contain_correct_stages(
-    results_json_graphs: dict, expected_stages: List[int]
-):
-    """Returns True if the json graphs are valid, False otherwise."""
-    try:
-        verify_results_json_graphs_contain_correct_stages(
-            results_json_graphs, expected_stages
-        )
-        return True
-    # pylint: disable=W0702
-    except KeyError:
-        return False
-    except ValueError:
-        return False
-
-
-def json_graphs_contain_correct_stages(
-    json_graphs: dict, expected_stages: List[int], run_config: dict
-):
-    """Returns True if the json graphs are valid, False otherwise."""
-    try:
-        verify_json_graphs_dict_contain_correct_stages(
-            json_graphs, expected_stages, run_config
-        )
-        return True
-    # pylint: disable=W0702
-    except KeyError:
-        return False
-    except ValueError:
-        return False
-
-
-def verify_results_json_graphs_contain_correct_stages(
-    results_json_graphs: dict, expected_stages: List[int]
-) -> None:
-    """Checks whether the loaded graphs from json contain at least the expected
-    stages for this stage of the experiment."""
-
-    if "experiment_config" not in results_json_graphs:
-        raise KeyError("Error, key: experiment_config not in output_dict.")
-    if "run_config" not in results_json_graphs:
-        raise KeyError("Error, key: run_config not in output_dict.")
-    if "graphs_dict" not in results_json_graphs:
-        raise KeyError("Error, key: graphs_dict not in output_dict.")
-    verify_json_graphs_dict_contain_correct_stages(
-        results_json_graphs["graphs_dict"],
-        expected_stages,
-        results_json_graphs["run_config"],
-    )
-
-
-def verify_json_graphs_dict_contain_correct_stages(
-    json_graphs: dict, expected_stages: List[int], run_config: dict
-) -> None:
-    """Verifies the json graphs dict contains the expected stages in each
-    graph."""
-    for expected_stage in expected_stages:
-        for graph_name, graph in json_graphs.items():
-            #            print(f'graph={graph}')
-            print(f"{graph_name}, type={type(graph)}")
-            # for elem in graph:
-            #    print(elem)
-            if graph["graph"]["completed_stages"]:
-                if expected_stage not in graph["graph"]["completed_stages"]:
-                    raise ValueError(
-                        "Error, for run_config: "
-                        + f"{run_config}, the expected "
-                        + f"stage:{expected_stage}, was not found in "
-                        + "the completed stages:"
-                        + f'{graph["graph"]["completed_stages"]} '
-                        + f"that were loaded from graph: {graph_name}."
-                    )
-
-
-def verify_nx_graph_contains_correct_stages(
-    graph_name: str, nx_graph: nx.DiGraph, expected_stages: List[int]
-) -> None:
-    """Verifies the networkx graph object contains the correct completed
-    stages."""
-    if "completed_stages" in nx_graph.graph.keys():
-        for expected_stage in expected_stages:
-            if expected_stage not in nx_graph.graph["completed_stages"]:
-                raise ValueError(
-                    f"Error, {graph_name} did not contain the expected "
-                    f"stages:{expected_stages}."
-                )
-
-
-def json_graphs_contain_expected_stages(
-    json_graphs: dict,
-    expected_graph_names: List[str],
-    expected_stages: List[int],
-) -> bool:
-    """Verifies for each of the expected graph names is in the json_graphs
-    dict, and then verifies each of those graphs contain the completed
-    stages."""
-    for expected_graph_name in expected_graph_names:
-        if expected_graph_name not in json_graphs.keys():
-            return False
-        for expected_stage in expected_stages:
-            # More completed stages than expected is ok.
-            if (
-                expected_stage
-                not in json_graphs[expected_graph_name]["completed_stages"]
-            ):
-                return False
-    return True

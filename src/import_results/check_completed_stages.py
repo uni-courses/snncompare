@@ -6,8 +6,10 @@ from src.export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
 )
-from src.export_results.json_to_nx_graph import load_pre_existing_graph_dict
-from src.export_results.verify_graphs import verify_completed_stages_list
+from src.export_results.load_json_to_nx_graph import (
+    load_pre_existing_graph_dict,
+)
+from src.export_results.verify_nx_graphs import verify_completed_stages_list
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )

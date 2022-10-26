@@ -1,7 +1,4 @@
-"""Methods used to verify the graphs.
-
-TODO: merge with from src.import_results.check_completed_stages
-"""
+"""Methods used to verify the graphs."""
 from typing import List
 
 import networkx as nx
@@ -9,6 +6,22 @@ import networkx as nx
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
+from src.verification_generic import verify_completed_stages_list
+
+
+def verify_results_nx_graphs_contain_expected_stages(
+    results_nx_graphs: dict, stage_index: int
+):
+    """Verifies that the nx_graphs dict contains the expected completed stages
+    in each nxgraph.graph dict.
+
+    Throws an error otherwise.
+    """
+    for graph_name, nx_graph in results_nx_graphs["graphs_dict"].items():
+        expected_stages = list(range(1, stage_index + 1))
+        verify_nx_graph_contains_correct_stages(
+            graph_name, nx_graph, expected_stages
+        )
 
 
 def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
@@ -63,22 +76,15 @@ def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
         verify_completed_stages_list(graph.graph["completed_stages"])
 
 
-def verify_completed_stages_list(completed_stages: List) -> None:
-    """Verifies the completed stages list is a list of consecutive positive
-    integers.
-
-    TODO: test this function.
-    """
-    start_stage = completed_stages[0]
-    for next_stage in completed_stages[1:]:
-        if start_stage != next_stage - 1:
-            raise Exception(
-                f"Stage indices are not consecutive:{completed_stages}."
-            )
-        start_stage = next_stage
-    for stage in completed_stages:
-        if stage < 1:
-            raise Exception(
-                "completed_stages contained non positive integer:"
-                + f"{completed_stages}"
-            )
+def verify_nx_graph_contains_correct_stages(
+    graph_name: str, nx_graph: nx.DiGraph, expected_stages: List[int]
+) -> None:
+    """Verifies the networkx graph object contains the correct completed
+    stages."""
+    if "completed_stages" in nx_graph.graph.keys():
+        for expected_stage in expected_stages:
+            if expected_stage not in nx_graph.graph["completed_stages"]:
+                raise ValueError(
+                    f"Error, {graph_name} did not contain the expected "
+                    f"stages:{expected_stages}."
+                )

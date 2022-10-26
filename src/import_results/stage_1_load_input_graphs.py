@@ -3,7 +3,7 @@
 import json
 
 from src.export_results.helper import run_config_to_filename
-from src.export_results.json_to_nx_graph import json_to_digraph
+from src.export_results.load_json_to_nx_graph import json_to_digraph
 from src.export_results.verify_stage_1_graphs import assert_graphs_are_in_dict
 from src.helper import get_extensions_list, is_identical
 from src.import_results.read_json import load_results_from_json

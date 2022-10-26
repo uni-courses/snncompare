@@ -11,10 +11,10 @@ import copy
 
 import networkx as nx
 
-from src.export_results.json_to_nx_graph import (
+from src.export_results.Output_stage_34 import output_stage_files_3_and_4
+from src.export_results.verify_nx_graphs import (
     verify_nx_graph_contains_correct_stages,
 )
-from src.export_results.Output_stage_34 import output_stage_files_3_and_4
 from src.import_results.check_completed_stages import (
     nx_graphs_have_completed_stage,
 )

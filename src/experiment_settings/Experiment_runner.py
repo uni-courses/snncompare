@@ -25,11 +25,13 @@ from src.experiment_settings.verify_run_completion import (
     assert_stage_is_completed,
 )
 from src.experiment_settings.verify_run_settings import verify_run_config
-from src.export_results.json_to_nx_graph import load_json_to_nx_graph_from_file
+from src.export_results.load_json_to_nx_graph import (
+    load_json_to_nx_graph_from_file,
+)
 from src.export_results.Output_stage_12 import output_files_stage_1_and_2
 from src.export_results.Output_stage_34 import output_stage_files_3_and_4
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
-from src.export_results.verify_graphs import verify_results_nx_graphs
+from src.export_results.verify_nx_graphs import verify_results_nx_graphs
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_stage_1
@@ -131,7 +133,7 @@ class Experiment_runner:
             }
 
             # Exports results, including graphs as dict.
-            output_files_stage_1_and_2(results_nx_graphs)
+            output_files_stage_1_and_2(results_nx_graphs, 1)
         else:
             results_nx_graphs = load_results_stage_1(run_config)
 
@@ -176,7 +178,7 @@ class Experiment_runner:
                 results_nx_graphs["graphs_dict"],
                 results_nx_graphs["run_config"],
             )
-            output_files_stage_1_and_2(results_nx_graphs)
+            output_files_stage_1_and_2(results_nx_graphs, 2)
         assert_stage_is_completed(results_nx_graphs["run_config"], 2)
 
     def __perform_run_stage_3(

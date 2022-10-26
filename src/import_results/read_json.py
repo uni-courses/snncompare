@@ -9,7 +9,7 @@ from pathlib import Path
 
 import networkx as nx
 
-from src.export_results.verify_graphs import verify_results_nx_graphs
+from src.export_results.verify_nx_graphs import verify_results_nx_graphs
 
 
 def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
