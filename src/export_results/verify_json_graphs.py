@@ -14,7 +14,6 @@ def verify_results_json_graphs_contain_correct_stages(
         raise KeyError("Error, key: run_config not in output_dict.")
     if "graphs_dict" not in results_json_graphs:
         raise KeyError("Error, key: graphs_dict not in output_dict.")
-    print("verify_json_graphs_dict_contain_correct_stages")
     verify_json_graphs_dict_contain_correct_stages(
         results_json_graphs["graphs_dict"],
         expected_stages,
@@ -38,10 +37,6 @@ def verify_json_graphs_dict_contain_correct_stages(
                 # Completed stages are only stored in the last timestep of the
                 # graph.
                 if not isinstance(json_graph, List):
-                    print(
-                        "Error, the json_graph is of type:"
-                        + f"{type(json_graph)}, with content:"
-                    )
                     raise TypeError(
                         "Error, the json_graph is of type:"
                         f"{type(json_graph)}, with content:"
