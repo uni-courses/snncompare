@@ -86,5 +86,6 @@ def verify_nx_graph_contains_correct_stages(
             if expected_stage not in nx_graph.graph["completed_stages"]:
                 raise ValueError(
                     f"Error, {graph_name} did not contain the expected "
-                    f"stages:{expected_stages}."
+                    f"stages:{expected_stages}. Instead, it contained:"
+                    f'{nx_graph.graph["completed_stages"]}'
                 )
