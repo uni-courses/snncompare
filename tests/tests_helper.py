@@ -60,10 +60,13 @@ def create_result_file_for_testing(
         dummy_result = create_results_dict_for_testing_stage_1(
             graph_names, completed_stages, input_graph, run_config
         )
-    elif max(completed_stages) in [2, 3]:
+    elif max(completed_stages) in [2, 3, 4]:
         dummy_result = create_results_dict_for_testing_stage_2(
             graph_names, completed_stages, input_graph, run_config
         )
+    if max(completed_stages) == 4:
+        add_results_to_stage_4(dummy_result)
+
     # TODO: support stage 4 dummy creation.
 
     # TODO: Optional: ensure output files exists.
@@ -155,10 +158,14 @@ def create_results_dict_for_testing_stage_2(
     }
     return dummy_result
 
-    # if completed_stages[-1] == 4:
-    #     # Include dummy results in graph.
-    #     # graphs_dict[graph_name].graph["results"] = {}
-    #     graphs_dict[graph_name].graph["results"] = "Filler"
+
+def add_results_to_stage_4(dummy_nx_results: dict) -> None:
+    """Creates dummy results in the last timestep/list element of the graph for
+    stage 4."""
+    for graph_name, nx_graph_list in dummy_nx_results["graphs_dict"].items():
+        if graph_name != "input_graph":
+            nx_graph_list[-1]["graph"]["results"] = {}
+            nx_graph_list[-1]["graph"]["results"] = "Filler"
 
 
 def create_dummy_output_images_stage_3(

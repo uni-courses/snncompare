@@ -10,6 +10,8 @@ import os
 import shutil
 import unittest
 
+import networkx as nx
+
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
@@ -80,7 +82,6 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         for run_config in self.experiment_runner.run_configs:
             to_run = determine_what_to_run(run_config)
-            print("\n\n\n")
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
             )
@@ -105,12 +106,12 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertIn("experiment_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
-            self.assertIn(
-                "alg_props",
-                stage_1_output_dict["graphs_dict"]["input_graph"].graph,
-            )
+            for nx_graph in stage_1_output_dict["graphs_dict"]["input_graph"]:
+                self.assertIn(
+                    "alg_props",
+                    nx_graph.graph,
+                )
 
-            # TODO: write the results to dict.
             # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:
                 self.assertIn(
@@ -118,15 +119,23 @@ class Test_stage_1_output_json(unittest.TestCase):
                 )
 
             # Verify each graph has the right completed stages attribute.
-            for graph_name in stage_1_output_dict["graphs_dict"].keys():
-                self.assertEqual(
-                    stage_1_output_dict["graphs_dict"][graph_name].graph[
-                        "completed_stages"
-                    ],
-                    self.expected_completed_stages,
-                )
+            for graph_name, nx_graph in stage_1_output_dict[
+                "graphs_dict"
+            ].items():
+                for nx_graph_frame in stage_1_output_dict["graphs_dict"][
+                    "input_graph"
+                ]:
+                    self.assertEqual(
+                        nx_graph_frame.graph["completed_stages"],
+                        self.expected_completed_stages,
+                    )
 
-            # TODO: verify the stage 4 graphs contain the results in the dict.
+                    # Assert the types of the graphs is valid.
+                    if graph_name == "input_graph":
+                        self.assertIsInstance(nx_graph_frame, nx.Graph)
+                    else:
+                        self.assertIsInstance(nx_graph_frame, nx.DiGraph)
+
             create_dummy_output_images_stage_3(
                 stage_1_graph_names,
                 get_input_graph(run_config),
