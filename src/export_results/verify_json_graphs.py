@@ -8,21 +8,37 @@ def verify_json_graphs_dict_contain_correct_stages(
     """Verifies the json graphs dict contains the expected stages in each
     graph."""
     for expected_stage in expected_stages:
-        for graph_name, graph in json_graphs.items():
+        for graph_name, json_graph in json_graphs.items():
             #            print(f'graph={graph}')
-            print(f"{graph_name}, type={type(graph)}")
-            for elem in graph:
+            print(f"{graph_name}, type={type(json_graph)}")
+            for elem in json_graph:
                 print(type(elem))
-            if graph["graph"]["completed_stages"]:
-                if expected_stage not in graph["graph"]["completed_stages"]:
-                    raise ValueError(
-                        "Error, for run_config: "
-                        + f"{run_config}, the expected "
-                        + f"stage:{expected_stage}, was not found in "
-                        + "the completed stages:"
-                        + f'{graph["graph"]["completed_stages"]} '
-                        + f"that were loaded from graph: {graph_name}."
-                    )
+                if isinstance(elem, dict):
+                    for key in elem.keys():
+                        print(f"key={key}")
+            if expected_stages[-1] == 1:
+                completed_stages = json_graph["graph"]["completed_stages"]
+
+            elif expected_stages[-1] == 2:
+                # TODO: determine why this is a list of graphs, instead of a
+                # graph with list of nodes.
+                # Completed stages are only stored in the last timestep of the
+                # graph.
+                completed_stages = json_graph[-1]["graph"]["completed_stages"]
+            else:
+                raise Exception(
+                    "Error, stage:{expected_stages[-1]} is "
+                    "not yet supported in this check."
+                )
+            if expected_stage not in completed_stages:
+                raise ValueError(
+                    "Error, for run_config: "
+                    + f"{run_config}, the expected "
+                    + f"stage:{expected_stage}, was not found in "
+                    + "the completed stages:"
+                    + f"{completed_stages} "
+                    + f"that were loaded from graph: {graph_name}."
+                )
 
 
 def verify_results_json_graphs_contain_correct_stages(
