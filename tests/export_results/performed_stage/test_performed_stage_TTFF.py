@@ -10,6 +10,8 @@ import os
 import shutil
 import unittest
 
+import networkx as nx
+
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
@@ -115,7 +117,9 @@ class Test_stage_1_output_json(unittest.TestCase):
                 )
 
             # Verify each graph has the right completed stages attribute.
-            for graph_name in stage_1_output_dict["graphs_dict"].keys():
+            for graph_name, json_graph in stage_1_output_dict[
+                "graphs_dict"
+            ].items():
                 self.assertEqual(
                     stage_1_output_dict["graphs_dict"][graph_name].graph[
                         "completed_stages"
@@ -123,11 +127,15 @@ class Test_stage_1_output_json(unittest.TestCase):
                     self.expected_completed_stages,
                 )
 
+                # Assert the types of the graphs is valid.
+                self.assertIsInstance(json_graph, (nx.Graph, nx.DiGraph))
+
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
             self.assertTrue(has_outputted_stage(run_config, 1, to_run))
 
             # Test for stage 1, 2, and 4.
+            print("ASSERTING output stage 2 is completed.")
             self.assertTrue(has_outputted_stage(run_config, 2, to_run))
             self.assertEqual(
                 has_outputted_stage(run_config, 3, to_run), self.export_snns

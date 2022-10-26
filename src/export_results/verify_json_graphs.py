@@ -2,6 +2,26 @@
 from typing import List
 
 
+def verify_results_json_graphs_contain_correct_stages(
+    results_json_graphs: dict, expected_stages: List[int]
+) -> None:
+    """Checks whether the loaded graphs from json contain at least the expected
+    stages for this stage of the experiment."""
+
+    if "experiment_config" not in results_json_graphs:
+        raise KeyError("Error, key: experiment_config not in output_dict.")
+    if "run_config" not in results_json_graphs:
+        raise KeyError("Error, key: run_config not in output_dict.")
+    if "graphs_dict" not in results_json_graphs:
+        raise KeyError("Error, key: graphs_dict not in output_dict.")
+    print("verify_json_graphs_dict_contain_correct_stages")
+    verify_json_graphs_dict_contain_correct_stages(
+        results_json_graphs["graphs_dict"],
+        expected_stages,
+        results_json_graphs["run_config"],
+    )
+
+
 def verify_json_graphs_dict_contain_correct_stages(
     json_graphs: dict, expected_stages: List[int], run_config: dict
 ) -> None:
@@ -17,6 +37,11 @@ def verify_json_graphs_dict_contain_correct_stages(
                 # graph with list of nodes.
                 # Completed stages are only stored in the last timestep of the
                 # graph.
+                if not isinstance(json_graph, List):
+                    raise TypeError(
+                        "Error, the json_graph is of type:"
+                        f"{type(json_graph)}, with content:{json_graph}"
+                    )
                 completed_stages = json_graph[-1]["graph"]["completed_stages"]
             else:
                 raise Exception(
@@ -32,22 +57,3 @@ def verify_json_graphs_dict_contain_correct_stages(
                     + f"{completed_stages} "
                     + f"that were loaded from graph: {graph_name}."
                 )
-
-
-def verify_results_json_graphs_contain_correct_stages(
-    results_json_graphs: dict, expected_stages: List[int]
-) -> None:
-    """Checks whether the loaded graphs from json contain at least the expected
-    stages for this stage of the experiment."""
-
-    if "experiment_config" not in results_json_graphs:
-        raise KeyError("Error, key: experiment_config not in output_dict.")
-    if "run_config" not in results_json_graphs:
-        raise KeyError("Error, key: run_config not in output_dict.")
-    if "graphs_dict" not in results_json_graphs:
-        raise KeyError("Error, key: graphs_dict not in output_dict.")
-    verify_json_graphs_dict_contain_correct_stages(
-        results_json_graphs["graphs_dict"],
-        expected_stages,
-        results_json_graphs["run_config"],
-    )

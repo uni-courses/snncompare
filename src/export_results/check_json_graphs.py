@@ -21,3 +21,5 @@ def json_graphs_contain_correct_stages(
         return False
     except ValueError:
         return False
+    except TypeError:
+        return False
