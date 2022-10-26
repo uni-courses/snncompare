@@ -1,4 +1,5 @@
 """Contains functions used to help the tests."""
+import copy
 import pathlib
 import random
 from typing import List
@@ -53,11 +54,17 @@ def create_result_file_for_testing(
     In particular, the has_outputted_stage() function is tested with
     this.
     """
-
+    dummy_result = {}
     # TODO: create the output results file with the respective graphs.
-    dummy_result: dict = create_results_dict_for_testing(
-        graph_names, completed_stages, input_graph, run_config
-    )
+    if max(completed_stages) == 1:
+        dummy_result = create_results_dict_for_testing_stage_1(
+            graph_names, completed_stages, input_graph, run_config
+        )
+    elif max(completed_stages) == 2:
+        dummy_result = create_results_dict_for_testing_stage_2(
+            graph_names, completed_stages, input_graph, run_config
+        )
+    # TODO: support stage 4 dummy creation.
 
     # TODO: Optional: ensure output files exists.
     write_dict_to_json(json_filepath, jsons.dump(dummy_result))
@@ -67,7 +74,7 @@ def create_result_file_for_testing(
     assertIsFile(filepath)
 
 
-def create_results_dict_for_testing(
+def create_results_dict_for_testing_stage_1(
     graph_names: List[str],
     completed_stages: List[str],
     input_graph: nx.DiGraph,
@@ -88,15 +95,8 @@ def create_results_dict_for_testing(
             # Get random nx.DiGraph graph.
             graphs_dict[graph_name] = input_graph
 
-            if 4 in completed_stages:
-                # Include dummy results in graph.
-                graphs_dict[graph_name].graph["results"] = {}
-
         # Add the completed stages as graph attribute.
         graphs_dict[graph_name].graph["completed_stages"] = completed_stages
-
-        if max(completed_stages) == 4:
-            graphs_dict[graph_name].graph["results"] = "Filler"
 
         # Convert the nx.DiGraph object to dict.
         graphs_dict[graph_name] = graphs_dict[graph_name].__dict__
@@ -108,6 +108,57 @@ def create_results_dict_for_testing(
         "graphs_dict": graphs_dict,
     }
     return dummy_result
+
+
+def create_results_dict_for_testing_stage_2(
+    graph_names: List[str],
+    completed_stages: List[str],
+    input_graph: nx.DiGraph,
+    run_config: dict,
+) -> dict:
+    """Generates a dictionary with the the experiment_config, run_config and
+    graphs."""
+    graphs_dict = {}
+
+    for graph_name in graph_names:
+        if graph_name == "input_graph":
+            # Add MDSA algorithm properties to input graph.
+            graphs_dict["input_graph"] = [input_graph]
+            graphs_dict["input_graph"][-1].graph[
+                "alg_props"
+            ] = Alipour_properties(
+                graphs_dict["input_graph"][-1], run_config["seed"]
+            ).__dict__
+        else:
+            # Get random nx.DiGraph graph.
+            graphs_dict[graph_name] = [copy.deepcopy(input_graph)]
+
+        graphs_dict[graph_name][-1].graph[
+            "completed_stages"
+        ] = completed_stages
+
+    # Convert the nx.DiGraph object to dict.
+    for graph_name in graph_names:
+        if isinstance(graphs_dict[graph_name], List):
+            for i, _ in enumerate(graphs_dict[graph_name]):
+                graphs_dict[graph_name][i] = graphs_dict[graph_name][
+                    i
+                ].__dict__
+        else:
+            raise Exception("Error, graph for stage 2 is a list.")
+
+    # Merge graph and experiment and run config into a single result dict.
+    dummy_result = {
+        "experiment_config": None,
+        "run_config": run_config,
+        "graphs_dict": graphs_dict,
+    }
+    return dummy_result
+
+    # if completed_stages[-1] == 4:
+    #     # Include dummy results in graph.
+    #     # graphs_dict[graph_name].graph["results"] = {}
+    #     graphs_dict[graph_name].graph["results"] = "Filler"
 
 
 def create_dummy_output_images_stage_3(

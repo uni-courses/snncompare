@@ -38,14 +38,22 @@ def verify_json_graphs_dict_contain_correct_stages(
                 # Completed stages are only stored in the last timestep of the
                 # graph.
                 if not isinstance(json_graph, List):
+                    print(
+                        "Error, the json_graph is of type:"
+                        + f"{type(json_graph)}, with content:"
+                    )
                     raise TypeError(
                         "Error, the json_graph is of type:"
-                        f"{type(json_graph)}, with content:{json_graph}"
+                        f"{type(json_graph)}, with content:"
                     )
+                # The non input SNN graphs are lists of graphs, 1 per
+                # timestep, so get the completed stages property from the
+                # last one of that list.
+                print(f"graph_name={graph_name}")
                 completed_stages = json_graph[-1]["graph"]["completed_stages"]
             else:
                 raise Exception(
-                    "Error, stage:{expected_stages[-1]} is "
+                    f"Error, stage:{expected_stages[-1]} is "
                     "not yet supported in this check."
                 )
             if expected_stage not in completed_stages:

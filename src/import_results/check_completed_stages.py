@@ -57,8 +57,6 @@ def has_outputted_stage(
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
-            print("filepath")
-            print(filepath)
             return False
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.
@@ -68,13 +66,10 @@ def has_outputted_stage(
                     run_config, stage_index, to_run
                 )
             except KeyError:
-                print("keyerror")
                 return False
             except ValueError:
-                print("valerr")
                 return False
             except TypeError:
-                print("typerror")
                 return False
             if stage_index == 4:
                 return has_valid_json_results(json_graphs, run_config, to_run)
