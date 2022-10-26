@@ -174,9 +174,7 @@ class Stage_4_graphs:
 
 
 def output_stage_json(
-    results_nx_graphs: dict,
-    filename: str,
-    stage_index: int,
+    results_nx_graphs: dict, filename: str, stage_index: int, to_run: dict
 ):
     """Exports results dict to a json file."""
 
@@ -190,7 +188,7 @@ def output_stage_json(
         results_nx_graphs, results_nx_graphs["run_config"]
     )
     verify_results_nx_graphs_contain_expected_stages(
-        results_nx_graphs, stage_index
+        results_nx_graphs, stage_index, to_run
     )
 
     results_json_graphs = convert_digraphs_to_json(

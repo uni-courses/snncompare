@@ -5,8 +5,7 @@ from src.export_results.Output import output_stage_json, plot_graph_behaviours
 
 
 def output_stage_files_3_and_4(
-    results_nx_graphs,
-    stage_index: int,
+    results_nx_graphs, stage_index: int, to_run: dict
 ):
     """Merges the experiment configuration dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
@@ -44,6 +43,7 @@ def output_stage_files_3_and_4(
                 results_nx_graphs,
                 filename,
                 stage_index,
+                to_run,
             )
         else:
             raise Exception("Error export_snns should not be exported.")

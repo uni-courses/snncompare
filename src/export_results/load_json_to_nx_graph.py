@@ -54,7 +54,7 @@ def json_dicts_of_graph_results_exist(
 
 
 def load_json_to_nx_graph_from_file(
-    run_config: dict, stage_index: int
+    run_config: dict, stage_index: int, to_run: dict
 ) -> dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
     exists, and then loads them back as json dicts.
@@ -72,7 +72,7 @@ def load_json_to_nx_graph_from_file(
         nx_graph = json_graph.node_link_graph(graph)
         nx_graphs_dict[graph_name] = nx_graph
     verify_results_nx_graphs_contain_expected_stages(
-        {"graphs_dict": nx_graphs_dict}, stage_index
+        {"graphs_dict": nx_graphs_dict}, stage_index, to_run
     )
     return nx_graphs_dict
 

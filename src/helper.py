@@ -805,7 +805,7 @@ def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
     verify_networkx_snn_spec(G, t=0)
 
 
-def get_expected_stage(
+def get_expected_stages(
     export_snns: bool, stage_index: int, to_run: dict
 ) -> List[int]:
     """Computes which stages should be expected at this stage of the

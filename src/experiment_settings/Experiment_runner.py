@@ -140,7 +140,7 @@ class Experiment_runner:
             }
 
             # Exports results, including graphs as dict.
-            output_files_stage_1_and_2(results_nx_graphs, 1)
+            output_files_stage_1_and_2(results_nx_graphs, 1, to_run)
         else:
             results_nx_graphs = load_results_stage_1(run_config)
 
@@ -173,7 +173,7 @@ class Experiment_runner:
                 if has_outputted_stage(results_nx_graphs["run_config"], 2):
                     # Load results from file.
                     nx_graphs_dict = load_json_to_nx_graph_from_file(
-                        results_nx_graphs["run_config"], 2
+                        results_nx_graphs["run_config"], 2, to_run
                     )
                     results_nx_graphs["graphs_dict"] = nx_graphs_dict
 
@@ -185,7 +185,7 @@ class Experiment_runner:
                 results_nx_graphs["graphs_dict"],
                 results_nx_graphs["run_config"],
             )
-            output_files_stage_1_and_2(results_nx_graphs, 2)
+            output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
         assert_stage_is_completed(results_nx_graphs["run_config"], 2)
 
     def __perform_run_stage_3(
@@ -212,7 +212,7 @@ class Experiment_runner:
             print("Generating plots for stage 3.")
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
-            output_stage_files_3_and_4(results_nx_graphs, 3)
+            output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
             print('"Done generating output plots for stage 3.')
             assert_stage_is_completed(results_nx_graphs["run_config"], 3)
 

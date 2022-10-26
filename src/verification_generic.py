@@ -10,7 +10,7 @@ def verify_completed_stages_list(completed_stages: List) -> None:
     """
     start_stage = completed_stages[0]
     for next_stage in completed_stages[1:]:
-        if start_stage != next_stage - 1:
+        if start_stage >= next_stage:
             raise Exception(
                 f"Stage indices are not consecutive:{completed_stages}."
             )

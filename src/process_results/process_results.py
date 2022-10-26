@@ -15,7 +15,7 @@ from src.export_results.Output_stage_34 import output_stage_files_3_and_4
 from src.export_results.verify_nx_graphs import (
     verify_nx_graph_contains_correct_stages,
 )
-from src.helper import add_stage_completion_to_graph, get_expected_stage
+from src.helper import add_stage_completion_to_graph, get_expected_stages
 from src.import_results.check_completed_stages import (
     nx_graphs_have_completed_stage,
 )
@@ -97,10 +97,10 @@ def export_results_to_json(
         verify_nx_graph_contains_correct_stages(
             graph_name,
             nx_graph,
-            get_expected_stage(export_snns, stage_index, to_run),
+            get_expected_stages(export_snns, stage_index, to_run),
         )
 
-    output_stage_files_3_and_4(results_nx_graphs, 4)
+    output_stage_files_3_and_4(results_nx_graphs, 4, to_run)
 
 
 def add_result_to_last_graph(snn_graphs, result_per_type: dict):
