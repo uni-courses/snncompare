@@ -183,7 +183,6 @@ def output_stage_json(
             "Error, the graphs_of_stage of stage_index="
             + f"{stage_index} was an empty dict."
         )
-    print(f"verified incoming results_nx_graphs for outputting:{stage_index}")
     verify_results_nx_graphs(
         results_nx_graphs, results_nx_graphs["run_config"]
     )

@@ -19,7 +19,7 @@ from src.export_results.verify_nx_graphs import (
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.helper import file_exists
+from src.helper import file_exists, get_expected_stages
 
 
 def json_to_digraph(json_data):
@@ -66,7 +66,7 @@ def load_json_to_nx_graph_from_file(
     nx_graphs_dict = {}
     # Load existing graph dict if it already exists, and if overwrite is off.
     json_graphs_dict: dict = load_pre_existing_graph_dict(
-        run_config, stage_index
+        run_config, stage_index, to_run
     )
     for graph_name, graph in json_graphs_dict.items():
         nx_graph = json_graph.node_link_graph(graph)
@@ -77,7 +77,9 @@ def load_json_to_nx_graph_from_file(
     return nx_graphs_dict
 
 
-def load_pre_existing_graph_dict(run_config, stage_index) -> dict:
+def load_pre_existing_graph_dict(
+    run_config: dict, stage_index: int, to_run: dict
+) -> dict:
     """Returns the pre-existing graphs that were generated during earlier
     stages of the experiment.
 
@@ -95,7 +97,12 @@ def load_pre_existing_graph_dict(run_config, stage_index) -> dict:
     if stage_index == 3:
         return load_verified_json_graphs_from_json(run_config, [1, 2, 3])
     if stage_index == 4:
-        return load_verified_json_graphs_from_json(run_config, [1, 2, 3, 4])
+        return load_verified_json_graphs_from_json(
+            run_config,
+            get_expected_stages(
+                run_config["export_snns"], stage_index, to_run
+            ),
+        )
     raise Exception("Error, unexpected stage_index.")
 
 

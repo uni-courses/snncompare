@@ -9,17 +9,10 @@ def verify_json_graphs_dict_contain_correct_stages(
     graph."""
     for expected_stage in expected_stages:
         for graph_name, json_graph in json_graphs.items():
-            #            print(f'graph={graph}')
-            print(f"{graph_name}, type={type(json_graph)}")
-            for elem in json_graph:
-                print(type(elem))
-                if isinstance(elem, dict):
-                    for key in elem.keys():
-                        print(f"key={key}")
             if expected_stages[-1] == 1:
                 completed_stages = json_graph["graph"]["completed_stages"]
 
-            elif expected_stages[-1] == 2:
+            elif expected_stages[-1] in [2, 4]:
                 # TODO: determine why this is a list of graphs, instead of a
                 # graph with list of nodes.
                 # Completed stages are only stored in the last timestep of the

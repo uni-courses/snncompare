@@ -144,7 +144,7 @@ class Experiment_runner:
         else:
             results_nx_graphs = load_results_stage_1(run_config)
 
-        assert_stage_is_completed(run_config, 1)
+        assert_stage_is_completed(run_config, 1, to_run)
         return results_nx_graphs
 
     def __perform_run_stage_2(
@@ -170,7 +170,9 @@ class Experiment_runner:
                 # not loaded, perform simulation.
 
                 # TODO: check if the graphs can be loaded from file,
-                if has_outputted_stage(results_nx_graphs["run_config"], 2):
+                if has_outputted_stage(
+                    results_nx_graphs["run_config"], 2, to_run
+                ):
                     # Load results from file.
                     nx_graphs_dict = load_json_to_nx_graph_from_file(
                         results_nx_graphs["run_config"], 2, to_run
@@ -186,7 +188,7 @@ class Experiment_runner:
                 results_nx_graphs["run_config"],
             )
             output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
-        assert_stage_is_completed(results_nx_graphs["run_config"], 2)
+        assert_stage_is_completed(results_nx_graphs["run_config"], 2, to_run)
 
     def __perform_run_stage_3(
         self,
@@ -214,7 +216,9 @@ class Experiment_runner:
             # stage 4 graphs
             output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
             print('"Done generating output plots for stage 3.')
-            assert_stage_is_completed(results_nx_graphs["run_config"], 3)
+            assert_stage_is_completed(
+                results_nx_graphs["run_config"], 3, to_run
+            )
 
     def __perform_run_stage_4(
         self, export_snns: bool, results_nx_graphs: dict, to_run: dict
@@ -229,11 +233,8 @@ class Experiment_runner:
             results_nx_graphs["run_config"],
             results_nx_graphs["graphs_dict"],
         )
-        for graph_name, graph in results_nx_graphs["graphs_dict"].items():
-            print(f"graph_name={graph_name}")
-            print(graph.graph.keys())
         export_results_to_json(export_snns, results_nx_graphs, 4, to_run)
-        assert_stage_is_completed(results_nx_graphs["run_config"], 4)
+        assert_stage_is_completed(results_nx_graphs["run_config"], 4, to_run)
 
 
 def experiment_config_to_run_configs(experiment_config: dict):
@@ -351,10 +352,7 @@ def determine_what_to_run(run_config) -> dict:
 
     # Check if the input graphs exist, (the graphs that can still be adapted.)
     if (
-        not has_outputted_stage(
-            run_config,
-            1,
-        )
+        not has_outputted_stage(run_config, 1, to_run)
         or run_config["overwrite_sim_results"]
     ):
         # If original graphs do not yet exist, or a manual overwrite is
@@ -366,13 +364,13 @@ def determine_what_to_run(run_config) -> dict:
     # Check if the incoming graphs have been supplemented with adaptation
     # and/or radiation.
     if (
-        not has_outputted_stage(run_config, 2)
+        not has_outputted_stage(run_config, 2, to_run)
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
-        not has_outputted_stage(run_config, 3)
+        not has_outputted_stage(run_config, 3, to_run)
         and (run_config["export_snns"] or run_config["show_snns"])
     ) or run_config["overwrite_visualisation"]:
         # Note this allows the user to create inconsistent simulation
@@ -387,7 +385,7 @@ def determine_what_to_run(run_config) -> dict:
     # Throw warning to user about potential discrepancy between graph
     # behaviour and old visualisation.
     if (
-        has_outputted_stage(run_config, 3)
+        has_outputted_stage(run_config, 3, to_run)
         and run_config["overwrite_sim_results"]
         and not run_config["overwrite_visualisation"]
     ):

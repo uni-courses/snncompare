@@ -12,6 +12,7 @@ import unittest
 
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
+    determine_what_to_run,
     example_experiment_config,
 )
 from src.export_results.helper import run_config_to_filename
@@ -77,6 +78,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         completed."""
 
         for run_config in self.experiment_runner.run_configs:
+            to_run = determine_what_to_run(run_config)
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
             )
@@ -124,13 +126,13 @@ class Test_stage_1_output_json(unittest.TestCase):
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
             print("first test")
-            self.assertTrue(has_outputted_stage(run_config, 1))
+            self.assertTrue(has_outputted_stage(run_config, 1, to_run))
 
             # Test for stage 1, 2, and 4.
-            self.assertFalse(has_outputted_stage(run_config, 2))
+            self.assertFalse(has_outputted_stage(run_config, 2, to_run))
             self.assertEqual(
-                has_outputted_stage(run_config, 3), self.export_snns
+                has_outputted_stage(run_config, 3, to_run), self.export_snns
             )
-            self.assertFalse(has_outputted_stage(run_config, 4))
+            self.assertFalse(has_outputted_stage(run_config, 4, to_run))
 
             # TODO: write test for stage 3.

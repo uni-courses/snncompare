@@ -92,8 +92,6 @@ def export_results_to_json(
 
     # Export graphs with embedded results to json.
     for graph_name, nx_graph in stage_4_graphs.items():
-        print(f"graph_name={graph_name}")
-        print(nx_graph.graph.keys())
         verify_nx_graph_contains_correct_stages(
             graph_name,
             nx_graph,

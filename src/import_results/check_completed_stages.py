@@ -14,15 +14,14 @@ from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 from src.graph_generation.stage_1_get_input_graphs import get_input_graph
-from src.helper import get_extensions_list
+from src.helper import get_expected_stages, get_extensions_list
 
 # from src.import_results.read_json import load_results_from_json
 
 
 # pylint: disable=R0912
 def has_outputted_stage(
-    run_config: dict,
-    stage_index: int,
+    run_config: dict, stage_index: int, to_run: dict
 ) -> bool:
     """Checks whether the the required output files exist, for a given
     simulation and whether their content is valid. Returns True if the file
@@ -58,21 +57,23 @@ def has_outputted_stage(
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
+            print("filepath")
             return False
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.
             # TODO: separate loading and checking if it can be loaded.
             try:
                 json_graphs = load_pre_existing_graph_dict(
-                    run_config, stage_index
+                    run_config, stage_index, to_run
                 )
             except KeyError:
+                print("keyerror")
                 return False
             except ValueError:
+                print("valerr")
                 return False
             if stage_index == 4:
-                # TODO: check if 4 is completed using
-                return has_valid_json_results(json_graphs, run_config)
+                return has_valid_json_results(json_graphs, run_config, to_run)
     return True
 
 
@@ -123,7 +124,9 @@ def stage_4_results_exist(nx_graphs: dict) -> bool:
 
 
 # pylint: disable=R1702
-def has_valid_json_results(json_graphs: dict, run_config: dict) -> bool:
+def has_valid_json_results(
+    json_graphs: dict, run_config: dict, to_run: dict
+) -> bool:
     """Checks if the json_graphs contain the expected results.
 
     TODO: support different algorithms.
@@ -142,18 +145,31 @@ def has_valid_json_results(json_graphs: dict, run_config: dict) -> bool:
                 ):
                     print("Graph name not set")
                     return False
+
+                expected_stages = get_expected_stages(
+                    run_config["export_snns"], 4, to_run
+                )
+
                 for graph_name, json_graph in json_graphs.items():
                     if graph_name in graphnames_with_results:
-                        if "results" not in json_graph["graph"].keys():
-                            print(json_graph.keys())
-                            print(type(json_graph))
+
+                        if expected_stages[-1] == 1:
+                            graph_properties = json_graph["graph"]
+
+                        elif expected_stages[-1] in [2, 4]:
+                            # TODO: determine why this is a list of graphs,
+                            # instead of a graph with list of nodes.
+                            # Completed stages are only stored in the last
+                            # timestep of the graph.
+                            graph_properties = json_graph[-1]["graph"]
+                        else:
+                            raise Exception(
+                                "Error, stage:{expected_stages[-1]} is "
+                                "not yet supported in this check."
+                            )
+                        if "results" not in graph_properties.keys():
+                            print(graph_properties.keys())
                             return False
-                        # if not isinstance(graph, (nx.DiGraph, nx.Graph)):
-                        #    print('wrong type')
-                        #    return False
-                        # if "results" not in graph.graph.keys():
-                        #    print('not in keys type')
-                        #    return False
                 return True
             raise Exception(
                 "Error, m_val setting is not of type int:"

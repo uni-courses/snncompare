@@ -12,6 +12,7 @@ import unittest
 
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
+    determine_what_to_run,
     example_experiment_config,
 )
 from src.export_results.helper import run_config_to_filename
@@ -79,6 +80,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         is not yet completed."""
 
         for run_config in self.experiment_runner.run_configs:
+            to_run = determine_what_to_run(run_config)
             print("\n\n\n")
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
@@ -133,10 +135,10 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
-            self.assertTrue(has_outputted_stage(run_config, 1))
+            self.assertTrue(has_outputted_stage(run_config, 1, to_run))
 
             # Test for stage 1, 2, and 4.
-            self.assertTrue(has_outputted_stage(run_config, 2))
+            self.assertTrue(has_outputted_stage(run_config, 2, to_run))
 
             sim_duration = get_sim_duration(
                 stage_1_output_dict["graphs_dict"]["input_graph"],
@@ -146,7 +148,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 "retry after dummy image creation, sim_duration="
                 + f"{sim_duration}"
             )
-            self.assertTrue(has_outputted_stage(run_config, 3))
-            self.assertFalse(has_outputted_stage(run_config, 4))
+            self.assertTrue(has_outputted_stage(run_config, 3, to_run))
+            self.assertFalse(has_outputted_stage(run_config, 4, to_run))
 
             # TODO: write test for stage 3.

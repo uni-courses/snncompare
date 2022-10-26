@@ -818,6 +818,5 @@ def get_expected_stages(
     if export_snns:
         if 3 not in expected_stages:
             expected_stages.append(3)
-    print(f"expected_stages={expected_stages}")
     # Sort and remove dupes.
     return list(set(sorted(expected_stages)))
