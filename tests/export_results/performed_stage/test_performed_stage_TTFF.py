@@ -10,6 +10,8 @@ import os
 import shutil
 import unittest
 
+import networkx as nx
+
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
@@ -22,6 +24,7 @@ from src.export_results.verify_stage_1_graphs import (
 )
 from src.graph_generation.stage_1_get_input_graphs import get_input_graph
 from src.import_results.check_completed_stages import has_outputted_stage
+from src.import_results.read_json import load_results_from_json
 from tests.tests_helper import (
     create_result_file_for_testing,
     get_n_random_run_configs,
@@ -94,39 +97,39 @@ class Test_stage_1_output_json(unittest.TestCase):
             )
 
             # Read output JSON file into dict.
-            # stage_1_output_dict = load_results_from_json(
-            #    json_filepath, run_config
-            # )
-            #
+            stage_1_output_dict = load_results_from_json(
+                json_filepath, run_config
+            )
+
             # Verify the 3 dicts are in the result dict.
-            # self.assertIn("experiment_config", stage_1_output_dict)
-            # self.assertIn("run_config", stage_1_output_dict)
-            # self.assertIn("graphs_dict", stage_1_output_dict)
-            # self#.assertIn(
-            # "alg_props",
-            #    #stage_1_output_dict["graphs_dict"]["input_graph"].graph,
-            # )#
-            #
-            #            # Verify the right graphs are within the graphs_dict.
-            #            for #graph_name in stage_1_graph_names:
-            #                #self#.assertIn(
-            #    #graph_name, stage_1_output_dict["graphs_dict"].keys()
-            # )#
-            #
+            self.assertIn("experiment_config", stage_1_output_dict)
+            self.assertIn("run_config", stage_1_output_dict)
+            self.assertIn("graphs_dict", stage_1_output_dict)
+            self.assertIn(
+                "alg_props",
+                stage_1_output_dict["graphs_dict"]["input_graph"].graph,
+            )
+
+            # Verify the right graphs are within the graphs_dict.
+            for graph_name in stage_1_graph_names:
+                self.assertIn(
+                    graph_name, stage_1_output_dict["graphs_dict"].keys()
+                )
+
             # Verify each graph has the right completed stages attribute.
-            # for #graph_name, json_graph in stage_1_output_dict[
-            # "graphs_dict"
-            # ].it#ems():
-            # self#.assertEqual(
-            #    #stag#e_1_output_dict["graphs_dict"][graph_name].graph[
-            #    #"completed_stages"
-            # ],#
-            #    #self.expected_completed_stages,
-            # )#
-            #
-            #                # Assert the types of the graphs is valid.
-            # self.assertIsInstance(json_graph, (nx.Graph, nx.DiGraph))
-            #
+            for graph_name, json_graph in stage_1_output_dict[
+                "graphs_dict"
+            ].items():
+                self.assertEqual(
+                    stage_1_output_dict["graphs_dict"][graph_name].graph[
+                        "completed_stages"
+                    ],
+                    self.expected_completed_stages,
+                )
+
+                # Assert the types of the graphs is valid.
+                self.assertIsInstance(json_graph, (nx.Graph, nx.DiGraph))
+
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
             self.assertTrue(has_outputted_stage(run_config, 1, to_run))
@@ -138,5 +141,3 @@ class Test_stage_1_output_json(unittest.TestCase):
                 has_outputted_stage(run_config, 3, to_run), self.export_snns
             )
             self.assertFalse(has_outputted_stage(run_config, 4, to_run))
-
-            # TODO: write test for stage 3.
