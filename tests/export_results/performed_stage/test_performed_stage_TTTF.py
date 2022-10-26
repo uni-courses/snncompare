@@ -10,6 +10,8 @@ import os
 import shutil
 import unittest
 
+import networkx as nx
+
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
@@ -21,7 +23,7 @@ from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 from src.graph_generation.stage_1_get_input_graphs import get_input_graph
-from src.helper import get_extensions_list, get_sim_duration
+from src.helper import get_extensions_list
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_from_json
 from tests.tests_helper import (
@@ -81,7 +83,6 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         for run_config in self.experiment_runner.run_configs:
             to_run = determine_what_to_run(run_config)
-            print("\n\n\n")
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
             )
@@ -106,10 +107,11 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertIn("experiment_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
-            self.assertIn(
-                "alg_props",
-                stage_1_output_dict["graphs_dict"]["input_graph"].graph,
-            )
+            for nx_graph in stage_1_output_dict["graphs_dict"]["input_graph"]:
+                self.assertIn(
+                    "alg_props",
+                    nx_graph.graph,
+                )
 
             # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:
@@ -118,13 +120,22 @@ class Test_stage_1_output_json(unittest.TestCase):
                 )
 
             # Verify each graph has the right completed stages attribute.
-            for graph_name in stage_1_output_dict["graphs_dict"].keys():
-                self.assertEqual(
-                    stage_1_output_dict["graphs_dict"][graph_name].graph[
-                        "completed_stages"
-                    ],
-                    self.expected_completed_stages,
-                )
+            for graph_name, nx_graph in stage_1_output_dict[
+                "graphs_dict"
+            ].items():
+                for nx_graph_frame in stage_1_output_dict["graphs_dict"][
+                    "input_graph"
+                ]:
+                    self.assertEqual(
+                        nx_graph_frame.graph["completed_stages"],
+                        self.expected_completed_stages,
+                    )
+
+                    # Assert the types of the graphs is valid.
+                    if graph_name == "input_graph":
+                        self.assertIsInstance(nx_graph_frame, nx.Graph)
+                    else:
+                        self.assertIsInstance(nx_graph_frame, nx.DiGraph)
 
             create_dummy_output_images_stage_3(
                 stage_1_graph_names,
@@ -139,15 +150,6 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test for stage 1, 2, and 4.
             self.assertTrue(has_outputted_stage(run_config, 2, to_run))
-
-            sim_duration = get_sim_duration(
-                stage_1_output_dict["graphs_dict"]["input_graph"],
-                run_config,
-            )
-            print(
-                "retry after dummy image creation, sim_duration="
-                + f"{sim_duration}"
-            )
             self.assertTrue(has_outputted_stage(run_config, 3, to_run))
             self.assertFalse(has_outputted_stage(run_config, 4, to_run))
 

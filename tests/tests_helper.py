@@ -60,7 +60,7 @@ def create_result_file_for_testing(
         dummy_result = create_results_dict_for_testing_stage_1(
             graph_names, completed_stages, input_graph, run_config
         )
-    elif max(completed_stages) == 2:
+    elif max(completed_stages) in [2, 3]:
         dummy_result = create_results_dict_for_testing_stage_2(
             graph_names, completed_stages, input_graph, run_config
         )
