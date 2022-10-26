@@ -15,6 +15,7 @@ from src.export_results.Output_stage_34 import output_stage_files_3_and_4
 from src.export_results.verify_nx_graphs import (
     verify_nx_graph_contains_correct_stages,
 )
+from src.helper import add_stage_completion_to_graph, get_expected_stage
 from src.import_results.check_completed_stages import (
     nx_graphs_have_completed_stage,
 )
@@ -29,6 +30,10 @@ def set_results(run_config: dict, stage_2_graphs: dict) -> None:
                 set_mdsa_snn_results(
                     algo_settings["m_val"], run_config, stage_2_graphs
                 )
+                # Set completed stage.
+                # Indicate the graphs have completed stage 1.
+                for nx_graph in stage_2_graphs.values():
+                    add_stage_completion_to_graph(nx_graph, 4)
             else:
                 raise Exception(
                     "Error, m_val setting is not of type int:"
@@ -41,7 +46,12 @@ def set_results(run_config: dict, stage_2_graphs: dict) -> None:
             )
 
 
-def export_results(results_nx_graphs: dict):
+def export_results_to_json(
+    export_snns: bool,
+    results_nx_graphs: dict,
+    stage_index: int,
+    to_run: dict,
+):
     """Integrates the results per graph type into the graph, then export the
     results dictionary (again) into the stage 4 folder."""
     # Create new independent graphs dict to include the results.
@@ -85,7 +95,9 @@ def export_results(results_nx_graphs: dict):
         print(f"graph_name={graph_name}")
         print(nx_graph.graph.keys())
         verify_nx_graph_contains_correct_stages(
-            graph_name, nx_graph, [1, 2, 3, 4]
+            graph_name,
+            nx_graph,
+            get_expected_stage(export_snns, stage_index, to_run),
         )
 
     output_stage_files_3_and_4(results_nx_graphs, 4)

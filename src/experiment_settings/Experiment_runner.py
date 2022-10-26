@@ -35,7 +35,10 @@ from src.export_results.verify_nx_graphs import verify_results_nx_graphs
 from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
 from src.import_results.check_completed_stages import has_outputted_stage
 from src.import_results.stage_1_load_input_graphs import load_results_stage_1
-from src.process_results.process_results import export_results, set_results
+from src.process_results.process_results import (
+    export_results_to_json,
+    set_results,
+)
 from src.simulation.stage2_sim import sim_graphs
 
 
@@ -92,7 +95,7 @@ class Experiment_runner:
         self.run_configs = self.__perform_run(self.experiment_config)
 
     # pylint: disable=W0238
-    def __perform_run(self, experiment_config):
+    def __perform_run(self, experiment_config: dict):
         """Private method that performs a run of the experiment.
 
         The 2 underscores indicate it is private. This method executes
@@ -108,7 +111,11 @@ class Experiment_runner:
             )
             self.__perform_run_stage_2(results_nx_graphs, to_run)
             self.__perform_run_stage_3(results_nx_graphs, to_run)
-            self.__perform_run_stage_4(results_nx_graphs)
+            self.__perform_run_stage_4(
+                self.experiment_config["export_snns"],
+                results_nx_graphs,
+                to_run,
+            )
 
         return run_configs
 
@@ -210,8 +217,7 @@ class Experiment_runner:
             assert_stage_is_completed(results_nx_graphs["run_config"], 3)
 
     def __perform_run_stage_4(
-        self,
-        results_nx_graphs: dict,
+        self, export_snns: bool, results_nx_graphs: dict, to_run: dict
     ) -> None:
         """Performs the run for stage 4.
 
@@ -226,7 +232,7 @@ class Experiment_runner:
         for graph_name, graph in results_nx_graphs["graphs_dict"].items():
             print(f"graph_name={graph_name}")
             print(graph.graph.keys())
-        export_results(results_nx_graphs)
+        export_results_to_json(export_snns, results_nx_graphs, 4, to_run)
         assert_stage_is_completed(results_nx_graphs["run_config"], 4)
 
 

@@ -803,3 +803,21 @@ def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
             )
         ]
     verify_networkx_snn_spec(G, t=0)
+
+
+def get_expected_stage(
+    export_snns: bool, stage_index: int, to_run: dict
+) -> List[int]:
+    """Computes which stages should be expected at this stage of the
+    experiment."""
+    expected_stages = list(range(1, stage_index + 1))
+
+    if not to_run["stage_3"]:
+        if 3 in expected_stages:
+            expected_stages.remove(3)
+    if export_snns:
+        if 3 not in expected_stages:
+            expected_stages.append(3)
+    print(f"expected_stages={expected_stages}")
+    # Sort and remove dupes.
+    return list(set(sorted(expected_stages)))
