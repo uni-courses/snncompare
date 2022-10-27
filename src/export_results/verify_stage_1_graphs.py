@@ -41,14 +41,14 @@ def get_expected_stage_1_graph_names(run_config: dict) -> List[str]:
     expected at the end of stage 1."""
 
     # TODO: make into hash
-    expected_graphs = ["input_graph", "snn_algo_graph"]
+    expected_graph_names = ["input_graph", "snn_algo_graph"]
     if has_adaptation(run_config):
-        expected_graphs.append("adapted_snn_graph")
+        expected_graph_names.append("adapted_snn_graph")
 
     if has_radiation(run_config):
-        expected_graphs.append("rad_snn_algo_graph")
-        expected_graphs.append("rad_adapted_snn_graph")
-    return expected_graphs
+        expected_graph_names.append("rad_snn_algo_graph")
+        expected_graph_names.append("rad_adapted_snn_graph")
+    return expected_graph_names
 
 
 def expected_graphs_are_in_dict(

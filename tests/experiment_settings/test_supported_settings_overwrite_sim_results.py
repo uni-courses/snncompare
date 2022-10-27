@@ -46,15 +46,15 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         missing from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Remove key and value of m.
-        experi_config.pop("overwrite_sim_results")
+        experiment_config.pop("overwrite_sim_results")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -62,7 +62,7 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         self.assertEqual(
             # "'overwrite_sim_results'",
             "Error:overwrite_sim_results is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -75,17 +75,17 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_experi_setts.overwrite_sim_results)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experi_config[
+            experiment_config[
                 "overwrite_sim_results"
             ] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
-                experi_config,
+                experiment_config,
                 expected_type,
                 self,
             )

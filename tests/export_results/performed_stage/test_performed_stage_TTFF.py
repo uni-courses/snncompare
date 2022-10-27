@@ -1,29 +1,30 @@
-"""Performs tests check whether the performed_stage function correctly
+"""Performs tests check whether the has_outputted_stage function correctly
 determines which stages have been completed and not for:
 Stage1=Done
 Stage2=Done
-Stage3=Done
-Stage4=TODO
+Stage3=Not yet done.
+Stage4=Not yet done.
 ."""
 
 import os
 import shutil
 import unittest
 
+import networkx as nx
+
 from src.experiment_settings.Experiment_runner import (
     Experiment_runner,
-    example_experi_config,
+    determine_what_to_run,
+    example_experiment_config,
 )
 from src.export_results.helper import run_config_to_filename
 from src.export_results.plot_graphs import create_root_dir_if_not_exists
 from src.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
-from src.import_results.stage_1_load_input_graphs import (
-    load_results_from_json,
-    performed_stage,
-)
+from src.graph_generation.stage_1_get_input_graphs import get_input_graph
+from src.import_results.check_completed_stages import has_outputted_stage
+from src.import_results.read_json import load_results_from_json
 from tests.tests_helper import (
     create_result_file_for_testing,
     get_n_random_run_configs,
@@ -48,14 +49,14 @@ class Test_stage_1_output_json(unittest.TestCase):
         create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
-        self.experi_config: dict = example_experi_config()
-        self.input_graph = get_networkx_graph_of_2_neurons()
+        self.experiment_config: dict = example_experiment_config()
+        # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2]
         self.export_snns = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
-            self.experi_config,
+            self.experiment_config,
             export_snns=self.export_snns,
             show_snns=False,
         )
@@ -73,11 +74,13 @@ class Test_stage_1_output_json(unittest.TestCase):
 
     # Test: Deleting all results says none of the stages have been performed.
     def test_output_json_contains_(self):
-        """Tests whether the output function creates a json that can be read as
-        a dict that contains an experi_config, a graphs_dict, and a
-        run_config."""
+        """Tests whether deleting all results and creating an artificial json
+        with only stage 1 and 2 completed, results in has_outputted_stage()
+        returning that only stage 1 and 2 are completed, and that stages 3 and
+        4 are not yet completed."""
 
         for run_config in self.experiment_runner.run_configs:
+            to_run = determine_what_to_run(run_config)
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
             )
@@ -89,7 +92,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath,
                 stage_1_graph_names,
                 self.expected_completed_stages,
-                self.input_graph,
+                get_input_graph(run_config),
                 run_config,
             )
 
@@ -102,10 +105,11 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertIn("experiment_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
-            self.assertIn(
-                "alg_props",
-                stage_1_output_dict["graphs_dict"]["input_graph"].graph,
-            )
+            for nx_graph in stage_1_output_dict["graphs_dict"]["input_graph"]:
+                self.assertIn(
+                    "alg_props",
+                    nx_graph.graph,
+                )
 
             # Verify the right graphs are within the graphs_dict.
             for graph_name in stage_1_graph_names:
@@ -114,21 +118,31 @@ class Test_stage_1_output_json(unittest.TestCase):
                 )
 
             # Verify each graph has the right completed stages attribute.
-            for graph_name in stage_1_output_dict["graphs_dict"].keys():
-                self.assertEqual(
-                    stage_1_output_dict["graphs_dict"][graph_name].graph[
-                        "completed_stages"
-                    ],
-                    self.expected_completed_stages,
-                )
+            for graph_name, nx_graph in stage_1_output_dict[
+                "graphs_dict"
+            ].items():
+                for nx_graph_frame in stage_1_output_dict["graphs_dict"][
+                    "input_graph"
+                ]:
+                    self.assertEqual(
+                        nx_graph_frame.graph["completed_stages"],
+                        self.expected_completed_stages,
+                    )
+
+                    # Assert the types of the graphs is valid.
+                    if graph_name == "input_graph":
+                        self.assertIsInstance(nx_graph_frame, nx.Graph)
+                    else:
+                        self.assertIsInstance(nx_graph_frame, nx.DiGraph)
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
-            self.assertTrue(performed_stage(run_config, 1))
+            self.assertTrue(has_outputted_stage(run_config, 1, to_run))
 
             # Test for stage 1, 2, and 4.
-            self.assertTrue(performed_stage(run_config, 2))
-            self.assertEqual(performed_stage(run_config, 3), self.export_snns)
-            self.assertFalse(performed_stage(run_config, 4))
-
-            # TODO: write test for stage 3.
+            print("ASSERTING output stage 2 is completed.")
+            self.assertTrue(has_outputted_stage(run_config, 2, to_run))
+            self.assertEqual(
+                has_outputted_stage(run_config, 3, to_run), self.export_snns
+            )
+            self.assertFalse(has_outputted_stage(run_config, 4, to_run))

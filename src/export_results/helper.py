@@ -1,6 +1,11 @@
 """Contains helper functions for exporting simulation results."""
 import collections
 import copy
+from typing import List
+
+import networkx as nx
+
+from src.helper import get_sim_duration
 
 
 def flatten(d, parent_key="", sep="_"):
@@ -48,3 +53,40 @@ def run_config_to_filename(run_config: dict) -> str:
     if len(filename) > 256:
         raise Exception(f"Filename={filename} is too long:{len(filename)}")
     return filename
+
+
+def get_expected_image_paths_stage_3(
+    graph_names: List[str],
+    input_graph: nx.DiGraph,
+    run_config: dict,
+    extensions,
+) -> List:
+    """Returns the expected image filepaths for stage 3.
+
+    (If export is on).
+    """
+    image_filepaths = []
+    filename: str = run_config_to_filename(run_config)
+
+    if "alg_props" not in input_graph.graph.keys():
+        raise Exception("Error, algo_props is not set.")
+
+    sim_duration = get_sim_duration(
+        input_graph,
+        run_config,
+    )
+
+    # TODO: move this into hardcoded setting.
+    image_dir = "latex/Images/graphs/"
+    for extension in extensions:
+        for graph_name in graph_names:
+            if graph_name == "input_graph":
+                image_filepaths.append(
+                    f"results/{graph_name}_{filename}{extension}"
+                )
+            else:
+                for t in range(0, sim_duration):
+                    image_filepaths.append(
+                        image_dir + f"{graph_name}_{filename}_{t}{extension}"
+                    )
+    return image_filepaths

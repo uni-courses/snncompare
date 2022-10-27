@@ -581,7 +581,7 @@ def get_alipour_labels(G, configuration):
 
 
 # checks if file exists
-def file_exists(string):
+def file_exists(filepath: str) -> bool:
     """
 
     :param string:
@@ -589,7 +589,7 @@ def file_exists(string):
     """
     # TODO: Execute Path(string).is_file() directly instead of calling this
     # function.
-    my_file = Path(string)
+    my_file = Path(filepath)
     return my_file.is_file()
 
 
@@ -672,10 +672,9 @@ def is_identical(
     """
 
     # Check whether all values in original dict are in the excluded keys
-    for key, val in original.items():
+    for key in original.keys():
         if key not in other.keys():
             if key not in excluded_keys:
-                print(f"key={key} missing.")
                 return False
 
         # Check if the values are identical for the given key.
@@ -683,10 +682,6 @@ def is_identical(
             if isinstance(other[key], type(original[key])):
                 if other[key] != original[key]:
                     if key not in excluded_keys:
-                        print(
-                            f"key={key} original val:{original[key]}, other "
-                            + f"val:{other[key]}, actual val:{val}."
-                        )
                         return False
             else:
                 return False
@@ -722,6 +717,7 @@ def get_extensions_dict(run_config, stage_index) -> dict:
         return {"config_and_graphs": ".json"}
     if stage_index == 3:
         # TODO: support .eps and/or .pdf.
+        # TODO: verify graphs, or graphs_dict
         return {"graphs": ".png"}
     if stage_index == 4:
         return {"config_graphs_and_results": ".json"}
@@ -731,25 +727,32 @@ def get_extensions_dict(run_config, stage_index) -> dict:
 def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
     """Adds the completed stage to the list of completed stages for the
     incoming graph."""
+    # Initialise the completed_stages key.
     if stage_index == 1:
         if "completed_stages" in some_graph.graph:
             raise Exception(
                 "Error, the completed_stages parameter is"
                 + f"already created for stage 1{some_graph.graph}:"
             )
-        some_graph.graph["completed_stages"] = [stage_index]
+        some_graph.graph["completed_stages"] = []
+
+    # After stage 1, the completed_stages key should already be a list.
     elif not isinstance(some_graph.graph["completed_stages"], list):
         raise Exception(
             "Error, the completed_stages parameter is not of type"
             + "list. instead, it is of type:"
             + f'{type(some_graph.graph["completed_stages"])}'
         )
-    elif stage_index in some_graph.graph["completed_stages"]:
-        # TODO: check if overwrite is on before throwing this error.
+
+    # At this point, the completed_stages key should not contain the current
+    # stage index already..
+    if stage_index in some_graph.graph["completed_stages"]:
         raise Exception(
-            f"Error, stage:{stage_index} is already completed for"
-            + f' this graph:{some_graph.graph["completed_stages"]}.'
+            f"Error, the stage:{stage_index} is already in the completed_stage"
+            f's: {some_graph.graph["completed_stages"]}'
         )
+
+    # Add the completed stages key to the snn graph.
     some_graph.graph["completed_stages"].append(stage_index)
 
 
@@ -769,6 +772,7 @@ def get_sim_duration(
                 * (algo_settings["m_val"] + 1)
                 + 10
             )
+
             if not isinstance(sim_time, int):
                 raise Exception(
                     "Error, sim_time is not an int."
@@ -780,7 +784,6 @@ def get_sim_duration(
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
     raise Exception("Error, the simulation time was not found.")
-
 
 
 def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
@@ -800,3 +803,20 @@ def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
             )
         ]
     verify_networkx_snn_spec(G, t=0)
+
+
+def get_expected_stages(
+    export_snns: bool, stage_index: int, to_run: dict
+) -> List[int]:
+    """Computes which stages should be expected at this stage of the
+    experiment."""
+    expected_stages = list(range(1, stage_index + 1))
+
+    if not to_run["stage_3"]:
+        if 3 in expected_stages:
+            expected_stages.remove(3)
+    if export_snns:
+        if 3 not in expected_stages:
+            expected_stages.append(3)
+    # Sort and remove dupes.
+    return list(set(sorted(expected_stages)))

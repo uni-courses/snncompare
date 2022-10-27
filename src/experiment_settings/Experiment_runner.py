@@ -1,10 +1,9 @@
-"""Contains a single setting of the experiment configuration settings.
+"""Contains the object that runs the entire experiment. Also Contains a single
+setting of the experiment configuration settings.
 
 (The values of the settings may vary, yet the types should be the same.)
 """
 
-
-from pprint import pprint
 
 from src.experiment_settings.Adaptation_Rad_settings import (
     Adaptations_settings,
@@ -22,190 +21,227 @@ from src.experiment_settings.verify_experiment_settings import (
     verify_experiment_config,
     verify_has_unique_id,
 )
-from src.experiment_settings.verify_run_settings import verify_run_config
-from src.export_results.Output import output_files_stage_1, output_stage_files
-from src.export_results.plot_graphs import create_root_dir_if_not_exists
-from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
-from src.import_results.stage_1_load_input_graphs import (
-    load_results_stage_1,
-    performed_stage,
+from src.experiment_settings.verify_run_completion import (
+    assert_stage_is_completed,
 )
-from src.process_results.process_results import export_results, get_results
+from src.experiment_settings.verify_run_settings import verify_run_config
+from src.export_results.load_json_to_nx_graph import (
+    load_json_to_nx_graph_from_file,
+)
+from src.export_results.Output_stage_12 import output_files_stage_1_and_2
+from src.export_results.Output_stage_34 import output_stage_files_3_and_4
+from src.export_results.plot_graphs import create_root_dir_if_not_exists
+from src.export_results.verify_nx_graphs import verify_results_nx_graphs
+from src.graph_generation.stage_1_get_input_graphs import get_used_graphs
+from src.import_results.check_completed_stages import has_outputted_stage
+from src.import_results.stage_1_load_input_graphs import load_results_stage_1
+from src.process_results.process_results import (
+    export_results_to_json,
+    set_results,
+)
 from src.simulation.stage2_sim import sim_graphs
 
 
 class Experiment_runner:
-    """Stores the configuration of a single run."""
+    """Experiment manager.
+
+    First prepares the environment for running the experiment, and then
+    calls a private method that executes the experiment consisting of 4
+    stages.
+    """
 
     # pylint: disable=R0903
 
     def __init__(
-        self, experi_config: dict, export_snns: bool, show_snns: bool
+        self, experiment_config: dict, export_snns: bool, show_snns: bool
     ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists("results")
 
         # Store the experiment configuration settings.
-        self.experi_config = experi_config
+        self.experiment_config = experiment_config
 
         # Load the ranges of supported settings.
         self.supp_experi_setts = Supported_experiment_settings()
 
-        # Verify the experiment experi_config are complete and valid.
+        # Verify the experiment experiment_config are complete and valid.
         # pylint: disable=R0801
         verify_experiment_config(
             self.supp_experi_setts,
-            experi_config,
+            experiment_config,
             has_unique_id=False,
             strict=True,
         )
 
-        # If the experiment experi_config does not contain a hash-code,
+        # If the experiment experiment_config does not contain a hash-code,
         # create the unique hash code for this configuration.
-        if not self.supp_experi_setts.has_unique_config_id(self.experi_config):
-            self.supp_experi_setts.append_unique_config_id(self.experi_config)
+        if not self.supp_experi_setts.has_unique_config_id(
+            self.experiment_config
+        ):
+            self.supp_experi_setts.append_unique_config_id(
+                self.experiment_config
+            )
 
         # Verify the unique hash code for this configuration is valid.
-        verify_has_unique_id(self.experi_config)
+        verify_has_unique_id(self.experiment_config)
 
         # Append the export_snns and show_snns arguments.
-        self.experi_config["export_snns"] = export_snns
-        print(f"export_snns={export_snns}")
-        self.experi_config["show_snns"] = show_snns
+        self.experiment_config["export_snns"] = export_snns
+        self.experiment_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
-]
         # TODO: see if self.run_configs can be removed.
-        self.run_configs = self.__perform_run(self.experi_config)
+        self.run_configs = self.__perform_run(self.experiment_config)
 
     # pylint: disable=W0238
-    def __perform_run(self, experi_config):
-        """Private method that runs the experiment.
+    def __perform_run(self, experiment_config: dict):
+        """Private method that performs a run of the experiment.
 
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
         # Generate run configurations.
-        run_configs = experiment_config_to_run_configs(experi_config)
+        run_configs = experiment_config_to_run_configs(experiment_config)
 
         for run_config in run_configs:
             to_run = determine_what_to_run(run_config)
-            print(f"to_run={to_run}")
-            results_stage_1 = self.__perform_run_stage_1(
-                experi_config, run_config, to_run
+            results_nx_graphs = self.__perform_run_stage_1(
+                experiment_config, run_config, to_run
             )
-            results_stage_2 = self.__perform_run_stage_2(
-                experi_config, results_stage_1, run_config, to_run
-            )
-            self.__perform_run_stage_3(
-                experi_config, results_stage_2, run_config, to_run
-            )
-            _ = self.__perform_run_stage_4(
-                experi_config, results_stage_2, run_config, to_run
+            self.__perform_run_stage_2(results_nx_graphs, to_run)
+            self.__perform_run_stage_3(results_nx_graphs, to_run)
+            self.__perform_run_stage_4(
+                self.experiment_config["export_snns"],
+                results_nx_graphs,
+                to_run,
             )
 
         return run_configs
 
     def __perform_run_stage_1(
-        self, experi_config: dict, run_config: dict, to_run: dict
+        self, experiment_config: dict, run_config: dict, to_run: dict
     ):
         """Performs the run for stage 1 or loads the data from file depending
-        on the run configuration."""
+        on the run configuration.
+
+        Stage 1 applies a conversion that the user specified to run an
+        SNN algorithm. This is done by taking an input graph, and
+        generating an SNN (graph) that runs the intended algorithm.
+        """
         if to_run["stage_1"]:
 
             # Run first stage of experiment, get input graph.
             stage_1_graphs: dict = get_used_graphs(run_config)
-            pprint(stage_1_graphs["input_graph"])
+            results_nx_graphs = {
+                "experiment_config": experiment_config,
+                "run_config": run_config,
+                "graphs_dict": stage_1_graphs,
+            }
 
             # Exports results, including graphs as dict.
-            results_stage_1: dict = output_files_stage_1(
-                experi_config, run_config, stage_1_graphs
-            )
+            output_files_stage_1_and_2(results_nx_graphs, 1, to_run)
+        else:
+            results_nx_graphs = load_results_stage_1(run_config)
 
-            # the graph dicts inside graphs_dict are converted
-            # back into nx.DiGraph objects.
-            # TODO, replace with generic conversion function at the cost of
-            # computation, saving 1 line of code.
-            results_stage_1["graphs_dict"] = stage_1_graphs
-            pprint(results_stage_1["graphs_dict"]["input_graph"])
-
-            # Set the radiation damage level.
-            # TODO: Verify this setting has any effect.
-            # Radiation_damage(0.2)
-        if not to_run["stage_1"]:
-            results_stage_1 = load_results_stage_1(run_config)
-        # TODO: ensure the graph dicts inside graphs_dict are converted
-        # back into nx.DiGraph objects.
-
-        # TODO: Verify stage 1 is completed.
-        return results_stage_1
+        assert_stage_is_completed(run_config, 1, to_run)
+        return results_nx_graphs
 
     def __perform_run_stage_2(
         self,
-        experi_config: dict,
-        results_stage_1: dict,
-        run_config: dict,
+        results_nx_graphs: dict,
         to_run: dict,
     ):
         """Performs the run for stage 2 or loads the data from file depending
-        on the run configuration."""
+        on the run configuration.
+
+        Stage two simulates the SNN graphs over time and, if desired,
+        exports each timestep of those SNN graphs to a json dictionary.
+        """
+        # Verify incoming results dict.
+        verify_results_nx_graphs(
+            results_nx_graphs, results_nx_graphs["run_config"]
+        )
 
         if to_run["stage_2"]:
+            if not results_nx_graphs["run_config"]["overwrite_sim_results"]:
+                # TODO: check if the stage 2 graphs already are loaded from
+                # file correctly. If loaded incorrectly, raise exception, if
+                # not loaded, perform simulation.
+
+                # TODO: check if the graphs can be loaded from file,
+                if has_outputted_stage(
+                    results_nx_graphs["run_config"], 2, to_run
+                ):
+                    # Load results from file.
+                    nx_graphs_dict = load_json_to_nx_graph_from_file(
+                        results_nx_graphs["run_config"], 2, to_run
+                    )
+                    results_nx_graphs["graphs_dict"] = nx_graphs_dict
+
+            # TODO: Verify the (incoming (and loaded)) graph types are as
+            # expected.
+
             # Run simulation on networkx or lava backend.
-            # print(results_stage_1)
-            # pprint(results_stage_1)
-            sim_graphs(results_stage_1["graphs_dict"], run_config)
-            results_stage_2 = output_files_stage_1(
-                experi_config, run_config, results_stage_1
+            sim_graphs(
+                results_nx_graphs["graphs_dict"],
+                results_nx_graphs["run_config"],
             )
-        # TODO: Verify stage 2 is completed.
-        return results_stage_2
+            output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
+        assert_stage_is_completed(results_nx_graphs["run_config"], 2, to_run)
 
     def __perform_run_stage_3(
         self,
-        experi_config: dict,
-        results_stage_2: dict,
-        run_config: dict,
+        results_nx_graphs: dict,
         to_run: dict,
-    ):
-        """Performs the run for stage 3 or loads the data from file depending
-        on the run configuration."""
+    ) -> None:
+        """Performs the run for stage 3, which visualises the behaviour of the
+        SNN graphs over time. This behaviour is shown as a sequence of images.
+
+        The behaviour is described with:
+        - Green neuron: means a neuron spikes in that timestep.
+        - Green synapse: means the input neuron of that synapse spiked at that
+        timestep.
+        - Red neuron: radiation has damaged/killed the neuron, it won't spike.
+        - Red synapse: means the input neuron of that synapse has died and will
+        not spike at that timestep.
+        - White/transparent neuron: works as expected, yet does not spike at
+        that timestep.
+        - A circular synapse: a recurrent connection of a neuron into itself.
+        """
         if to_run["stage_3"]:
             # Generate output json dicts (and plots) of propagated graphs.
             print("Generating plots for stage 3.")
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
-            output_stage_files(experi_config, run_config, results_stage_2, 3)
+            output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
             print('"Done generating output plots for stage 3.')
-        # TODO: Verify stage 3 is completed (if required).
+            assert_stage_is_completed(
+                results_nx_graphs["run_config"], 3, to_run
+            )
 
     def __perform_run_stage_4(
-        self,
-        experi_config: dict,
-        results_stage_2: dict,
-        run_config: dict,
-        to_run: dict,
-    ):
-        """Performs the run for stage 4 or loads the data from file depending
-        on the run configuration."""
-        if to_run["stage_4"]:
-            # TODO: compute results per graph type and export performance
-            # to json dict.
-            results_stage_4 = get_results(run_config, results_stage_2)
-            export_results(
-                experi_config, results_stage_4, run_config, results_stage_2
-            )
-        # TODO: Verify stage 4 is completed.
-        return results_stage_4
+        self, export_snns: bool, results_nx_graphs: dict, to_run: dict
+    ) -> None:
+        """Performs the run for stage 4.
+
+        Stage 4 computes the results of the SNN against the
+        default/Neumann implementation. Then stores this result in the
+        last entry of each graph.
+        """
+        set_results(
+            results_nx_graphs["run_config"],
+            results_nx_graphs["graphs_dict"],
+        )
+        export_results_to_json(export_snns, results_nx_graphs, 4, to_run)
+        assert_stage_is_completed(results_nx_graphs["run_config"], 4, to_run)
 
 
-
-def experiment_config_to_run_configs(experi_config: dict):
+def experiment_config_to_run_configs(experiment_config: dict):
     """Generates all the run_config dictionaries of a single experiment
-    configuration.
+    configuration. Then verifies whether each run_config is valid.
 
-    Verifies whether each run_config is valid.
+    TODO: Ensure this can be done modular, and lower the depth of the loop.
     """
     # pylint: disable=R0914
     supp_run_setts = Supported_run_settings()
@@ -213,28 +249,31 @@ def experiment_config_to_run_configs(experi_config: dict):
 
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
-    # for algorithm in experi_config["algorithms"]:
-    for algorithm_name, algo_setts_dict in experi_config["algorithms"].items():
+    # for algorithm in experiment_config["algorithms"]:
+    for algorithm_name, algo_setts_dict in experiment_config[
+        "algorithms"
+    ].items():
         for algo_config in convert_algorithm_to_setting_list(algo_setts_dict):
             algorithm = {algorithm_name: algo_config}
-            for adaptation_name, adaptation_setts_list in experi_config[
+            for adaptation_name, adaptation_setts_list in experiment_config[
                 "adaptations"
             ].items():
                 for adaptation_config in adaptation_setts_list:
                     adaptation = {adaptation_name: adaptation_config}
 
-                    for radiation_name, radiation_setts_list in experi_config[
-                        "radiations"
-                    ].items():
+                    for (
+                        radiation_name,
+                        radiation_setts_list,
+                    ) in experiment_config["radiations"].items():
                         # TODO: verify it is of type list.
                         for rad_config in radiation_setts_list:
                             radiation = {radiation_name: rad_config}
 
-                            for iteration in experi_config["iterations"]:
-                                for size_and_max_graph in experi_config[
+                            for iteration in experiment_config["iterations"]:
+                                for size_and_max_graph in experiment_config[
                                     "size_and_max_graphs"
                                 ]:
-                                    for simulator in experi_config[
+                                    for simulator in experiment_config[
                                         "simulators"
                                     ]:
                                         for graph_nr in range(
@@ -248,7 +287,7 @@ def experiment_config_to_run_configs(experi_config: dict):
                                                     size_and_max_graph,
                                                     graph_nr,
                                                     radiation,
-                                                    experi_config,
+                                                    experiment_config,
                                                     simulator,
                                                 )
                                             )
@@ -262,10 +301,10 @@ def experiment_config_to_run_configs(experi_config: dict):
         supp_run_setts.append_unique_config_id(run_config)
 
         # Append show_snns and export_snns to run config.
-        supp_run_setts.assert_has_key(experi_config, "show_snns", bool)
-        supp_run_setts.assert_has_key(experi_config, "export_snns", bool)
-        run_config["show_snns"] = experi_config["show_snns"]
-        run_config["export_snns"] = experi_config["export_snns"]
+        supp_run_setts.assert_has_key(experiment_config, "show_snns", bool)
+        supp_run_setts.assert_has_key(experiment_config, "export_snns", bool)
+        run_config["show_snns"] = experiment_config["show_snns"]
+        run_config["export_snns"] = experiment_config["export_snns"]
     return run_configs
 
 
@@ -277,7 +316,7 @@ def run_parameters_to_dict(
     size_and_max_graph,
     graph_nr,
     radiation,
-    experi_config,
+    experiment_config,
     simulator,
 ):
     """Stores selected parameters into a dictionary.
@@ -291,9 +330,11 @@ def run_parameters_to_dict(
         "graph_size": size_and_max_graph[0],
         "graph_nr": graph_nr,
         "radiation": radiation,
-        "overwrite_sim_results": experi_config["overwrite_sim_results"],
-        "overwrite_visualisation": experi_config["overwrite_visualisation"],
-        "seed": experi_config["seed"],
+        "overwrite_sim_results": experiment_config["overwrite_sim_results"],
+        "overwrite_visualisation": experiment_config[
+            "overwrite_visualisation"
+        ],
+        "seed": experiment_config["seed"],
         "simulator": simulator,
     }
 
@@ -301,21 +342,17 @@ def run_parameters_to_dict(
 def determine_what_to_run(run_config) -> dict:
     """Scans for existing output and then combines the run configuration
     settings to determine what still should be computed."""
+    # Initialise default: run everything.
     to_run = {
         "stage_1": False,
         "stage_2": False,
         "stage_3": False,
         "stage_4": False,
     }
-    # Determine which of the 4 stages have been performed and which stages
-    # still have to be completed.
 
     # Check if the input graphs exist, (the graphs that can still be adapted.)
     if (
-        not performed_stage(
-            run_config,
-            1,
-        )
+        not has_outputted_stage(run_config, 1, to_run)
         or run_config["overwrite_sim_results"]
     ):
         # If original graphs do not yet exist, or a manual overwrite is
@@ -327,13 +364,13 @@ def determine_what_to_run(run_config) -> dict:
     # Check if the incoming graphs have been supplemented with adaptation
     # and/or radiation.
     if (
-        not performed_stage(run_config, 2)
+        not has_outputted_stage(run_config, 2, to_run)
         or run_config["overwrite_sim_results"]
     ):
         to_run["stage_2"] = True
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
-        not performed_stage(run_config, 3)
+        not has_outputted_stage(run_config, 3, to_run)
         and (run_config["export_snns"] or run_config["show_snns"])
     ) or run_config["overwrite_visualisation"]:
         # Note this allows the user to create inconsistent simulation
@@ -348,7 +385,7 @@ def determine_what_to_run(run_config) -> dict:
     # Throw warning to user about potential discrepancy between graph
     # behaviour and old visualisation.
     if (
-        performed_stage(run_config, 3)
+        has_outputted_stage(run_config, 3, to_run)
         and run_config["overwrite_sim_results"]
         and not run_config["overwrite_visualisation"]
     ):
@@ -358,19 +395,11 @@ def determine_what_to_run(run_config) -> dict:
             + "not match with what the graphs actually do. We suggest you "
             + "try this again with:overwrite_visualisation=True"
         )
-
-    # Check if the results of the simulation with respect to alipour need to be
-    # completed.
-    if (
-        not performed_stage(run_config, 4)
-        or run_config["overwrite_sim_results"]
-    ):
-        to_run["stage_4"] = True
     return to_run
 
 
-def example_experi_config():
-    """Creates example experiment configuration settings."""
+def example_experiment_config():
+    """Creates example experiment configuration setting."""
     # Create prerequisites
     supp_experi_setts = Supported_experiment_settings()
     adap_sets = Adaptations_settings()

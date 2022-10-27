@@ -1,7 +1,6 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
 
-from pprint import pprint
 
 import networkx as nx
 
@@ -33,25 +32,29 @@ def sim_graphs(
     for graph_name, snn_graph in stage_1_graphs.items():
         if graph_name != "input_graph":
 
+            if not isinstance(snn_graph, nx.DiGraph):
+                raise Exception(
+                    "Error, snn_graph:{graph_name} was not of the"
+                    f"expected type, it was of:{type(snn_graph)}"
+                )
             # TODO: add lava neurons if run config demands lava.
             convert_graph_snn_to_nx_snn(snn_graph)
+            if not isinstance(snn_graph, nx.DiGraph):
+                raise Exception(
+                    "Error, snn_graph:{graph_name} was not of the"
+                    "expected type after conversion, it was of type:"
+                    f"{type(snn_graph)}"
+                )
 
             stage_1_graphs[graph_name].graph[
                 "sim_duration"
             ] = get_sim_duration(stage_1_graphs["input_graph"], run_config)
 
             # TODO: compute actual inhibition and mval
-            print(f"Simulating and verifying graph_name={graph_name}")
             run_snn_on_networkx(
                 snn_graph, stage_1_graphs[graph_name].graph["sim_duration"]
             )
-
-        print(f"Stage 2, adding:{graph_name}")
-        print(f"Stage 2, adding with type:{type(stage_1_graphs[graph_name])}")
-        pprint(stage_1_graphs[graph_name])
-
         add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
-        # TODO: export graphs to file.
 
 
 def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:
@@ -76,11 +79,16 @@ def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:
     # Generate networkx network.
     add_nx_neurons_to_networkx_graph(G, t=0)
 
+    if not isinstance(G, nx.DiGraph):
+        raise Exception(
+            "Error, the snn graph is not a networkx graph anymore:"
+            + f"{type(G)}"
+        )
+
     # TODO: add lava neurons if run config demands lava.
     # Generate lava network.
     # add_lava_neurons_to_networkx_graph(G)
 
     # Verify the simulations produce identical static
     # neuron properties.
-    # print("")
     # compare_static_snn_properties(self, G)

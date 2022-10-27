@@ -45,7 +45,6 @@ def create_degree_synapses_for_m_is_zero(
     """
     # pylint: disable=R1702
     # Currently no method is found to reduce the 6/5 nested blocks.
-    print(f"m={m},OLD")
     for some_id in range(m - 1):
         for l_key, l_value in left[some_id].items():
             for l_counter in l_value:
@@ -217,8 +216,6 @@ def get_annotation_text(desired_properties, G, nodename, t):
     :param G: The original graph on which the MDSA algorithm is ran.
     :param nodename: Node of the name of a networkx graph.
     """
-    # print(f"G={G.graph}")
-    # print(f"G.nodes[{nodename}]={G.nodes[nodename]}")
     annotation = ""
     if "bias" in desired_properties:
         annotation = (
@@ -324,6 +321,7 @@ def set_node_colours(G, t):
         else:
             if node_name[:11] != "connecting_":
                 # raise Exception(
+                # TODO: remove this from being needed.
                 print(f"Did not find spike dictionary for node:{node_name}")
             else:
                 color_map.append("yellow")

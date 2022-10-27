@@ -45,15 +45,15 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         is missing from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experi_config.pop("overwrite_visualisation")
+        experiment_config.pop("overwrite_visualisation")
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )
@@ -61,7 +61,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         self.assertEqual(
             # "'overwrite_visualisation'",
             "Error:overwrite_visualisation is not in the configuration"
-            + f" settings:{experi_config.keys()}",
+            + f" settings:{experiment_config.keys()}",
             str(context.exception),
         )
 
@@ -75,18 +75,18 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         is expected).
         """
         # Create deepcopy of configuration settings.
-        experi_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of overwrite_visualisation in copy.
 
         # TODO: generalise to also check if an error is thrown if it contains a
         # string or integer, using the generic test file.
         # verify_error_is_thrown_on_invalid_configuration_setting_value
-        experi_config["overwrite_visualisation"] = None
+        experiment_config["overwrite_visualisation"] = None
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
                 self.supp_experi_setts,
-                experi_config,
+                experiment_config,
                 has_unique_id=False,
                 strict=True,
             )

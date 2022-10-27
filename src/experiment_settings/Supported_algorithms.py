@@ -6,15 +6,13 @@ experiment can be ran."""
 class MDSA:
     """Minimum Dominating Set Approximation by Alipour.
 
-    The Graph Size
+    TODO: determine whether self.m_val should be an undefined parameter because
+    if follows from the iteration over self.mvals.
     """
 
     def __init__(
         self,
     ) -> None:
-
-        # List of the algorithm parameters for an experiment settings dict.
-        self.algo_parameters = ["m_vals"]
 
         # List of the algorithm parameters for a run settings dict.
         self.algo_parameters = ["m_val"]

@@ -4,6 +4,7 @@ Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
 import copy
+from typing import List
 
 import networkx as nx
 
@@ -15,6 +16,7 @@ from src.graph_generation.radiation.Radiation_damage import (
     verify_radiation_is_applied,
 )
 from src.graph_generation.snn_algo.mdsa_snn_algo import (
+    Alipour_properties,
     specify_mdsa_network_properties,
 )
 from src.graph_generation.Used_graphs import Used_graphs
@@ -54,8 +56,6 @@ def get_used_graphs(run_config: dict) -> dict:
 
     # Indicate the graphs have completed stage 1.
     for graph in graphs.values():
-        # print(f"Stage 1, adding:{graph_name}")
-        # pprint(f"graph={graph}")
         add_stage_completion_to_graph(graph, 1)
     return graphs
 
@@ -67,19 +67,39 @@ def get_input_graph(run_config: dict) -> nx.DiGraph:
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
-    input_graph = get_the_input_graphs(run_config)
+    input_graph: nx.DiGraph = get_the_input_graph(run_config)
 
     # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
     return input_graph
 
 
-def get_the_input_graphs(run_config) -> nx.DiGraph:
+def get_the_input_graph(run_config: dict) -> nx.DiGraph:
+    """Returns a specific input graph from the list of input graphs."""
+    return get_input_graphs(run_config)[run_config["graph_nr"]]
+
+
+def get_input_graphs(run_config: dict) -> List[nx.DiGraph]:
     """Removes graphs that are not used, because of a maximum nr of graphs that
     is to be evaluated."""
     used_graphs = Used_graphs()
-    input_graphs = used_graphs.get_graphs(run_config["graph_size"])
+    input_graphs: List[nx.DiGraph] = used_graphs.get_graphs(
+        run_config["graph_size"]
+    )
     if len(input_graphs) > run_config["graph_nr"]:
-        return input_graphs[run_config["graph_nr"]]
+        for input_graph in input_graphs:
+            # TODO: set alg_props:
+            if "alg_props" not in input_graph.graph.keys():
+                input_graph.graph["alg_props"] = Alipour_properties(
+                    input_graph, run_config["seed"]
+                ).__dict__
+
+            if not isinstance(input_graph, nx.Graph):
+                raise Exception(
+                    "Error, the input graph is not a networkx graph:"
+                    + f"{type(input_graph)}"
+                )
+
+        return input_graphs
     raise Exception(
         f"For input_graph of size:{run_config['graph_size']}, I found:"
         + f"{len(input_graphs)} graphs, yet expected graph_nr:"
@@ -114,7 +134,9 @@ def get_snn_algo_graph(
     return snn_algo_graph
 
 
-def get_adapted_graph(snn_algo_graph: nx.DiGraph, run_config: dict):
+def get_adapted_graph(
+    snn_algo_graph: nx.DiGraph, run_config: dict
+) -> nx.DiGraph:
     """Converts an input graph of stage 1 and applies a form of brain-inspired
     adaptation to it."""
 
@@ -133,7 +155,7 @@ def get_adapted_graph(snn_algo_graph: nx.DiGraph, run_config: dict):
                     f"Error, adaptation_setting={adaptation_setting},"
                     + "which is not an int."
                 )
-            adaptation_graph = get_redundant_graph(
+            adaptation_graph: nx.DiGraph = get_redundant_graph(
                 snn_algo_graph, adaptation_setting
             )
             return adaptation_graph
@@ -189,7 +211,7 @@ def get_redundant_graph(
     )
 
 
-def get_radiation_graph(snn_graph, run_config: dict, seed):
+def get_radiation_graph(snn_graph, run_config: dict, seed) -> nx.DiGraph:
     """Makes a deep copy of the incoming graph and applies radiation to it.
 
     Then returns the graph with the radiation, as well as a list of
@@ -219,11 +241,10 @@ def get_radiation_graph(snn_graph, run_config: dict, seed):
                 )
 
             rad_dam = Radiation_damage(probability=radiation_setting)
-            radiation_graph = copy.deepcopy(snn_graph)
+            radiation_graph: nx.DiGraph = copy.deepcopy(snn_graph)
             dead_neuron_names = rad_dam.inject_simulated_radiation(
                 radiation_graph, rad_dam.neuron_death_probability, seed
             )
-            print(f"dead_neuron_names={dead_neuron_names}")
             # TODO: verify radiation is injected with V1000
             verify_radiation_is_applied(
                 radiation_graph, dead_neuron_names, radiation_name
