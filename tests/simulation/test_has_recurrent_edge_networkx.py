@@ -90,7 +90,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         )
 
     def test_neuron_properties_after_1_sec_without_recurrent_connection(
-        self, t
+        self, t=0
     ):
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
         over time.
@@ -180,7 +180,12 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         self.assertEqual(G.nodes[1]["nx_LIF"][t].v.get(), 0)
 
         # TODO: assert dynamic properties per timestep.
-        run_snn_on_networkx(G, 1)
+        G = get_networkx_graph_of_2_neurons()  # Reload a new network and
+        # simulate it for t=2 time steps at once, otherwise, the
+        # "for t in range(sim_duration):"  will run it twice with sim_duration=
+        # 1, instead of once with sim_duration=2. Inside the simulation, the
+        # nr of LIF neurons are verified based on this sim_duration.
+        run_snn_on_networkx(G, 2)
         # Assert dynamic properties of neuron 0 at t=2.
         self.assertEqual(G.nodes[0]["nx_LIF"][t].u.get(), 0)
         self.assertEqual(
@@ -194,7 +199,8 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         self.assertEqual(G.nodes[1]["nx_LIF"][t].v.get(), 6)
 
         # TODO: assert dynamic properties per timestep.
-        run_snn_on_networkx(G, 1)
+        G = get_networkx_graph_of_2_neurons()
+        run_snn_on_networkx(G, 3)  # Reset network again and run for sim_time=3
         # Assert dynamic properties of neuron 0 at t=3.
         self.assertEqual(G.nodes[0]["nx_LIF"][t].u.get(), 0)
         self.assertEqual(
@@ -263,7 +269,9 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         self.assertEqual(G.nodes[1]["nx_LIF"][t].v.get(), 0)
 
         # Simulate network for 1 timestep.
-        run_snn_on_networkx(G, 1)
+        G = get_networkx_graph_of_2_neurons()
+        G.add_edge(0, 0, weight=-20.0)
+        run_snn_on_networkx(G, 2)  # Reset network again and run for sim_time=3
 
         self.assertFalse(G.nodes[0]["nx_LIF"][t].spikes)  # self-inhibition.
         self.assertFalse(G.nodes[1]["nx_LIF"][t].spikes)
@@ -285,7 +293,9 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         self.assertEqual(G.nodes[1]["nx_LIF"][t].v.get(), 6)
 
         # TODO: assert dynamic properties per timestep.
-        run_snn_on_networkx(G, 1)
+        G = get_networkx_graph_of_2_neurons()
+        G.add_edge(0, 0, weight=-20.0)
+        run_snn_on_networkx(G, 3)
 
         # Assert dynamic properties of neuron 0 at t=3.
         # u[t] = u[t-1] * (1-du) + a_in, a_in=0
