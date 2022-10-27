@@ -10,7 +10,6 @@ from src.experiment_settings.Scope_of_tests import Long_scope_of_tests
 from src.export_results.plot_graphs import plot_circular_graph
 from src.graph_generation.get_graph import (
     get_cyclic_graph_without_directed_path,
-    set_rand_neuron_properties,
 )
 from src.simulation.LIF_neuron import print_neuron_properties_per_graph
 from src.simulation.run_on_lava import (
@@ -25,6 +24,9 @@ from src.simulation.verify_graph_is_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
     verify_networkx_snn_spec,
+)
+from tests.simulation.tests_simulation_helper import (
+    get_graph_for_cyclic_propagation,
 )
 
 
@@ -49,17 +51,20 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
         # Get graph without edge to self.
 
         # Generate cyclic graph.
-        G = get_cyclic_graph_without_directed_path()
-        set_rand_neuron_properties(G, self.test_scope)
-        size = len(G)
+        # TODO: move this into a separate function that returns a fresh new
+        # graph at every timestep of simulation.
+        # Then ensure the graphs is simulated for t timesteps at each step of
+        # the simulation.
 
         for recurrent_density in np.arange(
             self.test_scope.min_recurrent_edge_density,
             self.test_scope.max_recurrent_edge_density,
             self.test_scope.recurrent_edge_density_stepsize,
         ):
+            size = len(get_cyclic_graph_without_directed_path())
             # Ensure the simulation works for all starter neurons.
             for starter_neuron in range(size):
+                G = get_graph_for_cyclic_propagation(self.test_scope)
 
                 # Assert graph is connected.
                 # self.assertTrue(nx.is_connected(G))
@@ -127,12 +132,14 @@ def run_simulation_for_t_steps(
 ):
     """Runs the SNN simulation on a graph for t timesteps."""
     for t in range(sim_duration):
+        G = get_graph_for_cyclic_propagation(test_object.test_scope)
+        print(f"t={t}")
         print("")
         # Run the simulation on networkx.
-        run_snn_on_networkx(G, 1)
+        run_snn_on_networkx(G, t)
 
         # Run the simulation on lava.
-        simulate_snn_on_lava(G, starter_neuron, 1)
+        simulate_snn_on_lava(G, starter_neuron, t)
 
         print(f"After t={t+1} simulation steps.")
         print_neuron_properties_per_graph(G, False, t)
