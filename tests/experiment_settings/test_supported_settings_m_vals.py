@@ -145,7 +145,7 @@ class Test_m_vals_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
-        # Set negative value of m in copy.
+        # Set too large value of m in copy.
         experiment_config["algorithms"]["MDSA"]["m_vals"] = [50]
 
         with self.assertRaises(Exception) as context:
