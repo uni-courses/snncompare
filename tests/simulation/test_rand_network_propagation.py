@@ -93,13 +93,14 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             assert_no_duplicate_edges_exist(G)
 
                             # Assert all neuron properties are specified.
-                            verify_networkx_snn_spec(G, t=0, backend="lava")
+                            verify_networkx_snn_spec(G, t=0, backend="nx")
 
                             # Generate networkx network.
                             add_nx_neurons_to_networkx_graph(G, t=0)
 
                             # Generate lava network.
                             add_lava_neurons_to_networkx_graph(G, t=0)
+                            verify_networkx_snn_spec(G, t=0, backend="lava")
 
                             # Verify the simulations produce identical static
                             # neuron properties.
