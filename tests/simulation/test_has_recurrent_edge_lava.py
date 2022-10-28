@@ -103,13 +103,13 @@ class Test_get_graph_on_lava(unittest.TestCase):
         add_lava_neurons_to_networkx_graph(G, t=0)
 
         # Assert static properties of neuron 0.
-        self.assertEqual(G.nodes[0]["lava_LIF"].bias.get(), 3)
+        self.assertEqual(G.nodes[0]["lava_LIF"].bias_mant.get(), 3)
         self.assertEqual(G.nodes[0]["lava_LIF"].du.get(), 0.0)
         self.assertEqual(G.nodes[0]["lava_LIF"].dv.get(), 0.0)
         self.assertEqual(G.nodes[0]["lava_LIF"].vth.get(), 2.0)
 
         # Assert static properties of neuron 1.
-        self.assertEqual(G.nodes[1]["lava_LIF"].bias.get(), 0)
+        self.assertEqual(G.nodes[1]["lava_LIF"].bias_mant.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].du.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].dv.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].vth.get(), 10)
@@ -152,13 +152,13 @@ class Test_get_graph_on_lava(unittest.TestCase):
         add_lava_neurons_to_networkx_graph(G, t=0)
 
         # Assert static properties of neuron 0.
-        self.assertEqual(G.nodes[0]["lava_LIF"].bias.get(), 3)
+        self.assertEqual(G.nodes[0]["lava_LIF"].bias_mant.get(), 3)
         self.assertEqual(G.nodes[0]["lava_LIF"].du.get(), 0.0)
         self.assertEqual(G.nodes[0]["lava_LIF"].dv.get(), 0.0)
         self.assertEqual(G.nodes[0]["lava_LIF"].vth.get(), 2.0)
 
         # Assert static properties of neuron 1.
-        self.assertEqual(G.nodes[1]["lava_LIF"].bias.get(), 0)
+        self.assertEqual(G.nodes[1]["lava_LIF"].bias_mant.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].du.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].dv.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].vth.get(), 10)
@@ -230,13 +230,13 @@ class Test_get_graph_on_lava(unittest.TestCase):
         add_lava_neurons_to_networkx_graph(G, t=0)
 
         # Assert static properties of neuron 0 at t=0.
-        self.assertEqual(G.nodes[0]["lava_LIF"].bias.get(), 3)
+        self.assertEqual(G.nodes[0]["lava_LIF"].bias_mant.get(), 3)
         self.assertEqual(G.nodes[0]["lava_LIF"].du.get(), 0.0)
         self.assertEqual(G.nodes[0]["lava_LIF"].dv.get(), 0.0)
         self.assertEqual(G.nodes[0]["lava_LIF"].vth.get(), 2.0)
 
         # Assert static properties of neuron 1 at t=0.
-        self.assertEqual(G.nodes[1]["lava_LIF"].bias.get(), 0)
+        self.assertEqual(G.nodes[1]["lava_LIF"].bias_mant.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].du.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].dv.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].vth.get(), 10)

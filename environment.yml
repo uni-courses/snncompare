@@ -15,7 +15,7 @@
 # yes | sudo apt install graphviz
 
 # Conda configuration settings. (Specify which modules/packages are installed.)
-name: nx2lava
+name: retry
 channels:
   - conda-forge
 dependencies:
@@ -23,9 +23,6 @@ dependencies:
   - python=3.8
   # Generate plots.
   - matplotlib
-# Run graph software quickly.
-  - networkx
-
 # Pre-commit packages for code quality:
 # Run python tests.
   - pytest-cov
@@ -51,6 +48,9 @@ dependencies:
   - mdformat
 # Auto check static typing.
   - mypy
+  # Run graph software quickly.
+  # Lava depends on networkx 2.8.0
+  - networkx==2.8.7
 # Another static type checker for python like mypy.
   - pyright
 # Include GitHub pre-commit hook.
@@ -73,7 +73,8 @@ dependencies:
   - pip:
     # Run pip install on .tar.gz file in GitHub repository (For lava-nc only).
     #- https://github.com/lava-nc/lava/releases/download/v0.3.0/lava-nc-0.3.0.tar.gz
-    - https://github.com/lava-nc/lava/releases/download/v0.5.0/lava-nc-0.5.0.tar.gz
+    #- https://github.com/lava-nc/lava/releases/download/v0.5.0/lava-nc-0.5.0.tar.gz
+    - https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
     # Support parsing Json files.
     - jsons
     # Auto generate documentation.
@@ -84,3 +85,6 @@ dependencies:
     - pytaggit
     # Identify and remove dead code.
     - vulture
+    # Run graph software quickly.
+    # Lava depends on networkx 2.8.0
+    #- networkx==2.8.7

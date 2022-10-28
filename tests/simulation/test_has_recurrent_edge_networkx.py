@@ -4,11 +4,15 @@ network."""
 import unittest
 
 from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
-from src.simulation.run_on_lava import simulate_snn_on_lava
+from src.simulation.run_on_lava import (
+    add_lava_neurons_to_networkx_graph,
+    simulate_snn_on_lava,
+)
 from src.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
 )
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 class Test_get_graph_on_networkx(unittest.TestCase):
@@ -60,6 +64,10 @@ class Test_get_graph_on_networkx(unittest.TestCase):
 
         # Generate networkx network.
         add_nx_neurons_to_networkx_graph(G, t=0)
+        verify_networkx_snn_spec(G, t=0, backend="nx")
+
+        add_lava_neurons_to_networkx_graph(G, t=0)
+        verify_networkx_snn_spec(G, t=0, backend="lava")
 
         # Verify the graph can run on Networkx
         run_snn_on_networkx(G, 2)

@@ -7,6 +7,7 @@ retrieves a first/single neuron. The simulation is than ran for t
 timesteps on a Loihi emulation.
 """
 
+
 import networkx as nx
 from lava.magma.core.run_conditions import RunSteps
 from lava.magma.core.run_configs import Loihi1SimCfg
@@ -32,7 +33,7 @@ def simulate_snn_on_lava(G: nx.Graph, starter_nodename: int, t: int) -> None:
     """
     # Verify the graph represents a connected and valid SNN, with all required
     # neuron and synapse properties specified.
-    verify_networkx_snn_spec(G, t)
+    verify_networkx_snn_spec(G, t, backend="lava")
 
     # The simulation is ran for t timesteps on a Loihi emulation.
     run_simulation_on_lava(t, G.nodes[starter_nodename]["lava_LIF"])
@@ -58,7 +59,7 @@ def add_lava_neurons_to_networkx_graph(G: nx.Graph, t: int) -> None:
     """
     # Verify the graph represents a connected and valid SNN, with all required
     # neuron and synapse properties specified.
-    verify_networkx_snn_spec(G, t)
+    verify_networkx_snn_spec(G, t, backend="generic")
 
     # Convert networkx graph to an SNN network that can be ran by Lava.
     # starter_neuron = convert_networkx_graph_to_lava_snn(G)
@@ -88,7 +89,8 @@ def add_lava_neurons_to_networkx_graph(G: nx.Graph, t: int) -> None:
     # Append neurons to networkx graph.
     append_neurons_to_networkx_graph(G, neuron_dict)
 
-    # Verify all neurons are appended to networkx graph.
+    # TODO: Verify all lava neurons are appended to networkx graph.
+    verify_networkx_snn_spec(G, t, backend="lava")
 
 
 def append_neurons_to_networkx_graph(G: nx.Graph, neuron_dict: dict) -> None:
