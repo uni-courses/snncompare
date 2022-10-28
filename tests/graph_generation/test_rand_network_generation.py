@@ -77,7 +77,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     assert_no_duplicate_edges_exist(G)
 
                     # Assert all neuron properties are specified.
-                    verify_networkx_snn_spec(G, t=0, backend="lava")
+                    verify_networkx_snn_spec(G, t=0, backend="nx")
 
     def test_generates_valid_snn_networks_with_recursive_edges(self):
         """Tests whether the random_snn_networks that are generated are valid
@@ -130,7 +130,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     assert_no_duplicate_edges_exist(G)
 
                     # Assert all neuron properties are specified.
-                    verify_networkx_snn_spec(G, t=0, backend="lava")
+                    verify_networkx_snn_spec(G, t=0, backend="nx")
 
 
 # Assert number of edges without recurrent edges.
