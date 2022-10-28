@@ -7,7 +7,6 @@ import networkx as nx
 import numpy as np
 
 from src.experiment_settings.Scope_of_tests import Long_scope_of_tests
-from src.export_results.plot_graphs import plot_circular_graph
 from src.graph_generation.get_graph import (
     get_cyclic_graph_without_directed_path,
 )
@@ -32,11 +31,16 @@ from tests.simulation.tests_simulation_helper import (
 
 class Test_propagation_with_recurrent_edges(unittest.TestCase):
     """Performs tests that verify lava simulation produces the same results as
-    the networkx simulation."""
+    the networkx simulation.
+
+    Note, if you get error: "Too many files", you can run in your CLI:
+    ulimit -n 800000 to circumvent it.
+    """
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
@@ -56,7 +60,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
         # Then ensure the graphs is simulated for t timesteps at each step of
         # the simulation.
 
-        for recurrent_density in np.arange(
+        for _ in np.arange(
             self.test_scope.min_recurrent_edge_density,
             self.test_scope.max_recurrent_edge_density,
             self.test_scope.recurrent_edge_density_stepsize,
@@ -100,12 +104,12 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
 
                 print_neuron_properties_per_graph(G, True, t=0)
 
-                plot_circular_graph(
-                    -1,
-                    G,
-                    recurrent_density,
-                    self.test_scope,
-                )
+                # plot_circular_graph(
+                #    -1,
+                #    G,
+                #    recurrent_density,
+                #    self.test_scope,
+                # )
 
             run_simulation_for_t_steps(
                 self, G, starter_neuron, sim_duration=20
@@ -146,8 +150,8 @@ def run_simulation_for_t_steps(
         # Verify dynamic neuron properties.
         test_object.compare_dynamic_snn_properties(G, t)
 
-    # Terminate Loihi simulation.
-    G.nodes[starter_neuron]["lava_LIF"].stop()
+        # Terminate Loihi simulation.
+        G.nodes[starter_neuron]["lava_LIF"].stop()
 
 
 def compare_static_snn_properties(test_object, G, t=0):
