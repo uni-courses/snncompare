@@ -7,9 +7,15 @@ from typing import List
 import jsons
 import networkx as nx
 
-from src.export_results.export_json_results import write_dict_to_json
-from src.export_results.helper import get_expected_image_paths_stage_3
-from src.graph_generation.snn_algo.mdsa_snn_algo import Alipour_properties
+from src.snn_algo_compare.export_results.export_json_results import (
+    write_dict_to_json,
+)
+from src.snn_algo_compare.export_results.helper import (
+    get_expected_image_paths_stage_3,
+)
+from src.snn_algo_compare.graph_generation.snn_algo.mdsa_snn_algo import (
+    Alipour_properties,
+)
 
 
 def get_n_random_run_configs(run_configs, n: int, seed: int = None):

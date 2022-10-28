@@ -3,16 +3,20 @@ network."""
 
 import unittest
 
-from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
-from src.simulation.run_on_lava import (
+from src.snn_algo_compare.graph_generation.get_graph import (
+    get_networkx_graph_of_2_neurons,
+)
+from src.snn_algo_compare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
-from src.simulation.run_on_networkx import (
+from src.snn_algo_compare.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
 )
-from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
+from src.snn_algo_compare.simulation.verify_graph_is_snn import (
+    verify_networkx_snn_spec,
+)
 
 
 class Test_get_graph_on_networkx(unittest.TestCase):

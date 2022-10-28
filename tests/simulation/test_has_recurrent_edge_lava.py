@@ -3,8 +3,10 @@ network."""
 
 import unittest
 
-from src.graph_generation.get_graph import get_networkx_graph_of_2_neurons
-from src.simulation.run_on_lava import (
+from src.snn_algo_compare.graph_generation.get_graph import (
+    get_networkx_graph_of_2_neurons,
+)
+from src.snn_algo_compare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
@@ -63,8 +65,11 @@ class Test_get_graph_on_lava(unittest.TestCase):
 
         # Verify the graph can run on Networkx.
         simulate_snn_on_lava(G, self.starter_node_name, 30)
+        G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
         # Add the recurrent edge.
+        G = get_networkx_graph_of_2_neurons()
+        add_lava_neurons_to_networkx_graph(G, t=0)
         G.add_edge(0, 0)
 
         with self.assertRaises(Exception) as context:
@@ -182,9 +187,13 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Assert dynamic properties of neuron 1 at t=1.
         self.assertEqual(G.nodes[1]["lava_LIF"].u.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 0)
+        # Terminate Loihi simulation.
+        G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
         # TODO: assert dynamic properties per timestep.
-        simulate_snn_on_lava(G, self.starter_node_name, 1)
+        G = get_networkx_graph_of_2_neurons()
+        add_lava_neurons_to_networkx_graph(G, t=0)
+        simulate_snn_on_lava(G, self.starter_node_name, 2)
         # Assert dynamic properties of neuron 0 at t=2.
         self.assertEqual(G.nodes[0]["lava_LIF"].u.get(), 0)
         self.assertEqual(
@@ -196,9 +205,13 @@ class Test_get_graph_on_lava(unittest.TestCase):
             G.nodes[1]["lava_LIF"].u.get(), 6
         )  # Incoming spike with weight 6.
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 6)
+        # Terminate Loihi simulation.
+        G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
         # TODO: assert dynamic properties per timestep.
-        simulate_snn_on_lava(G, self.starter_node_name, 1)
+        G = get_networkx_graph_of_2_neurons()
+        add_lava_neurons_to_networkx_graph(G, t=0)
+        simulate_snn_on_lava(G, self.starter_node_name, 3)
         # Assert dynamic properties of neuron 0 at t=3.
         self.assertEqual(G.nodes[0]["lava_LIF"].u.get(), 0)
         self.assertEqual(
@@ -262,9 +275,15 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Assert dynamic properties of neuron 1 at t=1 (after 1 sec of sim).
         self.assertEqual(G.nodes[1]["lava_LIF"].u.get(), 0)
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 0)
+        # Terminate Loihi simulation.
+        G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
         # Simulate network for 1 timestep.
-        simulate_snn_on_lava(G, self.starter_node_name, 1)
+        G = get_networkx_graph_of_2_neurons()
+        # Add the recurrent edge.
+        G.add_edge(0, 0, weight=-20.0)
+        add_lava_neurons_to_networkx_graph(G, t=0)
+        simulate_snn_on_lava(G, self.starter_node_name, 2)
 
         # Assert dynamic properties of neuron 0 at t=2.
         # spikes only the previous inhibitory spike has arrived.
@@ -280,9 +299,15 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # v[t] = v[t-1] * (1-dv) + u[t] + bias (bias=0)
         # v[t] = 0 * (1-dv) + 6 + bias (bias=0)
         self.assertEqual(G.nodes[1]["lava_LIF"].v.get(), 6)
+        # Terminate Loihi simulation.
+        G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
         # TODO: assert dynamic properties per timestep.
-        simulate_snn_on_lava(G, self.starter_node_name, 1)
+        G = get_networkx_graph_of_2_neurons()
+        # Add the recurrent edge.
+        G.add_edge(0, 0, weight=-20.0)
+        add_lava_neurons_to_networkx_graph(G, t=0)
+        simulate_snn_on_lava(G, self.starter_node_name, 3)
         # Assert dynamic properties of neuron 0 at t=3.
         # u[t] = u[t-1] * (1-du) + a_in, a_in=0
         # u[t] = -20 * (1-du) + a_in
