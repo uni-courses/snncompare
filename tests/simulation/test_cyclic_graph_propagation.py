@@ -7,10 +7,8 @@ import networkx as nx
 import numpy as np
 
 from src.experiment_settings.Scope_of_tests import Long_scope_of_tests
-from src.export_results.plot_graphs import plot_circular_graph
 from src.graph_generation.get_graph import (
     get_cyclic_graph_without_directed_path,
-    set_rand_neuron_properties,
 )
 from src.simulation.LIF_neuron import print_neuron_properties_per_graph
 from src.simulation.run_on_lava import (
@@ -26,15 +24,23 @@ from src.simulation.verify_graph_is_snn import (
     assert_synaptic_edgeweight_type_is_correct,
     verify_networkx_snn_spec,
 )
+from tests.simulation.tests_simulation_helper import (
+    get_graph_for_cyclic_propagation,
+)
 
 
 class Test_propagation_with_recurrent_edges(unittest.TestCase):
     """Performs tests that verify lava simulation produces the same results as
-    the networkx simulation."""
+    the networkx simulation.
+
+    Note, if you get error: "Too many files", you can run in your CLI:
+    ulimit -n 800000 to circumvent it.
+    """
 
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
@@ -49,17 +55,20 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
         # Get graph without edge to self.
 
         # Generate cyclic graph.
-        G = get_cyclic_graph_without_directed_path()
-        set_rand_neuron_properties(G, self.test_scope)
-        size = len(G)
+        # TODO: move this into a separate function that returns a fresh new
+        # graph at every timestep of simulation.
+        # Then ensure the graphs is simulated for t timesteps at each step of
+        # the simulation.
 
-        for recurrent_density in np.arange(
+        for _ in np.arange(
             self.test_scope.min_recurrent_edge_density,
             self.test_scope.max_recurrent_edge_density,
             self.test_scope.recurrent_edge_density_stepsize,
         ):
+            size = len(get_cyclic_graph_without_directed_path())
             # Ensure the simulation works for all starter neurons.
             for starter_neuron in range(size):
+                G = get_graph_for_cyclic_propagation(self.test_scope)
 
                 # Assert graph is connected.
                 # self.assertTrue(nx.is_connected(G))
@@ -95,12 +104,12 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
 
                 print_neuron_properties_per_graph(G, True, t=0)
 
-                plot_circular_graph(
-                    -1,
-                    G,
-                    recurrent_density,
-                    self.test_scope,
-                )
+                # plot_circular_graph(
+                #    -1,
+                #    G,
+                #    recurrent_density,
+                #    self.test_scope,
+                # )
 
             run_simulation_for_t_steps(
                 self, G, starter_neuron, sim_duration=20
@@ -127,20 +136,22 @@ def run_simulation_for_t_steps(
 ):
     """Runs the SNN simulation on a graph for t timesteps."""
     for t in range(sim_duration):
+        G = get_graph_for_cyclic_propagation(test_object.test_scope)
+        print(f"t={t}")
         print("")
         # Run the simulation on networkx.
-        run_snn_on_networkx(G, 1)
+        run_snn_on_networkx(G, t)
 
         # Run the simulation on lava.
-        simulate_snn_on_lava(G, starter_neuron, 1)
+        simulate_snn_on_lava(G, starter_neuron, t)
 
         print(f"After t={t+1} simulation steps.")
         print_neuron_properties_per_graph(G, False, t)
         # Verify dynamic neuron properties.
         test_object.compare_dynamic_snn_properties(G, t)
 
-    # Terminate Loihi simulation.
-    G.nodes[starter_neuron]["lava_LIF"].stop()
+        # Terminate Loihi simulation.
+        G.nodes[starter_neuron]["lava_LIF"].stop()
 
 
 def compare_static_snn_properties(test_object, G, t=0):
@@ -153,7 +164,9 @@ def compare_static_snn_properties(test_object, G, t=0):
         nx_neuron = G.nodes[node]["nx_LIF"][t]
 
         # Assert bias is equal.
-        test_object.assertEqual(lava_neuron.bias.get(), nx_neuron.bias.get())
+        test_object.assertEqual(
+            lava_neuron.bias_mant.get(), nx_neuron.bias.get()
+        )
 
         # dicts
         # print(f"lava_neuron.__dict__={lava_neuron.__dict__}")

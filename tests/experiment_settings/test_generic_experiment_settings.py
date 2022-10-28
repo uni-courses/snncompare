@@ -24,7 +24,7 @@ with_adaptation_with_radiation = {
     ),
     "algorithms": {
         "MDSA": {
-            "m_vals": list(range(0, 1, 1)),
+            "m_vals": list(range(0, 4, 1)),
         }
     },
     "iterations": list(range(0, 3, 1)),

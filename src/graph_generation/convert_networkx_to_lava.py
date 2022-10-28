@@ -1,8 +1,10 @@
 """Converts networkx graph representing lava spiking-neural-network into
 SNN."""
 
-# Instantiate Lava processes to build network
 import networkx as nx
+
+# Instantiate Lava processes to build network
+import numpy as np
 from lava.proc.dense.process import Dense
 from lava.proc.lif.process import LIF
 
@@ -196,7 +198,12 @@ def create_neuron_from_node(
     else:
         bias, du, dv, vth = get_neuron_properties(G, nodename, t)
 
-    neuron = LIF(bias=bias, du=du, dv=dv, vth=vth)
+    # https://github.com/lava-nc/lava/blob/release/v0.5.0/src/lava/proc/lif/
+    # process.py
+    # Source: https://github.com/lava-nc/lava/blob/ee2a6cf3bd05d51d0bb269a8801b
+    # e1b7da8deedd/tests/lava/proc/dense/test_stdp_sim.py
+    size = 1
+    neuron = LIF(bias_mant=bias, du=du, dv=dv, vth=vth, shape=(size,))
 
     # Add recurrent synapse if it exists.
     add_recurrent_edge(G, nodename, neuron)
@@ -265,21 +272,30 @@ def create_recurrent_synapse(neuron, weight):
     return neuron
 
 
-def create_weighted_synapse(w):
+def create_weighted_synapse(weight_value: int):
     """Creates a weighted synapse between neuron a and neuron b.
 
     :param w: Synaptic weight.
     """
     shape = (1, 1)
     # weights = np.random.randint(100, size=shape)
-    weights = [[w]]  # Needs to be this shape for a 1-1 neuron connection.
+    # weights = [[w]]  # Needs to be this shape for a 1-1 neuron connection.
+    # weights = (1,1)  # Needs to be this shape for a 1-1 neuron connection.
+    # shape = (10, 10)
+    # weights = (10,10)  # Needs to be this shape for a 1-1 neuron connection.
+    # size = 4
+    # weights = np.eye(size) * 1
+    size = 1
+    weights_init = np.eye(size) * weight_value
+    print(f"weights_init={weights_init}")
+
     weight_exp = 2
     num_weight_bits = 7
     sign_mode = 1
 
     dense = Dense(
         shape=shape,
-        weights=weights,
+        weights=weights_init,
         weight_exp=weight_exp,
         num_weight_bits=num_weight_bits,
         sign_mode=sign_mode,
