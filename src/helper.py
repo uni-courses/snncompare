@@ -802,7 +802,7 @@ def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
                 vth=float(G.nodes[nodename]["vth"]),
             )
         ]
-    verify_networkx_snn_spec(G, t=0)
+    verify_networkx_snn_spec(G, t=0, backend="nx")
 
 
 def get_expected_stages(

@@ -9,11 +9,11 @@ import numpy as np
 
 from src.experiment_settings.Scope_of_tests import Long_scope_of_tests
 from src.graph_generation.get_graph import gnp_random_connected_graph
-from src.simulation.verify_graph_is_snn import (
+from src.simulation.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
-    verify_networkx_snn_spec,
 )
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 class Test_networkx_and_lava_snn_simulation_produce_identical_results(
@@ -30,6 +30,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
     def test_generates_valid_snn_networks_without_recursive_edges(self):
         """Tests whether the random_snn_networks that are generated are valid
         snn networks.
+        TODO: separate into testing for lava and for nx backend.
 
         The graph must be connected, every edge must have a weight, no
         duplicate edges in the same direction may exist. All neurons
@@ -76,7 +77,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     assert_no_duplicate_edges_exist(G)
 
                     # Assert all neuron properties are specified.
-                    verify_networkx_snn_spec(G, t=0)
+                    verify_networkx_snn_spec(G, t=0, backend="lava")
 
     def test_generates_valid_snn_networks_with_recursive_edges(self):
         """Tests whether the random_snn_networks that are generated are valid
@@ -129,7 +130,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     assert_no_duplicate_edges_exist(G)
 
                     # Assert all neuron properties are specified.
-                    verify_networkx_snn_spec(G, t=0)
+                    verify_networkx_snn_spec(G, t=0, backend="lava")
 
 
 # Assert number of edges without recurrent edges.

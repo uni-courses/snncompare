@@ -13,11 +13,11 @@ from src.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
 )
-from src.simulation.verify_graph_is_snn import (
+from src.simulation.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
-    verify_networkx_snn_spec,
 )
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def sim_graphs(
@@ -74,7 +74,7 @@ def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:
     old_graph_to_new_graph_properties(G)
 
     # Assert all neuron properties are specified.
-    verify_networkx_snn_spec(G, t=0)
+    verify_networkx_snn_spec(G, t=0, backend="nx")
 
     # Generate networkx network.
     add_nx_neurons_to_networkx_graph(G, t=0)

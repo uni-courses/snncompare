@@ -8,7 +8,7 @@ import numpy as np
 from lava.proc.dense.process import Dense
 from lava.proc.lif.process import LIF
 
-from src.simulation.verify_graph_is_snn import (
+from src.simulation.verify_graph_is_networkx_snn import (
     assert_synapse_properties_are_specified,
 )
 

@@ -12,9 +12,9 @@ from typing import List
 import networkx as nx
 
 from src.simulation.LIF_neuron import LIF_neuron
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 # Import local project functions and classes.
-from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 def add_nx_neurons_to_networkx_graph(G: nx.DiGraph, t: int) -> None:
@@ -26,7 +26,7 @@ def add_nx_neurons_to_networkx_graph(G: nx.DiGraph, t: int) -> None:
     """
     # Verify the graph represents a connected and valid SNN, with all required
     # neuron and synapse properties specified.
-    verify_networkx_snn_spec(G, t)
+    verify_networkx_snn_spec(G, t, backend="nx")
 
     # Create LIF neurons in networkx graph.
     # generate_lif_neurons(G)
@@ -55,12 +55,12 @@ def run_snn_on_networkx(G: nx.DiGraph, sim_duration: int) -> None:
     """
     for t in range(sim_duration):
         # Verify the neurons of the previous timestep are valid.
-        verify_networkx_snn_spec(G, t)
+        verify_networkx_snn_spec(G, t, backend="nx")
 
         # Copy the neurons into the new timestep.
         copy_old_neurons_into_new_neuron_element(G, t)
 
-        verify_networkx_snn_spec(G, t + 1)
+        verify_networkx_snn_spec(G, t + 1, backend="nx")
         run_simulation_with_networkx_for_1_timestep(G, t + 1)
 
     # Verify the network dimensions. (Ensure sufficient nodes are added.)

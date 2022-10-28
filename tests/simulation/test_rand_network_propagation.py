@@ -12,11 +12,11 @@ from src.graph_generation.get_graph import gnp_random_connected_graph
 from src.simulation.LIF_neuron import print_neuron_properties_per_graph
 from src.simulation.run_on_lava import add_lava_neurons_to_networkx_graph
 from src.simulation.run_on_networkx import add_nx_neurons_to_networkx_graph
-from src.simulation.verify_graph_is_snn import (
+from src.simulation.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
-    verify_networkx_snn_spec,
 )
+from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 from tests.simulation.test_cyclic_graph_propagation import (
     compare_static_snn_properties,
 )
@@ -93,7 +93,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             assert_no_duplicate_edges_exist(G)
 
                             # Assert all neuron properties are specified.
-                            verify_networkx_snn_spec(G, t=0)
+                            verify_networkx_snn_spec(G, t=0, backend="lava")
 
                             # Generate networkx network.
                             add_nx_neurons_to_networkx_graph(G, t=0)
