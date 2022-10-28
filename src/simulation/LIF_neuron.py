@@ -1,7 +1,7 @@
 """File represents LIF neuron object."""
 
-
 import numpy as np
+from lava.proc.lif.process import LIF
 
 
 class LIF_neuron:
@@ -194,6 +194,7 @@ class Vth:
         return self.vth
 
 
+# pylint: disable=R0912
 def print_neuron_properties(neurons, static, ids=None, spikes=None):
     """Prints the neuron properties in human readable format.
 
@@ -220,7 +221,18 @@ def print_neuron_properties(neurons, static, ids=None, spikes=None):
             print(f"dv={str(round(x.dv.get(),2)) : <{spacing+2}}", end=" ")
         print("")
         for x in neurons:
-            print(f"bias={str(round(x.bias.get(),2)) : <{spacing}}", end=" ")
+            if isinstance(x, LIF_neuron):
+                print(
+                    f"bias={str(round(x.bias.get(),2)) : <{spacing}}", end=" "
+                )
+            elif isinstance(x, LIF):
+                print(
+                    f"bias={str(round(x.bias_mant.get(),2)) : <{spacing}}",
+                    end=" ",
+                )
+            else:
+                print(type(x))
+                raise Exception("Unsupported neuron type.")
         print("")
         for x in neurons:
             print(f"vth={str(round(x.vth.get(),2)) : <{spacing+1}}", end=" ")

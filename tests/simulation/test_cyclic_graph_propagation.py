@@ -160,7 +160,9 @@ def compare_static_snn_properties(test_object, G, t=0):
         nx_neuron = G.nodes[node]["nx_LIF"][t]
 
         # Assert bias is equal.
-        test_object.assertEqual(lava_neuron.bias.get(), nx_neuron.bias.get())
+        test_object.assertEqual(
+            lava_neuron.bias_mant.get(), nx_neuron.bias.get()
+        )
 
         # dicts
         # print(f"lava_neuron.__dict__={lava_neuron.__dict__}")
