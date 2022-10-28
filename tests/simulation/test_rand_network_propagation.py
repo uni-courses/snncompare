@@ -7,16 +7,26 @@ import unittest
 import networkx as nx
 import numpy as np
 
-from src.experiment_settings.Scope_of_tests import Long_scope_of_tests
-from src.graph_generation.get_graph import gnp_random_connected_graph
-from src.simulation.LIF_neuron import print_neuron_properties_per_graph
-from src.simulation.run_on_lava import add_lava_neurons_to_networkx_graph
-from src.simulation.run_on_networkx import add_nx_neurons_to_networkx_graph
-from src.simulation.verify_graph_is_networkx_snn import (
+from src.snn_algo_compare.exp_setts.Scope_of_tests import Long_scope_of_tests
+from src.snn_algo_compare.graph_generation.get_graph import (
+    gnp_random_connected_graph,
+)
+from src.snn_algo_compare.simulation.LIF_neuron import (
+    print_neuron_properties_per_graph,
+)
+from src.snn_algo_compare.simulation.run_on_lava import (
+    add_lava_neurons_to_networkx_graph,
+)
+from src.snn_algo_compare.simulation.run_on_networkx import (
+    add_nx_neurons_to_networkx_graph,
+)
+from src.snn_algo_compare.simulation.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
 )
-from src.simulation.verify_graph_is_snn import verify_networkx_snn_spec
+from src.snn_algo_compare.simulation.verify_graph_is_snn import (
+    verify_networkx_snn_spec,
+)
 from tests.simulation.test_cyclic_graph_propagation import (
     compare_static_snn_properties,
 )

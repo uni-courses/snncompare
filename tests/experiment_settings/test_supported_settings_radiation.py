@@ -4,7 +4,7 @@ specifications."""
 import copy
 import unittest
 
-from src.experiment_settings.verify_experiment_settings import (
+from src.snn_algo_compare.exp_setts.verify_experiment_settings import (
     verify_adap_and_rad_settings,
     verify_experiment_config,
 )

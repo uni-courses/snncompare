@@ -4,10 +4,10 @@ max_graph_size specifications."""
 import copy
 import unittest
 
-from src.experiment_settings.Supported_experiment_settings import (
+from src.snn_algo_compare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from src.experiment_settings.verify_experiment_settings import (
+from src.snn_algo_compare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
 from tests.experiment_settings.test_generic_experiment_settings import (

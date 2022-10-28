@@ -12,19 +12,27 @@ import unittest
 
 import networkx as nx
 
-from src.experiment_settings.Experiment_runner import (
+from src.snn_algo_compare.exp_setts.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
     example_experiment_config,
 )
-from src.export_results.helper import run_config_to_filename
-from src.export_results.plot_graphs import create_root_dir_if_not_exists
-from src.export_results.verify_stage_1_graphs import (
+from src.snn_algo_compare.export_results.helper import run_config_to_filename
+from src.snn_algo_compare.export_results.plot_graphs import (
+    create_root_dir_if_not_exists,
+)
+from src.snn_algo_compare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.graph_generation.stage_1_get_input_graphs import get_input_graph
-from src.import_results.check_completed_stages import has_outputted_stage
-from src.import_results.read_json import load_results_from_json
+from src.snn_algo_compare.graph_generation.stage_1_get_input_graphs import (
+    get_input_graph,
+)
+from src.snn_algo_compare.import_results.check_completed_stages import (
+    has_outputted_stage,
+)
+from src.snn_algo_compare.import_results.read_json import (
+    load_results_from_json,
+)
 from tests.tests_helper import (
     create_result_file_for_testing,
     get_n_random_run_configs,

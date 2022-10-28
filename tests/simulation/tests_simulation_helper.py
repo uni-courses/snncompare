@@ -1,11 +1,15 @@
 """Contains function to assist the simulation tests."""
 
-from src.graph_generation.get_graph import (
+from src.snn_algo_compare.graph_generation.get_graph import (
     get_cyclic_graph_without_directed_path,
     set_rand_neuron_properties,
 )
-from src.simulation.run_on_lava import add_lava_neurons_to_networkx_graph
-from src.simulation.run_on_networkx import add_nx_neurons_to_networkx_graph
+from src.snn_algo_compare.simulation.run_on_lava import (
+    add_lava_neurons_to_networkx_graph,
+)
+from src.snn_algo_compare.simulation.run_on_networkx import (
+    add_nx_neurons_to_networkx_graph,
+)
 
 
 def get_graph_for_cyclic_propagation(test_scope):
