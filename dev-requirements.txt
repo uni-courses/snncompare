@@ -1,10 +1,6 @@
 # This file ensures that the pre-commit service is ran every time you commit.
 # Basically it ensures people only push files to GIT that are up to standard.
 
-# Pre-commit packages for code quality:
-pre - commit
-# Include GitHub pre-commit hook.
-pre-commit
 
 # Turns relative import paths into absolute import paths.
 absolufy-imports
@@ -33,6 +29,10 @@ mdformat
 mypy
 # Auto generate documentation.
 pdoc3
+# Pre-commit packages for code quality:
+pre - commit
+# Include GitHub pre-commit hook.
+pre-commit
 # Seems to be an autoformatter like black, but installed using npm instead of pip.
 prettier
 # Visualise the structure of the code based on a command.

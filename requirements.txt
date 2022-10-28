@@ -1,8 +1,6 @@
 # This file ensures that the pre-commit service is ran every time you commit.
 # Basically it ensures people only push files to GIT that are up to standard.
 
-# Pre-commit packages for code quality:
-pre - commit
 
 # Run pip install on .tar.gz file in GitHub repository (For lava-nc only).
 #- https://github.com/lava-nc/lava/releases/download/v0.5.0/lava-nc-0.5.0.tar.gz
@@ -16,5 +14,7 @@ matplotlib
 networkx==2.8.7
 # Perform scientific computations.
 numpy
+# Pre-commit packages for code quality:
+pre - commit
 # Run python tests.
 pytest-cov
