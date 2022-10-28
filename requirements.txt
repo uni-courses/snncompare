@@ -1,3 +1,65 @@
 # This file ensures that the pre-commit service is ran every time you commit.
 # Basically it ensures people only push files to GIT that are up to standard.
+
+# Turns relative import paths into absolute import paths.
+absolufy-imports
+# Auto format Python code to make it flake8 compliant.
+autoflake
+# Scan Python code for security issues.
+bandit
+# Code formatting compliance.
+black
+# Correct code misspellings.
+codespell
+# Verify percentage of code that has at least 1 test.
+coverage
+# Auto formats the Python documentation written in the code.
+docformatter
+# Auto generate docstrings.
+flake8
+# Run pip install on .tar.gz file in GitHub repository (For lava-nc only).
+#- https://github.com/lava-nc/lava/releases/download/v0.5.0/lava-nc-0.5.0.tar.gz
+https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
+# Auto sort the import statements.
+isort
+# Support parsing Json files.
+jsons
+# Generate plots.
+matplotlib
+# Auto format Markdown files.
+mdformat
+# Auto check static typing.
+mypy
+# Run graph software quickly.
+# Lava depends on networkx 2.8.0
+networkx==2.8.7
+# Perform scientific computations.
+numpy
+# Auto generate documentation.
+pdoc3
+pipreqs
+# Pre-commit packages for code quality:
 pre - commit
+# Include GitHub pre-commit hook.
+pre-commit
+# Seems to be an autoformatter like black, but installed using npm instead of pip.
+prettier
+# Visualise the structure of the code based on a command.
+pycallgraph2
+# Auto check programming style aspects.
+pylint
+# Auto generate docstrings.
+pyment
+# Another static type checker for python like mypy.
+pyright
+# Tag files using Python.
+pytaggit
+# Run python tests.
+pytest-cov
+# Automatically upgrades Python syntax to the new Python version syntax.
+pyupgrade
+# Creating a pip package for this.
+setuptools
+# Identify and remove dead code.
+vulture
+wheel

@@ -85,6 +85,7 @@ dependencies:
     - pytaggit
     # Identify and remove dead code.
     - vulture
-    # Run graph software quickly.
-    # Lava depends on networkx 2.8.0
-    #- networkx==2.8.7
+    # Creating a pip package for this.
+    - setuptools
+    - wheel
+    - pipreqs
