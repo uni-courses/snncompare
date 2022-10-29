@@ -3,10 +3,10 @@ network."""
 
 import unittest
 
-from src.snn_algo_compare.graph_generation.get_graph import (
+from src.snnalgocompare.graph_generation.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
-from src.snn_algo_compare.simulation.run_on_lava import (
+from src.snnalgocompare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )

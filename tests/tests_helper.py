@@ -7,13 +7,13 @@ from typing import List
 import jsons
 import networkx as nx
 
-from src.snn_algo_compare.export_results.export_json_results import (
+from src.snnalgocompare.export_results.export_json_results import (
     write_dict_to_json,
 )
-from src.snn_algo_compare.export_results.helper import (
+from src.snnalgocompare.export_results.helper import (
     get_expected_image_paths_stage_3,
 )
-from src.snn_algo_compare.graph_generation.snn_algo.mdsa_snn_algo import (
+from src.snnalgocompare.graph_generation.snn_algo.mdsa_snn_algo import (
     Alipour_properties,
 )
 

@@ -9,8 +9,8 @@ with open("README.md", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="snn_algo_compare",
-    version="0.0.1",
+    name="snnalgocompare",
+    version="0.0.3",
     author="a-t-0",
     author_email="author@example.com",
     description="Runs an SNN algorithm and compares its results to its Neumann"
