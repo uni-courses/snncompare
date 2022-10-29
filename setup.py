@@ -9,7 +9,7 @@ with open("README.md", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="networkx-to-lava-nc-snn",
+    name="snn_algo_compare",
     version="0.0.1",
     author="a-t-0",
     author_email="author@example.com",
