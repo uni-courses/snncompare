@@ -12,9 +12,7 @@ These results are returned in the form of a dict.
 import networkx as nx
 
 from src.snncompare.helper import get_sim_duration
-from src.snncompare.process_results.get_alipour_nodes import (
-    get_alipour_nodes,
-)
+from src.snncompare.process_results.get_alipour_nodes import get_alipour_nodes
 
 
 def set_mdsa_snn_results(

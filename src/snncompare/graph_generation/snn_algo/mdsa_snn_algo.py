@@ -8,10 +8,7 @@ import networkx as nx
 from src.snncompare.graph_generation.helper_network_structure import (
     create_synapses_and_spike_dicts,
 )
-from src.snncompare.helper import (
-    generate_list_of_n_random_nrs,
-    get_y_position,
-)
+from src.snncompare.helper import generate_list_of_n_random_nrs, get_y_position
 
 
 def specify_mdsa_network_properties(

@@ -7,9 +7,7 @@ import unittest
 from src.snncompare.exp_setts.Supported_run_settings import (
     Supported_run_settings,
 )
-from src.snncompare.exp_setts.verify_run_settings import (
-    verify_run_config,
-)
+from src.snncompare.exp_setts.verify_run_settings import verify_run_config
 
 with_adaptation_with_radiation = {
     "adaptation": {"redundancy": 1.0},

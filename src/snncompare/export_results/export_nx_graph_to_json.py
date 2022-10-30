@@ -7,7 +7,7 @@ import networkx as nx
 from networkx.readwrite import json_graph
 
 
-def digraph_to_json(G):
+def digraph_to_json(G: nx.DiGraph):
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.

@@ -18,10 +18,7 @@ from src.snncompare.export_results.verify_stage_1_graphs import (
 from src.snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
-from src.snncompare.helper import (
-    get_expected_stages,
-    get_extensions_list,
-)
+from src.snncompare.helper import get_expected_stages, get_extensions_list
 
 
 # pylint: disable=R0912

@@ -5,35 +5,35 @@ import argparse
 
 def parse_cli_args() -> argparse.Namespace:
     """Reads command line arguments and converts them into python arguments."""
-    
+
     # Instantiate the parser
     parser = argparse.ArgumentParser(
         description="Optional description for arg" + " parser"
     )
-    
 
     # Create argument parsers to allow user to specify what to run.
     # Allow user run the experiment on a graph from file.
     parser.add_argument(
         "-g",
         "--graph-filepath",
-        dest="graph_from_file",
         action="store",
-        dest="graph_path",
         type=str,
-        help=("Run default experiment on networkx graph in json filepath. Give "
-        +"the filepath."),
+        help=(
+            "Run default experiment on networkx graph in json filepath. Give "
+            + "the filepath."
+        ),
     )
 
     # Run experiment on a particular experiment_settings json file.
     parser.add_argument(
         "-e",
-        "--experiment-config-path",
+        "--experiment-settings-path",
         action="store",
-        dest="experi_setts_filepath",
         type=str,
-        help=("Give filepath to experiment settings json on which to run "
-        +"the experiment."),
+        help=(
+            "Give filepath to experiment settings json on which to run "
+            + "the experiment."
+        ),
     )
 
     # Run run on a particular run_settings json file.
@@ -41,10 +41,10 @@ def parse_cli_args() -> argparse.Namespace:
         "-r",
         "--run-config-path",
         action="store",
-        dest="run_setts_filepath",
         type=str,
-        help=("Give filepath to run settings json on which to run "
-        +"the run."),
+        help=(
+            "Give filepath to run settings json on which to run " + "the run."
+        ),
     )
 
     # Ensure SNN behaviour is visualised in stage 3.
@@ -55,7 +55,7 @@ def parse_cli_args() -> argparse.Namespace:
         default=False,
         help=("Ensures the SNN behaviour is visualised."),
     )
-    
+
     # Create argument parsers to allow user to overwrite pre-existing output.
     # Ensure new SNN graphs are created.
     parser.add_argument(
@@ -63,9 +63,12 @@ def parse_cli_args() -> argparse.Namespace:
         "--overwrite-creation",
         action="store_true",
         default=False,
-        help=("Ensures new SNN graph is created, even if it already existed."
-        +"implies later stages are rewritten as well, images deleted, unless "
-        +"specified otherwise unless specified otherwise (with: --keep-...)"),
+        help=(
+            "Ensures new SNN graph is created, even if it already existed."
+            + "implies later stages are rewritten as well, images deleted, "
+            + "unless specified otherwise unless specified otherwise (with: "
+            + "--keep-...)"
+        ),
     )
 
     # Ensure new SNN graph propagation is performed.
@@ -74,9 +77,11 @@ def parse_cli_args() -> argparse.Namespace:
         "--overwrite-propagation",
         action="store_true",
         default=False,
-        help=("Ensures new SNN graph propagation is performed, even if it "
-        "already existed. implies later stages are rewritten as well, images "
-        "deleted, unless specified otherwise (with: --keep-...)"),
+        help=(
+            "Ensures new SNN graph propagation is performed, even if it "
+            "already existed. implies later stages are rewritten as well, "
+            "images deleted, unless specified otherwise (with: --keep-...)"
+        ),
     )
 
     # Ensure new SNN graph behaviour visualistation is created.
@@ -85,8 +90,10 @@ def parse_cli_args() -> argparse.Namespace:
         "--overwrite-visualisation",
         action="store_true",
         default=False,
-        help=("Ensures new SNN graph behaviour is visualised, even if it "
-        "already existed."),
+        help=(
+            "Ensures new SNN graph behaviour is visualised, even if it "
+            "already existed."
+        ),
     )
 
     # Ensure new SNN graph propagation is performed.
@@ -95,8 +102,10 @@ def parse_cli_args() -> argparse.Namespace:
         "--overwrite-results",
         action="store_true",
         default=False,
-        help=("Ensures new SNN algorithm results are computed, even if they "
-        "already existed."),
+        help=(
+            "Ensures new SNN algorithm results are computed, even if they "
+            "already existed."
+        ),
     )
 
     # Create argument parsers to allow user to overwrite pre-existing output.

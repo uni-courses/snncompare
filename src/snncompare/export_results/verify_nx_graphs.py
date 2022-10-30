@@ -7,9 +7,7 @@ from src.snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 from src.snncompare.helper import get_expected_stages
-from src.snncompare.verification_generic import (
-    verify_completed_stages_list,
-)
+from src.snncompare.verification_generic import verify_completed_stages_list
 
 
 def verify_results_nx_graphs_contain_expected_stages(

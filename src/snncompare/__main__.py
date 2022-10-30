@@ -9,6 +9,9 @@ from src.snncompare.exp_setts.Experiment_runner import (
     Experiment_runner,
     example_experiment_config,
 )
+from src.snncompare.experiment_settings.create_default_settings import (
+    create_default_graph_json,
+)
 from src.snncompare.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
 )
@@ -19,6 +22,8 @@ if os.path.exists("results"):
 if os.path.exists("latex"):
     shutil.rmtree("latex")
     create_root_dir_if_not_exists("latex/Images/graphs")
+
+create_default_graph_json()
 
 # Run experiment example run.
 # TODO: do this as a consequence of parsing the CLI arguments.

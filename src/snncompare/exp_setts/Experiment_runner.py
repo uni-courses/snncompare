@@ -24,9 +24,7 @@ from src.snncompare.exp_setts.verify_experiment_settings import (
 from src.snncompare.exp_setts.verify_run_completion import (
     assert_stage_is_completed,
 )
-from src.snncompare.exp_setts.verify_run_settings import (
-    verify_run_config,
-)
+from src.snncompare.exp_setts.verify_run_settings import verify_run_config
 from src.snncompare.export_results.load_json_to_nx_graph import (
     load_json_to_nx_graph_from_file,
 )

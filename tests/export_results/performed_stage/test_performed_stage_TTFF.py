@@ -30,9 +30,7 @@ from src.snncompare.graph_generation.stage_1_get_input_graphs import (
 from src.snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
-from src.snncompare.import_results.read_json import (
-    load_results_from_json,
-)
+from src.snncompare.import_results.read_json import load_results_from_json
 from tests.tests_helper import (
     create_result_file_for_testing,
     get_n_random_run_configs,
