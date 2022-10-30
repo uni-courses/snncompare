@@ -10,25 +10,25 @@ import os
 import shutil
 import unittest
 
-from src.snnalgocompare.exp_setts.Experiment_runner import (
+from src.snncompare.exp_setts.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
     example_experiment_config,
 )
-from src.snnalgocompare.export_results.helper import run_config_to_filename
-from src.snnalgocompare.export_results.plot_graphs import (
+from src.snncompare.export_results.helper import run_config_to_filename
+from src.snncompare.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
 )
-from src.snnalgocompare.export_results.verify_stage_1_graphs import (
+from src.snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.snnalgocompare.graph_generation.stage_1_get_input_graphs import (
+from src.snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
-from src.snnalgocompare.import_results.check_completed_stages import (
+from src.snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
-from src.snnalgocompare.import_results.stage_1_load_input_graphs import (
+from src.snncompare.import_results.stage_1_load_input_graphs import (
     load_results_from_json,
 )
 from tests.tests_helper import (

@@ -1,13 +1,13 @@
 """Contains function to assist the simulation tests."""
 
-from src.snnalgocompare.graph_generation.get_graph import (
+from src.snncompare.graph_generation.get_graph import (
     get_cyclic_graph_without_directed_path,
     set_rand_neuron_properties,
 )
-from src.snnalgocompare.simulation.run_on_lava import (
+from src.snncompare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
 )
-from src.snnalgocompare.simulation.run_on_networkx import (
+from src.snncompare.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
 )
 

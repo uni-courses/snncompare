@@ -7,15 +7,15 @@ import unittest
 import networkx as nx
 import numpy as np
 
-from src.snnalgocompare.exp_setts.Scope_of_tests import Long_scope_of_tests
-from src.snnalgocompare.graph_generation.get_graph import (
+from src.snncompare.exp_setts.Scope_of_tests import Long_scope_of_tests
+from src.snncompare.graph_generation.get_graph import (
     gnp_random_connected_graph,
 )
-from src.snnalgocompare.simulation.verify_graph_is_networkx_snn import (
+from src.snncompare.simulation.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
 )
-from src.snnalgocompare.simulation.verify_graph_is_snn import (
+from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
 

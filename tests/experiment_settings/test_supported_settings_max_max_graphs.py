@@ -4,10 +4,10 @@ max_max_graphs specifications."""
 import copy
 import unittest
 
-from src.snnalgocompare.exp_setts.Supported_experiment_settings import (
+from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from src.snnalgocompare.exp_setts.verify_experiment_settings import (
+from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
 from tests.experiment_settings.test_generic_experiment_settings import (

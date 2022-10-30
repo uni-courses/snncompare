@@ -4,10 +4,10 @@ specifications."""
 import copy
 import unittest
 
-from src.snnalgocompare.exp_setts.Supported_run_settings import (
+from src.snncompare.exp_setts.Supported_run_settings import (
     Supported_run_settings,
 )
-from src.snnalgocompare.exp_setts.verify_run_settings import (
+from src.snncompare.exp_setts.verify_run_settings import (
     verify_run_config,
 )
 

@@ -1,4 +1,4 @@
-"""Packaging logic for snnalgocompare."""
+"""Packaging logic for snncompare."""
 from __future__ import annotations
 
 import os

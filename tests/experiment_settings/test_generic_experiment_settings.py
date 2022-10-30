@@ -3,14 +3,14 @@ specifications."""
 import copy
 import unittest
 
-from src.snnalgocompare.exp_setts.Adaptation_Rad_settings import (
+from src.snncompare.exp_setts.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
-from src.snnalgocompare.exp_setts.Supported_experiment_settings import (
+from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from src.snnalgocompare.exp_setts.verify_experiment_settings import (
+from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_adap_and_rad_settings,
     verify_experiment_config,
 )

@@ -1,7 +1,7 @@
 """Verifies 2 nodes are included in the networkx graph."""
 import unittest
 
-from src.snnalgocompare.graph_generation.get_graph import (
+from src.snncompare.graph_generation.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
 
