@@ -7,40 +7,20 @@ from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
+from src.snncompare.exp_setts.default_setts.create_default_settings import (
+    default_experiment_config,
+)
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
 from src.snncompare.exp_setts.verify_experiment_settings import (
-    verify_adap_and_rad_settings,
     verify_experiment_config,
 )
 
 supp_exp_setts = Supported_experiment_settings()
 adap_sets = Adaptations_settings()
 rad_sets = Radiation_settings()
-with_adaptation_with_radiation = {
-    "adaptations": verify_adap_and_rad_settings(
-        supp_exp_setts, adap_sets.with_adaptation, "adaptations"
-    ),
-    "algorithms": {
-        "MDSA": {
-            "m_vals": list(range(0, 4, 1)),
-        }
-    },
-    "iterations": list(range(0, 3, 1)),
-    "min_graph_size": 3,
-    "min_max_graphs": 1,
-    "max_graph_size": 20,
-    "max_max_graphs": 15,
-    "overwrite_sim_results": True,
-    "overwrite_visualisation": True,
-    "radiations": verify_adap_and_rad_settings(
-        supp_exp_setts, rad_sets.with_radiation, "radiations"
-    ),
-    "seed": 5,
-    "size_and_max_graphs": [(3, 15), (4, 15)],
-    "simulators": ["nx"],
-}
+with_adaptation_with_radiation = default_experiment_config()
 
 
 class Test_generic_configuration_settings(unittest.TestCase):

@@ -73,7 +73,7 @@ def default_experiment_config():
             supp_exp_setts, rad_sets.with_radiation, "radiations"
         ),
         # "iterations": list(range(0, 3, 1)),
-        "iterations": list(range(0, 1, 1)),
+        "iterations": list(range(0, 3, 1)),
         # TODO: Change into list with "Seeds"
         "seed": 42,
         # TODO: merge into: "input graph properties object
