@@ -7,7 +7,7 @@ import shutil
 
 from src.snncompare.exp_setts.algos.get_alg_configs import (
     get_algo_configs,
-    verify_mdsa_configs,
+    verify_algo_configs,
 )
 from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.default_setts.create_default_settings import (
@@ -28,7 +28,7 @@ if os.path.exists("latex"):
 
 mdsa = MDSA(list(range(0, 4, 1)))
 mdsa_configs = get_algo_configs(mdsa.__dict__)
-verify_mdsa_configs("MDSA", mdsa_configs)
+verify_algo_configs("MDSA", mdsa_configs)
 create_default_graph_json()
 
 # Run experiment example run.
