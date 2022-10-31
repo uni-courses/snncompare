@@ -65,11 +65,11 @@ class Test_stage_1_output_json(unittest.TestCase):
         # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2, 3, 4]
-        self.export_snns = False  # Expect the test to export snn pictures.
+        self.export_images = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
             self.experiment_config,
-            export_snns=self.export_snns,
+            export_images=self.export_images,
             show_snns=False,
         )
         # TODO: verify the to_run is computed correctly.

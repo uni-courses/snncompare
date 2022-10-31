@@ -16,7 +16,6 @@ from src.snncompare.exp_setts.run_config.verify_run_settings import (
 )
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
-    convert_algorithm_to_setting_list,
 )
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
@@ -64,7 +63,7 @@ class Experiment_runner:
     # pylint: disable=R0903
 
     def __init__(
-        self, experiment_config: dict, export_snns: bool, show_snns: bool
+        self, experiment_config: dict, export_images: bool, show_snns: bool
     ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
@@ -74,12 +73,12 @@ class Experiment_runner:
         self.experiment_config = experiment_config
 
         # Load the ranges of supported settings.
-        self.supp_experi_setts = Supported_experiment_settings()
+        self.supp_exp_setts = Supported_experiment_settings()
 
         # Verify the experiment experiment_config are complete and valid.
         # pylint: disable=R0801
         verify_experiment_config(
-            self.supp_experi_setts,
+            self.supp_exp_setts,
             experiment_config,
             has_unique_id=False,
             strict=True,
@@ -87,18 +86,16 @@ class Experiment_runner:
 
         # If the experiment experiment_config does not contain a hash-code,
         # create the unique hash code for this configuration.
-        if not self.supp_experi_setts.has_unique_config_id(
+        if not self.supp_exp_setts.has_unique_config_id(
             self.experiment_config
         ):
-            self.supp_experi_setts.append_unique_config_id(
-                self.experiment_config
-            )
+            self.supp_exp_setts.append_unique_config_id(self.experiment_config)
 
         # Verify the unique hash code for this configuration is valid.
         verify_has_unique_id(self.experiment_config)
 
-        # Append the export_snns and show_snns arguments.
-        self.experiment_config["export_snns"] = export_snns
+        # Append the export_images and show_snns arguments.
+        self.experiment_config["export_images"] = export_images
         self.experiment_config["show_snns"] = show_snns
 
         # Perform runs accordingly.
@@ -123,7 +120,7 @@ class Experiment_runner:
             self.__perform_run_stage_2(results_nx_graphs, to_run)
             self.__perform_run_stage_3(results_nx_graphs, to_run)
             self.__perform_run_stage_4(
-                self.experiment_config["export_snns"],
+                self.experiment_config["export_images"],
                 results_nx_graphs,
                 to_run,
             )
@@ -232,7 +229,7 @@ class Experiment_runner:
             )
 
     def __perform_run_stage_4(
-        self, export_snns: bool, results_nx_graphs: dict, to_run: dict
+        self, export_images: bool, results_nx_graphs: dict, to_run: dict
     ) -> None:
         """Performs the run for stage 4.
 
@@ -244,7 +241,7 @@ class Experiment_runner:
             results_nx_graphs["run_config"],
             results_nx_graphs["graphs_dict"],
         )
-        export_results_to_json(export_snns, results_nx_graphs, 4, to_run)
+        export_results_to_json(export_images, results_nx_graphs, 4, to_run)
         assert_stage_is_completed(results_nx_graphs["run_config"], 4, to_run)
 
 
@@ -261,10 +258,8 @@ def experiment_config_to_run_configs(experiment_config: dict):
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
     # for algorithm in experiment_config["algorithms"]:
-    for algorithm_name, algo_setts_dict in experiment_config[
-        "algorithms"
-    ].items():
-        for algo_config in convert_algorithm_to_setting_list(algo_setts_dict):
+    for algorithm_name, algo_specs in experiment_config["algorithms"].items():
+        for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
             for adaptation_name, adaptation_setts_list in experiment_config[
                 "adaptations"
@@ -311,11 +306,11 @@ def experiment_config_to_run_configs(experiment_config: dict):
         # Append unique_id to run_config
         supp_run_setts.append_unique_config_id(run_config)
 
-        # Append show_snns and export_snns to run config.
+        # Append show_snns and export_images to run config.
         supp_run_setts.assert_has_key(experiment_config, "show_snns", bool)
-        supp_run_setts.assert_has_key(experiment_config, "export_snns", bool)
+        supp_run_setts.assert_has_key(experiment_config, "export_images", bool)
         run_config["show_snns"] = experiment_config["show_snns"]
-        run_config["export_snns"] = experiment_config["export_snns"]
+        run_config["export_images"] = experiment_config["export_images"]
     return run_configs
 
 
@@ -382,7 +377,7 @@ def determine_what_to_run(run_config) -> dict:
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not has_outputted_stage(run_config, 3, to_run)
-        and (run_config["export_snns"] or run_config["show_snns"])
+        and (run_config["export_images"] or run_config["show_snns"])
     ) or run_config["overwrite_visualisation"]:
         # Note this allows the user to create inconsistent simulation
         # results and visualisation. E.g. the simulated behaviour may

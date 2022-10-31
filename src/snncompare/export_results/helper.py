@@ -38,7 +38,7 @@ def run_config_to_filename(run_config: dict) -> str:
     stripped_run_config.pop("overwrite_sim_results")  # Irrellevant
     stripped_run_config.pop("overwrite_visualisation")  # Irrellevant
     stripped_run_config.pop("show_snns")  # Irrellevant
-    stripped_run_config.pop("export_snns")  # Irrellevant
+    stripped_run_config.pop("export_images")  # Irrellevant
     # instead (To reduce filename length).
     filename = str(flatten(stripped_run_config))
 

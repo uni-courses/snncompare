@@ -100,7 +100,7 @@ def load_pre_existing_graph_dict(
         return load_verified_json_graphs_from_json(
             run_config,
             get_expected_stages(
-                run_config["export_snns"], stage_index, to_run
+                run_config["export_images"], stage_index, to_run
             ),
         )
     raise Exception("Error, unexpected stage_index.")

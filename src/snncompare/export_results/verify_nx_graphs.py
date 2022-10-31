@@ -20,7 +20,9 @@ def verify_results_nx_graphs_contain_expected_stages(
     """
     for graph_name, nx_graph in results_nx_graphs["graphs_dict"].items():
         expected_stages = get_expected_stages(
-            results_nx_graphs["run_config"]["export_snns"], stage_index, to_run
+            results_nx_graphs["run_config"]["export_images"],
+            stage_index,
+            to_run,
         )
         verify_nx_graph_contains_correct_stages(
             graph_name, nx_graph, expected_stages

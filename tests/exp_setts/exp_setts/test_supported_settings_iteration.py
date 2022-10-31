@@ -7,10 +7,10 @@ import unittest
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
-from tests.experiment_settings.test_generic_experiment_settings import (
+from tests.exp_setts.exp_setts.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
-    supp_experi_setts,
+    supp_exp_setts,
     verify_error_is_thrown_on_invalid_configuration_setting_value,
     with_adaptation_with_radiation,
 )
@@ -23,18 +23,18 @@ class Test_iterations_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.supp_experi_setts = Supported_experiment_settings()
+        # self.supp_exp_setts = Supported_experiment_settings()
         self.maxDiff = None  # Display full error message.
 
         self.invalid_iterations_value = {
             "iterations": "invalid value of type string iso list of floats",
         }
 
-        self.supp_experi_setts = supp_experi_setts
+        self.supp_exp_setts = supp_exp_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
-        self.valid_iterations = self.supp_experi_setts.iterations
+        self.valid_iterations = self.supp_exp_setts.iterations
 
     def test_error_is_thrown_if_iterations_key_is_missing(self):
         """Verifies an exception is thrown if the iteration key is missing from
@@ -48,7 +48,7 @@ class Test_iterations_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
                 strict=True,
@@ -71,7 +71,7 @@ class Test_iterations_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_experi_setts.iterations)
+        expected_type = type(self.supp_exp_setts.iterations)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
@@ -93,7 +93,7 @@ class Test_iterations_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
                 strict=True,
@@ -115,7 +115,7 @@ class Test_iterations_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
                 strict=True,
@@ -138,7 +138,7 @@ class Test_iterations_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
                 strict=True,

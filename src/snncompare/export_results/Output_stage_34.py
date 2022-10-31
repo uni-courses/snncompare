@@ -39,7 +39,10 @@ def output_stage_files_3_and_4(
     # single dict.
     if results_nx_graphs["run_config"]["simulator"] == "nx":
 
-        if results_nx_graphs["run_config"]["export_snns"] or stage_index == 4:
+        if (
+            results_nx_graphs["run_config"]["export_images"]
+            or stage_index == 4
+        ):
             # Output the json dictionary of the files.
             filename = run_config_to_filename(results_nx_graphs["run_config"])
             output_stage_json(
@@ -49,12 +52,15 @@ def output_stage_files_3_and_4(
                 to_run,
             )
         else:
-            raise Exception("Error export_snns should not be exported.")
+            raise Exception("Error export_images should not be exported.")
 
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
         # TODO: Distinguish between showing snns and outputting snns.
-        if results_nx_graphs["run_config"]["export_snns"] and stage_index == 3:
+        if (
+            results_nx_graphs["run_config"]["export_images"]
+            and stage_index == 3
+        ):
             # Output graph behaviour for stage stage_index.
             plot_graph_behaviours(
                 filename,

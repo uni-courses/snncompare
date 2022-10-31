@@ -6,20 +6,20 @@ setting types should be identical.)
 """
 
 
-# pylint: disable=R0902
-# The settings object contains all the settings as a dictionary, hence no
-# hierarchy is used, leading to 10/7 instance attributes.
-
 import copy
 
-from src.snncompare.exp_setts.algos.Supported_algorithms import MDSA
+from src.snncompare.exp_setts.algos.get_alg_configs import get_algo_configs
+from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
     verify_min_max,
 )
 
 
-class Supported_experiment_settings:
+# pylint: disable=R0903
+# The settings object contains all the settings as a dictionary, hence no
+# hierarchy is used, leading to 10/7 instance attributes.
+class Exp_setts_typing:
     """Stores the supported experiment setting parameter ranges.
 
     An experiment can consist of multiple runs. A run is a particular
@@ -39,25 +39,39 @@ class Supported_experiment_settings:
             "max_max_graphs": int,
             "min_graph_size": int,
             "min_max_graphs": int,
-            "radiations": dict,
-            "overwrite_sim_results": bool,
+            "neuron_models": list,
+            "overwrite_snn_creation": bool,
+            "overwrite_snn_propagation": bool,
             "overwrite_visualisation": bool,
+            "overwrite_sim_results": bool,
+            "radiations": dict,
             "seed": int,
             "simulators": list,
             "size_and_max_graphs": list,
+            "synaptic_models": list,
         }
         self.optional_parameters = {
             "show_snns": bool,
-            # TODO: make clear export_snns means export the snn images.
-            "export_snns": bool,
+            "export_images": bool,
             "unique_id": int,
         }
+
+
+# pylint: disable=R0902
+class Supported_experiment_settings:
+    """Contains the settings that are supported for the experiment_config."""
+
+    def __init__(
+        self,
+    ) -> None:
+        self.parameters = Exp_setts_typing().parameters
+        self.optional_parameters = Exp_setts_typing().optional_parameters
 
         self.seed = 5
 
         # Create dictionary with algorithm name as key, and algorithm settings
         # object as value.
-        self.algorithms = {"MDSA": MDSA()}
+        self.algorithms = get_algo_configs(MDSA(list(range(0, 4, 1))).__dict__)
 
         # The number of times the experiment is repeated.
         self.iterations = list(range(0, 3, 1))
@@ -221,31 +235,3 @@ def dict_to_frozen_set(experiment_config: dict) -> frozenset:
         if isinstance(value, dict):
             value = dict_to_frozen_set(value)
     return frozenset(some_dict)
-
-
-def convert_algorithm_to_setting_list(algorithm: dict):
-    """Takes in a dictionary with parameters that may have lists of values, and
-    creates a list of algorithm dictionaries of all brute force combinations of
-    the values of the parameters lists."""
-    algorithms = []
-
-    # Loop through the parameters and value lists.
-    for parameter, values_list in algorithm.items():
-        if not isinstance(values_list, list):
-            raise Exception(
-                f"Error, the values_list of{parameter} is not"
-                + f" of type list, instead, it is:{type(values_list)}"
-            )
-        if parameter[-1] != "s":
-            raise Exception(
-                "Error, the parameter name should be in plural"
-                + "form, ending at an s."
-            )
-
-        # Loop through the values in a list of values of a parameter.
-        for value in values_list:
-            # TODO: allow for multiple parameters.
-            # Now the dictionary is overwritten for each parameter.
-            algorithms.append({parameter[:-1]: value})
-
-    return algorithms

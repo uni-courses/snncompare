@@ -15,8 +15,8 @@ def verify_run_config(supp_run_setts, run_config, has_unique_id, strict: bool):
     """Verifies the selected experiment configuration settings are valid.
 
     :param run_config: param has_unique_id:
-    :param has_unique_id: param supp_experi_setts:
-    :param supp_experi_setts:
+    :param has_unique_id: param supp_exp_setts:
+    :param supp_exp_setts:
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")

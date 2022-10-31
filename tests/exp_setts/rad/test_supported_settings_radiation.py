@@ -8,10 +8,10 @@ from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_adap_and_rad_settings,
     verify_experiment_config,
 )
-from tests.experiment_settings.test_generic_experiment_settings import (
+from tests.exp_setts.exp_setts.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
-    supp_experi_setts,
+    supp_exp_setts,
     with_adaptation_with_radiation,
 )
 
@@ -23,12 +23,12 @@ class Test_radiations_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_experi_setts = supp_experi_setts
+        self.supp_exp_setts = supp_exp_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-        self.valid_radiations = self.supp_experi_setts.radiations
+        self.valid_radiations = self.supp_exp_setts.radiations
 
         self.invalid_radiations_value = {
             "neuron_death": "invalid value of type string iso list",
@@ -49,7 +49,7 @@ class Test_radiations_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
                 strict=True,
@@ -72,7 +72,7 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_experi_setts, None, "radiations"
+                self.supp_exp_setts, None, "radiations"
             )
 
         self.assertEqual(
@@ -92,7 +92,7 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_experi_setts, "string_instead_of_dict", "radiations"
+                self.supp_exp_setts, "string_instead_of_dict", "radiations"
             )
 
         self.assertEqual(
@@ -106,9 +106,7 @@ class Test_radiations_settings(unittest.TestCase):
         thrown."""
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
-            verify_adap_and_rad_settings(
-                self.supp_experi_setts, {}, "radiations"
-            )
+            verify_adap_and_rad_settings(self.supp_exp_setts, {}, "radiations")
 
         self.assertEqual(
             "Error, property dict: radiations was empty.",
@@ -123,14 +121,14 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 self.invalid_radiations_key,
                 "radiations",
             )
 
         self.assertEqual(
             "Error, property.key:non-existing-key is not in the supported "
-            + f"property keys:{self.supp_experi_setts.radiations.keys()}.",
+            + f"property keys:{self.supp_exp_setts.radiations.keys()}.",
             str(context.exception),
         )
 
@@ -145,7 +143,7 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 self.invalid_radiations_value,
                 "radiations",
             )

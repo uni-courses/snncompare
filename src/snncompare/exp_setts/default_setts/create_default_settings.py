@@ -9,6 +9,8 @@ from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
+from src.snncompare.exp_setts.algos.get_alg_configs import get_algo_configs
+from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -43,32 +45,32 @@ def create_default_graph_json() -> None:
     # Verify file content.
 
 
-def create_default_experi_setts() -> None:
+def create_default_exp_setts() -> None:
     """Generates the default experiment settings json file."""
 
 
 def default_experiment_config():
     """Creates example experiment configuration setting."""
     # Create prerequisites
-    supp_experi_setts = Supported_experiment_settings()
+    supp_exp_setts = Supported_experiment_settings()
     adap_sets = Adaptations_settings()
     rad_sets = Radiation_settings()
 
     # Create the experiment configuration settings for a run with adaptation
     # and with radiation.
+    print(get_algo_configs(MDSA(list(range(0, 4, 1))).__dict__))
+
     with_adaptation_with_radiation = {
         # TODO: set using a verification setting.
         "algorithms": {
-            "MDSA": {
-                "m_vals": list(range(2, 3, 1)),
-            }
+            "MDSA": get_algo_configs(MDSA(list(range(0, 4, 1))).__dict__)
         },
         # TODO: pass algo to see if it is compatible with the algorithm.
         "adaptations": verify_adap_and_rad_settings(
-            supp_experi_setts, adap_sets.with_adaptation, "adaptations"
+            supp_exp_setts, adap_sets.with_adaptation, "adaptations"
         ),
         "radiations": verify_adap_and_rad_settings(
-            supp_experi_setts, rad_sets.with_radiation, "radiations"
+            supp_exp_setts, rad_sets.with_radiation, "radiations"
         ),
         # "iterations": list(range(0, 3, 1)),
         "iterations": list(range(0, 1, 1)),
@@ -90,7 +92,7 @@ def default_experiment_config():
         # TODO: pass algo to see if it is compatible with the algorithm.
         # TODO: move into "Backend options"
         "simulators": ["nx"],
-        "neuron_types": ["LIF"],
-        "synapse_types": ["LIF"],
+        "neuron_models": ["LIF"],
+        "synaptic_models": ["LIF"],
     }
     return with_adaptation_with_radiation

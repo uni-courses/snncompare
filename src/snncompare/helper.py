@@ -810,7 +810,7 @@ def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
 
 
 def get_expected_stages(
-    export_snns: bool, stage_index: int, to_run: dict
+    export_images: bool, stage_index: int, to_run: dict
 ) -> List[int]:
     """Computes which stages should be expected at this stage of the
     experiment."""
@@ -819,7 +819,7 @@ def get_expected_stages(
     if not to_run["stage_3"]:
         if 3 in expected_stages:
             expected_stages.remove(3)
-    if export_snns:
+    if export_images:
         if 3 not in expected_stages:
             expected_stages.append(3)
     # Sort and remove dupes.

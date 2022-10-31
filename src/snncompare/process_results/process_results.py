@@ -54,7 +54,7 @@ def set_results(run_config: dict, stage_2_graphs: dict) -> None:
 
 
 def export_results_to_json(
-    export_snns: bool,
+    export_images: bool,
     results_nx_graphs: dict,
     stage_index: int,
     to_run: dict,
@@ -102,7 +102,7 @@ def export_results_to_json(
         verify_nx_graph_contains_correct_stages(
             graph_name,
             nx_graph,
-            get_expected_stages(export_snns, stage_index, to_run),
+            get_expected_stages(export_images, stage_index, to_run),
         )
 
     output_stage_files_3_and_4(results_nx_graphs, 4, to_run)

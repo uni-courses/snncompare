@@ -46,7 +46,7 @@ class Supported_run_settings:
         }
         self.optional_parameters = {
             "duration": int,
-            "export_snns": bool,
+            "export_images": bool,
             "show_snns": bool,
             "stage": int,  # TODO: remove this parameter.
             "unique_id": int,

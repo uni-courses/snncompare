@@ -149,7 +149,7 @@ def has_valid_json_results(
                     return False
 
                 expected_stages = get_expected_stages(
-                    run_config["export_snns"], 4, to_run
+                    run_config["export_images"], 4, to_run
                 )
 
                 for graph_name, json_graph in json_graphs.items():

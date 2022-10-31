@@ -15,12 +15,12 @@ from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
 
-supp_experi_setts = Supported_experiment_settings()
+supp_exp_setts = Supported_experiment_settings()
 adap_sets = Adaptations_settings()
 rad_sets = Radiation_settings()
 with_adaptation_with_radiation = {
     "adaptations": verify_adap_and_rad_settings(
-        supp_experi_setts, adap_sets.with_adaptation, "adaptations"
+        supp_exp_setts, adap_sets.with_adaptation, "adaptations"
     ),
     "algorithms": {
         "MDSA": {
@@ -35,7 +35,7 @@ with_adaptation_with_radiation = {
     "overwrite_sim_results": True,
     "overwrite_visualisation": True,
     "radiations": verify_adap_and_rad_settings(
-        supp_experi_setts, rad_sets.with_radiation, "radiations"
+        supp_exp_setts, rad_sets.with_radiation, "radiations"
     ),
     "seed": 5,
     "size_and_max_graphs": [(3, 15), (4, 15)],
@@ -73,7 +73,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         """Verifies a valid configuration settings object and object type is
         returned."""
         returned_dict = verify_experiment_config(
-            supp_experi_setts,
+            supp_exp_setts,
             with_adaptation_with_radiation,
             has_unique_id=False,
             strict=True,
@@ -89,7 +89,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
             verify_experiment_config(
-                supp_experi_setts, None, has_unique_id=False, strict=True
+                supp_exp_setts, None, has_unique_id=False, strict=True
             )
 
         self.assertEqual(
@@ -109,7 +109,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_experiment_config(
-                supp_experi_setts,
+                supp_exp_setts,
                 "string_instead_of_dict",
                 has_unique_id=False,
                 strict=True,
@@ -133,7 +133,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_experiment_config(
-                supp_experi_setts,
+                supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
                 strict=True,
@@ -141,7 +141,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         self.assertEqual(
             f"Error:{self.invalid_adaptation_key} is not supported by the"
             + " configuration settings:"
-            + f"{supp_experi_setts.parameters}",
+            + f"{supp_exp_setts.parameters}",
             str(context.exception),
         )
 
@@ -164,7 +164,7 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
         )
     with test_object.assertRaises(Exception) as context:
         verify_experiment_config(
-            test_object.supp_experi_setts,
+            test_object.supp_exp_setts,
             experiment_config,
             has_unique_id=False,
             strict=True,

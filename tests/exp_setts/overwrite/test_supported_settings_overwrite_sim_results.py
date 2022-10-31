@@ -10,10 +10,10 @@ from src.snncompare.exp_setts.Supported_experiment_settings import (
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
-from tests.experiment_settings.test_generic_experiment_settings import (
+from tests.exp_setts.exp_setts.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
-    supp_experi_setts,
+    supp_exp_setts,
     verify_error_is_thrown_on_invalid_configuration_setting_value,
     with_adaptation_with_radiation,
 )
@@ -26,9 +26,9 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
     # Initialize test object
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.supp_experi_setts = Supported_experiment_settings()
+        self.supp_exp_setts = Supported_experiment_settings()
         self.valid_overwrite_sim_results = (
-            self.supp_experi_setts.overwrite_sim_results
+            self.supp_exp_setts.overwrite_sim_results
         )
 
         self.invalid_overwrite_sim_results_value = {
@@ -36,7 +36,7 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
             + " floats",
         }
 
-        self.supp_experi_setts = supp_experi_setts
+        self.supp_exp_setts = supp_exp_setts
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
@@ -53,7 +53,7 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_experiment_config(
-                self.supp_experi_setts,
+                self.supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
                 strict=True,
@@ -76,7 +76,7 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_experi_setts.overwrite_sim_results)
+        expected_type = type(self.supp_exp_setts.overwrite_sim_results)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:

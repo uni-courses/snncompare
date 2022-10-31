@@ -26,7 +26,7 @@ from src.snncompare.simulation.verify_graph_is_networkx_snn import (
 from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
-from tests.experiment_settings.test_scope import Long_scope_of_tests
+from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 from tests.simulation.test_cyclic_graph_propagation import (
     compare_static_snn_properties,
 )
