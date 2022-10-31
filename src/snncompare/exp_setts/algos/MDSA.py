@@ -4,6 +4,10 @@ settings."""
 
 from typing import List
 
+from src.snncompare.exp_setts.algos.verify_algos import (
+    assert_parameter_is_list,
+)
+
 
 # pylint: disable=R0903
 class MDSA_config:
@@ -45,12 +49,14 @@ class MDSA:
         self.min_m_vals: int = 0
         self.max_m_vals: int = 3
 
-        # Verify type of parameters.
-        if not isinstance(m_vals, List):
-            raise TypeError(
-                "m_vals is not of type:List[int]. Instead it is of "
-                + f"type:{type(m_vals)}"
-            )
+        self.verify_m_vals(m_vals)
+
+        # List of the algorithm parameters for a run settings dict.
+        self.alg_parameters = {"m_vals": m_vals}
+
+    def verify_m_vals(self, m_vals: List[int]) -> None:
+        """Verifies the m_vals parameter setting of the algorithm."""
+        assert_parameter_is_list(m_vals)
 
         # Verify values of parameters.
         for m_val in m_vals:
@@ -62,14 +68,11 @@ class MDSA:
                 )
             if m_val < self.min_m_vals:
                 raise ValueError(
-                    "Error, the minimum supported value for "
-                    + f"m_vals is:{self.min_m_vals}, yet we found:{m_vals}"
+                    "Error, the minimum supported value for m_vals is:"
+                    + f"{self.min_m_vals}, yet we found {m_vals}"
                 )
             if m_val > self.max_m_vals:
                 raise ValueError(
-                    "Error, the maximum supported value for "
-                    + f"m_vals is:{self.min_m_vals}, yet we found:{m_vals}"
+                    "Error, the maximum supported value for m_vals is:"
+                    + f"{self.min_m_vals}, yet we found:{m_vals}"
                 )
-
-        # List of the algorithm parameters for a run settings dict.
-        self.alg_parameters = {"m_vals": m_vals}

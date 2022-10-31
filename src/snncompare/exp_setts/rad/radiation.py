@@ -4,13 +4,8 @@ settings."""
 
 from typing import List
 
-from src.snncompare.exp_setts.algos.verify_algos import (
-    assert_parameter_is_list,
-)
-
 
 # pylint: disable=R0903
-# pylint: disable=R0801
 class DUMMY_config:
     """Create a particular configuration for the MDSA algorithm."""
 
@@ -75,9 +70,21 @@ class DUMMY:
             "other_vals": other_vals,
         }
 
+    def assert_parameter_is_list(self, parameter: List) -> None:
+        """Asserts the incoming parameter is of type list.
+
+        Throws error if it is of another type.
+        """
+        # Verify type of parameters.
+        if not isinstance(parameter, List):
+            raise TypeError(
+                "some_vals is not of type:List[int]. Instead it is of "
+                + f"type:{type(parameter)}"
+            )
+
     def verify_some_vals(self, some_vals: List[int]) -> None:
         """Verifies the some_vals parameter setting of the algorithm."""
-        assert_parameter_is_list(some_vals)
+        self.assert_parameter_is_list(some_vals)
 
         # Verify values of parameters.
         for some_val in some_vals:
@@ -100,7 +107,7 @@ class DUMMY:
 
     def verify_other_vals(self, other_vals: List[str]) -> None:
         """Verifies the other_vals parameter setting of the algorithm."""
-        assert_parameter_is_list(other_vals)
+        self.assert_parameter_is_list(other_vals)
 
         # Verify values of parameters.
         for other_val in other_vals:
