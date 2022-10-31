@@ -3,9 +3,6 @@
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from src.snncompare.exp_setts.verify_experiment_settings import (
-    verify_adap_and_rad_settings,
-)
 
 
 class Adaptations_settings:
@@ -71,21 +68,3 @@ class Radiation_settings:
 adaptation_settings = Adaptations_settings()
 radiation_settings = Radiation_settings()
 supported_settings = Supported_experiment_settings()
-
-with_and_without_adaptation_and_radiation = {
-    "m": list(range(0, 1, 1)),
-    "iterations": list(range(0, 3, 1)),
-    "size,max_graphs": [(3, 15), (4, 15)],
-    "adaptations": verify_adap_and_rad_settings(
-        supported_settings,
-        adaptation_settings.with_and_without_adaptation,
-        "adaptations",
-    ),
-    "radiations": verify_adap_and_rad_settings(
-        supported_settings,
-        radiation_settings.with_and_without_radiation,
-        "radiations",
-    ),
-    "overwrite": True,
-    "simulators": ["nx"],
-}

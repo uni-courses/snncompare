@@ -7,7 +7,6 @@ import unittest
 import networkx as nx
 import numpy as np
 
-from src.snncompare.exp_setts.Scope_of_tests import Long_scope_of_tests
 from src.snncompare.graph_generation.get_graph import (
     gnp_random_connected_graph,
 )
@@ -27,6 +26,7 @@ from src.snncompare.simulation.verify_graph_is_networkx_snn import (
 from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
+from tests.experiment_settings.test_scope import Long_scope_of_tests
 from tests.simulation.test_cyclic_graph_propagation import (
     compare_static_snn_properties,
 )

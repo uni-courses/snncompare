@@ -12,7 +12,7 @@ setting types should be identical.)
 
 import copy
 
-from src.snncompare.exp_setts.Supported_algorithms import MDSA
+from src.snncompare.exp_setts.algos.Supported_algorithms import MDSA
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
     verify_min_max,

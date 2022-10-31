@@ -5,13 +5,11 @@ that invokes this script."""
 import os
 import shutil
 
-from src.snncompare.exp_setts.Experiment_runner import (
-    Experiment_runner,
-    example_experiment_config,
-)
-from src.snncompare.experiment_settings.create_default_settings import (
+from src.snncompare.exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,
+    default_experiment_config,
 )
+from src.snncompare.Experiment_runner import Experiment_runner
 from src.snncompare.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
 )
@@ -27,7 +25,7 @@ create_default_graph_json()
 
 # Run experiment example run.
 # TODO: do this as a consequence of parsing the CLI arguments.
-experiment_config = example_experiment_config()
+experiment_config = default_experiment_config()
 show_snns = False
 export_snns = False
 Experiment_runner(

@@ -13,10 +13,12 @@ setting types should be identical.)
 # pylint: disable=R0903
 
 
+from src.snncompare.exp_setts.run_config.verify_run_settings import (
+    verify_run_config,
+)
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     dict_to_frozen_set,
 )
-from src.snncompare.exp_setts.verify_run_settings import verify_run_config
 
 
 class Supported_run_settings:

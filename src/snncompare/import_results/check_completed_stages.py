@@ -67,6 +67,7 @@ def has_outputted_stage(
                 json_graphs = load_pre_existing_graph_dict(
                     run_config, stage_index, to_run
                 )
+            # pylint: disable=R0801
             except KeyError:
                 return False
             except ValueError:

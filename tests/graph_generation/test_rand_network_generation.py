@@ -7,7 +7,6 @@ import unittest
 import networkx as nx
 import numpy as np
 
-from src.snncompare.exp_setts.Scope_of_tests import Long_scope_of_tests
 from src.snncompare.graph_generation.get_graph import (
     gnp_random_connected_graph,
 )
@@ -18,6 +17,7 @@ from src.snncompare.simulation.verify_graph_is_networkx_snn import (
 from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
+from tests.experiment_settings.test_scope import Long_scope_of_tests
 
 
 class Test_networkx_and_lava_snn_simulation_produce_identical_results(

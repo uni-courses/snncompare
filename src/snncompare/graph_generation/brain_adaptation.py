@@ -1,13 +1,15 @@
 """Applies brain adaptation to a MDSA SNN graph."""
 import copy
 
-from src.snncompare.exp_setts.create_testobject import add_monitor_to_dict
 from src.snncompare.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
 )
 from src.snncompare.helper import print_time
 from src.snncompare.old_conversion import (
     convert_networkx_graph_to_snn_with_one_neuron,
+)
+from tests.experiment_settings.test_create_testobject import (
+    add_monitor_to_dict,
 )
 
 

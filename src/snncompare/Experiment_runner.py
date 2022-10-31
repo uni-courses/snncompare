@@ -5,26 +5,23 @@ setting of the experiment configuration settings.
 """
 
 
-from src.snncompare.exp_setts.Adaptation_Rad_settings import (
-    Adaptations_settings,
-    Radiation_settings,
+from src.snncompare.exp_setts.run_config.Supported_run_settings import (
+    Supported_run_settings,
+)
+from src.snncompare.exp_setts.run_config.verify_run_completion import (
+    assert_stage_is_completed,
+)
+from src.snncompare.exp_setts.run_config.verify_run_settings import (
+    verify_run_config,
 )
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
     convert_algorithm_to_setting_list,
 )
-from src.snncompare.exp_setts.Supported_run_settings import (
-    Supported_run_settings,
-)
 from src.snncompare.exp_setts.verify_experiment_settings import (
-    verify_adap_and_rad_settings,
     verify_experiment_config,
     verify_has_unique_id,
 )
-from src.snncompare.exp_setts.verify_run_completion import (
-    assert_stage_is_completed,
-)
-from src.snncompare.exp_setts.verify_run_settings import verify_run_config
 from src.snncompare.export_results.load_json_to_nx_graph import (
     load_json_to_nx_graph_from_file,
 )
@@ -410,40 +407,3 @@ def determine_what_to_run(run_config) -> dict:
             + "try this again with:overwrite_visualisation=True"
         )
     return to_run
-
-
-def example_experiment_config():
-    """Creates example experiment configuration setting."""
-    # Create prerequisites
-    supp_experi_setts = Supported_experiment_settings()
-    adap_sets = Adaptations_settings()
-    rad_sets = Radiation_settings()
-
-    # Create the experiment configuration settings for a run with adaptation
-    # and with radiation.
-    with_adaptation_with_radiation = {
-        "algorithms": {
-            "MDSA": {
-                "m_vals": list(range(2, 3, 1)),
-            }
-        },
-        "adaptations": verify_adap_and_rad_settings(
-            supp_experi_setts, adap_sets.with_adaptation, "adaptations"
-        ),
-        # "iterations": list(range(0, 3, 1)),
-        "iterations": list(range(0, 1, 1)),
-        "min_max_graphs": 1,
-        "max_max_graphs": 15,
-        "min_graph_size": 3,
-        "max_graph_size": 20,
-        "overwrite_sim_results": False,
-        "overwrite_visualisation": False,
-        "radiations": verify_adap_and_rad_settings(
-            supp_experi_setts, rad_sets.with_radiation, "radiations"
-        ),
-        "seed": 42,
-        # "size_and_max_graphs": [(3, 1), (4, 3)],
-        "size_and_max_graphs": [(3, 1)],
-        "simulators": ["nx"],
-    }
-    return with_adaptation_with_radiation

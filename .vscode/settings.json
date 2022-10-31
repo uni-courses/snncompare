@@ -1,0 +1,10 @@
+{
+  "explorer.confirmDragAndDrop": false,
+  "files.exclude": {
+    "**/.coverage.*": true,
+    "**/__init__*": true,
+    "**/__pycache__*": true
+  },
+  "window.zoomLevel": -1,
+  "workbench.colorTheme": "Default High Contrast"
+}

@@ -10,10 +10,12 @@ import os
 import shutil
 import unittest
 
-from src.snncompare.exp_setts.Experiment_runner import (
+from src.snncompare.exp_setts.default_setts.create_default_settings import (
+    default_experiment_config,
+)
+from src.snncompare.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
-    example_experiment_config,
 )
 from src.snncompare.export_results.helper import run_config_to_filename
 from src.snncompare.export_results.plot_graphs import (
@@ -55,7 +57,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
-        self.experiment_config: dict = example_experiment_config()
+        self.experiment_config: dict = default_experiment_config()
         # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1]

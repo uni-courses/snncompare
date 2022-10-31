@@ -3,7 +3,7 @@ specifications."""
 import copy
 import unittest
 
-from src.snncompare.exp_setts.Adaptation_Rad_settings import (
+from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
