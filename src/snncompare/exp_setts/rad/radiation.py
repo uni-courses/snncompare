@@ -97,7 +97,7 @@ class DUMMY:
             if some_val < self.min_some_vals:
                 raise ValueError(
                     "Error, the minimum supported value for some_vals is:"
-                    + f"{self.min_some_vals}, yet we found {some_vals}"
+                    + f"{self.min_some_vals}, yet we found:{some_vals}"
                 )
             if some_val > self.max_some_vals:
                 raise ValueError(

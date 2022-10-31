@@ -4,9 +4,7 @@ settings."""
 
 from typing import List
 
-from src.snncompare.exp_setts.algos.verify_algos import (
-    assert_parameter_is_list,
-)
+from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 
 
 # pylint: disable=R0903
@@ -69,7 +67,7 @@ class MDSA:
             if m_val < self.min_m_vals:
                 raise ValueError(
                     "Error, the minimum supported value for m_vals is:"
-                    + f"{self.min_m_vals}, yet we found {m_vals}"
+                    + f"{self.min_m_vals}, yet we found:{m_vals}"
                 )
             if m_val > self.max_m_vals:
                 raise ValueError(

@@ -4,9 +4,7 @@ settings."""
 
 from typing import List
 
-from src.snncompare.exp_setts.algos.verify_algos import (
-    assert_parameter_is_list,
-)
+from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 
 
 # pylint: disable=R0903
@@ -90,7 +88,7 @@ class DUMMY:
             if some_val < self.min_some_vals:
                 raise ValueError(
                     "Error, the minimum supported value for some_vals is:"
-                    + f"{self.min_some_vals}, yet we found {some_vals}"
+                    + f"{self.min_some_vals}, yet we found:{some_vals}"
                 )
             if some_val > self.max_some_vals:
                 raise ValueError(
