@@ -4,15 +4,19 @@
 """
 # pylint: disable=R0801
 
+# controllers.py
+from __future__ import annotations
 
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any
 
-from src.snncompare.exp_setts.run_config.Supported_run_settings import (
-    Supported_run_settings,
-)
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_integer_settings,
 )
+
+if TYPE_CHECKING:
+    from src.snncompare.exp_setts.run_config.Supported_run_settings import (
+        Supported_run_settings,
+    )
 
 
 # pylint: disable=W0613
@@ -50,7 +54,7 @@ def verify_run_config(supp_run_setts, run_config, has_unique_id, strict: bool):
 
 
 def verify_parameter_types(
-    supp_run_setts: Supported_run_settings, run_config: Dict[str, Any]
+    supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
     """Checks for each parameter in the supported_run_settings object whether
     it is of a valid type."""
@@ -67,7 +71,7 @@ def verify_parameter_types(
 
 
 def verify_run_config_dict_is_complete(
-    supp_run_setts: Supported_run_settings, run_config: Dict[str, Any]
+    supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
     """Verifies the configuration settings dictionary is complete."""
     for expected_key in supp_run_setts.parameters.keys():
