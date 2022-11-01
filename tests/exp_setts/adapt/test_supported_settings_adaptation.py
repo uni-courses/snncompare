@@ -34,7 +34,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.invalid_adaptation_key = {"non-existing-key": 5}
 
-    def test_error_is_thrown_if_adaptation_key_is_missing(self):
+    def test_error_is_thrown_if_adaptation_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the adaptation key is missing
         from the MDSA algorithm settings dictionary of the supported algorithms
         dictionary of the configuration settings dictionary."""
@@ -60,7 +60,9 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_adaptation_value_type_is_none(self):
+    def test_error_is_thrown_for_invalid_adaptation_value_type_is_none(
+        self,
+    ) -> None:
         """Verifies if an error is thrown if the value belonging to the
         adaptation key in the configuration settings has value: None.
 
@@ -79,7 +81,9 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_adaptation_value_type_is_string(self):
+    def test_error_is_thrown_for_invalid_adaptation_value_type_is_string(
+        self,
+    ) -> None:
         """Verifies if an error is thrown if the value belonging to the
         adaptation key in the configuration settings has a value of type
         string.
@@ -100,7 +104,9 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_adaptation_dictionary_keys_are_missing(self):
+    def test_error_is_thrown_if_adaptation_dictionary_keys_are_missing(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if an empty adaptation dict is
         thrown."""
         with self.assertRaises(Exception) as context:
@@ -116,7 +122,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_adaptation_dict_key(self):
+    def test_catch_invalid_adaptation_dict_key(self) -> None:
         """."""
 
         with self.assertRaises(Exception) as context:
@@ -133,7 +139,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_adaptation_dict_value_type_for_key(self):
+    def test_catch_invalid_adaptation_dict_value_type_for_key(self) -> None:
         """Tests whether the adaptation setting dictionary throws an error if
         it contains an invalid value type for one of its keys.
 

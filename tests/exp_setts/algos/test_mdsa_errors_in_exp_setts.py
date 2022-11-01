@@ -38,7 +38,7 @@ class Test_mdsa(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_iterations = self.supp_exp_setts.iterations
 
-    def test_error_is_thrown_if_m_val_key_is_missing(self):
+    def test_error_is_thrown_if_m_val_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the m_val key is missing from
         (one of the) the mdsa_configs."""
         # Create deepcopy of configuration settings.
@@ -69,7 +69,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_m_val_has_invalid_type(self):
+    def test_error_is_thrown_if_m_val_has_invalid_type(self) -> None:
         """Verifies an exception is thrown if the m_vals key is missing from
         the mdsa configs."""
 
@@ -100,7 +100,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_m_val_is_too_large(self):
+    def test_error_is_thrown_if_m_val_is_too_large(self) -> None:
         """Verifies an exception is thrown if the m_vals key is too large in
         the mdsa configs."""
         # Create deepcopy of configuration settings.
@@ -137,7 +137,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_m_val_is_too_low(self):
+    def test_error_is_thrown_if_m_val_is_too_low(self) -> None:
         """Verifies an exception is thrown if the m_vals key is too low in the
         mdsa configs."""
         # Create deepcopy of configuration settings.

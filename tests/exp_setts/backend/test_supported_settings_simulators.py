@@ -35,7 +35,7 @@ class Test_simulators_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
         self.valid_simulators = self.supp_exp_setts.simulators
 
-    def test_error_is_thrown_if_simulators_key_is_missing(self):
+    def test_error_is_thrown_if_simulators_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the simulators key is missing
         from the configuration settings dictionary."""
 
@@ -60,7 +60,7 @@ class Test_simulators_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_simulators_value_type(self):
+    def test_error_is_thrown_for_invalid_simulators_value_type(self) -> None:
         """Verifies an exception is thrown if the simulators dictionary value,
         is of invalid type.
 
@@ -82,7 +82,7 @@ class Test_simulators_settings(unittest.TestCase):
                 self,
             )
 
-    def test_catch_empty_simulators_value_list(self):
+    def test_catch_empty_simulators_value_list(self) -> None:
         """Verifies an exception is thrown if the simulators dictionary value
         is a list without elements."""
         # Create deepcopy of configuration settings.
@@ -104,7 +104,7 @@ class Test_simulators_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_simulators_value(self):
+    def test_catch_invalid_simulators_value(self) -> None:
         """Verifies an exception is thrown if the simulators dictionary value
         is not supported by the permissible simulators values."""
         # Create deepcopy of configuration settings.

@@ -3,38 +3,16 @@
 import math
 import random
 from itertools import combinations, groupby
+from typing import List, Union
 
 import networkx as nx
 import numpy as np
+from networkx.classes.digraph import DiGraph
+from numpy import float64, ndarray
 
 from src.snncompare.export_results.plot_graphs import plot_circular_graph
 from src.snncompare.simulation.LIF_neuron import LIF_neuron
-
-
-def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
-    """Gets a cyclic graph with nodes that cannot be reached following the
-    directed edges, to test if the Lava simulation imposes some requirements on
-    the graph properties."""
-    graph = nx.DiGraph()
-    graph.add_nodes_from(
-        [0, 1, 2, 3, 4, 5, 6, 7, 8],
-        color="w",
-    )
-    graph.add_edges_from(
-        [
-            (1, 0),
-            (1, 2),
-            (3, 2),
-            (4, 3),
-            (4, 5),
-            (5, 6),
-            (6, 7),
-            (7, 5),
-            (8, 7),
-        ],
-        weight=float(10),
-    )
-    return graph
+from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
 def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
@@ -65,11 +43,11 @@ def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
 
 
 def gnp_random_connected_graph(
-    density,
-    recurrent_density,
-    size,
-    test_scope,
-):
+    density: float64,
+    recurrent_density: Union[int, float64],
+    size: int,
+    test_scope: Long_scope_of_tests,
+) -> DiGraph:
     """Generates a random undirected graph, similarly to an Erdős-Rényi graph,
     but enforcing that the resulting graph is conneted.
 
@@ -87,11 +65,13 @@ def gnp_random_connected_graph(
     if density >= 1:
         return nx.complete_graph(size, create_using=G)
     for _, node_edges in groupby(edges, key=lambda x: x[0]):
-        node_edges = list(node_edges)
+        listed_node_edges = list(node_edges)
 
-        random_edge = random.choice(node_edges)  # nosec - using a random seed.
+        random_edge = random.choice(  # nosec - using a random seed.
+            listed_node_edges
+        )
         G.add_edge(*random_edge)
-        for e in node_edges:
+        for e in listed_node_edges:
             if random.random() < density:  # nosec - no security application.
                 G.add_edge(*e)
 
@@ -152,7 +132,9 @@ def add_random_recurrent_edges(
             G.edges[(node, node)]["weight"] = float(rand_edge_weights[node])
 
 
-def set_random_edge_weights(G, min_weight, max_weight, seed):
+def set_random_edge_weights(
+    G: DiGraph, min_weight: int, max_weight: int, seed: int
+) -> None:
     """Creates random edge weights and assigns them to the edge objects in the
     graph.
 
@@ -177,9 +159,9 @@ def set_random_edge_weights(G, min_weight, max_weight, seed):
 
 
 def set_rand_neuron_properties(
-    G,
-    test_scope,
-):
+    G: DiGraph,
+    test_scope: Long_scope_of_tests,
+) -> None:
     """Sets name: int, bias: float, du: float, dv: float, vth: float for each
     neuron with random value within predetermined ranges.
 
@@ -208,7 +190,9 @@ def set_rand_neuron_properties(
         ]
 
 
-def get_list_with_rand_ints_in_range(min_val, max_val, length, seed):
+def get_list_with_rand_ints_in_range(
+    min_val: int, max_val: int, length: int, seed: int
+) -> List[int]:
     """Generates and returns a list with random integers in range [min,max] of
     length length.
 
@@ -228,7 +212,9 @@ def get_list_with_rand_ints_in_range(min_val, max_val, length, seed):
     return rand_integers
 
 
-def get_list_with_rand_floats_in_range(min_val, max_val, length, seed):
+def get_list_with_rand_floats_in_range(
+    min_val: int, max_val: int, length: int, seed: int
+) -> ndarray:
     """Generates and returns a list with random integers in range [min,max] of
     length length.
 
@@ -245,7 +231,9 @@ def get_list_with_rand_floats_in_range(min_val, max_val, length, seed):
     return rand_floats
 
 
-def get_list_with_rand_bools(length, recurrent_edge_density, seed):
+def get_list_with_rand_bools(
+    length: int, recurrent_edge_density: Union[int, float64], seed: int
+) -> List[bool]:
     """Generates and returns a list with random booleans of length length. The
     amount of True values is determined by: recurrent_edge_density*length.
 

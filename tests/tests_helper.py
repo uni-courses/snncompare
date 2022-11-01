@@ -194,3 +194,29 @@ def create_dummy_output_images_stage_3(
         # Verify output JSON file exists.
         filepath = pathlib.Path(image_filepath)
         assertIsFile(filepath)
+
+
+def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
+    """Gets a cyclic graph with nodes that cannot be reached following the
+    directed edges, to test if the Lava simulation imposes some requirements on
+    the graph properties."""
+    graph = nx.DiGraph()
+    graph.add_nodes_from(
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        color="w",
+    )
+    graph.add_edges_from(
+        [
+            (1, 0),
+            (1, 2),
+            (3, 2),
+            (4, 3),
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 5),
+            (8, 7),
+        ],
+        weight=float(10),
+    )
+    return graph

@@ -45,7 +45,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
     # pylint: disable=R0801
     def test_random_networks_are_propagated_the_same_on_networkx_and_lava(
         self,
-    ):
+    ) -> None:
         """Tests whether the random_snn_networks that are generated yield the
         same behaviour on lava as on networkx."""
         # pylint: disable=R1702

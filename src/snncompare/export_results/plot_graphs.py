@@ -1,12 +1,22 @@
 """File used to generate graph plots."""
 
 import os
+from typing import Dict, Union
 
 import matplotlib.pyplot as plt
 import networkx as nx
+from networkx.classes.digraph import DiGraph
+from numpy import float64
+
+from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
-def plot_circular_graph(density, G, recurrent_edge_density, test_scope):
+def plot_circular_graph(
+    density: float64,
+    G: DiGraph,
+    recurrent_edge_density: Union[int, float64],
+    test_scope: Long_scope_of_tests,
+) -> None:
     """Generates a circular plot of a (directed) graph.
 
     :param density: param G:
@@ -63,7 +73,7 @@ def plot_uncoordinated_graph(G, show=True):
     plt.close()
 
 
-def create_target_dir_if_not_exists(path, new_dir_name):
+def create_target_dir_if_not_exists(path: str, new_dir_name: str) -> None:
     """Creates an output dir for graph plots.
 
     :param path: param new_dir_name:
@@ -75,7 +85,7 @@ def create_target_dir_if_not_exists(path, new_dir_name):
         os.makedirs(f"{path}/{new_dir_name}")
 
 
-def create_root_dir_if_not_exists(root_dir_name):
+def create_root_dir_if_not_exists(root_dir_name: str) -> None:
     """
 
     :param root_dir_name:
@@ -87,7 +97,7 @@ def create_root_dir_if_not_exists(root_dir_name):
         raise Exception(f"Error, root_dir_name={root_dir_name} did not exist.")
 
 
-def get_labels(G, configuration):
+def get_labels(G: DiGraph, configuration: str) -> Dict[int, str]:
     """Returns the labels for the plot nodes.
 
     :param G: The original graph on which the MDSA algorithm is ran.

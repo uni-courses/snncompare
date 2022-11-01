@@ -21,7 +21,7 @@ class Test_mdsa(unittest.TestCase):
         self.mdsa_configs = get_algo_configs(self.mdsa.__dict__)
         verify_algo_configs("MDSA", self.mdsa_configs)
 
-    def test_error_is_thrown_if_m_val_key_is_missing(self):
+    def test_error_is_thrown_if_m_val_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the m_val key is missing from
         (one of the) the mdsa_configs."""
         # First verify the mdsa_configs are valid.
@@ -38,7 +38,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_m_val_has_invalid_type(self):
+    def test_error_is_thrown_if_m_val_has_invalid_type(self) -> None:
         """Verifies an exception is thrown if the m_vals key is missing from
         the mdsa configs."""
         # First verify the mdsa_configs are valid.
@@ -55,7 +55,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_m_val_is_too_large(self):
+    def test_error_is_thrown_if_m_val_is_too_large(self) -> None:
         """Verifies an exception is thrown if the m_vals key is too large in
         the mdsa configs."""
         # First verify the mdsa_configs are valid.
@@ -76,7 +76,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_m_val_is_too_low(self):
+    def test_error_is_thrown_if_m_val_is_too_low(self) -> None:
         """Verifies an exception is thrown if the m_vals key is too low in the
         mdsa configs."""
         # First verify the mdsa_configs are valid.

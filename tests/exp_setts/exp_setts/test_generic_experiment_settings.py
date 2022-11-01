@@ -2,6 +2,7 @@
 specifications."""
 import copy
 import unittest
+from typing import Any, Dict, Optional
 
 from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
     Adaptations_settings,
@@ -49,7 +50,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             "redundancy": "invalid value of type string iso list",
         }
 
-    def test_returns_valid_configuration_settings(self):
+    def test_returns_valid_configuration_settings(self) -> None:
         """Verifies a valid configuration settings object and object type is
         returned."""
         returned_dict = verify_experiment_config(
@@ -62,7 +63,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         self.assertEqual(with_adaptation_with_radiation, returned_dict)
 
-    def test_experiment_config_is_none(self):
+    def test_experiment_config_is_none(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         type None."""
 
@@ -79,7 +80,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_experiment_config_type(self):
+    def test_catch_invalid_experiment_config_type(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         invalid type.
 
@@ -101,7 +102,9 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_on_invalid_configuration_setting_key(self):
+    def test_error_is_thrown_on_invalid_configuration_setting_key(
+        self,
+    ) -> None:
         """Verifies an error is thrown on an invalid configuration setting
         key."""
         # Create deepcopy of configuration settings.
@@ -127,8 +130,11 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
 
 def verify_error_is_thrown_on_invalid_configuration_setting_value(
-    invalid_config_setting_value, experiment_config, expected_type, test_object
-):
+    invalid_config_setting_value: Optional[str],
+    experiment_config: Dict[str, Any],
+    expected_type: type,
+    test_object: Any,
+) -> None:
     """Verifies an error is thrown on an invalid configuration setting value.
 
     This method is called by other test files and is genereric for most

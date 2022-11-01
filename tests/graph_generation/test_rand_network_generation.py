@@ -31,7 +31,9 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
         super().__init__(*args, **kwargs)
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
-    def test_generates_valid_snn_networks_without_recursive_edges(self):
+    def test_generates_valid_snn_networks_without_recursive_edges(
+        self,
+    ) -> None:
         """Tests whether the random_snn_networks that are generated are valid
         snn networks.
         TODO: separate into testing for lava and for nx backend.
@@ -83,7 +85,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     # Assert all neuron properties are specified.
                     verify_networkx_snn_spec(G, t=0, backend="nx")
 
-    def test_generates_valid_snn_networks_with_recursive_edges(self):
+    def test_generates_valid_snn_networks_with_recursive_edges(self) -> None:
         """Tests whether the random_snn_networks that are generated are valid
         snn networks.
 

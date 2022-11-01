@@ -280,7 +280,7 @@ def verify_object_type(obj, expected_type, element_type=None):
     list.
 
     :param obj: param expected_type:
-    :param element_type: Default value = None)
+    :param element_type: Default value = None
     :param expected_type:
     """
 

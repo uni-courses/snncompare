@@ -1,8 +1,12 @@
 """Verifies the graph represents a connected and valid SNN, with all required
 neuron and synapse properties specified."""
 
+from typing import Tuple
+
 # Import the networkx module.
 import networkx as nx
+from _collections_abc import dict_keys
+from networkx.classes.digraph import DiGraph
 
 
 def verify_nx_neuron_properties_are_specified(
@@ -56,7 +60,9 @@ def assert_synaptic_edgeweight_type_is_correct(
         )
 
 
-def assert_synapse_properties_are_specified(G, edge):
+def assert_synapse_properties_are_specified(
+    G: DiGraph, edge: Tuple[int, int]
+) -> None:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -71,7 +77,9 @@ def assert_synapse_properties_are_specified(G, edge):
         )
 
 
-def check_if_synapse_properties_are_specified(G, edge):
+def check_if_synapse_properties_are_specified(
+    G: DiGraph, edge: Tuple[int, int]
+) -> bool:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -88,7 +96,7 @@ def check_if_synapse_properties_are_specified(G, edge):
     return False
 
 
-def get_synapse_property_names(G, edge):
+def get_synapse_property_names(G: DiGraph, edge: Tuple[int, int]) -> dict_keys:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -98,7 +106,7 @@ def get_synapse_property_names(G, edge):
     return G.edges[edge].keys()
 
 
-def assert_no_duplicate_edges_exist(G):
+def assert_no_duplicate_edges_exist(G: DiGraph) -> None:
     """Asserts no duplicate edges exist, throws error otherwise.
 
     :param G: The original graph on which the MDSA algorithm is ran.

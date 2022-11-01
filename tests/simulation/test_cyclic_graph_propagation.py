@@ -2,13 +2,12 @@
 networkx simulation."""
 
 import unittest
+from typing import Union
 
 import networkx as nx
 import numpy as np
+from networkx.classes.digraph import DiGraph
 
-from src.snncompare.graph_generation.get_graph import (
-    get_cyclic_graph_without_directed_path,
-)
 from src.snncompare.simulation.LIF_neuron import (
     print_neuron_properties_per_graph,
 )
@@ -28,12 +27,16 @@ from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
+from tests.simulation.test_rand_network_propagation import (
+    Test_propagation_with_recurrent_edges,
+)
 from tests.simulation.tests_simulation_helper import (
     get_graph_for_cyclic_propagation,
 )
+from tests.tests_helper import get_cyclic_graph_without_directed_path
 
 
-class Test_propagation_with_recurrent_edges(unittest.TestCase):
+class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
     """Performs tests that verify lava simulation produces the same results as
     the networkx simulation.
 
@@ -50,7 +53,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
 
     def test_random_networks_are_propagated_the_same_on_networkx_and_lava(
         self,
-    ):
+    ) -> None:
         """Tests whether the random_snn_networks that are generated yield the
         same behaviour on lava as on networkx."""
         # pylint: disable=R1702
@@ -119,7 +122,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                 self, G, starter_neuron, sim_duration=20
             )
 
-    def compare_dynamic_snn_properties(self, G, t):
+    def compare_dynamic_snn_properties(self, G: DiGraph, t: int) -> None:
         """Performs comparison of static neuron properties at each timestep.
 
         :param G: The original graph on which the MDSA algorithm is ran.
@@ -136,8 +139,14 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
 
 
 def run_simulation_for_t_steps(
-    test_object, G, starter_neuron, sim_duration=20
-):
+    test_object: Union[
+        Test_propagation_with_recurrent_edges,
+        Test_cyclic_propagation_with_recurrent_edges,
+    ],
+    G: DiGraph,
+    starter_neuron: int,
+    sim_duration: int = 20,
+) -> None:
     """Runs the SNN simulation on a graph for t timesteps."""
     for t in range(sim_duration):
         G = get_graph_for_cyclic_propagation(test_object.test_scope)
@@ -158,7 +167,14 @@ def run_simulation_for_t_steps(
         G.nodes[starter_neuron]["lava_LIF"].stop()
 
 
-def compare_static_snn_properties(test_object, G, t=0):
+def compare_static_snn_properties(
+    test_object: Union[
+        Test_propagation_with_recurrent_edges,
+        Test_cyclic_propagation_with_recurrent_edges,
+    ],
+    G: DiGraph,
+    t: int = 0,
+) -> None:
     """Performs comparison of static neuron properties at each timestep.
 
     :param G: The original graph on which the MDSA algorithm is ran.

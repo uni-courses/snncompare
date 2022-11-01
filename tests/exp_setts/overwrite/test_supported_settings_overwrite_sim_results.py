@@ -41,7 +41,9 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_error_is_thrown_if_overwrite_sim_results_key_is_missing(self):
+    def test_error_is_thrown_if_overwrite_sim_results_key_is_missing(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if the overwrite_sim_results key is
         missing from the configuration settings dictionary."""
 
@@ -66,7 +68,7 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_overwrite_sim_results_value_is_invalid_type(self):
+    def test_overwrite_sim_results_value_is_invalid_type(self) -> None:
         """Verifies an exception is thrown if the overwrite_sim_results
         dictionary value, is of invalid type.
 

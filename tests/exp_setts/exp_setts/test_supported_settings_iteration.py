@@ -40,7 +40,7 @@ class Test_iterations_settings(unittest.TestCase):
         )
         self.valid_iterations = self.supp_exp_setts.iterations
 
-    def test_error_is_thrown_if_iterations_key_is_missing(self):
+    def test_error_is_thrown_if_iterations_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the iteration key is missing from
         the configuration settings dictionary."""
 
@@ -65,7 +65,7 @@ class Test_iterations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_iterations_value_is_invalid_type(self):
+    def test_iterations_value_is_invalid_type(self) -> None:
         """Verifies an exception is thrown if the iteration dictionary value,
         is of invalid type.
 
@@ -87,7 +87,7 @@ class Test_iterations_settings(unittest.TestCase):
                 self,
             )
 
-    def test_catch_empty_iterations_value_list(self):
+    def test_catch_empty_iterations_value_list(self) -> None:
         """Verifies an exception is thrown if the iteration dictionary value is
         a list without elements."""
         # Create deepcopy of configuration settings.
@@ -109,7 +109,7 @@ class Test_iterations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_iterations_value_too_low(self):
+    def test_catch_iterations_value_too_low(self) -> None:
         """Verifies an exception is thrown if the iteration dictionary value is
         lower than the supported range of iteration values permits."""
         # Create deepcopy of configuration settings.
@@ -132,7 +132,7 @@ class Test_iterations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_iterations_value_too_high(self):
+    def test_catch_iterations_value_too_high(self) -> None:
         """Verifies an exception is thrown if the iteration dictionary value is
         higher than the supported range of iteration values permits."""
         # Create deepcopy of configuration settings.

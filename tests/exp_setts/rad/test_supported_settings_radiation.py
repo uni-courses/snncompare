@@ -36,7 +36,7 @@ class Test_radiations_settings(unittest.TestCase):
 
         self.invalid_radiations_key = {"non-existing-key": 5}
 
-    def test_error_is_thrown_if_radiations_key_is_missing(self):
+    def test_error_is_thrown_if_radiations_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the radiations key is missing
         from the MDSA algorithm settings dictionary of the supported algorithms
         dictionary of the configuration settings dictionary."""
@@ -62,7 +62,9 @@ class Test_radiations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_radiations_value_type_is_none(self):
+    def test_error_is_thrown_for_invalid_radiations_value_type_is_none(
+        self,
+    ) -> None:
         """Verifies if an error is thrown if the value belonging to the
         radiations key in the configuration settings has value: None.
 
@@ -81,7 +83,9 @@ class Test_radiations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_radiations_value_type_is_string(self):
+    def test_error_is_thrown_for_invalid_radiations_value_type_is_string(
+        self,
+    ) -> None:
         """Verifies if an error is thrown if the value belonging to the
         radiations key in the configuration settings has a value of type
         string.
@@ -101,7 +105,9 @@ class Test_radiations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_radiations_dictionary_keys_are_missing(self):
+    def test_error_is_thrown_if_radiations_dictionary_keys_are_missing(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if an empty radiations dict is
         thrown."""
         with self.assertRaises(Exception) as context:
@@ -115,7 +121,7 @@ class Test_radiations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_radiations_dict_key(self):
+    def test_catch_invalid_radiations_dict_key(self) -> None:
         """."""
 
         with self.assertRaises(Exception) as context:
@@ -132,7 +138,7 @@ class Test_radiations_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_radiations_dict_value_type_for_key(self):
+    def test_catch_invalid_radiations_dict_value_type_for_key(self) -> None:
         """Tests whether the radiations setting dictionary throws an error if
         it contains an invalid value type for one of its keys.
 

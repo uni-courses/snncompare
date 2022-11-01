@@ -39,7 +39,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_error_is_thrown_if_max_max_graphs_key_is_missing(self):
+    def test_error_is_thrown_if_max_max_graphs_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the max_max_graphs key is missing
         from the configuration settings dictionary."""
 
@@ -64,7 +64,9 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_max_max_graphs_value_type(self):
+    def test_error_is_thrown_for_invalid_max_max_graphs_value_type(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if the max_max_graphs dictionary
         value, is of invalid type.
 
@@ -86,7 +88,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
                 self,
             )
 
-    def test_catch_invalid_max_max_graphs_value_type_too_low(self):
+    def test_catch_invalid_max_max_graphs_value_type_too_low(self) -> None:
         """Verifies an exception is thrown if the max_max_graphs dictionary
         value is lower than the supported range of max_max_graphs values
         permits."""
@@ -110,7 +112,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_max_max_graphs_is_smaller_than_min_max_graphs(self):
+    def test_catch_max_max_graphs_is_smaller_than_min_max_graphs(self) -> None:
         """Verifies an exception is thrown if the max_max_graphs value is
         smaller than the min_max_graphs value."""
         # Create deepcopy of configuration settings.
@@ -137,7 +139,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_max_max_graphs_value_too_high(self):
+    def test_catch_max_max_graphs_value_too_high(self) -> None:
         """Verifies an exception is thrown if the max_max_graphs dictionary
         value is higher than the supported range of max_max_graphs values
         permits."""

@@ -40,7 +40,9 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_error_is_thrown_if_overwrite_visualisation_key_is_missing(self):
+    def test_error_is_thrown_if_overwrite_visualisation_key_is_missing(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if the overwrite_visualisation key
         is missing from the configuration settings dictionary."""
 
@@ -67,7 +69,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
 
     def test_error_is_thrown_for_invalid_overwrite_visualisation_value_type(
         self,
-    ):
+    ) -> None:
         """Verifies an exception is thrown if the overwrite_visualisation
         dictionary value, is of invalid type.
 

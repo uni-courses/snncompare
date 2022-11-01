@@ -38,7 +38,7 @@ class Test_seed_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_error_is_thrown_if_seed_key_is_missing(self):
+    def test_error_is_thrown_if_seed_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the seed key is missing from the
         configuration settings dictionary."""
 
@@ -63,7 +63,7 @@ class Test_seed_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_seed_value_type(self):
+    def test_error_is_thrown_for_invalid_seed_value_type(self) -> None:
         """Verifies an exception is thrown if the seed dictionary value, is of
         invalid type.
 

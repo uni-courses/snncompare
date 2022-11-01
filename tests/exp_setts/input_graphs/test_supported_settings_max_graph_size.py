@@ -38,7 +38,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_error_is_thrown_if_max_graph_size_key_is_missing(self):
+    def test_error_is_thrown_if_max_graph_size_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the max_graph_size key is missing
         from the configuration settings dictionary."""
 
@@ -63,7 +63,9 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_max_graph_size_value_type(self):
+    def test_error_is_thrown_for_invalid_max_graph_size_value_type(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if the max_graph_size dictionary
         value, is of invalid type.
 
@@ -89,7 +91,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_max_graph_size_value_too_low(self):
+    def test_catch_max_graph_size_value_too_low(self) -> None:
         """Verifies an exception is thrown if the max_graph_size dictionary
         value is lower than the supported range of max_graph_size values
         permits."""
@@ -113,7 +115,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_max_graph_size_is_smaller_than_min_graph_size(self):
+    def test_catch_max_graph_size_is_smaller_than_min_graph_size(self) -> None:
         """To state the obvious, this also tests whether min_graph_size is
         larger than max_graph size throws an exception."""
         # Create deepcopy of configuration settings.
@@ -140,7 +142,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_max_graph_size_value_too_high(self):
+    def test_catch_max_graph_size_value_too_high(self) -> None:
         """Verifies an exception is thrown if the max_graph_size dictionary
         value is higher than the supported range of max_graph_size values
         permits."""

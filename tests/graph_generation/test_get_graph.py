@@ -14,7 +14,7 @@ class Test_get_graph(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def test_returns_2_nodes(self):
+    def test_returns_2_nodes(self) -> None:
         """Tests whether the get_networkx_graph_of_2_neurons function returns a
         graph with two nodes."""
 

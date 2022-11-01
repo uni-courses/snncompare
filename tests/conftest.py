@@ -1,28 +1,35 @@
-""" Configuration for pytest to automatically collect types.
-Thanks to Guilherme Salgado. """
+"""Configuration for pytest to automatically collect types.
+
+Thanks to Guilherme Salgado.
+"""
 
 import pytest
+from pyannotate_runtime import collect_types
 
 
+# pylint: disable=W0613
 def pytest_collection_finish(session):
     """Handle the pytest collection finish hook: configure pyannotate.
 
-    Explicitly delay importing `collect_types` until all tests have
-    been collected.  This gives gevent a chance to monkey patch the
-    world before importing pyannotate.
+    Explicitly delay importing `collect_types` until all tests have been
+    collected.  This gives gevent a chance to monkey patch the world
+    before importing pyannotate.
     """
-    from pyannotate_runtime import collect_types
+
     collect_types.init_types_collection()
 
 
+# pylint: disable=W0613
 @pytest.fixture(autouse=True)
 def collect_types_fixture():
-    from pyannotate_runtime import collect_types
+    """Performs unknown activity."""
+
     collect_types.start()
     yield
     collect_types.stop()
 
 
+# pylint: disable=W0613
 def pytest_sessionfinish(session, exitstatus):
-    from pyannotate_runtime import collect_types
+    """Performs unknown activity."""
     collect_types.dump_stats("type_info.json")

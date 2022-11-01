@@ -39,7 +39,7 @@ class Test_min_graph_size_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
-    def test_error_is_thrown_if_min_graph_size_key_is_missing(self):
+    def test_error_is_thrown_if_min_graph_size_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the min_graph_size key is missing
         from the configuration settings dictionary."""
 
@@ -64,7 +64,9 @@ class Test_min_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_min_graph_size_value_type(self):
+    def test_error_is_thrown_for_invalid_min_graph_size_value_type(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if the min_graph_size dictionary
         value, is of invalid type.
 
@@ -88,7 +90,7 @@ class Test_min_graph_size_settings(unittest.TestCase):
 
     # TODO: test_catch_empty_min_graph_size_value_list
 
-    def test_catch_min_graph_size_value_too_low(self):
+    def test_catch_min_graph_size_value_too_low(self) -> None:
         """Verifies an exception is thrown if the min_graph_size dictionary
         value is lower than the supported range of min_graph_size values
         permits."""
@@ -112,7 +114,7 @@ class Test_min_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_min_graph_size_value_too_high(self):
+    def test_catch_min_graph_size_value_too_high(self) -> None:
         """Verifies an exception is thrown if the min_graph_size dictionary
         value is higher than the supported range of min_graph_size values
         permits."""

@@ -53,7 +53,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         self.valid_run_setting = with_adaptation_with_radiation
         self.invalid_adaptation_key = "non-existing-key"
 
-    def test_returns_valid_configuration_settings(self):
+    def test_returns_valid_configuration_settings(self) -> None:
         """Verifies a valid configuration settings object and object type is
         returned."""
         returned_dict = verify_run_config(
@@ -66,7 +66,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         self.assertEqual(self.valid_run_setting, returned_dict)
 
-    def test_experiment_config_is_none(self):
+    def test_experiment_config_is_none(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         type None."""
 
@@ -83,7 +83,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_invalid_experiment_config_type(self):
+    def test_catch_invalid_experiment_config_type(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         invalid type.
 
@@ -105,7 +105,9 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_on_invalid_configuration_setting_key(self):
+    def test_error_is_thrown_on_invalid_configuration_setting_key(
+        self,
+    ) -> None:
         """Verifies an error is thrown on an invalid configuration setting
         key."""
         # Create deepcopy of configuration settings.

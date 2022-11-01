@@ -24,7 +24,7 @@ class Test_dummy(unittest.TestCase):
         self.dummy_configs = get_algo_configs(self.dummy.__dict__)
         verify_algo_configs("DUMMY", self.dummy_configs)
 
-    def test_error_is_thrown_if_some_val_key_is_missing(self):
+    def test_error_is_thrown_if_some_val_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the some_val key is missing from
         (one of the) the dummy_configs."""
         # First verify the dummy_configs are valid.
@@ -41,7 +41,7 @@ class Test_dummy(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_other_val_key_is_missing(self):
+    def test_error_is_thrown_if_other_val_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the other_val key is missing from
         (one of the) the dummy_configs."""
         # First verify the dummy_configs are valid.
@@ -58,7 +58,7 @@ class Test_dummy(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_some_val_has_invalid_type(self):
+    def test_error_is_thrown_if_some_val_has_invalid_type(self) -> None:
         """Verifies an exception is thrown if the some_vals key is missing from
         the dummy configs."""
         # First verify the dummy_configs are valid.
@@ -75,7 +75,7 @@ class Test_dummy(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_other_val_has_invalid_type(self):
+    def test_error_is_thrown_if_other_val_has_invalid_type(self) -> None:
         """Verifies an exception is thrown if the other_vals key is missing
         from the dummy configs."""
         # First verify the dummy_configs are valid.
@@ -92,7 +92,7 @@ class Test_dummy(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_some_val_is_too_large(self):
+    def test_error_is_thrown_if_some_val_is_too_large(self) -> None:
         """Verifies an exception is thrown if the some_vals key is too large in
         the dummy configs."""
         # First verify the dummy_configs are valid.
@@ -113,7 +113,7 @@ class Test_dummy(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_if_some_val_is_too_low(self):
+    def test_error_is_thrown_if_some_val_is_too_low(self) -> None:
         """Verifies an exception is thrown if the some_vals key is too low in
         the dummy configs."""
         # First verify the dummy_configs are valid.

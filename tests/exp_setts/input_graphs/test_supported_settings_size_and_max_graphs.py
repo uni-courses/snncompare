@@ -38,7 +38,9 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             self.supp_exp_setts.size_and_max_graphs
         )
 
-    def test_error_is_thrown_if_size_and_max_graphs_key_is_missing(self):
+    def test_error_is_thrown_if_size_and_max_graphs_key_is_missing(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if the size_and_max_graphs key is
         missing from the configuration settings dictionary."""
 
@@ -62,7 +64,9 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_error_is_thrown_for_invalid_size_and_max_graphs_value_type(self):
+    def test_error_is_thrown_for_invalid_size_and_max_graphs_value_type(
+        self,
+    ) -> None:
         """Verifies an exception is thrown if the size_and_max_graphs
         dictionary value, is of invalid type.
 
@@ -86,7 +90,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
                 self,
             )
 
-    def test_catch_empty_size_and_max_graphs_value_list(self):
+    def test_catch_empty_size_and_max_graphs_value_list(self) -> None:
         """Verifies an exception is thrown if the size_and_max_graphs
         dictionary value is a list without elements."""
         # Create deepcopy of configuration settings.
@@ -108,7 +112,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_size_and_max_graphs_value_too_low(self):
+    def test_catch_size_and_max_graphs_value_too_low(self) -> None:
         """Verifies an exception is thrown if the size_and_max_graphs
         dictionary value is lower than the supported range of
         size_and_max_graphs values permits."""
@@ -167,7 +171,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
             str(context.exception),
         )
 
-    def test_catch_size_and_max_graphs_value_too_high(self):
+    def test_catch_size_and_max_graphs_value_too_high(self) -> None:
         """Verifies an exception is thrown if the size_and_max_graphs
         dictionary value is higher than the supported range of
         size_and_max_graphs values permits."""
