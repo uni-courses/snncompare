@@ -63,7 +63,7 @@ def default_experiment_config():
     with_adaptation_with_radiation = {
         # TODO: set using a verification setting.
         "algorithms": {
-            "MDSA": get_algo_configs(MDSA(list(range(0, 4, 1))).__dict__)
+            "MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)
         },
         # TODO: pass algo to see if it is compatible with the algorithm.
         "adaptations": verify_adap_and_rad_settings(
@@ -73,7 +73,7 @@ def default_experiment_config():
             supp_exp_setts, rad_sets.with_radiation, "radiations"
         ),
         # "iterations": list(range(0, 3, 1)),
-        "iterations": list(range(0, 3, 1)),
+        "iterations": list(range(0, 1, 1)),
         # TODO: Change into list with "Seeds"
         "seed": 42,
         # TODO: merge into: "input graph properties object

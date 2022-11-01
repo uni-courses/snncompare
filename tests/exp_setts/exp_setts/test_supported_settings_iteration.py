@@ -34,6 +34,10 @@ class Test_iterations_settings(unittest.TestCase):
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
+        # Overwrite default setting for testing purposes.
+        self.with_adaptation_with_radiation["iterations"] = list(
+            range(0, 3, 1)
+        )
         self.valid_iterations = self.supp_exp_setts.iterations
 
     def test_error_is_thrown_if_iterations_key_is_missing(self):
