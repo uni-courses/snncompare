@@ -55,7 +55,7 @@ def verify_val_bound_and_type(
     var_name: str,
 ) -> None:
     """Verifies an incoming number is of expected type, and that its value is
-    bounded,"""
+    bounded."""
     # Verify type of parameters
     if not isinstance(some_val, elem_type):
         raise TypeError(
