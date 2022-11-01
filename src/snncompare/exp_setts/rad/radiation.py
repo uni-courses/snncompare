@@ -4,8 +4,11 @@ settings."""
 
 from typing import List
 
+from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
+
 
 # pylint: disable=R0903
+# pylint: disable=R0801
 class DUMMY_config:
     """Create a particular configuration for the MDSA algorithm."""
 
@@ -70,21 +73,9 @@ class DUMMY:
             "other_vals": other_vals,
         }
 
-    def assert_parameter_is_list(self, parameter: List) -> None:
-        """Asserts the incoming parameter is of type list.
-
-        Throws error if it is of another type.
-        """
-        # Verify type of parameters.
-        if not isinstance(parameter, List):
-            raise TypeError(
-                "some_vals is not of type:List[int]. Instead it is of "
-                + f"type:{type(parameter)}"
-            )
-
     def verify_some_vals(self, some_vals: List[int]) -> None:
         """Verifies the some_vals parameter setting of the algorithm."""
-        self.assert_parameter_is_list(some_vals)
+        assert_parameter_is_list(some_vals)
 
         # Verify values of parameters.
         for some_val in some_vals:
@@ -107,7 +98,7 @@ class DUMMY:
 
     def verify_other_vals(self, other_vals: List[str]) -> None:
         """Verifies the other_vals parameter setting of the algorithm."""
-        self.assert_parameter_is_list(other_vals)
+        assert_parameter_is_list(other_vals)
 
         # Verify values of parameters.
         for other_val in other_vals:
@@ -122,3 +113,63 @@ class DUMMY:
                     f"Error, the value:{other_val} is not in the supported "
                     + f"other_vals values: {self.supported_other_vals}"
                 )
+
+
+def specify_supported_radiations_settings(test_object):
+    """Specifies types of supported radiations settings. Some settings consist
+    of a list of tuples, with the probability of a change occurring, followed
+    by the average magnitude of the change.
+
+    Others only contain a list of floats which represent the probability
+    of radiations induced change occurring.
+    """
+    # List of tuples with x=probabiltity of change, y=average value change
+    # in synaptic weights.
+    test_object.delta_synaptic_w = [
+        (0.01, 0.5),
+        (0.05, 0.4),
+        (0.1, 0.3),
+        (0.2, 0.2),
+        (0.25, 0.1),
+    ]
+
+    # List of tuples with x=probabiltity of change, y=average value change
+    # in neuronal threshold.
+    test_object.delta_vth = [
+        (0.01, 0.5),
+        (0.05, 0.4),
+        (0.1, 0.3),
+        (0.2, 0.2),
+        (0.25, 0.1),
+    ]
+
+    # Create a supported radiations setting example.
+    test_object.radiations = {
+        # No radiations
+        "None": [],
+        # radiations effects are transient, they last for 1 or 10
+        # simulation steps. If transient is 0., the changes are permanent.
+        "transient": [0.0, 1.0, 10.0],
+        # List of probabilities of a neuron dying due to radiations.
+        "neuron_death": [
+            0.01,
+            0.05,
+            0.1,
+            0.2,
+            0.25,
+        ],
+        # List of probabilities of a synapse dying due to radiations.
+        "synaptic_death": [
+            0.01,
+            0.05,
+            0.1,
+            0.2,
+            0.25,
+        ],
+        # List of: (probability of synaptic weight change, and the average
+        # factor with which it changes due to radiations).
+        "delta_synaptic_w": test_object.delta_synaptic_w,
+        # List of: (probability of neuron threshold change, and the average
+        # factor with which it changes due to radiations).
+        "delta_vth": test_object.delta_vth,
+    }

@@ -10,6 +10,9 @@ import copy
 
 from src.snncompare.exp_setts.algos.get_alg_configs import get_algo_configs
 from src.snncompare.exp_setts.algos.MDSA import MDSA
+from src.snncompare.exp_setts.rad.radiation import (
+    specify_supported_radiations_settings,
+)
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
     verify_min_max,
@@ -107,7 +110,7 @@ class Supported_experiment_settings:
         self.specify_supported_adaptation_settings()
 
         # Generate the supported radiations settings.
-        self.specify_supported_radiations_settings()
+        specify_supported_radiations_settings(self)
 
     def specify_supported_adaptation_settings(self):
         """Specifies all the supported types of adaptation settings."""
@@ -126,65 +129,6 @@ class Supported_experiment_settings:
                 5.0
             ],  # Multiply firing frequency with 5 to limit spike decay
             # impact.
-        }
-
-    def specify_supported_radiations_settings(self):
-        """Specifies types of supported radiations settings. Some settings
-        consist of a list of tuples, with the probability of a change
-        occurring, followed by the average magnitude of the change.
-
-        Others only contain a list of floats which represent the
-        probability of radiations induced change occurring.
-        """
-        # List of tuples with x=probabiltity of change, y=average value change
-        # in synaptic weights.
-        self.delta_synaptic_w = [
-            (0.01, 0.5),
-            (0.05, 0.4),
-            (0.1, 0.3),
-            (0.2, 0.2),
-            (0.25, 0.1),
-        ]
-
-        # List of tuples with x=probabiltity of change, y=average value change
-        # in neuronal threshold.
-        self.delta_vth = [
-            (0.01, 0.5),
-            (0.05, 0.4),
-            (0.1, 0.3),
-            (0.2, 0.2),
-            (0.25, 0.1),
-        ]
-
-        # Create a supported radiations setting example.
-        self.radiations = {
-            # No radiations
-            "None": [],
-            # radiations effects are transient, they last for 1 or 10
-            # simulation steps. If transient is 0., the changes are permanent.
-            "transient": [0.0, 1.0, 10.0],
-            # List of probabilities of a neuron dying due to radiations.
-            "neuron_death": [
-                0.01,
-                0.05,
-                0.1,
-                0.2,
-                0.25,
-            ],
-            # List of probabilities of a synapse dying due to radiations.
-            "synaptic_death": [
-                0.01,
-                0.05,
-                0.1,
-                0.2,
-                0.25,
-            ],
-            # List of: (probability of synaptic weight change, and the average
-            # factor with which it changes due to radiations).
-            "delta_synaptic_w": self.delta_synaptic_w,
-            # List of: (probability of neuron threshold change, and the average
-            # factor with which it changes due to radiations).
-            "delta_vth": self.delta_vth,
         }
 
     def has_unique_config_id(self, experiment_config):
