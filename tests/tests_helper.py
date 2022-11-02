@@ -1,8 +1,10 @@
 """Contains functions used to help the tests."""
+from __future__ import annotations
 import copy
 import pathlib
 import random
-from typing import List
+from typing import List, Union
+
 
 import jsons
 import networkx as nx
@@ -13,10 +15,16 @@ from src.snncompare.export_results.export_json_results import (
 from src.snncompare.export_results.helper import (
     get_expected_image_paths_stage_3,
 )
-from src.snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
+
+
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from tests.simulation.test_cyclic_graph_propagation import Test_cyclic_propagation_with_recurrent_edges
+    from tests.simulation.test_rand_network_propagation import Test_propagation_with_recurrent_edges
+    from src.snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
     Alipour_properties,
 )
-
 
 def get_n_random_run_configs(run_configs, n: int, seed: int = None):
     """Returns n random experiment configurations."""
@@ -220,3 +228,48 @@ def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
         weight=float(10),
     )
     return graph
+
+def compare_static_snn_properties(
+    test_object: Union[
+        Test_propagation_with_recurrent_edges,
+        Test_cyclic_propagation_with_recurrent_edges,
+    ],
+    G: nx.DiGraph,
+    t: int = 0,
+) -> None:
+    """Performs comparison of static neuron properties at each timestep.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    """
+    for node in G.nodes:
+        lava_neuron = G.nodes[node]["lava_LIF"]
+        nx_neuron = G.nodes[node]["nx_LIF"][t]
+
+        # Assert bias is equal.
+        test_object.assertEqual(
+            lava_neuron.bias_mant.get(), nx_neuron.bias.get()
+        )
+
+        # dicts
+        # print(f"lava_neuron.__dict__={lava_neuron.__dict__}")
+        # print(f"lava_neuron.__dict__={nx_neuron.__dict__}")
+
+        # Assert du is equal.
+        test_object.assertEqual(lava_neuron.du.get(), nx_neuron.du.get())
+        #
+
+        # Assert dv is equal.
+        test_object.assertEqual(lava_neuron.dv.get(), nx_neuron.dv.get())
+
+        # print(f"lava_neuron.name.get()={lava_neuron.name.get()}")
+        # print(f"lava_neuron.name.get()={nx_neuron.name.get()}")
+        # Assert name is equal.
+        # self.assertEqual(lava_neuron.name, nx_neuron.name)
+
+        # Assert vth is equal.
+        test_object.assertEqual(lava_neuron.vth.get(), nx_neuron.vth.get())
+
+        # Assert v_reset is equal. (Not yet implemented in Lava.)
+        # self.assertEqual(
+        #    lava_neuron.v_reset.get(), nx_neuron.v_reset.get()
+        # )

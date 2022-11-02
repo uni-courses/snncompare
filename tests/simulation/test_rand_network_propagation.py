@@ -1,8 +1,11 @@
 """Performs tests that verify lava simulation produces the same results as the
 networkx simulation."""
 
+
+
 import math
 import unittest
+
 
 import networkx as nx
 import numpy as np
@@ -27,9 +30,9 @@ from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
-from tests.simulation.test_cyclic_graph_propagation import (
-    compare_static_snn_properties,
-)
+from tests.tests_helper import compare_static_snn_properties
+
+
 
 
 class Test_propagation_with_recurrent_edges(unittest.TestCase):
