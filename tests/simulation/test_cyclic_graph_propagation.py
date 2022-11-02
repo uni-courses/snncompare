@@ -1,8 +1,8 @@
 """Performs tests that verify lava simulation produces the same results as the
 networkx simulation."""
 from __future__ import annotations
+
 import unittest
-from typing import Union
 
 import networkx as nx
 import numpy as np
@@ -27,12 +27,17 @@ from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
-from tests.simulation.test_rand_network_propagation import Test_propagation_with_recurrent_edges
-
+from tests.simulation.test_rand_network_propagation import (
+    Test_propagation_with_recurrent_edges,
+)
 from tests.simulation.tests_simulation_helper import (
     get_graph_for_cyclic_propagation,
 )
-from tests.tests_helper import compare_static_snn_properties, get_cyclic_graph_without_directed_path
+from tests.tests_helper import (
+    compare_static_snn_properties,
+    get_cyclic_graph_without_directed_path,
+)
+
 
 class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
     """Performs tests that verify lava simulation produces the same results as
@@ -137,10 +142,10 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
 
 
 def run_simulation_for_t_steps(
-    test_object: Union[
-        Test_propagation_with_recurrent_edges,
-        Test_cyclic_propagation_with_recurrent_edges,
-    ],
+    test_object: (
+        Test_propagation_with_recurrent_edges
+        | Test_cyclic_propagation_with_recurrent_edges
+    ),
     G: DiGraph,
     starter_neuron: int,
     sim_duration: int = 20,
@@ -163,5 +168,3 @@ def run_simulation_for_t_steps(
 
         # Terminate Loihi simulation.
         G.nodes[starter_neuron]["lava_LIF"].stop()
-
-

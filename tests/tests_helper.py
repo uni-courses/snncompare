@@ -1,10 +1,10 @@
 """Contains functions used to help the tests."""
 from __future__ import annotations
+
 import copy
 import pathlib
 import random
-from typing import List, Union
-
+from typing import TYPE_CHECKING, List
 
 import jsons
 import networkx as nx
@@ -15,16 +15,18 @@ from src.snncompare.export_results.export_json_results import (
 from src.snncompare.export_results.helper import (
     get_expected_image_paths_stage_3,
 )
-
-
-
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from tests.simulation.test_cyclic_graph_propagation import Test_cyclic_propagation_with_recurrent_edges
-    from tests.simulation.test_rand_network_propagation import Test_propagation_with_recurrent_edges
-    from src.snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
+from src.snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
     Alipour_properties,
 )
+
+if TYPE_CHECKING:
+    from tests.simulation.test_cyclic_graph_propagation import (
+        Test_cyclic_propagation_with_recurrent_edges,
+    )
+    from tests.simulation.test_rand_network_propagation import (
+        Test_propagation_with_recurrent_edges,
+    )
+
 
 def get_n_random_run_configs(run_configs, n: int, seed: int = None):
     """Returns n random experiment configurations."""
@@ -57,8 +59,8 @@ def assertIsNotFile(path):
 
 def create_result_file_for_testing(
     json_filepath: str,
-    graph_names: List[str],
-    completed_stages: List[str],
+    graph_names: list[str],
+    completed_stages: list[str],
     input_graph: nx.DiGraph,
     run_config: dict,
 ):
@@ -92,8 +94,8 @@ def create_result_file_for_testing(
 
 
 def create_results_dict_for_testing_stage_1(
-    graph_names: List[str],
-    completed_stages: List[str],
+    graph_names: list[str],
+    completed_stages: list[str],
     input_graph: nx.DiGraph,
     run_config: dict,
 ) -> dict:
@@ -128,8 +130,8 @@ def create_results_dict_for_testing_stage_1(
 
 
 def create_results_dict_for_testing_stage_2(
-    graph_names: List[str],
-    completed_stages: List[str],
+    graph_names: list[str],
+    completed_stages: list[str],
     input_graph: nx.DiGraph,
     run_config: dict,
 ) -> dict:
@@ -183,7 +185,7 @@ def add_results_to_stage_4(dummy_nx_results: dict) -> None:
 
 
 def create_dummy_output_images_stage_3(
-    graph_names: List[str],
+    graph_names: list[str],
     input_graph: nx.DiGraph,
     run_config: dict,
     extensions,
@@ -229,11 +231,12 @@ def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
     )
     return graph
 
+
 def compare_static_snn_properties(
-    test_object: Union[
-        Test_propagation_with_recurrent_edges,
-        Test_cyclic_propagation_with_recurrent_edges,
-    ],
+    test_object: (
+        Test_propagation_with_recurrent_edges
+        | Test_cyclic_propagation_with_recurrent_edges
+    ),
     G: nx.DiGraph,
     t: int = 0,
 ) -> None:
