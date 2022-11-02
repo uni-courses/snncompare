@@ -2,11 +2,14 @@
 
 (The values of the settings may vary, yet the types should be the same.)
 """
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.algos.verify_algos import (
     verify_algos_in_experiment_config,
+)
+from src.snncompare.exp_setts.Supported_experiment_settings import (
+    Supported_experiment_settings,
 )
 
 
@@ -94,8 +97,9 @@ def verify_experiment_config(
 
 
 def verify_experiment_config_dict_is_complete(
-    supp_exp_setts, experiment_config
-):
+    supp_exp_setts: Supported_experiment_settings,
+    experiment_config: Dict[str, Any],
+) -> None:
     """Verifies the configuration settings dictionary is complete."""
     for expected_key in supp_exp_setts.parameters:
         if expected_key not in experiment_config.keys():
@@ -126,7 +130,9 @@ def verify_experiment_config_dict_contains_only_valid_entries(
                 )
 
 
-def verify_list_element_types_and_list_len(list_setting, element_type):
+def verify_list_element_types_and_list_len(
+    list_setting: Any, element_type: type
+) -> None:
     """Verifies the types and minimum length of configuration settings that are
     stored with a value of type list.
 
@@ -141,7 +147,12 @@ def verify_list_element_types_and_list_len(list_setting, element_type):
         )
 
 
-def verify_list_setting(supp_exp_setts, setting, element_type, setting_name):
+def verify_list_setting(
+    supp_exp_setts: Supported_experiment_settings,
+    setting: Any,
+    element_type: type,
+    setting_name: str,
+) -> None:
     """Verifies the configuration settings that have values of type list, that
     the list has at least 1 element in it, and that its values are within the
     supported range.
@@ -167,7 +178,9 @@ def verify_list_setting(supp_exp_setts, setting, element_type, setting_name):
             )
 
 
-def get_expected_range(setting_name, supp_exp_setts):
+def get_expected_range(
+    setting_name: str, supp_exp_setts: Supported_experiment_settings
+) -> Union[List[int], List[str]]:
     """Returns the ranges as specified in the Supported_experiment_settings
     object for the asked setting.
 
@@ -188,8 +201,9 @@ def get_expected_range(setting_name, supp_exp_setts):
 
 
 def verify_size_and_max_graphs_settings(
-    supp_exp_setts, size_and_max_graphs_setting
-):
+    supp_exp_setts: Supported_experiment_settings,
+    size_and_max_graphs_setting: Union[List[Tuple[int, int]], None],
+) -> None:
     """Verifies the configuration setting size_and_max_graphs_setting values
     are a list of tuples with at least 1 tuple, and that its values are within
     the supported range.
@@ -201,24 +215,29 @@ def verify_size_and_max_graphs_settings(
     verify_list_element_types_and_list_len(size_and_max_graphs_setting, tuple)
 
     # Verify the tuples contain valid values for size and max_graphs.
-    for size_and_max_graphs in size_and_max_graphs_setting:
-        size = size_and_max_graphs[0]
-        max_graphs = size_and_max_graphs[1]
+    if size_and_max_graphs_setting is not None:
+        for size_and_max_graphs in size_and_max_graphs_setting:
+            size = size_and_max_graphs[0]
+            max_graphs = size_and_max_graphs[1]
 
-        verify_integer_settings(
-            size,
-            supp_exp_setts.min_graph_size,
-            supp_exp_setts.max_graph_size,
-        )
+            verify_integer_settings(
+                size,
+                supp_exp_setts.min_graph_size,
+                supp_exp_setts.max_graph_size,
+            )
 
-        verify_integer_settings(
-            max_graphs,
-            supp_exp_setts.min_max_graphs,
-            supp_exp_setts.max_max_graphs,
-        )
+            verify_integer_settings(
+                max_graphs,
+                supp_exp_setts.min_max_graphs,
+                supp_exp_setts.max_max_graphs,
+            )
 
 
-def verify_integer_settings(integer_setting, min_val=None, max_val=None):
+def verify_integer_settings(
+    integer_setting: Optional[int],
+    min_val: Optional[int] = None,
+    max_val: Optional[int] = None,
+) -> None:
     """Verifies an integer setting is of type integer and that it is within the
     supported minimum and maximum value range..
 
@@ -246,7 +265,7 @@ def verify_integer_settings(integer_setting, min_val=None, max_val=None):
             )
 
 
-def verify_min_max(min_val, max_val):
+def verify_min_max(min_val: int, max_val: int) -> None:
     """Verifies a lower bound/minimum value is indeed smaller than an
     upperbound/maximum value.
 
@@ -262,7 +281,7 @@ def verify_min_max(min_val, max_val):
         )
 
 
-def verify_bool_setting(bool_setting):
+def verify_bool_setting(bool_setting: Union[None, bool, str]) -> None:
     """Verifies the bool_setting value is of type: boolean.
 
     :param bool_setting:
@@ -274,7 +293,11 @@ def verify_bool_setting(bool_setting):
         )
 
 
-def verify_object_type(obj, expected_type, element_type=None):
+def verify_object_type(
+    obj: Union[float, List, Tuple],
+    expected_type: type,
+    element_type: type = None,
+) -> None:
     """Verifies an incoming object has the expected type, and if the object is
     a tuple or list, it also verifies the types of the elements in the tuple or
     list.
@@ -440,7 +463,9 @@ def verify_radiations_values(
             elif isinstance(setting, tuple):
                 # Verify the radiations setting tuple is of type float,
                 # float.
-                verify_object_type(setting, tuple, (float, float))
+                # TODO: change type((1.0, 2.0)) to the type it is.
+                verify_object_type(setting, tuple, type((1.0, 2.0)))
+
             else:
                 # Throw error if the radiations setting is something other
                 # than a float or tuple of floats.

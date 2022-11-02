@@ -4,6 +4,7 @@ import copy
 from typing import List
 
 import networkx as nx
+from networkx.classes.graph import Graph
 
 from src.snncompare.graph_generation.helper_network_structure import (
     create_synapses_and_spike_dicts,
@@ -399,7 +400,7 @@ class Alipour_properties:
     """Contains the properties required to compute Alipour algorithm
     results."""
 
-    def __init__(self, G, seed):
+    def __init__(self, G: Graph, seed: int) -> None:
 
         # Initialise properties for Alipour algorithm
         rand_ceil = self.get_random_ceiling(G)
@@ -421,7 +422,7 @@ class Alipour_properties:
         self.inhibition = inhibition
         self.initial_rand_current = initial_rand_current
 
-    def get_random_ceiling(self, G):
+    def get_random_ceiling(self, G: Graph) -> int:
         """Generate the maximum random ceiling.
 
         +2 to allow selecting a larger range of numbers than the number
@@ -432,7 +433,7 @@ class Alipour_properties:
         rand_ceil = len(G) + 0
         return rand_ceil
 
-    def get_delta(self):
+    def get_delta(self) -> int:
         """Make the random numbers differ with at least delta>=2.
 
         This is to prevent multiple degree_receiver_x_y neurons (that
@@ -444,7 +445,9 @@ class Alipour_properties:
         delta = 2
         return delta
 
-    def spread_rand_nrs_with_delta(self, delta, rand_nrs):
+    def spread_rand_nrs_with_delta(
+        self, delta: int, rand_nrs: List[int]
+    ) -> List[int]:
         """Spread the random numbers with delta to ensure 1 winner in WTA
         circuit.
 
@@ -454,7 +457,7 @@ class Alipour_properties:
         spread_rand_nrs = [x * delta for x in rand_nrs]
         return spread_rand_nrs
 
-    def get_inhibition(self, delta, G, rand_ceil):
+    def get_inhibition(self, delta: int, G: Graph, rand_ceil: int) -> int:
         """Add inhibition to rand_nrs to ensure the degree_receiver current
         u[1] always starts negative. The a_in of the degree_receiver_x_y neuron
         is.
@@ -476,7 +479,9 @@ class Alipour_properties:
         inhibition = len(G) * (rand_ceil * delta + 1) + (rand_ceil) * delta + 1
         return inhibition
 
-    def get_initial_random_current(self, inhibition, rand_nrs):
+    def get_initial_random_current(
+        self, inhibition: int, rand_nrs: List[int]
+    ) -> List[int]:
         """Returns the list with random initial currents for the rand_ neurons.
 
         :param inhibition: Value of shift of rand_nrs to ensure

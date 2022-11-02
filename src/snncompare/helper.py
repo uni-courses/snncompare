@@ -12,6 +12,7 @@ from typing import List
 import networkx as nx
 import pylab as plt
 from lava.proc.monitor.process import Monitor
+from networkx.classes.graph import Graph
 
 from src.snncompare.export_results.export_json_results import get_unique_hash
 from src.snncompare.export_results.plot_graphs import (
@@ -87,7 +88,9 @@ def sort_neurons(neurons, neuron_dict):
     return sorted_neurons
 
 
-def generate_list_of_n_random_nrs(G, max_val=None, seed=None):
+def generate_list_of_n_random_nrs(
+    G: Graph, max_val: int = None, seed: int = None
+) -> List[int]:
     """Generates list of numbers in range of 1 to (and including) len(G), or:
 
     Generates list of numbers in range of 1 to (and including) max, or:

@@ -85,7 +85,7 @@ class Test_stage_1_output_json(unittest.TestCase):
     # Loop through (random) run configs.
 
     # Test: Deleting all results says none of the stages have been performed.
-    def test_output_json_contains_(self):
+    def test_output_json_contains_(self) -> None:
         """Tests whether deleting all results and creating an artificial json
         with stages 1, 2, 3 and 4 completed, results in has_outputted_stage()
         returning that stages 1, 2, 3 and 4 are completed."""

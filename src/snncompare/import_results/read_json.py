@@ -7,7 +7,7 @@ graphs.
 import copy
 import json
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List, Optional
 
 import networkx as nx
 
@@ -93,7 +93,9 @@ def get_graph_attributes_from_dict_and_return_nx_graph(json_graph: dict):
     return nx_graph
 
 
-def load_json_file_into_dict(json_filepath):
+def load_json_file_into_dict(
+    json_filepath: str,
+) -> Dict[str, Optional[Dict[str, Any]]]:
     """TODO: make this into a private function that cannot be called by
     any other object than some results loader.
     Loads a json file into dict from a filepath."""

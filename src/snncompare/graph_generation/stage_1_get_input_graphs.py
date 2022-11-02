@@ -4,7 +4,7 @@ Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
 import copy
-from typing import List
+from typing import Any, Dict, List
 
 import networkx as nx
 
@@ -164,7 +164,7 @@ def get_adapted_graph(
         )
 
 
-def has_adaptation(run_config):
+def has_adaptation(run_config: Dict[str, Any]) -> bool:
     """Checks if the adaptation contains a None setting.
 
     TODO: ensure the adaptation only consists of 1 setting per run.
@@ -177,7 +177,7 @@ def has_adaptation(run_config):
     return False
 
 
-def has_radiation(run_config):
+def has_radiation(run_config: Dict[str, Any]) -> bool:
     """Checks if the radiation contains a None setting.
 
     TODO: ensure the radiation only consists of 1 setting per run.

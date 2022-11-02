@@ -81,7 +81,7 @@ class Test_stage_1_output_json(unittest.TestCase):
     # Loop through (random) run configs.
 
     # Test:
-    def test_output_json_contains_(self):
+    def test_output_json_contains_(self) -> None:
         """Tests whether deleting all results and creating an artificial json
         with only stage 1 completed, results in has_outputted_stage() returning
         that only stage 1 is completed, and that stages 2,3 and 4 are not yet

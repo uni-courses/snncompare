@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import pathlib
 import random
+from pathlib import PosixPath
 from typing import TYPE_CHECKING, List
 
 import jsons
@@ -37,7 +38,7 @@ def get_n_random_run_configs(run_configs, n: int, seed: int = None):
     return random.sample(run_configs, n)
 
 
-def assertIsFile(path):
+def assertIsFile(path: PosixPath) -> None:
     """Asserts a file exists.
 
     Throws error if a file does not exist.
@@ -89,7 +90,7 @@ def create_result_file_for_testing(
     write_dict_to_json(json_filepath, jsons.dump(dummy_result))
 
     # Verify output JSON file exists.
-    filepath = pathlib.Path(json_filepath)
+    filepath = pathlib.PosixPath(json_filepath)
     assertIsFile(filepath)
 
 
@@ -202,7 +203,7 @@ def create_dummy_output_images_stage_3(
             pass
 
         # Verify output JSON file exists.
-        filepath = pathlib.Path(image_filepath)
+        filepath = pathlib.PosixPath(image_filepath)
         assertIsFile(filepath)
 
 

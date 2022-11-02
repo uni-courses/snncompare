@@ -1,20 +1,22 @@
 """Contains helper functions for exporting simulation results."""
 import collections
 import copy
-from typing import List
+from typing import Any, Dict, List, Union
 
 import networkx as nx
 
 from src.snncompare.helper import get_sim_duration
 
 
-def flatten(d, parent_key="", sep="_"):
+def flatten(
+    d: Dict[str, Any], parent_key: str = "", sep: str = "_"
+) -> Union[Dict[str, float], Dict[str, int]]:
     """Flattens a dictionary (makes multiple lines into a oneliner)."""
-    items = []
+    items: List = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
         if isinstance(v, collections.MutableMapping):
-            items.extend(flatten(v, new_key, sep=sep).items())
+            items.extend(flatten(dict(v), new_key, sep=sep).items())
         else:
             items.append((new_key, v))
     return dict(items)

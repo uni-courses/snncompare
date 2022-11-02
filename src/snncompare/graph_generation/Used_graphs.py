@@ -1,11 +1,14 @@
 """Contains the list of graphs that are used for radiation testing."""
+from typing import List
+
 import networkx as nx
+from networkx.classes.graph import Graph
 
 
 class Used_graphs:
     """Creates graphs used for paper."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.three = self.get_graphs_with_3_neurons()
         self.four = self.get_graphs_with_4_neurons()
         self.five = self.get_graphs_with_5_neurons()
@@ -23,15 +26,15 @@ class Used_graphs:
             return self.five
         raise Exception("Graph size of: {size} is currently not supported.")
 
-    def get_graphs_with_3_neurons(self):
+    def get_graphs_with_3_neurons(self) -> List[Graph]:
         """Returns list of graphs of size 3."""
         return [self.three_a()]
 
-    def get_graphs_with_4_neurons(self):
+    def get_graphs_with_4_neurons(self) -> List[Graph]:
         """Returns list of graphs of size 4."""
         return [self.four_a(), self.four_b(), self.four_c()]
 
-    def get_graphs_with_5_neurons(self):
+    def get_graphs_with_5_neurons(self) -> List[Graph]:
         """Returns list of graphs of size 5."""
         return [
             self.five_a(),
