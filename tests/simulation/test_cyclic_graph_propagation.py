@@ -27,15 +27,12 @@ from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
+from tests.simulation.test_rand_network_propagation import Test_propagation_with_recurrent_edges
 
 from tests.simulation.tests_simulation_helper import (
     get_graph_for_cyclic_propagation,
 )
-from tests.tests_helper import get_cyclic_graph_without_directed_path
-
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    Test_propagation_with_recurrent_edges
+from tests.tests_helper import compare_static_snn_properties, get_cyclic_graph_without_directed_path
 
 class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
     """Performs tests that verify lava simulation produces the same results as
