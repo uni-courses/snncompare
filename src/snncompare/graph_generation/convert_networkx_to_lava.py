@@ -1,6 +1,6 @@
 """Converts networkx graph representing lava spiking-neural-network into
 SNN."""
-
+from pprint import pprint
 from typing import Dict, List, Optional, Tuple
 
 import networkx as nx
@@ -10,6 +10,7 @@ import numpy as np
 from lava.proc.dense.process import Dense
 from lava.proc.lif.process import LIF
 from networkx.classes.digraph import DiGraph
+from typeguard import typechecked
 
 from src.snncompare.simulation.verify_graph_is_networkx_snn import (
     assert_synapse_properties_are_specified,
@@ -243,8 +244,9 @@ def add_recurrent_edge(G: DiGraph, nodename: int, neuron: LIF) -> None:
         create_recurrent_synapse(neuron, weight)
 
 
+@typechecked
 def get_neuron_properties(
-    G: nx.DiGraph, nodename: str, t: int
+    G: nx.DiGraph, nodename: int, t: int
 ) -> Tuple[float, float, float, float]:
     """Returns the bias,du,dv and vth of a node of the MDSA SNN graph.
 
@@ -253,11 +255,21 @@ def get_neuron_properties(
     :param nodename: Node of the name of a networkx graph. Name of the node of
      the networkx graph.
     """
-    bias = G.nodes[nodename]["nx_LIF"][t].bias.get()
-    du = G.nodes[nodename]["nx_LIF"][t].du.get()
-    dv = G.nodes[nodename]["nx_LIF"][t].dv.get()
-    vth = G.nodes[nodename]["nx_LIF"][t].vth.get()
-    return bias, du, dv, vth
+    pprint(G.__dict__)
+    print(f"nodename={nodename}")
+    print(f"nodename={type(nodename)}")
+
+    if int(nodename) in G.nodes:
+        pprint(G.nodes[nodename])
+        if "nx_LIF" in G.nodes[nodename]:
+            pprint(G.nodes[nodename]["nx_LIF"])
+            bias = G.nodes[nodename]["nx_LIF"][t].bias.get()
+            du = G.nodes[nodename]["nx_LIF"][t].du.get()
+            dv = G.nodes[nodename]["nx_LIF"][t].dv.get()
+            vth = G.nodes[nodename]["nx_LIF"][t].vth.get()
+            return bias, du, dv, vth
+        raise Exception(f"node does not have nx_LIF:{G.nodes[nodename]}.")
+    raise Exception(f"nodename:{nodename} not in G.nodes:{G.nodes}.")
 
 
 def get_neuron_properties_old(
