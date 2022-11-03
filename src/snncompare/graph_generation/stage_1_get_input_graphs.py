@@ -4,7 +4,7 @@ Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
 import copy
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import networkx as nx
 from typeguard import typechecked
@@ -65,14 +65,14 @@ def get_used_graphs(run_config: dict) -> dict:
 
 @typechecked
 @typechecked
-def get_input_graph(run_config: dict) -> nx.DiGraph:
+def get_input_graph(run_config: dict) -> nx.Graph:
     """TODO: support retrieving graph sizes larger than size 5.
     TODO: ensure those graphs have valid properties, e.g. triangle-free and
     non-planar."""
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
-    input_graph: nx.DiGraph = get_the_input_graph(run_config)
+    input_graph: nx.Graph = get_the_input_graph(run_config)
 
     # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
     return input_graph
@@ -80,14 +80,14 @@ def get_input_graph(run_config: dict) -> nx.DiGraph:
 
 @typechecked
 @typechecked
-def get_the_input_graph(run_config: dict) -> nx.DiGraph:
+def get_the_input_graph(run_config: dict) -> nx.Graph:
     """Returns a specific input graph from the list of input graphs."""
     return get_input_graphs(run_config)[run_config["graph_nr"]]
 
 
 @typechecked
 @typechecked
-def get_input_graphs(run_config: dict) -> List[nx.DiGraph]:
+def get_input_graphs(run_config: dict) -> List[nx.Graph]:
     """Removes graphs that are not used, because of a maximum nr of graphs that
     is to be evaluated."""
     used_graphs = Used_graphs()
@@ -120,7 +120,7 @@ def get_input_graphs(run_config: dict) -> List[nx.DiGraph]:
 @typechecked
 @typechecked
 def get_snn_algo_graph(
-    input_graph: nx.DiGraph, run_config: dict
+    input_graph: nx.Graph, run_config: dict
 ) -> nx.DiGraph:
     """Takes the input graph and converts it to an snn that solves some
     algorithm when it is being ran.
@@ -234,7 +234,7 @@ def get_redundant_graph(
 @typechecked
 def get_radiation_graph(
     snn_graph: nx.DiGraph, run_config: dict, seed: int
-) -> nx.DiGraph:
+) -> nx.Graph:
     """Makes a deep copy of the incoming graph and applies radiation to it.
 
     Then returns the graph with the radiation, as well as a list of

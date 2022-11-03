@@ -16,7 +16,7 @@ from tests.exp_setts.unsorted.test_create_testobject import add_monitor_to_dict
 def implement_adaptation_mechanism(
     adaptation_graph: nx.DiGraph,
     # m,
-) -> nx.DiGraph:
+) -> None:
     """
     :param adaptation_graph: Graph with the MDSA SNN approximation solution.
     :param m: The amount of approximation iterations used in the MDSA

@@ -262,7 +262,6 @@ class Experiment_runner:
 
 
 @typechecked
-@typechecked
 def experiment_config_to_run_configs(
     experiment_config: Dict[str, Any]
 ) -> List[Dict[str, Any]]:

@@ -23,13 +23,13 @@ class LIF_neuron:
     # Eleven is considered is reasonable in this case.
     @typechecked
     def __init__(
-        self, name: int, bias: float, du: float, dv: float, vth: float
+        self, name: str, bias: float, du: float, dv: float, vth: float
     ) -> None:
         # pylint: disable=R0913
         self.bias = Bias(bias)  # Amount of voltage added every timestep.
         self.du = Du(du)  # Change in current over time.
         self.dv = Dv(dv)  # Change in voltage over time.
-        self.name = name  # Set the identifier of the neuron.
+        self.name:str = name  # Set the identifier of the neuron.
         self.vth = Vth(vth)  # Threshold Voltage of the neuron.
 
         # Initialise default values.

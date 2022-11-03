@@ -15,7 +15,7 @@ from src.snncompare.helper import generate_list_of_n_random_nrs, get_y_position
 
 @typechecked
 def specify_mdsa_network_properties(
-    input_graph: nx.DiGraph, m_val: int, seed: int
+    input_graph: nx.Graph, m_val: int, seed: int
 ) -> nx.DiGraph:
     """Takes an input graph and generates an SNN that runs the MDSA algorithm
     by Alipour.
@@ -51,7 +51,7 @@ def specify_mdsa_network_properties(
 
 @typechecked
 def input_graph_to_mdsa_snn_graph(
-    input_graph: nx.DiGraph, rand_nrs: List[int], rand_ceil: int, m_val: int
+    input_graph: nx.Graph, rand_nrs: List[int], rand_ceil: int, m_val: int
 ) -> nx.DiGraph:
     """Returns a networkx graph that represents the snn that computes the
     spiking degree in the degree_receiver neurons. One node in the graph

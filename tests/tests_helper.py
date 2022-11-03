@@ -73,7 +73,7 @@ def create_result_file_for_testing(
     json_filepath: str,
     graph_names: list[str],
     completed_stages: list[int],
-    input_graph: nx.DiGraph,
+    input_graph: nx.Graph,
     run_config: dict,
 ) -> None:
     """Creates a dummy .json result file that can be used to test functions
@@ -109,7 +109,7 @@ def create_result_file_for_testing(
 def create_results_dict_for_testing_stage_1(
     graph_names: list[str],
     completed_stages: list[int],
-    input_graph: nx.DiGraph,
+    input_graph: nx.Graph,
     run_config: dict,
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
@@ -146,7 +146,7 @@ def create_results_dict_for_testing_stage_1(
 def create_results_dict_for_testing_stage_2(
     graph_names: list[str],
     completed_stages: list[int],
-    input_graph: nx.DiGraph,
+    input_graph: nx.Graph,
     run_config: dict,
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
@@ -202,7 +202,7 @@ def add_results_to_stage_4(dummy_nx_results: dict) -> None:
 @typechecked
 def create_dummy_output_images_stage_3(
     graph_names: list[str],
-    input_graph: nx.DiGraph,
+    input_graph: nx.Graph,
     run_config: dict,
     extensions: list[str],
 ) -> None:

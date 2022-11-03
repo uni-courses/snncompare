@@ -22,8 +22,6 @@ from src.snncompare.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
 )
 
-pprint(typeguard.__dict__)
-
 # Remove results directory if it exists.
 if os.path.exists("results"):
     shutil.rmtree("results")

@@ -49,7 +49,7 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
     :param G: The original graph on which the MDSA algorithm is ran.
 
     """
-    return G
+    pass
 
 
 @typechecked

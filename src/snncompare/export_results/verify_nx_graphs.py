@@ -119,7 +119,7 @@ def verify_results_nx_graphs(
 
 @typechecked
 def verify_nx_graph_contains_correct_stages(
-    graph_name: str, nx_graph: nx.DiGraph, expected_stages: List[int]
+    graph_name: str, nx_graph: nx.Graph, expected_stages: List[int]
 ) -> None:
     """Verifies the networkx graph object contains the correct completed
     stages."""

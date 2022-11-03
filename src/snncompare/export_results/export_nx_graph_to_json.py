@@ -48,7 +48,7 @@ def convert_digraphs_to_json(
 
 @typechecked
 def convert_stage_1_digraphs_to_json(
-    graphs: Union[nx.Graph, nx.DiGraph]
+    graphs: dict
 ) -> Dict[str, Any]:
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}

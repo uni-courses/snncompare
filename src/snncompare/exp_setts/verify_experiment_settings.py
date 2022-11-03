@@ -246,8 +246,8 @@ def verify_size_and_max_graphs_settings(
 @typechecked
 def verify_integer_settings(
     integer_setting: int,
-    min_val: Union[int, None] = None,
-    max_val: int | None = None,
+    min_val: int = None,
+    max_val: int = None,
 ) -> None:
     """Verifies an integer setting is of type integer and that it is within the
     supported minimum and maximum value range..
@@ -294,7 +294,7 @@ def verify_min_max(min_val: int, max_val: int) -> None:
 
 
 @typechecked
-def verify_bool_setting(bool_setting: None | bool | str) -> None:
+def verify_bool_setting(bool_setting: bool) -> None:
     """Verifies the bool_setting value is of type: boolean.
 
     :param bool_setting:

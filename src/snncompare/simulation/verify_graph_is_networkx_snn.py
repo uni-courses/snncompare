@@ -64,7 +64,7 @@ def assert_synaptic_edgeweight_type_is_correct(
 
 @typechecked
 def assert_synapse_properties_are_specified(
-    G: DiGraph, edge: Tuple[int, int]
+    G: DiGraph, edge: Tuple[str, str]
 ) -> None:
     """
 
@@ -82,7 +82,7 @@ def assert_synapse_properties_are_specified(
 
 @typechecked
 def check_if_synapse_properties_are_specified(
-    G: DiGraph, edge: Tuple[int, int]
+    G: DiGraph, edge: Tuple[str,str]
 ) -> bool:
     """
 
@@ -101,7 +101,7 @@ def check_if_synapse_properties_are_specified(
 
 
 @typechecked
-def get_synapse_property_names(G: DiGraph, edge: Tuple[int, int]) -> dict_keys:
+def get_synapse_property_names(G: DiGraph, edge: Tuple[str,str]) -> dict_keys:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.

@@ -526,26 +526,26 @@ def full_alipour(
 
 
 @typechecked
-def compute_mark(delta: float, G: nx.DiGraph, rand_ceil: float) -> None:
+def compute_mark(delta: float, input_graph: nx.Graph, rand_ceil: float) -> None:
     """Computes the mark at the counter neurons after the simulation is
     completed."""
     # Compute the mark based on degree+randomness=weight
-    for node in G.nodes:
+    for node in input_graph.nodes:
         max_weight = max(
-            G.nodes[n]["weight"] for n in nx.all_neighbors(G, node)
+            input_graph.nodes[n]["weight"] for n in nx.all_neighbors(input_graph, node)
         )
 
         nr_of_max_weights = 0
-        for n in nx.all_neighbors(G, node):
+        for n in nx.all_neighbors(input_graph, node):
             if (
-                G.nodes[n]["weight"] == max_weight
+                input_graph.nodes[n]["weight"] == max_weight
             ):  # should all max weight neurons be marked or only one of them?
 
                 # Always raise mark always by (rand_ceil + 1) * delta
                 # (not by 1).
                 # Read of the score from countermarks, not marks.
-                G.nodes[n]["marks"] += (rand_ceil + 1) * delta
-                G.nodes[n]["countermarks"] += 1
+                input_graph.nodes[n]["marks"] += (rand_ceil + 1) * delta
+                input_graph.nodes[n]["countermarks"] += 1
                 nr_of_max_weights = nr_of_max_weights + 1
 
                 # Verify there is only one max weight neuron.
@@ -644,7 +644,7 @@ def file_exists(filepath: str) -> bool:
 @typechecked
 def compute_marks_for_m_larger_than_one(
     delta: float,
-    G: nx.DiGraph,
+    input_graph: nx.Graph,
     inhibition: float,
     iteration: int,
     m: int,
@@ -659,43 +659,43 @@ def compute_marks_for_m_larger_than_one(
     # TODO: reduce 10/5 arguments to at most 5/5.
     # Don't compute for m=0
     for loop in range(1, m + 1):
-        for node in G.nodes:
-            G.nodes[node]["weight"] = (
-                G.nodes[node]["marks"] + G.nodes[node]["random_number"]
+        for node in input_graph.nodes:
+            input_graph.nodes[node]["weight"] = (
+                input_graph.nodes[node]["marks"] + input_graph.nodes[node]["random_number"]
             )
-            G.nodes[node]["inhibited_weight"] = (
-                G.nodes[node]["weight"] - inhibition
+            input_graph.nodes[node]["inhibited_weight"] = (
+                input_graph.nodes[node]["weight"] - inhibition
             )
             # Reset marks.
-            G.nodes[node]["marks"] = 0
-            G.nodes[node]["countermarks"] = 0
+            input_graph.nodes[node]["marks"] = 0
+            input_graph.nodes[node]["countermarks"] = 0
 
-        for node in G.nodes:
+        for node in input_graph.nodes:
             max_weight = max(
-                G.nodes[n]["weight"] for n in nx.all_neighbors(G, node)
+                input_graph.nodes[n]["weight"] for n in nx.all_neighbors(input_graph, node)
             )
-            for n in nx.all_neighbors(G, node):
-                if G.nodes[n]["weight"] == max_weight:
+            for n in nx.all_neighbors(input_graph, node):
+                if input_graph.nodes[n]["weight"] == max_weight:
 
                     # Always raise mark always by (rand_ceil + 1) * delta
                     # (not by 1).
-                    G.nodes[n]["marks"] += (rand_ceil + 1) * delta
-                    G.nodes[n]["countermarks"] += 1
+                    input_graph.nodes[n]["marks"] += (rand_ceil + 1) * delta
+                    input_graph.nodes[n]["countermarks"] += 1
 
         if show or export:
             plot_alipour(
-                "0rand_mark", iteration, seed, size, loop, G, show=show
+                "0rand_mark", iteration, seed, size, loop, input_graph, show=show
             )
-            plot_alipour("1weight", iteration, seed, size, loop, G, show=show)
+            plot_alipour("1weight", iteration, seed, size, loop, input_graph, show=show)
             plot_alipour(
-                "2inhib_weight", iteration, seed, size, loop, G, show=show
+                "2inhib_weight", iteration, seed, size, loop, input_graph, show=show
             )
 
 
 @typechecked
 def set_node_default_values(
     delta: float,
-    G: nx.DiGraph,
+    input_graph: nx.Graph,
     inhibition: int,
     node: int,
     rand_ceil: float,
@@ -706,14 +706,14 @@ def set_node_default_values(
     # TODO: reduce 6/5 arguments to at most 5/5.
     # Initialise values.
     # G.nodes[node]["marks"] = 0
-    G.nodes[node]["marks"] = G.degree(node) * (rand_ceil + 1) * delta
-    G.nodes[node]["countermarks"] = 0
-    G.nodes[node]["random_number"] = 1 * uninhibited_spread_rand_nrs[node]
-    G.nodes[node]["weight"] = (
-        G.degree(node) * (rand_ceil + 1) * delta
-        + G.nodes[node]["random_number"]
+    input_graph.nodes[node]["marks"] = input_graph.degree(node) * (rand_ceil + 1) * delta
+    input_graph.nodes[node]["countermarks"] = 0
+    input_graph.nodes[node]["random_number"] = 1 * uninhibited_spread_rand_nrs[node]
+    input_graph.nodes[node]["weight"] = (
+        input_graph.degree(node) * (rand_ceil + 1) * delta
+        + input_graph.nodes[node]["random_number"]
     )
-    G.nodes[node]["inhibited_weight"] = G.nodes[node]["weight"] - inhibition
+    input_graph.nodes[node]["inhibited_weight"] = input_graph.nodes[node]["weight"] - inhibition
 
 
 @typechecked
@@ -784,42 +784,42 @@ def get_extensions_dict(run_config: dict, stage_index: int) -> dict:
 
 @typechecked
 def add_stage_completion_to_graph(
-    some_graph: nx.DiGraph, stage_index: int
+    input_graph: nx.Graph, stage_index: int
 ) -> None:
     """Adds the completed stage to the list of completed stages for the
     incoming graph."""
     # Initialise the completed_stages key.
     if stage_index == 1:
-        if "completed_stages" in some_graph.graph:
+        if "completed_stages" in input_graph.graph:
             raise Exception(
                 "Error, the completed_stages parameter is"
-                + f"already created for stage 1{some_graph.graph}:"
+                + f"already created for stage 1{input_graph.graph}:"
             )
-        some_graph.graph["completed_stages"] = []
+        input_graph.graph["completed_stages"] = []
 
     # After stage 1, the completed_stages key should already be a list.
-    elif not isinstance(some_graph.graph["completed_stages"], list):
+    elif not isinstance(input_graph.graph["completed_stages"], list):
         raise Exception(
             "Error, the completed_stages parameter is not of type"
             + "list. instead, it is of type:"
-            + f'{type(some_graph.graph["completed_stages"])}'
+            + f'{type(input_graph.graph["completed_stages"])}'
         )
 
     # At this point, the completed_stages key should not contain the current
     # stage index already..
-    if stage_index in some_graph.graph["completed_stages"]:
+    if stage_index in input_graph.graph["completed_stages"]:
         raise Exception(
             f"Error, the stage:{stage_index} is already in the completed_stage"
-            f's: {some_graph.graph["completed_stages"]}'
+            f's: {input_graph.graph["completed_stages"]}'
         )
 
     # Add the completed stages key to the snn graph.
-    some_graph.graph["completed_stages"].append(stage_index)
+    input_graph.graph["completed_stages"].append(stage_index)
 
 
 @typechecked
 def get_sim_duration(
-    input_graph: nx.DiGraph,
+    input_graph: nx.Graph,
     run_config: dict,
 ) -> int:
     """Compute the simulation duration for a given algorithm and graph."""

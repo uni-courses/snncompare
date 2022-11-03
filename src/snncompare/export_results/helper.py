@@ -12,7 +12,7 @@ from src.snncompare.helper import get_sim_duration
 @typechecked
 def flatten(
     d: Dict[str, Any], parent_key: str = "", sep: str = "_"
-) -> Union[Dict[str, float], Dict[str, int]]:
+) -> Union[dict,Dict[str, float], Dict[str, int]]:
     """Flattens a dictionary (makes multiple lines into a oneliner)."""
     items: List = []
     for k, v in d.items():
@@ -63,7 +63,7 @@ def run_config_to_filename(run_config: dict) -> str:
 @typechecked
 def get_expected_image_paths_stage_3(
     graph_names: List[str],
-    input_graph: nx.DiGraph,
+    input_graph: nx.Graph,
     run_config: dict,
     extensions: List[str],
 ) -> List:

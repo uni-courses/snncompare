@@ -23,10 +23,9 @@ if TYPE_CHECKING:
 
 
 # pylint: disable=W0613
-@typechecked
 def verify_run_config(
     supp_run_setts: Supported_run_settings,
-    run_config: str | dict | None,
+    run_config: dict,
     has_unique_id: bool,
     strict: bool,
 ) -> dict:
@@ -62,7 +61,7 @@ def verify_run_config(
     return run_config
 
 
-@typechecked
+
 def verify_parameter_types(
     supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
@@ -80,7 +79,7 @@ def verify_parameter_types(
             )
 
 
-@typechecked
+
 def verify_run_config_dict_is_complete(
     supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
@@ -93,7 +92,7 @@ def verify_run_config_dict_is_complete(
             )
 
 
-@typechecked
+
 def verify_run_config_dict_contains_only_valid_entries(
     supp_run_setts: Supported_run_settings, run_config: dict, strict: bool
 ) -> None:

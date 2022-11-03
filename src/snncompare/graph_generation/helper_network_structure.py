@@ -11,7 +11,7 @@ from src.snncompare.export_results.Plot_to_tex import Plot_to_tex
 
 @typechecked
 def create_synapses_and_spike_dicts(
-    G: nx.DiGraph,
+    input_graph: nx.Graph,
     get_degree: nx.DiGraph,
     left: List[dict],
     m: int,
@@ -31,7 +31,7 @@ def create_synapses_and_spike_dicts(
             get_degree, left, m, rand_ceil, right
         )
     else:
-        get_degree = retry_create_degree_synapses(G, get_degree, m, rand_ceil)
+        get_degree = retry_create_degree_synapses(input_graph, get_degree, m, rand_ceil)
 
     # Create spike dictionaries with [t] as key, and boolean spike as value for
     # each node.
@@ -79,7 +79,7 @@ def create_degree_synapses_for_m_is_zero(
 
 @typechecked
 def retry_create_degree_synapses(
-    G: nx.Graph, get_degree: nx.DiGraph, m: int, rand_ceil: float
+    input_graph: nx.Graph, get_degree: nx.DiGraph, m: int, rand_ceil: float
 ) -> nx.DiGraph:
     """
 
@@ -93,9 +93,9 @@ def retry_create_degree_synapses(
     # pylint: disable=R0913
     # Currently no method is found to reduce the 6/5 nested blocks.
     for loop in range(0, m):
-        for x_l in G.nodes:
-            for y in G.nodes:
-                for x_r in G.nodes:
+        for x_l in input_graph.nodes:
+            for y in input_graph.nodes:
+                for x_r in input_graph.nodes:
                     if (
                         f"degree_receiver_{x_l}_{y}_{loop}" in get_degree.nodes
                         and (

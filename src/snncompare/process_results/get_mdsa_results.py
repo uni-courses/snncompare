@@ -32,7 +32,7 @@ def set_mdsa_snn_results(
     # Get Alipour count.
     # Compute the count for each node according to Alipour et al.'s algorithm.
     alipour_counter_marks = get_alipour_nodes(
-        G=stage_2_graphs["input_graph"],
+        input_graph=stage_2_graphs["input_graph"],
         iteration=run_config["iteration"],
         m_val=m_val,
         rand_props=stage_2_graphs["input_graph"].graph["alg_props"],
@@ -134,7 +134,7 @@ def get_snn_results(
 
 @typechecked
 def get_nx_LIF_count_without_redundancy(
-    input_graph: nx.DiGraph, nx_SNN_G: nx.DiGraph, m_val: int, t: int
+    input_graph: nx.Graph, nx_SNN_G: nx.DiGraph, m_val: int, t: int
 ) -> dict:
     """Creates a dictionary with the node name and the the current as node
     count.
@@ -159,7 +159,7 @@ def get_nx_LIF_count_without_redundancy(
 
 @typechecked
 def get_nx_LIF_count_with_redundancy(
-    input_graph: nx.DiGraph,
+    input_graph: nx.Graph,
     adapted_nx_snn_graph: nx.DiGraph,
     m_val: int,
     t: int,

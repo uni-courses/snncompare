@@ -15,7 +15,7 @@ from src.snncompare.helper import (
 # pylint: disable=R0913
 @typechecked
 def get_alipour_nodes(
-    G: nx.Graph,
+    input_graph: nx.Graph,
     iteration: int,
     m_val: int,
     rand_props: Dict[str, Any],
@@ -40,17 +40,17 @@ def get_alipour_nodes(
     # TODO: read out from rand_props object.
     uninhibited_spread_rand_nrs = [(x + inhibition) for x in rand_nrs]
 
-    for node in G.nodes:
+    for node in input_graph.nodes:
         set_node_default_values(
-            delta, G, inhibition, node, rand_ceil, uninhibited_spread_rand_nrs
+            delta, input_graph, inhibition, node, rand_ceil, uninhibited_spread_rand_nrs
         )
 
     # pylint: disable=R0801
-    compute_mark(delta, G, rand_ceil)
+    compute_mark(delta, input_graph, rand_ceil)
 
     compute_marks_for_m_larger_than_one(
         delta=delta,
-        G=G,
+        input_graph=input_graph,
         inhibition=inhibition,
         iteration=iteration,
         m=m_val,
@@ -61,12 +61,12 @@ def get_alipour_nodes(
         show=False,
     )
     counter_marks = {}
-    for node_index in G.nodes:
-        counter_marks[f"counter_{node_index}_{m_val}"] = G.nodes[node_index][
+    for node_index in input_graph.nodes:
+        counter_marks[f"counter_{node_index}_{m_val}"] = input_graph.nodes[node_index][
             "countermarks"
         ]
         print(
             f"node_index:{node_index}, ali-mark:"
-            + f'{G.nodes[node_index]["countermarks"]}'
+            + f'{input_graph.nodes[node_index]["countermarks"]}'
         )
     return counter_marks

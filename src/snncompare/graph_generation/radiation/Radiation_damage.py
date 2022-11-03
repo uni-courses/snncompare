@@ -37,7 +37,7 @@ class Radiation_damage:
 
     @typechecked
     def inject_simulated_radiation(
-        self, get_degree: dict, probability: float, seed: int
+        self, get_degree: nx.DiGraph, probability: float, seed: int
     ) -> List[str]:
         """
 
