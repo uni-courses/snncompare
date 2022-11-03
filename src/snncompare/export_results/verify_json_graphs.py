@@ -1,7 +1,10 @@
 """Methods used to verify the json graphs."""
 from typing import List
 
+from typeguard import typechecked
 
+
+@typechecked
 def verify_results_json_graphs_contain_correct_stages(
     results_json_graphs: dict, expected_stages: List[int]
 ) -> None:
@@ -21,6 +24,7 @@ def verify_results_json_graphs_contain_correct_stages(
     )
 
 
+@typechecked
 def verify_json_graphs_dict_contain_correct_stages(
     json_graphs: dict, expected_stages: List[int], run_config: dict
 ) -> None:

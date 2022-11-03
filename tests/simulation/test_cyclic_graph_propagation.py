@@ -7,6 +7,7 @@ import unittest
 import networkx as nx
 import numpy as np
 from networkx.classes.digraph import DiGraph
+from typeguard import typechecked
 
 from src.snncompare.simulation.LIF_neuron import (
     print_neuron_properties_per_graph,
@@ -48,12 +49,14 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
     """
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
+    @typechecked
     def test_random_networks_are_propagated_the_same_on_networkx_and_lava(
         self,
     ) -> None:
@@ -125,6 +128,7 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
                 self, G, starter_neuron, sim_duration=20
             )
 
+    @typechecked
     def compare_dynamic_snn_properties(self, G: DiGraph, t: int) -> None:
         """Performs comparison of static neuron properties at each timestep.
 
@@ -141,6 +145,7 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
             self.assertEqual(lava_neuron.v.get(), nx_neuron.v.get())
 
 
+@typechecked
 def run_simulation_for_t_steps(
     test_object: (
         Test_propagation_with_recurrent_edges

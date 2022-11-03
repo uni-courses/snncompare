@@ -17,6 +17,7 @@ from src.snncompare.simulation.verify_graph_is_networkx_snn import (
 )
 
 
+@typechecked
 def initialise_networkx_to_snn_conversion(
     G: DiGraph,
 ) -> Tuple[List[int], LIF, List[LIF], int, Dict[LIF, int]]:
@@ -47,6 +48,7 @@ def initialise_networkx_to_snn_conversion(
     return converted_nodes, lhs_neuron, neurons, lhs_nodename, neuron_dict
 
 
+@typechecked
 def convert_networkx_to_lava_snn(
     G: DiGraph,
     converted_nodes: List[int],
@@ -168,6 +170,7 @@ def convert_networkx_to_lava_snn(
     )
 
 
+@typechecked
 def node_is_converted(converted_nodes: List[int], nodename: int) -> bool:
     """Verifies that the incoming node is not converted into a neuron yet.
 
@@ -181,6 +184,7 @@ def node_is_converted(converted_nodes: List[int], nodename: int) -> bool:
 
 
 # pylint: disable=R0913
+@typechecked
 def create_neuron_from_node(
     G: DiGraph,
     converted_nodes: List[int],
@@ -230,6 +234,7 @@ def create_neuron_from_node(
     return converted_nodes, neuron, neurons, nodename
 
 
+@typechecked
 def add_recurrent_edge(G: DiGraph, nodename: int, neuron: LIF) -> None:
     """Adds a recurrent edge to the node if it exists.
 
@@ -244,6 +249,7 @@ def add_recurrent_edge(G: DiGraph, nodename: int, neuron: LIF) -> None:
         create_recurrent_synapse(neuron, weight)
 
 
+@typechecked
 @typechecked
 def get_neuron_properties(
     G: nx.DiGraph, nodename: int, t: int
@@ -272,6 +278,7 @@ def get_neuron_properties(
     raise Exception(f"nodename:{nodename} not in G.nodes:{G.nodes}.")
 
 
+@typechecked
 def get_neuron_properties_old(
     G: nx.DiGraph, node: int
 ) -> Tuple[float, float, float, float]:
@@ -290,6 +297,7 @@ def get_neuron_properties_old(
     return bias, du, dv, vth
 
 
+@typechecked
 def create_recurrent_synapse(neuron: LIF, weight: float) -> LIF:
     """Creates a synapse from a neuron back into itself.
 
@@ -303,6 +311,7 @@ def create_recurrent_synapse(neuron: LIF, weight: float) -> LIF:
     return neuron
 
 
+@typechecked
 def create_weighted_synapse(weight_value: float) -> Dense:
     """Creates a weighted synapse between neuron a and neuron b.
 
@@ -334,6 +343,7 @@ def create_weighted_synapse(weight_value: float) -> Dense:
     return dense
 
 
+@typechecked
 def connect_synapse(neuron_a: LIF, neuron_b: LIF, dense: Dense) -> LIF:
     """Connects a synapse named dense from neuron a to neuron b.
 
@@ -346,6 +356,7 @@ def connect_synapse(neuron_a: LIF, neuron_b: LIF, dense: Dense) -> LIF:
     return neuron_a
 
 
+@typechecked
 def get_neuron_belonging_to_node_from_list(
     neurons: List[LIF], nodename: int, nodes: List[int]
 ) -> LIF:
@@ -361,6 +372,7 @@ def get_neuron_belonging_to_node_from_list(
     return neurons[index]
 
 
+@typechecked
 def add_synapse_between_nodes(
     G: DiGraph,
     lhs_neuron: LIF,
@@ -395,6 +407,7 @@ def add_synapse_between_nodes(
     return lhs_neuron
 
 
+@typechecked
 def add_synapse_left_to_right(
     G: DiGraph,
     lhs_neuron: LIF,
@@ -433,6 +446,7 @@ def add_synapse_left_to_right(
     return lhs_neuron
 
 
+@typechecked
 def add_synapse_right_to_left(
     G: DiGraph,
     lhs_neuron: LIF,
@@ -472,6 +486,7 @@ def add_synapse_right_to_left(
     return lhs_neuron
 
 
+@typechecked
 def get_edge_if_exists(
     G: DiGraph, lhs_nodename: int, rhs_node: int
 ) -> Optional[Tuple[int, int]]:
@@ -505,6 +520,7 @@ def get_edge_if_exists(
     return None
 
 
+@typechecked
 def connect_synapse_left_to_right(
     lhs_neuron: LIF, rhs_neuron: LIF, dense: Dense
 ) -> LIF:
@@ -519,6 +535,7 @@ def connect_synapse_left_to_right(
     return lhs_neuron
 
 
+@typechecked
 def connect_synapse_right_to_left(
     lhs_neuron: LIF, rhs_neuron: LIF, dense: Dense
 ) -> LIF:
@@ -533,6 +550,7 @@ def connect_synapse_right_to_left(
     return lhs_neuron
 
 
+@typechecked
 def add_neuron_to_dict(
     neighbour: int, neuron_dict: Dict[LIF, int], rhs_neuron: LIF
 ) -> Dict[LIF, int]:

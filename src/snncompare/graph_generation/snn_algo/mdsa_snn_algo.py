@@ -5,6 +5,7 @@ from typing import List
 
 import networkx as nx
 from networkx.classes.graph import Graph
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.helper_network_structure import (
     create_synapses_and_spike_dicts,
@@ -12,6 +13,7 @@ from src.snncompare.graph_generation.helper_network_structure import (
 from src.snncompare.helper import generate_list_of_n_random_nrs, get_y_position
 
 
+@typechecked
 def specify_mdsa_network_properties(
     input_graph: nx.DiGraph, m_val: int, seed: int
 ) -> nx.DiGraph:
@@ -47,6 +49,7 @@ def specify_mdsa_network_properties(
     return mdsa_snn_graph
 
 
+@typechecked
 def input_graph_to_mdsa_snn_graph(
     input_graph: nx.DiGraph, rand_nrs: List[int], rand_ceil: int, m_val: int
 ) -> nx.DiGraph:
@@ -400,6 +403,7 @@ class Alipour_properties:
     """Contains the properties required to compute Alipour algorithm
     results."""
 
+    @typechecked
     def __init__(self, G: Graph, seed: int) -> None:
 
         # Initialise properties for Alipour algorithm
@@ -422,6 +426,7 @@ class Alipour_properties:
         self.inhibition = inhibition
         self.initial_rand_current = initial_rand_current
 
+    @typechecked
     def get_random_ceiling(self, G: Graph) -> int:
         """Generate the maximum random ceiling.
 
@@ -433,6 +438,7 @@ class Alipour_properties:
         rand_ceil = len(G) + 0
         return rand_ceil
 
+    @typechecked
     def get_delta(self) -> int:
         """Make the random numbers differ with at least delta>=2.
 
@@ -445,6 +451,7 @@ class Alipour_properties:
         delta = 2
         return delta
 
+    @typechecked
     def spread_rand_nrs_with_delta(
         self, delta: int, rand_nrs: List[int]
     ) -> List[int]:
@@ -457,6 +464,7 @@ class Alipour_properties:
         spread_rand_nrs = [x * delta for x in rand_nrs]
         return spread_rand_nrs
 
+    @typechecked
     def get_inhibition(self, delta: int, G: Graph, rand_ceil: int) -> int:
         """Add inhibition to rand_nrs to ensure the degree_receiver current
         u[1] always starts negative. The a_in of the degree_receiver_x_y neuron
@@ -479,6 +487,7 @@ class Alipour_properties:
         inhibition = len(G) * (rand_ceil * delta + 1) + (rand_ceil) * delta + 1
         return inhibition
 
+    @typechecked
     def get_initial_random_current(
         self, inhibition: int, rand_nrs: List[int]
     ) -> List[int]:

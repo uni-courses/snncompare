@@ -1,10 +1,10 @@
 """File represents LIF neuron object."""
-
 from typing import Any, List
 
 import networkx as nx
 import numpy as np
 from lava.proc.lif.process import LIF
+from typeguard import typechecked
 
 
 class LIF_neuron:
@@ -21,6 +21,7 @@ class LIF_neuron:
 
     # pylint: disable=too-many-instance-attributes
     # Eleven is considered is reasonable in this case.
+    @typechecked
     def __init__(
         self, name: int, bias: float, du: float, dv: float, vth: float
     ) -> None:
@@ -40,6 +41,7 @@ class LIF_neuron:
         self.a_in: float = 0.0
         self.a_in_next: float = 0.0
 
+    @typechecked
     def simulate_neuron_one_timestep(self, a_in: int) -> bool:
         """Computes what the new current u and new voltage v will be based on
         the default neuron properties, du,dv, bias, previous current u,
@@ -57,6 +59,7 @@ class LIF_neuron:
         return self.spikes
 
     # TODO: make this function only accessible to object itself.
+    @typechecked
     def set_compute_u(self, a_in: int) -> None:
         """Computes the new current u based on the previous current u, du, and
         the incoming input signal/value of a_in. After computation overwrites
@@ -67,6 +70,7 @@ class LIF_neuron:
         self.u = U(self.u.get() * (1 - self.du.get()) + a_in)
 
     # TODO: make this function only accessible to object itself.
+    @typechecked
     def set_compute_v(self) -> None:
         """Computes the new voltage v based on the previous current v, the new
         current u, the bias and the dv.
@@ -97,6 +101,7 @@ class Bias:
 
     # pylint: disable=R0903
 
+    @typechecked
     def __init__(self, bias: float) -> None:
         if isinstance(bias, float):
             self.bias = bias
@@ -106,6 +111,7 @@ class Bias:
                 + f"{type(bias)}"
             )
 
+    @typechecked
     def get(self) -> float:
         """Returns the bias value as a float."""
         return self.bias
@@ -115,6 +121,7 @@ class Du:
     """Creates a du object that contains a float, and a get() function."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self, du: float) -> None:
         if isinstance(du, float):
             self.du = du
@@ -123,6 +130,7 @@ class Du:
                 "Error, du type is not float, instead, it is:" + f"{type(du)}"
             )
 
+    @typechecked
     def get(self) -> float:
         """Returns the du value as a float."""
         return self.du
@@ -132,6 +140,7 @@ class Dv:
     """Creates a dv object that contains a float, and a get() function."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self, dv: float) -> None:
         if isinstance(dv, float):
             self.dv = dv
@@ -140,6 +149,7 @@ class Dv:
                 "Error, dv type is not float, instead, it is:" + f"{type(dv)}"
             )
 
+    @typechecked
     def get(self) -> float:
         """Returns the dv value as a float."""
         return self.dv
@@ -149,6 +159,7 @@ class U:
     """Creates a u object that contains a float, and a get() function."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self, u: float) -> None:
         if isinstance(u, float):
             self.u = u
@@ -157,6 +168,7 @@ class U:
                 "Error, u type is not float, instead, it is:" + f"{type(u)}"
             )
 
+    @typechecked
     def get(self) -> float:
         """Returns the u (current) value as a float."""
         return self.u
@@ -166,6 +178,7 @@ class V:
     """Creates a v object that contains a float, and a get() fvnction."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self, v: float) -> None:
         if isinstance(v, float):
             self.v = v
@@ -174,6 +187,7 @@ class V:
                 "Error, v type is not float, instead, it is:" + f"{type(v)}"
             )
 
+    @typechecked
     def get(self) -> float:
         """Returns the v (voltage) value as a float."""
         return self.v
@@ -183,6 +197,7 @@ class Vth:
     """Creates a vth object that contains a float, and a get() function."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self, vth: float) -> None:
         if isinstance(vth, float):
             self.vth = vth
@@ -192,12 +207,14 @@ class Vth:
                 + f"{type(vth)}"
             )
 
+    @typechecked
     def get(self) -> float:
         """Returns the vth (threshold voltage) value as a float."""
         return self.vth
 
 
 # pylint: disable=R0912
+@typechecked
 def print_neuron_properties(
     neurons: List[Any],
     static: bool,
@@ -259,6 +276,7 @@ def print_neuron_properties(
     print("")
 
 
+@typechecked
 def round_if_array(value: Any) -> float:
     """Rounds an incoming value up to 2 decimals and unpacks array if lif
     neuron property is returns as array.
@@ -270,6 +288,7 @@ def round_if_array(value: Any) -> float:
     return round(value, 2)
 
 
+@typechecked
 def print_neuron_properties_per_graph(
     G: nx.DiGraph, static: Any, t: int
 ) -> None:

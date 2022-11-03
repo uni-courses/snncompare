@@ -1,7 +1,10 @@
 """Contains functions that the algorithm specification files use."""
 from typing import List
 
+from typeguard import typechecked
 
+
+@typechecked
 def assert_parameter_is_list(parameter: List) -> None:
     """Asserts the incoming parameter is of type list.
 

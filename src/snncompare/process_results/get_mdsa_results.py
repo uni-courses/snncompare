@@ -8,15 +8,16 @@ and the SNN match.
 
 These results are returned in the form of a dict.
 """
-
 from typing import Dict
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.helper import get_sim_duration
 from src.snncompare.process_results.get_alipour_nodes import get_alipour_nodes
 
 
+@typechecked
 def set_mdsa_snn_results(
     m_val: int, run_config: dict, stage_2_graphs: dict
 ) -> None:
@@ -88,6 +89,7 @@ def set_mdsa_snn_results(
 
 
 # pylint: disable=R0913
+@typechecked
 def get_snn_results(
     alipour_counter_marks: Dict[str, int],
     input_graph: nx.Graph,
@@ -130,6 +132,7 @@ def get_snn_results(
     return snn_counter_marks
 
 
+@typechecked
 def get_nx_LIF_count_without_redundancy(
     input_graph: nx.DiGraph, nx_SNN_G: nx.DiGraph, m_val: int, t: int
 ) -> dict:
@@ -154,6 +157,7 @@ def get_nx_LIF_count_without_redundancy(
     return node_counts
 
 
+@typechecked
 def get_nx_LIF_count_with_redundancy(
     input_graph: nx.DiGraph,
     adapted_nx_snn_graph: nx.DiGraph,
@@ -195,6 +199,7 @@ def get_nx_LIF_count_with_redundancy(
     return node_counts
 
 
+@typechecked
 def counter_neuron_died(
     snn_graph: nx.DiGraph, counter_neuron_name: str
 ) -> bool:
@@ -212,6 +217,7 @@ def counter_neuron_died(
     return False
 
 
+@typechecked
 def graph_has_dead_neurons(snn_graph: nx.DiGraph) -> bool:
     """Checks whether the "rad_death" key is in any of the nodes of the graph,
     and if it is, verifies it is in all of the nodes."""

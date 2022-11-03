@@ -1,8 +1,8 @@
 """Contains the specification of and maximum values of the algorithm
 settings."""
-
-
 from typing import List
+
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.algos.verify_algos import (
     verify_list_with_numbers,
@@ -14,6 +14,7 @@ from src.snncompare.exp_setts.algos.verify_algos import (
 class Radiation_config:
     """Create a particular configuration for the Radiation configuration."""
 
+    @typechecked
     def __init__(self, dummy_config: dict) -> None:
 
         for some_property, value in dummy_config.items():
@@ -54,6 +55,7 @@ class Permanent_neuron_death:
     TODO: Example usage: default_radiation=Permanent_neuron_death()
     """
 
+    @typechecked
     def __init__(
         self,
         death_probability: List[float],

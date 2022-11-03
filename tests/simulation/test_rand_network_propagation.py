@@ -1,12 +1,11 @@
 """Performs tests that verify lava simulation produces the same results as the
 networkx simulation."""
-
-
 import math
 import unittest
 
 import networkx as nx
 import numpy as np
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.get_graph import (
     gnp_random_connected_graph,
@@ -36,12 +35,14 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
     the networkx simulation."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
     # pylint: disable=R0801
+    @typechecked
     def test_random_networks_are_propagated_the_same_on_networkx_and_lava(
         self,
     ) -> None:
@@ -126,6 +127,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             # )
 
     # TODO: remove duplicate into separate test helper function.
+    @typechecked
     def compare_dynamic_snn_properties(self, G: nx.DiGraph, t: int) -> None:
         """Performs comparison of static neuron properties at each timestep.
 

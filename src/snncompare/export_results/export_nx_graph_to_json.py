@@ -1,12 +1,13 @@
 """Converts the nx graphs into json objects."""
-
 import copy
 from typing import Any, Dict, List, Union
 
 import networkx as nx
 from networkx.readwrite import json_graph
+from typeguard import typechecked
 
 
+@typechecked
 def digraph_to_json(G: nx.DiGraph) -> Any:
     """
 
@@ -20,6 +21,7 @@ def digraph_to_json(G: nx.DiGraph) -> Any:
     raise Exception("Error, incoming graph was None.")
 
 
+@typechecked
 def convert_digraphs_to_json(
     results_nx_graphs: dict, stage_index: int
 ) -> dict:
@@ -44,6 +46,7 @@ def convert_digraphs_to_json(
     return results_json_graphs
 
 
+@typechecked
 def convert_stage_1_digraphs_to_json(
     graphs: Union[nx.Graph, nx.DiGraph]
 ) -> Dict[str, Any]:
@@ -65,6 +68,7 @@ def convert_stage_1_digraphs_to_json(
     return graphs_dict_stage_1
 
 
+@typechecked
 def convert_stage_2_digraphs_to_json(
     graphs: Dict[str, Union[Union[nx.Graph, nx.DiGraph], List]]
 ) -> Dict[str, Any]:

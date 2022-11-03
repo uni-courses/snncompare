@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.algos.verify_algos import (
     verify_algos_in_experiment_config,
@@ -18,6 +20,7 @@ if TYPE_CHECKING:
 
 
 # pylint: disable=W0613
+@typechecked
 def verify_experiment_config(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: None | str | dict,
@@ -101,6 +104,7 @@ def verify_experiment_config(
     verify_bool_setting(experiment_config["overwrite_visualisation"])
 
 
+@typechecked
 def verify_experiment_config_dict_is_complete(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: dict[str, Any],
@@ -114,6 +118,7 @@ def verify_experiment_config_dict_is_complete(
             )
 
 
+@typechecked
 def verify_experiment_config_dict_contains_only_valid_entries(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: dict,
@@ -137,6 +142,7 @@ def verify_experiment_config_dict_contains_only_valid_entries(
                 )
 
 
+@typechecked
 def verify_list_element_types_and_list_len(
     list_setting: Any, element_type: type
 ) -> None:
@@ -154,6 +160,7 @@ def verify_list_element_types_and_list_len(
         )
 
 
+@typechecked
 def verify_list_setting(
     supp_exp_setts: Supported_experiment_settings,
     setting: Any,
@@ -185,6 +192,7 @@ def verify_list_setting(
             )
 
 
+@typechecked
 def get_expected_range(
     setting_name: str, supp_exp_setts: Supported_experiment_settings
 ) -> list[int] | list[str]:
@@ -207,6 +215,7 @@ def get_expected_range(
     raise Exception("Error, unsupported parameter requested.")
 
 
+@typechecked
 def verify_size_and_max_graphs_settings(
     supp_exp_setts: Supported_experiment_settings,
     size_and_max_graphs_setting: list[tuple[int, int]] | None,
@@ -240,6 +249,7 @@ def verify_size_and_max_graphs_settings(
             )
 
 
+@typechecked
 def verify_integer_settings(
     integer_setting: int | None,
     min_val: int | None = None,
@@ -272,6 +282,7 @@ def verify_integer_settings(
             )
 
 
+@typechecked
 def verify_min_max(min_val: int, max_val: int) -> None:
     """Verifies a lower bound/minimum value is indeed smaller than an
     upperbound/maximum value.
@@ -288,6 +299,7 @@ def verify_min_max(min_val: int, max_val: int) -> None:
         )
 
 
+@typechecked
 def verify_bool_setting(bool_setting: None | bool | str) -> None:
     """Verifies the bool_setting value is of type: boolean.
 
@@ -300,6 +312,7 @@ def verify_bool_setting(bool_setting: None | bool | str) -> None:
         )
 
 
+@typechecked
 def verify_object_type(
     obj: float | list | tuple,
     expected_type: type,
@@ -338,6 +351,7 @@ def verify_object_type(
             )
 
 
+@typechecked
 def verify_adap_and_rad_settings(
     supp_exp_setts: Supported_experiment_settings,
     some_dict: dict | str | None,
@@ -383,6 +397,7 @@ def verify_adap_and_rad_settings(
     )
 
 
+@typechecked
 def verify_algorithm_settings(
     supp_exp_setts: Supported_experiment_settings,
     some_dict: dict,
@@ -391,6 +406,7 @@ def verify_algorithm_settings(
     """TODO: Verifies the settings of the algorithm are valid."""
 
 
+@typechecked
 def verify_adaptation_values(
     supp_exp_setts: Supported_experiment_settings, adaptations: dict, key: str
 ) -> None:
@@ -431,6 +447,7 @@ def verify_adaptation_values(
             verify_object_type(setting, float, None)
 
 
+@typechecked
 def verify_radiations_values(
     supp_exp_setts: Supported_experiment_settings, radiations: dict, key: str
 ) -> None:
@@ -488,6 +505,7 @@ def verify_radiations_values(
                 )
 
 
+@typechecked
 def verify_has_unique_id(experiment_config: dict) -> None:
     """Verifies the config setting has a unique id."""
     if not isinstance(experiment_config, dict):

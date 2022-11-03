@@ -2,7 +2,10 @@
 neural network (SNN)."""
 import argparse
 
+from typeguard import typechecked
 
+
+@typechecked
 def parse_cli_args() -> argparse.Namespace:
     """Reads command line arguments and converts them into python arguments."""
 

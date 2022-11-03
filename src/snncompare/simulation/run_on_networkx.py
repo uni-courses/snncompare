@@ -4,21 +4,23 @@ First verifies the graph represents a connected and valid SNN, with all
 required neuron and synapse properties specified. Then loops through the
 network to simulate it, one neuron at a time.
 """
-
-# Import external libraries.
-
 from typing import List
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.simulation.LIF_neuron import LIF_neuron
 from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
 
+# Import external libraries.
+
+
 # Import local project functions and classes.
 
 
+@typechecked
 def add_nx_neurons_to_networkx_graph(G: nx.DiGraph, t: int) -> None:
     """
 
@@ -40,6 +42,7 @@ def add_nx_neurons_to_networkx_graph(G: nx.DiGraph, t: int) -> None:
     initialise_a_in_is_zero_at_t_is_1(G, t)
 
 
+@typechecked
 def generate_lif_synapses(G: nx.DiGraph) -> None:
     """
 
@@ -49,6 +52,7 @@ def generate_lif_synapses(G: nx.DiGraph) -> None:
     return G
 
 
+@typechecked
 def run_snn_on_networkx(G: nx.DiGraph, sim_duration: int) -> None:
     """Runs the simulation for t timesteps using networkx, not lava.
 
@@ -69,6 +73,7 @@ def run_snn_on_networkx(G: nx.DiGraph, sim_duration: int) -> None:
     verify_networkx_graph_dimensions(G, sim_duration)
 
 
+@typechecked
 def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t: int) -> None:
     """Creates a new neuron for the next timestep, by copying the old neuron.
 
@@ -78,6 +83,7 @@ def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t: int) -> None:
         G.nodes[node]["nx_LIF"].append(G.nodes[node]["nx_LIF"][t])
 
 
+@typechecked
 def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration: int) -> None:
     """Ensures the graph contains at least sim_duration SNN neurons of a single
     name. This is because each neuron, with a single name, needs to be
@@ -116,6 +122,7 @@ def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration: int) -> None:
                 )
 
 
+@typechecked
 def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph, t: int) -> None:
     """Runs the networkx simulation of the network for 1 timestep. The results
     of the simulation are stored in the G.nodes network.
@@ -158,6 +165,7 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph, t: int) -> None:
         nx_lif.a_in = nx_lif.a_in_next
 
 
+@typechecked
 def reset_a_in_next_for_all_neurons(G: nx.DiGraph, t: int) -> None:
     """Resets the a_in_next for all neurons to 0.
 
@@ -167,6 +175,7 @@ def reset_a_in_next_for_all_neurons(G: nx.DiGraph, t: int) -> None:
         G.nodes[node]["nx_LIF"][t].a_in_next = 0
 
 
+@typechecked
 def initialise_a_in_is_zero_at_t_is_1(G: nx.DiGraph, t: int) -> None:
     """
 

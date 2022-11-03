@@ -1,13 +1,13 @@
 """Creates test object."""
-
-
 from typing import Any, List, Tuple
 
 from lava.proc.monitor.process import Monitor
+from typeguard import typechecked
 
 from src.snncompare.helper import fill_dictionary
 
 
+@typechecked
 def get_degree_receiver_previous_property_dicts(
     test_object: Any, degree_receiver_neurons: List
 ) -> Tuple[dict, dict, dict]:
@@ -41,6 +41,7 @@ def get_degree_receiver_previous_property_dicts(
     )
 
 
+@typechecked
 def get_selector_previous_property_dicts(
     test_object: Any, selector_neurons: List
 ) -> Tuple[dict, dict, dict]:
@@ -70,6 +71,7 @@ def get_selector_previous_property_dicts(
     return selector_previous_a_in, selector_previous_us, selector_previous_vs
 
 
+@typechecked
 def get_counter_previous_property_dicts(
     test_object: Any, counter_neurons: List
 ) -> Tuple[dict, dict, dict]:
@@ -99,6 +101,7 @@ def get_counter_previous_property_dicts(
     return counter_previous_a_in, counter_previous_us, counter_previous_vs
 
 
+@typechecked
 def add_monitor_to_dict(
     neuron: str, monitor_dict: dict, sim_time: int
 ) -> Monitor:
@@ -126,6 +129,7 @@ class Selector_neuron:
     """Creates expected properties of the selector neuron."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self) -> None:
         self.first_name = "selector_0"
         self.bias = 5
@@ -138,6 +142,7 @@ class Spike_once_neuron:
     """Creates expected properties of the spike_once neuron."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self) -> None:
         self.first_name = "spike_once_0"
         self.bias = 2
@@ -150,6 +155,7 @@ class Rand_neuron:
     """Creates expected properties of the rand neuron."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self) -> None:
         self.first_name = "rand_0"
         self.bias = 2
@@ -162,6 +168,7 @@ class Counter_neuron:
     """Creates expected properties of the counter neuron."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self) -> None:
         self.first_name = "counter_0"
         self.bias = 0
@@ -174,6 +181,7 @@ class Degree_receiver:
     """Creates expected properties of the spike_once neuron."""
 
     # pylint: disable=R0903
+    @typechecked
     def __init__(self) -> None:
         self.first_name = "spike_once_0"
         self.bias = 0

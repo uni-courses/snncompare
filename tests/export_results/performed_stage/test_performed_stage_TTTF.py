@@ -5,12 +5,12 @@ Stage2=Done
 Stage3=Done.
 Stage4=Not yet done.
 ."""
-
 import os
 import shutil
 import unittest
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.default_setts.create_default_settings import (
     default_experiment_config,
@@ -49,6 +49,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
     # Initialize test object
 
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
@@ -84,6 +85,7 @@ class Test_stage_1_output_json(unittest.TestCase):
     # Loop through (random) run configs.
 
     # Test: Deleting all results says none of the stages have been performed.
+    @typechecked
     def test_output_json_contains_(self) -> None:
         """Tests whether deleting all results and creating an artificial json
         with stages 1,2 and 3 completed, results in has_outputted_stage()

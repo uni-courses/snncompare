@@ -2,10 +2,13 @@
 import itertools
 from typing import Any, Dict, List
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.algos.DUMMY import DUMMY, DUMMY_config
 from src.snncompare.exp_setts.algos.MDSA import MDSA, MDSA_config
 
 
+@typechecked
 def get_algo_configs(algo_spec: dict) -> List[dict]:
     """Returns a list of MDSA_config objects."""
     algo_configs: List[Dict[str, Any]] = []
@@ -29,6 +32,7 @@ def get_algo_configs(algo_spec: dict) -> List[dict]:
     return algo_configs
 
 
+@typechecked
 def verify_algo_configs(algo_name: str, algo_configs: List[dict]) -> None:
     """Verifies the MDSA algorithm configurations are valid."""
     for algo_config_dict in algo_configs:

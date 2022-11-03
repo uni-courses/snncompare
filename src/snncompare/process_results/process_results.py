@@ -6,10 +6,10 @@ The MDSA algorithm results will consist of a list of nodes per used
 graph that have been selected according to Alipour, and according to the
 respective SNN graph.
 """
-
 import copy
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.export_results.Output_stage_34 import (
     output_stage_files_3_and_4,
@@ -29,6 +29,7 @@ from src.snncompare.process_results.get_mdsa_results import (
 )
 
 
+@typechecked
 def set_results(run_config: dict, stage_2_graphs: dict) -> None:
     """Gets the results for the algorithms that have been ran."""
     for algo_name, algo_settings in run_config["algorithm"].items():
@@ -53,6 +54,7 @@ def set_results(run_config: dict, stage_2_graphs: dict) -> None:
             )
 
 
+@typechecked
 def export_results_to_json(
     export_images: bool,
     results_nx_graphs: dict,
@@ -108,6 +110,7 @@ def export_results_to_json(
     output_stage_files_3_and_4(results_nx_graphs, 4, to_run)
 
 
+@typechecked
 def add_result_to_last_graph(snn_graphs: dict, result_per_type: dict) -> None:
     """Checks whether the incoming snn_graph is a list of graphs or single
     graph.

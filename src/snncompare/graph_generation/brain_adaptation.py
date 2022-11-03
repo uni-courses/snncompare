@@ -3,6 +3,7 @@ import copy
 from typing import Any, List, Tuple
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
@@ -14,6 +15,7 @@ from src.snncompare.old_conversion import (
 from tests.exp_setts.unsorted.test_create_testobject import add_monitor_to_dict
 
 
+@typechecked
 def adaptation_mech_2_networkx_and_snn(
     has_radiation: bool,
     latest_millis: Any,
@@ -64,6 +66,7 @@ def adaptation_mech_2_networkx_and_snn(
     return dead_neuron_names, latest_time, latest_millis
 
 
+@typechecked
 def implement_adaptation_mechanism(
     get_degree: nx.DiGraph,
     has_radiation: bool,
@@ -139,6 +142,7 @@ def implement_adaptation_mechanism(
     return dead_neuron_names
 
 
+@typechecked
 def store_input_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
@@ -153,6 +157,7 @@ def store_input_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     get_degree.nodes[node_name]["input_edges"] = input_edges
 
 
+@typechecked
 def store_output_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
@@ -167,6 +172,7 @@ def store_output_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     get_degree.nodes[node_name]["output_edges"] = output_edges
 
 
+@typechecked
 def create_redundant_node(
     d: float, get_degree: nx.DiGraph, node_name: str
 ) -> None:
@@ -194,6 +200,7 @@ def create_redundant_node(
 
 
 # pylint: disable=R0801
+@typechecked
 def compute_vth_for_delay(get_degree: nx.DiGraph, node_name: str) -> float:
     """Increases vth with 1 to realise a delay of t=1 for the redundant
     spike_once neurons, rand neurons and selector neurons.
@@ -215,6 +222,7 @@ def compute_vth_for_delay(get_degree: nx.DiGraph, node_name: str) -> float:
     return vth
 
 
+@typechecked
 def add_input_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
@@ -234,6 +242,7 @@ def add_input_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
         )
 
 
+@typechecked
 def add_output_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
@@ -254,6 +263,7 @@ def add_output_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
         )
 
 
+@typechecked
 def add_inhibitory_synapse(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
@@ -267,6 +277,7 @@ def add_inhibitory_synapse(get_degree: nx.DiGraph, node_name: str) -> None:
     # TODO: set edge weight
 
 
+@typechecked
 def add_recurrent_inhibitiory_synapses(
     get_degree: nx.DiGraph, nodename: str
 ) -> None:
@@ -288,6 +299,7 @@ def add_recurrent_inhibitiory_synapses(
         )
 
 
+@typechecked
 def convert_new_graph_to_snn(test_object: Any, sim_time: int) -> Any:
     """
 

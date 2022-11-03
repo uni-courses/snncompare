@@ -4,14 +4,7 @@
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
-
-
-# pylint: disable=R0902
-# The settings object contains all the settings as a dictionary, hence no
-# hierarchy is used,leading to 10/7 instance attributes.
-# pylint: disable=R0801
-# pylint: disable=R0903
-
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.run_config.verify_run_settings import (
     verify_run_config,
@@ -19,6 +12,12 @@ from src.snncompare.exp_setts.run_config.verify_run_settings import (
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     dict_to_frozen_set,
 )
+
+# pylint: disable=R0902
+# The settings object contains all the settings as a dictionary, hence no
+# hierarchy is used,leading to 10/7 instance attributes.
+# pylint: disable=R0801
+# pylint: disable=R0903
 
 
 class Supported_run_settings:
@@ -28,6 +27,7 @@ class Supported_run_settings:
     combination of experiment setting parameters.
     """
 
+    @typechecked
     def __init__(
         self,
     ) -> None:
@@ -52,6 +52,7 @@ class Supported_run_settings:
             "unique_id": int,
         }
 
+    @typechecked
     def append_unique_config_id(self, run_config: dict) -> dict:
         """Checks if an run configuration dictionary already has a unique
         identifier, and if not it computes and appends it.
@@ -75,6 +76,7 @@ class Supported_run_settings:
         verify_run_config(self, run_config, has_unique_id=False, strict=False)
         return run_config
 
+    @typechecked
     def assert_has_key(
         self, some_dict: dict, key: str, some_type: type
     ) -> None:

@@ -1,6 +1,7 @@
 """Parses the graph json files to recreate the graphs."""
-
 import json
+
+from typeguard import typechecked
 
 from src.snncompare.export_results.helper import run_config_to_filename
 from src.snncompare.export_results.load_json_to_nx_graph import json_to_digraph
@@ -11,6 +12,7 @@ from src.snncompare.helper import get_extensions_list, is_identical
 from src.snncompare.import_results.read_json import load_results_from_json
 
 
+@typechecked
 def load_results_stage_1(run_config: dict) -> dict:
     """Loads the experiment config, run config and graphs from the json file.
 
@@ -52,6 +54,7 @@ def load_results_stage_1(run_config: dict) -> dict:
     return stage_1_graphs
 
 
+@typechecked
 def load_stage_2_output_dict(relative_output_dir: str, filename: str) -> dict:
     """Loads the stage_2 output dictionary from a file.
 

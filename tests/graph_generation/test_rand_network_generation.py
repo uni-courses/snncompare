@@ -1,11 +1,11 @@
 """Performs tests that verify lava simulation produces the same results as the
 networkx simulation."""
-
 import math
 import unittest
 
 import networkx as nx
 import numpy as np
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.get_graph import (
     gnp_random_connected_graph,
@@ -27,10 +27,12 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
     the networkx simulation."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
+    @typechecked
     def test_generates_valid_snn_networks_without_recursive_edges(
         self,
     ) -> None:
@@ -85,6 +87,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     # Assert all neuron properties are specified.
                     verify_networkx_snn_spec(G, t=0, backend="nx")
 
+    @typechecked
     def test_generates_valid_snn_networks_with_recursive_edges(self) -> None:
         """Tests whether the random_snn_networks that are generated are valid
         snn networks.

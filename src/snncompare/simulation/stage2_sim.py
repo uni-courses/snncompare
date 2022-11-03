@@ -1,8 +1,8 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
 
-
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.helper import (
     add_stage_completion_to_graph,
@@ -22,6 +22,7 @@ from src.snncompare.simulation.verify_graph_is_snn import (
 )
 
 
+@typechecked
 def sim_graphs(
     stage_1_graphs: dict,
     run_config: dict,
@@ -59,6 +60,7 @@ def sim_graphs(
         add_stage_completion_to_graph(stage_1_graphs[graph_name], 2)
 
 
+@typechecked
 def convert_graph_snn_to_nx_snn(G: nx.DiGraph) -> None:
     """Converts the SNN graph specfification to a networkx SNN that can be ran.
 

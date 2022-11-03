@@ -13,6 +13,7 @@ import networkx as nx
 import pylab as plt
 from lava.proc.monitor.process import Monitor
 from networkx.classes.graph import Graph
+from typeguard import typechecked
 
 from src.snncompare.export_results.export_json_results import get_unique_hash
 from src.snncompare.export_results.plot_graphs import (
@@ -28,6 +29,7 @@ from src.snncompare.simulation.verify_graph_is_snn import (
 )
 
 
+@typechecked
 def fill_dictionary(
     neuron_dict: dict,
     neurons: List,
@@ -72,6 +74,7 @@ def fill_dictionary(
     return previous_us, previous_vs, None, None
 
 
+@typechecked
 def sort_neurons(neurons: List, neuron_dict: dict) -> List:
     """
 
@@ -90,6 +93,7 @@ def sort_neurons(neurons: List, neuron_dict: dict) -> List:
     return sorted_neurons
 
 
+@typechecked
 def generate_list_of_n_random_nrs(
     G: Graph, max_val: int = None, seed: int = None
 ) -> List[int]:
@@ -117,6 +121,7 @@ def generate_list_of_n_random_nrs(
     )
 
 
+@typechecked
 def get_y_position(G: nx.Graph, node: int, neighbour: int, d: float) -> float:
     """Ensures the degree receiver nodes per node are aligned with continuous
     interval.
@@ -135,6 +140,7 @@ def get_y_position(G: nx.Graph, node: int, neighbour: int, d: float) -> float:
     return float((node + neighbour / len(G)) * 4 * d)
 
 
+@typechecked
 def delete_files_in_folder(folder: str) -> None:
     """
 
@@ -149,6 +155,7 @@ def delete_files_in_folder(folder: str) -> None:
     os.makedirs(folder, exist_ok=False)
 
 
+@typechecked
 def delete_file_if_exists(filepath: str) -> None:
     """Deletes a file if it exists."""
     try:
@@ -157,6 +164,7 @@ def delete_file_if_exists(filepath: str) -> None:
         pass
 
 
+@typechecked
 def export_get_degree_graph(
     has_adaptation: bool,
     has_radiation: bool,
@@ -239,6 +247,7 @@ def export_get_degree_graph(
         )
 
 
+@typechecked
 def remove_monitors_from_get_degree(get_degree: nx.DiGraph) -> None:
     """
 
@@ -251,6 +260,7 @@ def remove_monitors_from_get_degree(get_degree: nx.DiGraph) -> None:
         get_degree.nodes[node_name]["spike_monitor_id"] = None
 
 
+@typechecked
 def get_counter_neurons_from_dict(
     expected_nr_of_neurons: int, neuron_dict: dict, m: int
 ) -> List:
@@ -282,6 +292,7 @@ def get_counter_neurons_from_dict(
     return counter_neurons
 
 
+@typechecked
 def get_neuron_from_dict(
     neuron_dict: dict, neurons: List, neuron_name: str
 ) -> Any:
@@ -298,6 +309,7 @@ def get_neuron_from_dict(
     raise Exception(f"Did not find neuron:{neuron_name} in dict:{neuron_dict}")
 
 
+@typechecked
 def print_time(status: Any, previous_millis: int) -> Tuple[Any, int]:
     """
 
@@ -318,6 +330,7 @@ def print_time(status: Any, previous_millis: int) -> Tuple[Any, int]:
     return now, now_millis
 
 
+@typechecked
 def write_results_to_file(
     has_passed: bool,
     m: int,
@@ -363,6 +376,7 @@ def write_results_to_file(
         file1.close()
 
 
+@typechecked
 def create_neuron_monitors(test_object: Any, sim_time: int) -> None:
     """
 
@@ -407,6 +421,7 @@ def create_neuron_monitors(test_object: Any, sim_time: int) -> None:
             ] = monitor_process_id
 
 
+@typechecked
 def store_spike_values_in_neurons(get_degree: nx.DiGraph, t: int) -> None:
     """
 
@@ -440,6 +455,7 @@ def store_spike_values_in_neurons(get_degree: nx.DiGraph, t: int) -> None:
                 )
 
 
+@typechecked
 def full_alipour(
     iteration: int,
     G: nx.DiGraph,
@@ -509,6 +525,7 @@ def full_alipour(
     return G
 
 
+@typechecked
 def compute_mark(delta: float, G: nx.DiGraph, rand_ceil: float) -> None:
     """Computes the mark at the counter neurons after the simulation is
     completed."""
@@ -536,6 +553,7 @@ def compute_mark(delta: float, G: nx.DiGraph, rand_ceil: float) -> None:
                     raise Exception("Two numbers with identical max weight.")
 
 
+@typechecked
 def plot_alipour(
     configuration: str,
     iteration: int,
@@ -582,6 +600,7 @@ def plot_alipour(
     plt.close()
 
 
+@typechecked
 def get_alipour_labels(G: nx.DiGraph, configuration: str) -> Dict[str, str]:
     """
 
@@ -609,6 +628,7 @@ def get_alipour_labels(G: nx.DiGraph, configuration: str) -> Dict[str, str]:
 
 
 # checks if file exists
+@typechecked
 def file_exists(filepath: str) -> bool:
     """
 
@@ -621,6 +641,7 @@ def file_exists(filepath: str) -> bool:
     return my_file.is_file()
 
 
+@typechecked
 def compute_marks_for_m_larger_than_one(
     delta: float,
     G: nx.DiGraph,
@@ -671,6 +692,7 @@ def compute_marks_for_m_larger_than_one(
             )
 
 
+@typechecked
 def set_node_default_values(
     delta: float,
     G: nx.DiGraph,
@@ -694,6 +716,7 @@ def set_node_default_values(
     G.nodes[node]["inhibited_weight"] = G.nodes[node]["weight"] - inhibition
 
 
+@typechecked
 def is_identical(
     original: dict, other: dict, excluded_keys: List[str]
 ) -> bool:
@@ -721,6 +744,7 @@ def is_identical(
     return True
 
 
+@typechecked
 def get_extensions_list(run_config: dict, stage_index: int) -> List:
     """
 
@@ -732,6 +756,7 @@ def get_extensions_list(run_config: dict, stage_index: int) -> List:
     return list(get_extensions_dict(run_config, stage_index).values())
 
 
+@typechecked
 def get_extensions_dict(run_config: dict, stage_index: int) -> dict:
     """Returns the file extensions of the output types. The dictionary key
     describes the content of the file, and the extension is given as the value.
@@ -757,6 +782,7 @@ def get_extensions_dict(run_config: dict, stage_index: int) -> dict:
     raise Exception("Unsupported experiment stage.")
 
 
+@typechecked
 def add_stage_completion_to_graph(
     some_graph: nx.DiGraph, stage_index: int
 ) -> None:
@@ -791,6 +817,7 @@ def add_stage_completion_to_graph(
     some_graph.graph["completed_stages"].append(stage_index)
 
 
+@typechecked
 def get_sim_duration(
     input_graph: nx.DiGraph,
     run_config: dict,
@@ -821,6 +848,7 @@ def get_sim_duration(
     raise Exception("Error, the simulation time was not found.")
 
 
+@typechecked
 def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
     """Converts the old graph properties of the first template neuron into the
     new template neuron.
@@ -840,6 +868,7 @@ def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
     verify_networkx_snn_spec(G, t=0, backend="nx")
 
 
+@typechecked
 def get_expected_stages(
     export_images: bool, stage_index: int, to_run: dict
 ) -> List[int]:

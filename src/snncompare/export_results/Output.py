@@ -12,6 +12,7 @@ import pathlib
 from typing import List, Optional
 
 import jsons
+from typeguard import typechecked
 
 from src.snncompare.export_results.export_json_results import (
     write_dict_to_json,
@@ -87,6 +88,7 @@ with_adaptation_with_radiation = {
 # TODO: append tags to output file(s).
 
 
+@typechecked
 def output_files_stage_4(
     correct: bool,
     experiment_config: dict,
@@ -123,6 +125,7 @@ def output_files_stage_4(
 class Stage_1_graphs:
     """Stage 1: The networkx graphs that will be propagated."""
 
+    @typechecked
     def __init__(
         self, experiment_config: dict, stage_1_graphs: dict, run_config: dict
     ) -> None:
@@ -143,6 +146,7 @@ class Stage_1_graphs:
 class Stage_2_graphs:
     """Stage 2: The propagated networkx graphs (at least one per timestep)."""
 
+    @typechecked
     def __init__(
         self, experiment_config: dict, graphs_stage_2: dict, run_config: dict
     ) -> None:
@@ -158,6 +162,7 @@ class Stage_2_graphs:
 class Stage_3_graphs:
     """Stage 3: Visaualisation of the networkx graphs over time."""
 
+    @typechecked
     def __init__(
         self, experiment_config: dict, graphs_stage_3: dict, run_config: dict
     ) -> None:
@@ -174,6 +179,7 @@ class Stage_4_graphs:
     """Stage 4: Post-processed performance data of algorithm and adaptation
     mechanism."""
 
+    @typechecked
     def __init__(
         self, experiment_config: dict, graphs_stage_4: dict, run_config: dict
     ) -> None:
@@ -185,6 +191,7 @@ class Stage_4_graphs:
         )
 
 
+@typechecked
 def output_stage_json(
     results_nx_graphs: dict, filename: str, stage_index: int, to_run: dict
 ) -> None:
@@ -221,6 +228,7 @@ def output_stage_json(
     # TODO: append tags to output file.
 
 
+@typechecked
 def plot_graph_behaviours(
     filepath: str, stage_2_graphs: dict, run_config: dict
 ) -> None:
@@ -261,6 +269,7 @@ def plot_graph_behaviours(
 
 # pylint: disable=R0912
 # pylint: disable=R0915
+@typechecked
 def create_custom_plot_titles(
     graph_name: str, t: int, seed: int
 ) -> Optional[str]:

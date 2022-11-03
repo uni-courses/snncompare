@@ -1,4 +1,5 @@
 """"Outputs the results for stage 3 and/or 4."""
+from typeguard import typechecked
 
 from src.snncompare.export_results.helper import run_config_to_filename
 from src.snncompare.export_results.Output import (
@@ -7,6 +8,7 @@ from src.snncompare.export_results.Output import (
 )
 
 
+@typechecked
 def output_stage_files_3_and_4(
     results_nx_graphs: dict, stage_index: int, to_run: dict
 ) -> None:

@@ -9,9 +9,11 @@ Input: Experiment configuration.
         Stage 4: Post-processed performance data of algorithm and adaptation
         mechanism.
 """
+from typeguard import typechecked
 
 
 # pylint: disable=W0613
+@typechecked
 def verify_stage_4_graphs(
     experiment_config: dict, run_config: dict, graphs_stage_4: dict
 ) -> None:

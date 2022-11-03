@@ -4,6 +4,8 @@ import copy
 import unittest
 from typing import Any, Dict, Optional
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
@@ -29,6 +31,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
@@ -50,6 +53,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             "redundancy": "invalid value of type string iso list",
         }
 
+    @typechecked
     def test_returns_valid_configuration_settings(self) -> None:
         """Verifies a valid configuration settings object and object type is
         returned."""
@@ -65,6 +69,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             with_adaptation_with_radiation, with_adaptation_with_radiation
         )
 
+    @typechecked
     def test_experiment_config_is_none(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         type None."""
@@ -82,6 +87,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_catch_invalid_experiment_config_type(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         invalid type.
@@ -104,6 +110,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_on_invalid_configuration_setting_key(
         self,
     ) -> None:
@@ -131,6 +138,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
 
 
+@typechecked
 def verify_error_is_thrown_on_invalid_configuration_setting_value(
     invalid_config_setting_value: Optional[str],
     experiment_config: Dict[str, Any],

@@ -1,8 +1,8 @@
 """Used to generate the default experiment configuration json, run
 configuration settings, default input graph and default input graphs."""
-
 import jsons
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.arg_parser.arg_verification import verify_input_graph_path
 from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
@@ -26,6 +26,7 @@ from src.snncompare.export_results.export_nx_graph_to_json import (
 from src.snncompare.graph_generation.Used_graphs import Used_graphs
 
 
+@typechecked
 def create_default_graph_json() -> None:
     """Generates a default input graph and exports it to a json file."""
     used_graphs = Used_graphs()
@@ -45,10 +46,12 @@ def create_default_graph_json() -> None:
     # Verify file content.
 
 
+@typechecked
 def create_default_exp_setts() -> None:
     """Generates the default experiment settings json file."""
 
 
+@typechecked
 def default_experiment_config() -> dict:
     """Creates example experiment configuration setting."""
     # Create prerequisites

@@ -1,8 +1,8 @@
 """Contains the specification of and maximum values of the algorithm
 settings."""
-
-
 from typing import List
+
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 
@@ -12,6 +12,7 @@ from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 class DUMMY_config:
     """Create a particular configuration for the MDSA algorithm."""
 
+    @typechecked
     def __init__(self, dummy_config: dict) -> None:
 
         for some_property, value in dummy_config.items():
@@ -50,6 +51,7 @@ class DUMMY:
     Example usage: default_MDSA_alg=MDSA(some_vals=list(range(0, 4, 1)))
     """
 
+    @typechecked
     def __init__(
         self,
         some_vals: List[int],
@@ -73,6 +75,7 @@ class DUMMY:
             "other_vals": other_vals,
         }
 
+    @typechecked
     def verify_some_vals(self, some_vals: List[int]) -> None:
         """Verifies the some_vals parameter setting of the algorithm."""
         assert_parameter_is_list(some_vals)
@@ -96,6 +99,7 @@ class DUMMY:
                     + f"{self.min_some_vals}, yet we found:{some_vals}"
                 )
 
+    @typechecked
     def verify_other_vals(self, other_vals: List[str]) -> None:
         """Verifies the other_vals parameter setting of the algorithm."""
         assert_parameter_is_list(other_vals)

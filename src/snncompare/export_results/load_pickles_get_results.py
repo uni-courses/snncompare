@@ -3,8 +3,10 @@ import pickle  # nosec
 from typing import Any, List, Tuple  # nosec
 
 import networkx as nx
+from typeguard import typechecked
 
 
+@typechecked
 def get_desired_properties_for_graph_printing() -> List[str]:
     """Returns the properties that are to be printed to CLI."""
     desired_properties = [
@@ -19,6 +21,7 @@ def get_desired_properties_for_graph_printing() -> List[str]:
     return desired_properties
 
 
+@typechecked
 def get_neurons(
     G: nx.DiGraph, sim_type: str, neuron_types: str
 ) -> Tuple[List, dict]:
@@ -55,6 +58,7 @@ def get_neurons(
     return neurons, neurons_dict_per_type
 
 
+@typechecked
 def load_pickle(pickle_filename: str) -> Any:
     """TODO: change to load hierarchic objects instead of parameter list.
     TODO: delete"""

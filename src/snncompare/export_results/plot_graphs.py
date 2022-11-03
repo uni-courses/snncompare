@@ -1,15 +1,16 @@
 """File used to generate graph plots."""
-
 import os
 from typing import Dict, Union
 
 import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.classes.digraph import DiGraph
+from typeguard import typechecked
 
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
+@typechecked
 def plot_circular_graph(
     density: float,
     G: DiGraph,
@@ -48,6 +49,7 @@ def plot_circular_graph(
     plt.close()
 
 
+@typechecked
 def plot_uncoordinated_graph(G: nx.DiGraph, show: bool = True) -> None:
     """Generates a circular plot of a (directed) graph.
 
@@ -72,6 +74,7 @@ def plot_uncoordinated_graph(G: nx.DiGraph, show: bool = True) -> None:
     plt.close()
 
 
+@typechecked
 def create_target_dir_if_not_exists(path: str, new_dir_name: str) -> None:
     """Creates an output dir for graph plots.
 
@@ -84,6 +87,7 @@ def create_target_dir_if_not_exists(path: str, new_dir_name: str) -> None:
         os.makedirs(f"{path}/{new_dir_name}")
 
 
+@typechecked
 def create_root_dir_if_not_exists(root_dir_name: str) -> None:
     """
 
@@ -96,6 +100,7 @@ def create_root_dir_if_not_exists(root_dir_name: str) -> None:
         raise Exception(f"Error, root_dir_name={root_dir_name} did not exist.")
 
 
+@typechecked
 def get_labels(G: DiGraph, configuration: str) -> Dict[int, str]:
     """Returns the labels for the plot nodes.
 

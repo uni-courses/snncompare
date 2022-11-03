@@ -1,5 +1,4 @@
 """File used to generate graphs that are used for testing."""
-
 import math
 import random
 from itertools import combinations, groupby
@@ -9,12 +8,14 @@ import networkx as nx
 import numpy as np
 from networkx.classes.digraph import DiGraph
 from numpy import ndarray
+from typeguard import typechecked
 
 from src.snncompare.export_results.plot_graphs import plot_circular_graph
 from src.snncompare.simulation.LIF_neuron import LIF_neuron
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
+@typechecked
 def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
     """Returns graph with 2 neurons with a synapse with weight of 4 from
     nodename 0 to nodename 1."""
@@ -42,6 +43,7 @@ def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
     return graph
 
 
+@typechecked
 def gnp_random_connected_graph(
     density: float,
     recurrent_density: Union[int, float],
@@ -94,6 +96,7 @@ def gnp_random_connected_graph(
     return G
 
 
+@typechecked
 def add_random_recurrent_edges(
     G: nx.DiGraph, recurrent_edge_density: float, test_scope: Any
 ) -> None:
@@ -132,6 +135,7 @@ def add_random_recurrent_edges(
             G.edges[(node, node)]["weight"] = float(rand_edge_weights[node])
 
 
+@typechecked
 def set_random_edge_weights(
     G: DiGraph, min_weight: int, max_weight: int, seed: int
 ) -> None:
@@ -158,6 +162,7 @@ def set_random_edge_weights(
         G.edges[edge]["weight"] = float(rand_edge_weights[i])
 
 
+@typechecked
 def set_rand_neuron_properties(
     G: DiGraph,
     test_scope: Long_scope_of_tests,
@@ -190,6 +195,7 @@ def set_rand_neuron_properties(
         ]
 
 
+@typechecked
 def get_list_with_rand_ints_in_range(
     min_val: int, max_val: int, length: int, seed: int
 ) -> Any:
@@ -212,6 +218,7 @@ def get_list_with_rand_ints_in_range(
     return rand_integers
 
 
+@typechecked
 def get_list_with_rand_floats_in_range(
     min_val: int, max_val: int, length: int, seed: int
 ) -> ndarray:
@@ -231,6 +238,7 @@ def get_list_with_rand_floats_in_range(
     return rand_floats
 
 
+@typechecked
 def get_list_with_rand_bools(
     length: int, recurrent_edge_density: Union[int, float], seed: int
 ) -> List[bool]:

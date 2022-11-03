@@ -4,6 +4,8 @@ max_graph_size specifications."""
 import copy
 import unittest
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -23,6 +25,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
     invalid max_graph_size settings.."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_exp_setts = Supported_experiment_settings()
@@ -38,6 +41,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
+    @typechecked
     def test_error_is_thrown_if_max_graph_size_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the max_graph_size key is missing
         from the configuration settings dictionary."""
@@ -63,6 +67,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_for_invalid_max_graph_size_value_type(
         self,
     ) -> None:
@@ -91,6 +96,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_catch_max_graph_size_value_too_low(self) -> None:
         """Verifies an exception is thrown if the max_graph_size dictionary
         value is lower than the supported range of max_graph_size values
@@ -115,6 +121,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_catch_max_graph_size_is_smaller_than_min_graph_size(self) -> None:
         """To state the obvious, this also tests whether min_graph_size is
         larger than max_graph size throws an exception."""
@@ -142,6 +149,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_catch_max_graph_size_value_too_high(self) -> None:
         """Verifies an exception is thrown if the max_graph_size dictionary
         value is higher than the supported range of max_graph_size values

@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, List
 
 import jsons
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.export_results.export_json_results import (
     write_dict_to_json,
@@ -29,6 +30,7 @@ if TYPE_CHECKING:
     )
 
 
+@typechecked
 def get_n_random_run_configs(
     run_configs: list[dict], n: int, seed: int = None
 ) -> Any:
@@ -44,6 +46,7 @@ def get_n_random_run_configs(
     return random.sample(run_configs, n)
 
 
+@typechecked
 def assertIsFile(path: PosixPath) -> None:
     """Asserts a file exists.
 
@@ -54,6 +57,7 @@ def assertIsFile(path: PosixPath) -> None:
         raise AssertionError("File does not exist: %s" % str(path))
 
 
+@typechecked
 def assertIsNotFile(path: str) -> None:
     """Asserts a file does not exists.
 
@@ -64,6 +68,7 @@ def assertIsNotFile(path: str) -> None:
         raise AssertionError("File exist: %s" % str(path))
 
 
+@typechecked
 def create_result_file_for_testing(
     json_filepath: str,
     graph_names: list[str],
@@ -100,6 +105,7 @@ def create_result_file_for_testing(
     assertIsFile(filepath)
 
 
+@typechecked
 def create_results_dict_for_testing_stage_1(
     graph_names: list[str],
     completed_stages: list[int],
@@ -136,6 +142,7 @@ def create_results_dict_for_testing_stage_1(
     return dummy_result
 
 
+@typechecked
 def create_results_dict_for_testing_stage_2(
     graph_names: list[str],
     completed_stages: list[int],
@@ -182,6 +189,7 @@ def create_results_dict_for_testing_stage_2(
     return dummy_result
 
 
+@typechecked
 def add_results_to_stage_4(dummy_nx_results: dict) -> None:
     """Creates dummy results in the last timestep/list element of the graph for
     stage 4."""
@@ -191,6 +199,7 @@ def add_results_to_stage_4(dummy_nx_results: dict) -> None:
             nx_graph_list[-1]["graph"]["results"] = "Filler"
 
 
+@typechecked
 def create_dummy_output_images_stage_3(
     graph_names: list[str],
     input_graph: nx.DiGraph,
@@ -213,6 +222,7 @@ def create_dummy_output_images_stage_3(
         assertIsFile(filepath)
 
 
+@typechecked
 def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
     """Gets a cyclic graph with nodes that cannot be reached following the
     directed edges, to test if the Lava simulation imposes some requirements on
@@ -239,6 +249,7 @@ def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
     return graph
 
 
+@typechecked
 def compare_static_snn_properties(
     test_object: (
         Test_propagation_with_recurrent_edges

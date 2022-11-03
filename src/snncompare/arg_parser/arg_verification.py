@@ -1,20 +1,22 @@
 """Verifies the given CLI arguments are valid in combination with each
 other."""
-
 import json
 from typing import Any
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.helper import file_exists
 
 
+@typechecked
 def verify_args(args: Any) -> None:
     """Performs the checks to verify the parser."""
     verify_input_graph_path(args.graph_filepath)
     verify_experiment_settings(args.experiment_settings_path)
 
 
+@typechecked
 def verify_input_graph_path(graph_path: str) -> None:
     """Verifies the filepath for the input graph exists and contains a valid
     networkx graph."""
@@ -37,6 +39,7 @@ def verify_input_graph_path(graph_path: str) -> None:
         )
 
 
+@typechecked
 def verify_experiment_settings(exp_setts_path: str) -> None:
     """Verifies the filepath for the input graph exists and contains a valid
     networkx graph."""

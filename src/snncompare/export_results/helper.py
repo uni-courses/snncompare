@@ -4,10 +4,12 @@ import copy
 from typing import Any, Dict, List, Union
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.helper import get_sim_duration
 
 
+@typechecked
 def flatten(
     d: Dict[str, Any], parent_key: str = "", sep: str = "_"
 ) -> Union[Dict[str, float], Dict[str, int]]:
@@ -26,6 +28,7 @@ def flatten(
 # {'a': 1, 'c_a': 2, 'c_b_x': 5, 'd': [1, 2, 3], 'c_b_y': 10}
 
 
+@typechecked
 def run_config_to_filename(run_config: dict) -> str:
     """Converts a run_config dictionary into a filename.
 
@@ -57,6 +60,7 @@ def run_config_to_filename(run_config: dict) -> str:
     return filename
 
 
+@typechecked
 def get_expected_image_paths_stage_3(
     graph_names: List[str],
     input_graph: nx.DiGraph,

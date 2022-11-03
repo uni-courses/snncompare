@@ -4,6 +4,8 @@ overwrite_visualisation specifications."""
 import copy
 import unittest
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -23,6 +25,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
     invalid overwrite_visualisation settings.."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_exp_setts = Supported_experiment_settings()
@@ -40,6 +43,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
+    @typechecked
     def test_error_is_thrown_if_overwrite_visualisation_key_is_missing(
         self,
     ) -> None:
@@ -67,6 +71,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_for_invalid_overwrite_visualisation_value_type(
         self,
     ) -> None:

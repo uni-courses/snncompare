@@ -2,6 +2,7 @@
 from typing import List
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
@@ -10,6 +11,7 @@ from src.snncompare.helper import get_expected_stages
 from src.snncompare.verification_generic import verify_completed_stages_list
 
 
+@typechecked
 def verify_results_nx_graphs_contain_expected_stages(
     results_nx_graphs: dict, stage_index: int, to_run: dict
 ) -> None:
@@ -30,6 +32,7 @@ def verify_results_nx_graphs_contain_expected_stages(
 
 
 # pylint: disable=R0912
+@typechecked
 def verify_results_nx_graphs(
     results_nx_graphs: dict, run_config: dict
 ) -> None:
@@ -114,6 +117,7 @@ def verify_results_nx_graphs(
                 )
 
 
+@typechecked
 def verify_nx_graph_contains_correct_stages(
     graph_name: str, nx_graph: nx.DiGraph, expected_stages: List[int]
 ) -> None:

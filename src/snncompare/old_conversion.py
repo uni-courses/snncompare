@@ -1,7 +1,8 @@
 """Old code used to convert the networkx graph to an MDSA SNN algorithm."""
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.convert_networkx_to_lava import (
     add_neuron_to_dict,
@@ -11,6 +12,7 @@ from src.snncompare.graph_generation.convert_networkx_to_lava import (
 )
 
 
+@typechecked
 def convert_networkx_graph_to_snn_with_one_neuron(
     G: nx.DiGraph,
 ) -> Tuple[List, List, List, Any, dict]:
@@ -38,6 +40,7 @@ def convert_networkx_graph_to_snn_with_one_neuron(
     return converted_nodes, lhs_neuron, neurons, lhs_node, neuron_dict
 
 
+@typechecked
 def retry_build_snn(
     G: nx.DiGraph,
     converted_nodes: List,
@@ -46,7 +49,7 @@ def retry_build_snn(
     visited_nodes: List,
     neuron_dict: dict = None,
 ) -> Tuple[
-    List, Any, List, Any, Union[Dict[Any, int], Dict[Any, Any]], List[Any]
+    List[Any], Any, List[Any], Any, Optional[Dict[Any, Any]], List[Any]
 ]:
     """
 
@@ -158,6 +161,7 @@ def retry_build_snn(
     )
 
 
+@typechecked
 def get_neuron_belonging_to_node_from_list(
     neurons: List[Any], node: int, nodes: List[int]
 ) -> List[Any]:
@@ -172,6 +176,7 @@ def get_neuron_belonging_to_node_from_list(
     return neurons[index]
 
 
+@typechecked
 def get_node_belonging_to_neuron_from_list(
     neuron: int, neurons: List[int], nodes: List[int]
 ) -> int:
@@ -186,6 +191,7 @@ def get_node_belonging_to_neuron_from_list(
     return nodes[index]
 
 
+@typechecked
 def get_edge_if_exists(
     G: nx.DiGraph, lhs_node: int, rhs_node: int
 ) -> Union[None, Tuple[int, int]]:
@@ -218,6 +224,7 @@ def get_edge_if_exists(
     return None
 
 
+@typechecked
 def assert_all_neuron_properties_are_specified(
     G: nx.DiGraph, node: str
 ) -> None:
@@ -234,6 +241,7 @@ def assert_all_neuron_properties_are_specified(
         )
 
 
+@typechecked
 def all_neuron_properties_are_specified(G: nx.DiGraph, node: str) -> bool:
     """
 
@@ -251,6 +259,7 @@ def all_neuron_properties_are_specified(G: nx.DiGraph, node: str) -> bool:
     return False
 
 
+@typechecked
 def get_neuron_property_names(G: nx.DiGraph, node: str) -> List:
     """
 

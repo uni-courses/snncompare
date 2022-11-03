@@ -1,13 +1,14 @@
 """Verifies the graph represents a connected and valid SNN, with all required
 neuron and synapse properties specified."""
-
 # Import the networkx module.
 from pprint import pprint
 
 import networkx as nx
 import numpy as np
+from typeguard import typechecked
 
 
+@typechecked
 def verify_lava_neuron_properties_are_specified(
     node: nx.DiGraph.nodes,
 ) -> None:

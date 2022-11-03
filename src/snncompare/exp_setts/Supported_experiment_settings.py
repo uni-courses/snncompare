@@ -4,9 +4,9 @@
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
-
-
 import copy
+
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.algos.get_alg_configs import get_algo_configs
 from src.snncompare.exp_setts.algos.MDSA import MDSA
@@ -26,6 +26,7 @@ class Exp_setts_typing:
     combination of experiment setting parameters.
     """
 
+    @typechecked
     def __init__(
         self,
     ) -> None:
@@ -61,6 +62,7 @@ class Exp_setts_typing:
 class Supported_experiment_settings:
     """Contains the settings that are supported for the experiment_config."""
 
+    @typechecked
     def __init__(
         self,
     ) -> None:
@@ -109,6 +111,7 @@ class Supported_experiment_settings:
         # Generate the supported radiations settings.
         self.specify_supported_radiations_settings()
 
+    @typechecked
     def specify_supported_radiations_settings(self) -> None:
         """Specifies types of supported radiations settings. Some settings
         consist of a list of tuples, with the probability of a change
@@ -168,6 +171,7 @@ class Supported_experiment_settings:
             "delta_vth": self.delta_vth,
         }
 
+    @typechecked
     def specify_supported_adaptation_settings(self) -> None:
         """Specifies all the supported types of adaptation settings."""
 
@@ -187,6 +191,7 @@ class Supported_experiment_settings:
             # impact.
         }
 
+    @typechecked
     def has_unique_config_id(self, experiment_config: dict) -> bool:
         """
 
@@ -197,6 +202,7 @@ class Supported_experiment_settings:
             return True
         return False
 
+    @typechecked
     def append_unique_config_id(self, experiment_config: dict) -> dict:
         """Checks if an experiment configuration dictionary already has a
         unique identifier, and if not it computes and appends it.
@@ -227,6 +233,7 @@ class Supported_experiment_settings:
         return experiment_config
 
 
+@typechecked
 def dict_to_frozen_set(experiment_config: dict) -> frozenset:
     """Converts a dictionary into a frozenset, such that a hash code of the
     dict can be computed."""

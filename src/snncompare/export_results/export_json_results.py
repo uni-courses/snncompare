@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Generator, List
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.export_results.export_nx_graph_to_json import (
     digraph_to_json,
@@ -14,6 +15,7 @@ from src.snncompare.export_results.plot_graphs import (
 )
 
 
+@typechecked
 def write_dict_to_json(output_filepath: str, some_dict: dict) -> None:
     """Writes a dict file to a .json file."""
     with open(output_filepath, "w", encoding="utf-8") as fp:
@@ -25,6 +27,7 @@ def write_dict_to_json(output_filepath: str, some_dict: dict) -> None:
     # TODO: verify the file content is valid.
 
 
+@typechecked
 def export_end_results(
     dead_neuron_names: List[str],
     G: nx.DiGraph,
@@ -114,6 +117,7 @@ def export_end_results(
     )
 
 
+@typechecked
 def export_results_as_json(
     G: nx.DiGraph,
     dead_neuron_names: List[str],
@@ -171,6 +175,7 @@ def export_results_as_json(
     # TODO: verify the file content is valid.
 
 
+@typechecked
 def export_graphs_as_pickle(
     brain_adaptation_graph: nx.DiGraph,
     G: nx.DiGraph,
@@ -219,6 +224,7 @@ def export_graphs_as_pickle(
         )
 
 
+@typechecked
 def get_unique_hash(
     dead_neuron_names: List[str],
     has_adaptation: bool,
@@ -270,6 +276,7 @@ def get_unique_hash(
     return hash(hash_set)
 
 
+@typechecked
 def uniq(lst: List) -> Generator:
     """
 
@@ -284,6 +291,7 @@ def uniq(lst: List) -> Generator:
         last = item
 
 
+@typechecked
 def sort_and_deduplicate(some_list: List[Any]) -> List[Any]:
     """
 

@@ -1,8 +1,8 @@
 """Verifies the graph represents a connected and valid SNN, with all required
 neuron and synapse properties specified."""
-
 # Import the networkx module.
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.simulation.verify_graph_is_lava_snn import (
     verify_lava_neuron_properties_are_specified,
@@ -13,6 +13,7 @@ from src.snncompare.simulation.verify_graph_is_networkx_snn import (
 )
 
 
+@typechecked
 def verify_networkx_snn_spec(G: nx.DiGraph, t: int, backend: str) -> None:
     """
 

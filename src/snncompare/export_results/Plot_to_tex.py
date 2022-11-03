@@ -11,13 +11,13 @@ plt_tex.plotMultipleLines(plt_tex,single_x_series,multiple_y_series,"x-axis
 For a single line, use:
 plt_tex.plotSingleLine(plt_tex,range(0, len(dataseries)),dataseries,"x-axis
 label [units]","y-axis label [units]",lineLabel,"3b",4,11)"""
-
 import os
 from typing import Any, List
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import lines
+from typeguard import typechecked
 
 # You can also plot a table directly into latex, see example_create_a_table(..)
 # Then put it in latex with for example:
@@ -35,10 +35,12 @@ from matplotlib import lines
 class Plot_to_tex:
     """Object used to output plots to latex directory of project."""
 
+    @typechecked
     def __init__(self) -> None:
         self.script_dir = self.get_script_dir()
 
     # plot graph (legendPosition = integer 1 to 4)
+    @typechecked
     def plotSingleLine(
         self,
         x_path: Any,
@@ -80,6 +82,7 @@ class Plot_to_tex:
     #         plt.show();
 
     # plot graphs
+    @typechecked
     def plotMultipleLines(
         self,
         x: List,
@@ -141,6 +144,7 @@ class Plot_to_tex:
     # Generate random line colours
     # Source: https://stackoverflow.com/questions/14720331/
     # how-to-generate-random-colors-in-matplotlib
+    @typechecked
     def get_cmap(self, n: int, name: str = "hsv") -> Any:
         """Returns a function that maps each index in 0, 1, ..., n-1 to a
         distinct RGB color; the keyword argument name must be a standard mpl
@@ -151,6 +155,7 @@ class Plot_to_tex:
         """
         return plt.cm.get_cmap(name, n)
 
+    @typechecked
     def generateLineTypes(self, y_series: List) -> List:
         """
 
@@ -175,6 +180,7 @@ class Plot_to_tex:
 
     # Create a table with: table_matrix = np.zeros((4,4),dtype=object) and pass
     # it to this object
+    @typechecked
     def put_table_in_tex(
         self, table_matrix: Any, filename: str, project_name: str
     ) -> None:
@@ -205,6 +211,7 @@ class Plot_to_tex:
 
     # replace this with your own table creation and then pass it to
     # put_table_in_tex(..)
+    @typechecked
     def example_create_a_table(self) -> None:
         """Example on how to create a latex table from Python."""
         project_name = "1"
@@ -222,11 +229,13 @@ class Plot_to_tex:
 
         self.put_table_in_tex(table_matrix, table_name, project_name)
 
+    @typechecked
     def get_script_dir(self) -> str:
         """returns the directory of this script regardless of from which level
         the code is executed."""
         return os.path.dirname(__file__)
 
+    @typechecked
     def export_plot(self, some_plt: Any, filename: str) -> None:
         """
 
@@ -239,6 +248,7 @@ class Plot_to_tex:
             "latex/Images/" + "graphs/" + filename + ".png", dpi=200
         )
 
+    @typechecked
     def create_target_dir_if_not_exists(
         self, path: str, new_dir_name: str
     ) -> None:

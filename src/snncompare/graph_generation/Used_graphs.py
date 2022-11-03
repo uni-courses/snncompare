@@ -3,16 +3,19 @@ from typing import List
 
 import networkx as nx
 from networkx.classes.graph import Graph
+from typeguard import typechecked
 
 
 class Used_graphs:
     """Creates graphs used for paper."""
 
+    @typechecked
     def __init__(self) -> None:
         self.three = self.get_graphs_with_3_neurons()
         self.four = self.get_graphs_with_4_neurons()
         self.five = self.get_graphs_with_5_neurons()
 
+    @typechecked
     def get_graphs(self, size: int) -> List[nx.Graph]:
         """Returns the graphs that are used for testing, per selected size.
 
@@ -26,14 +29,17 @@ class Used_graphs:
             return self.five
         raise Exception("Graph size of: {size} is currently not supported.")
 
+    @typechecked
     def get_graphs_with_3_neurons(self) -> List[Graph]:
         """Returns list of graphs of size 3."""
         return [self.three_a()]
 
+    @typechecked
     def get_graphs_with_4_neurons(self) -> List[Graph]:
         """Returns list of graphs of size 4."""
         return [self.four_a(), self.four_b(), self.four_c()]
 
+    @typechecked
     def get_graphs_with_5_neurons(self) -> List[Graph]:
         """Returns list of graphs of size 5."""
         return [
@@ -45,6 +51,7 @@ class Used_graphs:
             self.five_f(),
         ]
 
+    @typechecked
     def three_a(self) -> nx.DiGraph:
         """Creates two different graphs of size 3."""
         graph = nx.Graph()
@@ -60,6 +67,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def four_a(self) -> nx.DiGraph:
         """Straight line."""
         graph = nx.Graph()
@@ -76,6 +84,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def four_b(self) -> nx.DiGraph:
         """Y"""
         graph = nx.Graph()
@@ -92,6 +101,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def four_c(self) -> nx.DiGraph:
         """Square."""
         graph = nx.Graph()
@@ -109,6 +119,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def five_a(self) -> nx.DiGraph:
         """Straight line."""
         graph = nx.Graph()
@@ -126,6 +137,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def five_b(self) -> nx.DiGraph:
         """Y-long-tail."""
         graph = nx.Graph()
@@ -143,6 +155,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def five_c(self) -> nx.DiGraph:
         """Y with 3 arms."""
         graph = nx.Graph()
@@ -160,6 +173,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def five_d(self) -> nx.DiGraph:
         """Pentagon."""
         graph = nx.Graph()
@@ -178,6 +192,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def five_e(self) -> nx.DiGraph:
         """Square-with-tail."""
         graph = nx.Graph()
@@ -196,6 +211,7 @@ class Used_graphs:
         )
         return graph
 
+    @typechecked
     def five_f(self) -> nx.DiGraph:
         """Square."""
         graph = nx.Graph()
@@ -220,6 +236,7 @@ class Run:
     # pylint: disable=R0902
     # TODO: reduce 17/5 instance attributes to at most 15/7.
 
+    @typechecked
     def __init__(
         self,
         dead_neuron_names: List[str],
@@ -261,6 +278,7 @@ class Run:
         # TODO: resolve.
         # self.nr_of_spikes = self.get_nr_of_spikes()
 
+    @typechecked
     def get_amount_of_neurons(self, get_degree: nx.DiGraph) -> int:
         """
 
@@ -269,6 +287,7 @@ class Run:
         """
         return len(get_degree)
 
+    @typechecked
     def get_amount_synapses(self, get_degree: nx.DiGraph) -> int:
         """
 
@@ -277,6 +296,7 @@ class Run:
         """
         return len(get_degree.edges)
 
+    @typechecked
     def get_nr_of_spikes(self) -> None:
         """TODO: implement this method to store the number of spikes if it is
         found.

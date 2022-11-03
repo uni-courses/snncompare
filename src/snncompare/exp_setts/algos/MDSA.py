@@ -1,8 +1,8 @@
 """Contains the specification of and maximum values of the algorithm
 settings."""
-
-
 from typing import List
+
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 
@@ -11,6 +11,7 @@ from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 class MDSA_config:
     """Create a particular configuration for the MDSA algorithm."""
 
+    @typechecked
     def __init__(self, mdsa_config: dict) -> None:
 
         for some_property, value in mdsa_config.items():
@@ -39,6 +40,7 @@ class MDSA:
     Example usage: default_MDSA_alg=MDSA(m_vals=list(range(0, 4, 1)))
     """
 
+    @typechecked
     def __init__(
         self,
         m_vals: List[int],
@@ -52,6 +54,7 @@ class MDSA:
         # List of the algorithm parameters for a run settings dict.
         self.alg_parameters = {"m_vals": m_vals}
 
+    @typechecked
     def verify_m_vals(self, m_vals: List[int]) -> None:
         """Verifies the m_vals parameter setting of the algorithm."""
         assert_parameter_is_list(m_vals)

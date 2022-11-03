@@ -1,11 +1,11 @@
 """Converts the json graphs back into nx graphs."""
-
 import json
 from pprint import pprint
 from typing import List
 
 import networkx as nx
 from networkx.readwrite import json_graph
+from typeguard import typechecked
 
 from src.snncompare.export_results.check_nx_graphs import (
     json_graphs_contain_expected_stages,
@@ -23,6 +23,7 @@ from src.snncompare.export_results.verify_stage_1_graphs import (
 from src.snncompare.helper import file_exists, get_expected_stages
 
 
+@typechecked
 def json_to_digraph(json_data: dict) -> nx.DiGraph:
     """
 
@@ -35,6 +36,7 @@ def json_to_digraph(json_data: dict) -> nx.DiGraph:
     raise Exception("Error, did not find json_data.")
 
 
+@typechecked
 def json_dicts_of_graph_results_exist(
     run_config: dict, expected_stages: List[int]
 ) -> bool:
@@ -54,6 +56,7 @@ def json_dicts_of_graph_results_exist(
     return False
 
 
+@typechecked
 def load_json_to_nx_graph_from_file(
     run_config: dict, stage_index: int, to_run: dict
 ) -> dict:
@@ -78,6 +81,7 @@ def load_json_to_nx_graph_from_file(
     return nx_graphs_dict
 
 
+@typechecked
 def load_pre_existing_graph_dict(
     run_config: dict, stage_index: int, to_run: dict
 ) -> dict:
@@ -107,6 +111,7 @@ def load_pre_existing_graph_dict(
     raise Exception("Error, unexpected stage_index.")
 
 
+@typechecked
 def load_verified_json_graphs_from_json(
     run_config: dict, expected_stages: List[int]
 ) -> dict:
@@ -134,6 +139,7 @@ def load_verified_json_graphs_from_json(
     return results_json_graphs["graphs_dict"]
 
 
+@typechecked
 def load_json_graphs_from_json(run_config: dict) -> dict:
     """TODO: make private.
     Loads the json dict and returns the graphs of the relevant stages."""

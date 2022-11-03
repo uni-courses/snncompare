@@ -6,14 +6,13 @@ incoming networkx object to an SNN network that can be ran by Lava, and
 retrieves a first/single neuron. The simulation is than ran for t
 timesteps on a Loihi emulation.
 """
-
-
 import networkx as nx
 from lava.magma.core.run_conditions import RunSteps
 from lava.magma.core.run_configs import Loihi1SimCfg
 
 # Instantiate Lava processes to build network.
 from lava.proc.lif.process import LIF
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.convert_networkx_to_lava import (
     initialise_networkx_to_snn_conversion,
@@ -23,6 +22,7 @@ from src.snncompare.simulation.verify_graph_is_snn import (
 )
 
 
+@typechecked
 def simulate_snn_on_lava(G: nx.Graph, starter_nodename: int, t: int) -> None:
     """
 
@@ -41,6 +41,7 @@ def simulate_snn_on_lava(G: nx.Graph, starter_nodename: int, t: int) -> None:
     run_simulation_on_lava(t, G.nodes[starter_nodename]["lava_LIF"])
 
 
+@typechecked
 def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
     """
 
@@ -54,6 +55,7 @@ def run_simulation_on_lava(t: int, starter_neuron: LIF) -> None:
     starter_neuron.run(condition=RunSteps(num_steps=t), run_cfg=Loihi1SimCfg())
 
 
+@typechecked
 def add_lava_neurons_to_networkx_graph(G: nx.Graph, t: int) -> None:
     """Generates a lava SNN and adds the neurons to the networkx Graph nodes.
 
@@ -95,6 +97,7 @@ def add_lava_neurons_to_networkx_graph(G: nx.Graph, t: int) -> None:
     verify_networkx_snn_spec(G, t, backend="lava")
 
 
+@typechecked
 def append_neurons_to_networkx_graph(G: nx.Graph, neuron_dict: dict) -> None:
     """Appends lava neuron objects as keys to the networkx graph nodes.
 

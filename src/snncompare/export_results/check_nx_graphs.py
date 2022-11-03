@@ -1,9 +1,10 @@
 """Methods used to safely check nx_graph properties."""
-
-
 from typing import List
 
+from typeguard import typechecked
 
+
+@typechecked
 def json_graphs_contain_expected_stages(
     json_graphs: dict,
     expected_graph_names: List[str],

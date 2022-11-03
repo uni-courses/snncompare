@@ -3,6 +3,8 @@ specifications."""
 import copy
 import unittest
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_adap_and_rad_settings,
     verify_experiment_config,
@@ -20,6 +22,7 @@ class Test_adaptation_settings(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_exp_setts = supp_exp_setts
@@ -34,6 +37,7 @@ class Test_adaptation_settings(unittest.TestCase):
 
         self.invalid_adaptation_key = {"non-existing-key": 5}
 
+    @typechecked
     def test_error_is_thrown_if_adaptation_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the adaptation key is missing
         from the MDSA algorithm settings dictionary of the supported algorithms
@@ -60,6 +64,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_for_invalid_adaptation_value_type_is_none(
         self,
     ) -> None:
@@ -81,6 +86,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_for_invalid_adaptation_value_type_is_string(
         self,
     ) -> None:
@@ -104,6 +110,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_if_adaptation_dictionary_keys_are_missing(
         self,
     ) -> None:
@@ -122,6 +129,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_catch_invalid_adaptation_dict_key(self) -> None:
         """."""
 
@@ -139,6 +147,7 @@ class Test_adaptation_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_catch_invalid_adaptation_dict_value_type_for_key(self) -> None:
         """Tests whether the adaptation setting dictionary throws an error if
         it contains an invalid value type for one of its keys.

@@ -1,4 +1,5 @@
 """File represents LIF neuron object."""
+from typeguard import typechecked
 
 
 class Scope_of_tests:
@@ -9,6 +10,7 @@ class Scope_of_tests:
     # pylint: disable=too-many-instance-attributes
     # Eleven is considered is reasonable in this case.
 
+    @typechecked
     def __init__(self, export: bool = True, show: bool = False) -> None:
 
         self.export = export  # Export the graph that is generated to .png
@@ -52,6 +54,7 @@ class Long_scope_of_tests:
     # pylint: disable=too-many-instance-attributes
     # Eleven is considered is reasonable in this case.
 
+    @typechecked
     def __init__(self, export: bool = True, show: bool = False) -> None:
 
         self.export = export  # Export the graph that is generated to .png

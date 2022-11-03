@@ -1,7 +1,8 @@
 """Performs tests that verify the behaviour of a recurrent edge in the
 network."""
-
 import unittest
+
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.get_graph import (
     get_networkx_graph_of_2_neurons,
@@ -19,10 +20,12 @@ class Test_get_graph_on_lava(unittest.TestCase):
     """
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.starter_node_name = 0
 
+    @typechecked
     def test_returns_2_nodes(self) -> None:
         """Tests whether the get_networkx_graph_of_2_neurons function returns a
         graph with two nodes."""
@@ -50,6 +53,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Assert the edges go from node 0 to node 1, and from 0 to 0.
         self.assertEqual(set(G.edges), {(0, 0), (0, 1)})
 
+    @typechecked
     def test_verify_recurrent_edge_without_weight_throws_error(
         self,
     ) -> None:
@@ -97,6 +101,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Terminate Loihi simulation.
         G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
+    @typechecked
     def test_neuron_properties_after_1_sec_without_recurrent_connection(
         self,
     ) -> None:
@@ -148,6 +153,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Terminate Loihi simulation.
         G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
+    @typechecked
     def test_neuron_properties_without_recurrent_connection(self) -> None:
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
         over time.
@@ -231,6 +237,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Terminate Loihi simulation.
         G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
+    @typechecked
     def test_neuron_properties_with_recurrent_connection(self) -> None:
         """Creates an SNN consisting of 2 neurons, adds an inhibitory recurrent
         synapse to the excitatory neuron (at node 0), and verifies the SNN

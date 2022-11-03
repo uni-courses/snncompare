@@ -5,6 +5,8 @@ import copy
 import unittest
 from typing import Any
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
@@ -48,12 +50,14 @@ class Test_generic_configuration_settings(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_run_settings = Supported_run_settings()
         self.valid_run_setting = with_adaptation_with_radiation
         self.invalid_adaptation_key = "non-existing-key"
 
+    @typechecked
     def test_returns_valid_configuration_settings(self) -> None:
         """Verifies a valid configuration settings object and object type is
         returned."""
@@ -67,6 +71,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         self.assertEqual(self.valid_run_setting, returned_dict)
 
+    @typechecked
     def test_experiment_config_is_none(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         type None."""
@@ -84,6 +89,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_catch_invalid_experiment_config_type(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         invalid type.
@@ -106,6 +112,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_on_invalid_configuration_setting_key(
         self,
     ) -> None:
@@ -133,6 +140,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
 
 
+@typechecked
 def verify_error_is_thrown_on_invalid_configuration_setting_value(
     invalid_config_setting_value: Any,
     experiment_config: dict,

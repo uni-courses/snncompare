@@ -9,10 +9,10 @@ Input: Experiment configuration.
         Stage 4: Post-processed performance data of algorithm and adaptation
         mechanism.
 """
-
-
 # pylint: disable=W0613
 from typing import List
+
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.stage_1_get_input_graphs import (
     has_adaptation,
@@ -20,6 +20,7 @@ from src.snncompare.graph_generation.stage_1_get_input_graphs import (
 )
 
 
+@typechecked
 def verify_stage_1_graphs(
     experiment_config: dict, run_config: dict, graphs: dict
 ) -> None:
@@ -36,6 +37,7 @@ def verify_stage_1_graphs(
     # TODO: verify the properties required by the run config are in the graphs.
 
 
+@typechecked
 def get_expected_stage_1_graph_names(run_config: dict) -> List[str]:
     """Parses the run config and returns a list with the graph names that are
     expected at the end of stage 1."""
@@ -51,6 +53,7 @@ def get_expected_stage_1_graph_names(run_config: dict) -> List[str]:
     return expected_graph_names
 
 
+@typechecked
 def expected_graphs_are_in_dict(
     run_config: dict, graphs: dict, stage: int
 ) -> bool:
@@ -70,6 +73,7 @@ def expected_graphs_are_in_dict(
     return True
 
 
+@typechecked
 def assert_graphs_are_in_dict(
     run_config: dict, graphs: dict, stage: int
 ) -> None:

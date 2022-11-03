@@ -1,15 +1,15 @@
 """Assists the conversion from the input graph to an SNN graph that performs
 the MDSA approximation."""
-
-
 from typing import Any, Dict, List, Tuple, Union
 
 import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
+from typeguard import typechecked
 
 from src.snncompare.export_results.Plot_to_tex import Plot_to_tex
 
 
+@typechecked
 def create_synapses_and_spike_dicts(
     G: nx.DiGraph,
     get_degree: nx.DiGraph,
@@ -39,6 +39,7 @@ def create_synapses_and_spike_dicts(
         get_degree.nodes[node]["spike"] = {}
 
 
+@typechecked
 def create_degree_synapses_for_m_is_zero(
     get_degree: nx.DiGraph,
     left: List[dict],
@@ -76,6 +77,7 @@ def create_degree_synapses_for_m_is_zero(
     return get_degree
 
 
+@typechecked
 def retry_create_degree_synapses(
     G: nx.Graph, get_degree: nx.DiGraph, m: int, rand_ceil: float
 ) -> nx.DiGraph:
@@ -114,6 +116,7 @@ def retry_create_degree_synapses(
 
 
 # pylint: disable=R0913
+@typechecked
 def plot_coordinated_graph(
     G: Union[nx.Graph, nx.DiGraph],
     desired_properties: Union[List, None],
@@ -186,6 +189,7 @@ def plot_coordinated_graph(
 
 
 # pylint: disable=R0913
+@typechecked
 def add_neuron_properties_to_plot(
     axis: Any,
     desired_properties: List,
@@ -229,6 +233,7 @@ def add_neuron_properties_to_plot(
         )
 
 
+@typechecked
 def get_annotation_text(
     desired_properties: List[str], G: nx.Graph, nodename: str, t: int
 ) -> str:
@@ -272,6 +277,7 @@ def get_annotation_text(
     return annotation
 
 
+@typechecked
 def plot_unstructured_graph(G: nx.DiGraph, show: bool = False) -> None:
     """
 
@@ -291,6 +297,7 @@ def plot_unstructured_graph(G: nx.DiGraph, show: bool = False) -> None:
     plt.close()
 
 
+@typechecked
 def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
     """Returns a list of node colours in order of G.nodes.
 
@@ -321,6 +328,7 @@ def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
     return color_map, spiking_edges
 
 
+@typechecked
 def set_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List, List]:
     """
 
@@ -352,6 +360,7 @@ def set_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List, List]:
     return color_map, spiking_edges, unseen_edges
 
 
+@typechecked
 def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
     """
 
@@ -369,6 +378,7 @@ def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
     return edge_color_map
 
 
+@typechecked
 def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
     """
 
@@ -400,6 +410,7 @@ def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
     return node_labels
 
 
+@typechecked
 def add_recursive_edges_to_graph(G: nx.DiGraph) -> None:
     """Adds recursive edges to graph for nodes that have the recur attribute.
 

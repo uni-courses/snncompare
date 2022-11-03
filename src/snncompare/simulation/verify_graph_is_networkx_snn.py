@@ -1,14 +1,15 @@
 """Verifies the graph represents a connected and valid SNN, with all required
 neuron and synapse properties specified."""
-
 from typing import Tuple
 
 # Import the networkx module.
 import networkx as nx
 from _collections_abc import dict_keys
 from networkx.classes.digraph import DiGraph
+from typeguard import typechecked
 
 
+@typechecked
 def verify_nx_neuron_properties_are_specified(
     node: nx.DiGraph.nodes, t: int
 ) -> None:
@@ -28,6 +29,7 @@ def verify_nx_neuron_properties_are_specified(
         raise Exception("vth is not a float.")
 
 
+@typechecked
 def assert_synaptic_edgeweight_type_is_correct(
     G: nx.DiGraph, edge: nx.DiGraph.edges
 ) -> None:
@@ -60,6 +62,7 @@ def assert_synaptic_edgeweight_type_is_correct(
         )
 
 
+@typechecked
 def assert_synapse_properties_are_specified(
     G: DiGraph, edge: Tuple[int, int]
 ) -> None:
@@ -77,6 +80,7 @@ def assert_synapse_properties_are_specified(
         )
 
 
+@typechecked
 def check_if_synapse_properties_are_specified(
     G: DiGraph, edge: Tuple[int, int]
 ) -> bool:
@@ -96,6 +100,7 @@ def check_if_synapse_properties_are_specified(
     return False
 
 
+@typechecked
 def get_synapse_property_names(G: DiGraph, edge: Tuple[int, int]) -> dict_keys:
     """
 
@@ -106,6 +111,7 @@ def get_synapse_property_names(G: DiGraph, edge: Tuple[int, int]) -> dict_keys:
     return G.edges[edge].keys()
 
 
+@typechecked
 def assert_no_duplicate_edges_exist(G: DiGraph) -> None:
     """Asserts no duplicate edges exist, throws error otherwise.
 

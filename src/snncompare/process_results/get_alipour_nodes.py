@@ -1,9 +1,9 @@
 """Computes which nodes are selected by the MDSA algorithm presented by Alipour
 et al."""
-
 from typing import Any, Dict
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.helper import (
     compute_mark,
@@ -13,6 +13,7 @@ from src.snncompare.helper import (
 
 
 # pylint: disable=R0913
+@typechecked
 def get_alipour_nodes(
     G: nx.Graph,
     iteration: int,

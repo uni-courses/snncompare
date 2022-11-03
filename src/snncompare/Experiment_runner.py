@@ -3,9 +3,9 @@ setting of the experiment configuration settings.
 
 (The values of the settings may vary, yet the types should be the same.)
 """
-
-
 from typing import Any, Dict, List, Tuple
+
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.run_config.Supported_run_settings import (
     Supported_run_settings,
@@ -64,6 +64,8 @@ class Experiment_runner:
 
     # pylint: disable=R0903
 
+    @typechecked
+    @typechecked
     def __init__(
         self, experiment_config: dict, export_images: bool, show_snns: bool
     ) -> None:
@@ -105,6 +107,8 @@ class Experiment_runner:
         self.run_configs = self.__perform_run(self.experiment_config)
 
     # pylint: disable=W0238
+    @typechecked
+    @typechecked
     def __perform_run(self, experiment_config: dict) -> List[dict]:
         """Private method that performs a run of the experiment.
 
@@ -131,6 +135,8 @@ class Experiment_runner:
 
         return run_configs
 
+    @typechecked
+    @typechecked
     def __perform_run_stage_1(
         self, experiment_config: dict, run_config: dict, to_run: dict
     ) -> dict:
@@ -159,6 +165,8 @@ class Experiment_runner:
         assert_stage_is_completed(run_config, 1, to_run)
         return results_nx_graphs
 
+    @typechecked
+    @typechecked
     def __perform_run_stage_2(
         self,
         results_nx_graphs: dict,
@@ -202,6 +210,8 @@ class Experiment_runner:
             output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
         assert_stage_is_completed(results_nx_graphs["run_config"], 2, to_run)
 
+    @typechecked
+    @typechecked
     def __perform_run_stage_3(
         self,
         results_nx_graphs: dict,
@@ -232,6 +242,8 @@ class Experiment_runner:
                 results_nx_graphs["run_config"], 3, to_run
             )
 
+    @typechecked
+    @typechecked
     def __perform_run_stage_4(
         self, export_images: bool, results_nx_graphs: dict, to_run: dict
     ) -> None:
@@ -249,6 +261,8 @@ class Experiment_runner:
         assert_stage_is_completed(results_nx_graphs["run_config"], 4, to_run)
 
 
+@typechecked
+@typechecked
 def experiment_config_to_run_configs(
     experiment_config: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
@@ -321,6 +335,8 @@ def experiment_config_to_run_configs(
 
 
 # pylint: disable=R0913
+@typechecked
+@typechecked
 def run_parameters_to_dict(
     adaptation: Dict[str, Any],
     algorithm: Dict[str, Any],
@@ -352,6 +368,8 @@ def run_parameters_to_dict(
     }
 
 
+@typechecked
+@typechecked
 def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
     """Scans for existing output and then combines the run configuration
     settings to determine what still should be computed."""

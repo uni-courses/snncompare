@@ -2,6 +2,8 @@
 from pathlib import Path
 from typing import List
 
+from typeguard import typechecked
+
 from src.snncompare.export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
@@ -22,6 +24,7 @@ from src.snncompare.helper import get_expected_stages, get_extensions_list
 
 
 # pylint: disable=R0912
+@typechecked
 def has_outputted_stage(
     run_config: dict, stage_index: int, to_run: dict
 ) -> bool:
@@ -79,6 +82,7 @@ def has_outputted_stage(
     return True
 
 
+@typechecked
 def nx_graphs_have_completed_stage(
     run_config: dict, results_nx_graphs: dict, stage_index: int
 ) -> bool:
@@ -110,6 +114,7 @@ def nx_graphs_have_completed_stage(
     return True
 
 
+@typechecked
 def stage_4_results_exist(nx_graphs: dict) -> bool:
     """Verifies the stage 4 results are stored in the expected graph
     objects."""
@@ -126,6 +131,7 @@ def stage_4_results_exist(nx_graphs: dict) -> bool:
 
 
 # pylint: disable=R1702
+@typechecked
 def has_valid_json_results(
     json_graphs: dict, run_config: dict, to_run: dict
 ) -> bool:

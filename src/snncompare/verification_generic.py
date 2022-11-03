@@ -1,7 +1,10 @@
 """Performs generic verification tasks."""
 from typing import List
 
+from typeguard import typechecked
 
+
+@typechecked
 def verify_completed_stages_list(completed_stages: List) -> None:
     """Verifies the completed stages list is a list of consecutive positive
     integers.

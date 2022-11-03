@@ -4,6 +4,8 @@ specifications."""
 import copy
 import unittest
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.algos.get_alg_configs import (
     get_algo_configs,
     verify_algo_configs,
@@ -23,6 +25,7 @@ class Test_mdsa(unittest.TestCase):
     specifications."""
 
     # Initialize test object
+    @typechecked
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.mdsa = MDSA(list(range(0, 4, 1)))
@@ -37,6 +40,7 @@ class Test_mdsa(unittest.TestCase):
             "MDSA", self.default_exp_config["algorithms"]["MDSA"]
         )
 
+    @typechecked
     def test_error_is_thrown_if_m_val_key_is_missing(self) -> None:
         """Verifies an exception is thrown if the m_val key is missing from
         (one of the) the mdsa_configs."""
@@ -67,6 +71,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_if_m_val_has_invalid_type(self) -> None:
         """Verifies an exception is thrown if the m_vals key is missing from
         the mdsa configs."""
@@ -98,6 +103,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_if_m_val_is_too_large(self) -> None:
         """Verifies an exception is thrown if the m_vals key is too large in
         the mdsa configs."""
@@ -135,6 +141,7 @@ class Test_mdsa(unittest.TestCase):
             str(context.exception),
         )
 
+    @typechecked
     def test_error_is_thrown_if_m_val_is_too_low(self) -> None:
         """Verifies an exception is thrown if the m_vals key is too low in the
         mdsa configs."""

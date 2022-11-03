@@ -16,6 +16,7 @@ from tests.tests_helper import get_cyclic_graph_without_directed_path
 
 
 @typechecked
+@typechecked
 def get_graph_for_cyclic_propagation(
     test_scope: Long_scope_of_tests,
 ) -> DiGraph:

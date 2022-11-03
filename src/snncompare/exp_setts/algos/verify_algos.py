@@ -1,13 +1,14 @@
 """Used to verify the algorithm specifications in an experiment
 configuration."""
-
-
 from typing import Any, List, Union
+
+from typeguard import typechecked
 
 from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 from src.snncompare.exp_setts.algos.get_alg_configs import verify_algo_configs
 
 
+@typechecked
 def verify_algos_in_experiment_config(exp_setts: dict) -> None:
     """Verifies an algorithm specification is valid."""
     for algo_name, algo_spec in exp_setts["algorithms"].items():
@@ -19,6 +20,7 @@ def verify_algos_in_experiment_config(exp_setts: dict) -> None:
             )
 
 
+@typechecked
 def verify_list_with_numbers(
     elem_type: type,
     min_val: Union[float, int],
@@ -47,6 +49,7 @@ def verify_list_with_numbers(
             )
 
 
+@typechecked
 def verify_val_bound_and_type(
     elem_type: type,
     min_val: Union[float, int],

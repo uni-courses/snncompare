@@ -10,12 +10,14 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import networkx as nx
+from typeguard import typechecked
 
 from src.snncompare.export_results.verify_nx_graphs import (
     verify_results_nx_graphs,
 )
 
 
+@typechecked
 def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.DiGraph object."""
@@ -44,6 +46,7 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     return results_json_graphs
 
 
+@typechecked
 def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
     """First loads the graph attributes from a graph dict and stores them as a
     dict.
@@ -75,6 +78,7 @@ def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
     return graphs_dict
 
 
+@typechecked
 def get_graph_attributes_from_dict_and_return_nx_graph(
     json_graph: dict,
 ) -> nx.DiGraph:
@@ -95,6 +99,7 @@ def get_graph_attributes_from_dict_and_return_nx_graph(
     return nx_graph
 
 
+@typechecked
 def load_json_file_into_dict(
     json_filepath: str,
 ) -> Dict[str, Optional[Dict[str, Any]]]:

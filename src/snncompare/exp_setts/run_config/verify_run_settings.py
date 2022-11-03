@@ -2,16 +2,19 @@
 
 (The values of the settings may vary, yet the types should be the same.)
 """
-# pylint: disable=R0801
-
 # controllers.py
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from typeguard import typechecked
+
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_integer_settings,
 )
+
+# pylint: disable=R0801
+
 
 if TYPE_CHECKING:
     from src.snncompare.exp_setts.run_config.Supported_run_settings import (
@@ -20,6 +23,7 @@ if TYPE_CHECKING:
 
 
 # pylint: disable=W0613
+@typechecked
 def verify_run_config(
     supp_run_setts: Supported_run_settings,
     run_config: str | dict | None,
@@ -58,6 +62,7 @@ def verify_run_config(
     return run_config
 
 
+@typechecked
 def verify_parameter_types(
     supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
@@ -75,6 +80,7 @@ def verify_parameter_types(
             )
 
 
+@typechecked
 def verify_run_config_dict_is_complete(
     supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
@@ -87,6 +93,7 @@ def verify_run_config_dict_is_complete(
             )
 
 
+@typechecked
 def verify_run_config_dict_contains_only_valid_entries(
     supp_run_setts: Supported_run_settings, run_config: dict, strict: bool
 ) -> None:
@@ -110,6 +117,7 @@ def verify_run_config_dict_contains_only_valid_entries(
                 )
 
 
+@typechecked
 def verify_has_unique_id(run_config: dict) -> None:
     """Verifies the config setting has a unique id."""
     if not isinstance(run_config, dict):
