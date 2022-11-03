@@ -36,7 +36,7 @@ def set_mdsa_snn_results(
         m_val=m_val,
         rand_props=stage_2_graphs["input_graph"].graph["alg_props"],
         seed=run_config["seed"],
-        size=run_config["size"],
+        size=run_config["graph_size"],
     )
 
     # Compute SNN results

@@ -42,7 +42,7 @@ def verify_results_nx_graphs(
     nx.Graph for graph_name=="input_graph", and nx.DiGraph otherwise. If
     completed_stages of a graph is larger than 1, the value of the
     results["graphs_dict"] should be of type list, with nx.Graph and
-    nx.Digraphs respectively. # TODO: break this check into separate
+    nx.DiGraphs respectively. # TODO: break this check into separate
     functions.
     """
     stage_1_graph_names = get_expected_stage_1_graph_names(run_config)

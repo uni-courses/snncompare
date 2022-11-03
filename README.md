@@ -267,3 +267,19 @@ And for type checking:
 ```
 mypy --disallow-untyped-calls --disallow-untyped-defs tests/export_results/performed_stage/test_performed_stage_TTFF.py
 ```
+
+### Releasing pip package update
+
+To udate the Python pip package, one can first satisfy the following requirements:
+
+```
+pip install --upgrade pip setuptools wheel
+pip install twine
+```
+
+Followed by updating the package with:
+
+```
+python3 setup.py sdist bdist_wheel
+python -m twine upload dist/*
+```

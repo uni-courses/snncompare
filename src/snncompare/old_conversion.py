@@ -234,7 +234,7 @@ def assert_all_neuron_properties_are_specified(
         )
 
 
-def all_neuron_properties_are_specified(G: nx.Digraph, node: str) -> bool:
+def all_neuron_properties_are_specified(G: nx.DiGraph, node: str) -> bool:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.

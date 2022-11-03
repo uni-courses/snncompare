@@ -54,7 +54,7 @@ def convert_stage_1_digraphs_to_json(
             raise Exception(
                 "stage_index=1, Error, for graph:"
                 + f"{graph_name}, the graph is not a"
-                + f"nx.Digraph(). Instead, it is:{type(graph_container)}"
+                + f"nx.DiGraph(). Instead, it is:{type(graph_container)}"
             )
         graphs_dict_stage_1[graph_name] = digraph_to_json(graph_container)
     if not graphs_dict_stage_1:  # checks if dict not empty like: {}

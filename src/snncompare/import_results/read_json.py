@@ -18,7 +18,7 @@ from src.snncompare.export_results.verify_nx_graphs import (
 
 def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     """Loads the results from a json file, and then converts the graph dicts
-    back into a nx.Digraph object."""
+    back into a nx.DiGraph object."""
     # Load the json dictionary of results.
     results_json_graphs: dict = load_json_file_into_dict(json_filepath)
     # print(json_filepath)
