@@ -111,7 +111,9 @@ def export_results_to_json(
 
 
 @typechecked
-def add_result_to_last_graph(snn_graphs: nx.DiGraph, result_per_type: dict) -> None:
+def add_result_to_last_graph(
+    snn_graphs: nx.DiGraph, result_per_type: dict
+) -> None:
     """Checks whether the incoming snn_graph is a list of graphs or single
     graph.
 

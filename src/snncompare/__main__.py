@@ -4,9 +4,6 @@ that invokes this script."""
 # Import code belonging to this project.
 import os
 import shutil
-from pprint import pprint
-
-import typeguard
 
 from src.snncompare.exp_setts.algos.get_alg_configs import (
     get_algo_configs,

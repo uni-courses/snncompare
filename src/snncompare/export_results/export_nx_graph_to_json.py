@@ -47,9 +47,7 @@ def convert_digraphs_to_json(
 
 
 @typechecked
-def convert_stage_1_digraphs_to_json(
-    graphs: dict
-) -> Dict[str, Any]:
+def convert_stage_1_digraphs_to_json(graphs: dict) -> Dict[str, Any]:
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():

@@ -36,20 +36,19 @@ def add_nx_neurons_to_networkx_graph(G: nx.DiGraph, t: int) -> None:
     # generate_lif_neurons(G)
 
     # Create synapses between neurons in networkx graph edges.
-    generate_lif_synapses(G)
+    generate_lif_synapses()
 
     # Initialise the nodes at time t=0 (with a_in=0).
     initialise_a_in_is_zero_at_t_is_1(G, t)
 
 
 @typechecked
-def generate_lif_synapses(G: nx.DiGraph) -> None:
+def generate_lif_synapses() -> None:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
 
     """
-    pass
 
 
 @typechecked

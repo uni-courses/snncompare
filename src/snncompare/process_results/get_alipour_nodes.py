@@ -42,7 +42,12 @@ def get_alipour_nodes(
 
     for node in input_graph.nodes:
         set_node_default_values(
-            delta, input_graph, inhibition, node, rand_ceil, uninhibited_spread_rand_nrs
+            delta,
+            input_graph,
+            inhibition,
+            node,
+            rand_ceil,
+            uninhibited_spread_rand_nrs,
         )
 
     # pylint: disable=R0801
@@ -62,9 +67,9 @@ def get_alipour_nodes(
     )
     counter_marks = {}
     for node_index in input_graph.nodes:
-        counter_marks[f"counter_{node_index}_{m_val}"] = input_graph.nodes[node_index][
-            "countermarks"
-        ]
+        counter_marks[f"counter_{node_index}_{m_val}"] = input_graph.nodes[
+            node_index
+        ]["countermarks"]
         print(
             f"node_index:{node_index}, ali-mark:"
             + f'{input_graph.nodes[node_index]["countermarks"]}'

@@ -31,7 +31,9 @@ def create_synapses_and_spike_dicts(
             get_degree, left, m, rand_ceil, right
         )
     else:
-        get_degree = retry_create_degree_synapses(input_graph, get_degree, m, rand_ceil)
+        get_degree = retry_create_degree_synapses(
+            input_graph, get_degree, m, rand_ceil
+        )
 
     # Create spike dictionaries with [t] as key, and boolean spike as value for
     # each node.

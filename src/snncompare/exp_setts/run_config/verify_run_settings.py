@@ -61,7 +61,6 @@ def verify_run_config(
     return run_config
 
 
-
 def verify_parameter_types(
     supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
@@ -79,7 +78,6 @@ def verify_parameter_types(
             )
 
 
-
 def verify_run_config_dict_is_complete(
     supp_run_setts: Supported_run_settings, run_config: dict[str, Any]
 ) -> None:
@@ -90,7 +88,6 @@ def verify_run_config_dict_is_complete(
                 f"Error:{expected_key} is not in the configuration"
                 + f" settings:{run_config.keys()}"
             )
-
 
 
 def verify_run_config_dict_contains_only_valid_entries(

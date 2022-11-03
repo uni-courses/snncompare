@@ -509,7 +509,7 @@ def full_alipour(
 
     compute_marks_for_m_larger_than_one(
         delta=delta,
-        G=G,
+        input_graph=G,
         inhibition=inhibition,
         iteration=iteration,
         m=m,
@@ -526,13 +526,16 @@ def full_alipour(
 
 
 @typechecked
-def compute_mark(delta: float, input_graph: nx.Graph, rand_ceil: float) -> None:
+def compute_mark(
+    delta: float, input_graph: nx.Graph, rand_ceil: float
+) -> None:
     """Computes the mark at the counter neurons after the simulation is
     completed."""
     # Compute the mark based on degree+randomness=weight
     for node in input_graph.nodes:
         max_weight = max(
-            input_graph.nodes[n]["weight"] for n in nx.all_neighbors(input_graph, node)
+            input_graph.nodes[n]["weight"]
+            for n in nx.all_neighbors(input_graph, node)
         )
 
         nr_of_max_weights = 0
@@ -661,7 +664,8 @@ def compute_marks_for_m_larger_than_one(
     for loop in range(1, m + 1):
         for node in input_graph.nodes:
             input_graph.nodes[node]["weight"] = (
-                input_graph.nodes[node]["marks"] + input_graph.nodes[node]["random_number"]
+                input_graph.nodes[node]["marks"]
+                + input_graph.nodes[node]["random_number"]
             )
             input_graph.nodes[node]["inhibited_weight"] = (
                 input_graph.nodes[node]["weight"] - inhibition
@@ -672,7 +676,8 @@ def compute_marks_for_m_larger_than_one(
 
         for node in input_graph.nodes:
             max_weight = max(
-                input_graph.nodes[n]["weight"] for n in nx.all_neighbors(input_graph, node)
+                input_graph.nodes[n]["weight"]
+                for n in nx.all_neighbors(input_graph, node)
             )
             for n in nx.all_neighbors(input_graph, node):
                 if input_graph.nodes[n]["weight"] == max_weight:
@@ -684,11 +689,25 @@ def compute_marks_for_m_larger_than_one(
 
         if show or export:
             plot_alipour(
-                "0rand_mark", iteration, seed, size, loop, input_graph, show=show
+                "0rand_mark",
+                iteration,
+                seed,
+                size,
+                loop,
+                input_graph,
+                show=show,
             )
-            plot_alipour("1weight", iteration, seed, size, loop, input_graph, show=show)
             plot_alipour(
-                "2inhib_weight", iteration, seed, size, loop, input_graph, show=show
+                "1weight", iteration, seed, size, loop, input_graph, show=show
+            )
+            plot_alipour(
+                "2inhib_weight",
+                iteration,
+                seed,
+                size,
+                loop,
+                input_graph,
+                show=show,
             )
 
 
@@ -706,14 +725,20 @@ def set_node_default_values(
     # TODO: reduce 6/5 arguments to at most 5/5.
     # Initialise values.
     # G.nodes[node]["marks"] = 0
-    input_graph.nodes[node]["marks"] = input_graph.degree(node) * (rand_ceil + 1) * delta
+    input_graph.nodes[node]["marks"] = (
+        input_graph.degree(node) * (rand_ceil + 1) * delta
+    )
     input_graph.nodes[node]["countermarks"] = 0
-    input_graph.nodes[node]["random_number"] = 1 * uninhibited_spread_rand_nrs[node]
+    input_graph.nodes[node]["random_number"] = (
+        1 * uninhibited_spread_rand_nrs[node]
+    )
     input_graph.nodes[node]["weight"] = (
         input_graph.degree(node) * (rand_ceil + 1) * delta
         + input_graph.nodes[node]["random_number"]
     )
-    input_graph.nodes[node]["inhibited_weight"] = input_graph.nodes[node]["weight"] - inhibition
+    input_graph.nodes[node]["inhibited_weight"] = (
+        input_graph.nodes[node]["weight"] - inhibition
+    )
 
 
 @typechecked

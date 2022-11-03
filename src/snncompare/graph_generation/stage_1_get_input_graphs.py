@@ -4,7 +4,7 @@ Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
 import copy
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import networkx as nx
 from typeguard import typechecked
@@ -119,9 +119,7 @@ def get_input_graphs(run_config: dict) -> List[nx.Graph]:
 
 @typechecked
 @typechecked
-def get_snn_algo_graph(
-    input_graph: nx.Graph, run_config: dict
-) -> nx.DiGraph:
+def get_snn_algo_graph(input_graph: nx.Graph, run_config: dict) -> nx.DiGraph:
     """Takes the input graph and converts it to an snn that solves some
     algorithm when it is being ran.
 

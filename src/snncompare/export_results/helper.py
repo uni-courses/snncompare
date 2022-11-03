@@ -12,7 +12,7 @@ from src.snncompare.helper import get_sim_duration
 @typechecked
 def flatten(
     d: Dict[str, Any], parent_key: str = "", sep: str = "_"
-) -> Union[dict,Dict[str, float], Dict[str, int]]:
+) -> Union[dict, Dict[str, float], Dict[str, int]]:
     """Flattens a dictionary (makes multiple lines into a oneliner)."""
     items: List = []
     for k, v in d.items():

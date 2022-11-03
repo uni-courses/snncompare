@@ -72,47 +72,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
         self.assertEqual(self.valid_run_setting, returned_dict)
 
     @typechecked
-    def test_experiment_config_is_none(self) -> None:
-        """Verifies an error is thrown if configuration settings object is of
-        type None."""
-
-        with self.assertRaises(Exception) as context:
-            # Configuration Settings of type None throw error.
-            verify_run_config(
-                self.supp_run_settings, None, has_unique_id=False, strict=True
-            )
-
-        self.assertEqual(
-            "Error, the run_config is of type:"
-            + f"{type(None)}, yet it was expected to be of"
-            + " type dict.",
-            str(context.exception),
-        )
-
-    @typechecked
-    def test_catch_invalid_experiment_config_type(self) -> None:
-        """Verifies an error is thrown if configuration settings object is of
-        invalid type.
-
-        (String instead of the expected dictionary).
-        """
-
-        with self.assertRaises(Exception) as context:
-            # iterations dictionary of type None throws error.
-            verify_run_config(
-                self.supp_run_settings,
-                "string_instead_of_dict",
-                has_unique_id=False,
-                strict=True,
-            )
-        self.assertEqual(
-            "Error, the run_config is of type:"
-            + f'{type("")}, yet it was expected to be of'
-            + " type dict.",
-            str(context.exception),
-        )
-
-    @typechecked
     def test_error_is_thrown_on_invalid_configuration_setting_key(
         self,
     ) -> None:

@@ -29,7 +29,7 @@ class LIF_neuron:
         self.bias = Bias(bias)  # Amount of voltage added every timestep.
         self.du = Du(du)  # Change in current over time.
         self.dv = Dv(dv)  # Change in voltage over time.
-        self.name:str = name  # Set the identifier of the neuron.
+        self.name: str = name  # Set the identifier of the neuron.
         self.vth = Vth(vth)  # Threshold Voltage of the neuron.
 
         # Initialise default values.
