@@ -1,6 +1,6 @@
 """Contains function to assist the simulation tests."""
-
 from networkx.classes.digraph import DiGraph
+from typeguard import typechecked
 
 from src.snncompare.graph_generation.get_graph import (
     set_rand_neuron_properties,
@@ -15,6 +15,7 @@ from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 from tests.tests_helper import get_cyclic_graph_without_directed_path
 
 
+@typechecked
 def get_graph_for_cyclic_propagation(
     test_scope: Long_scope_of_tests,
 ) -> DiGraph:
