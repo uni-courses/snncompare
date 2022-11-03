@@ -58,7 +58,7 @@ def export_results_to_json(
     results_nx_graphs: dict,
     stage_index: int,
     to_run: dict,
-):
+) -> None:
     """Integrates the results per graph type into the graph, then export the
     results dictionary (again) into the stage 4 folder."""
     # Create new independent graphs dict to include the results.
@@ -108,7 +108,7 @@ def export_results_to_json(
     output_stage_files_3_and_4(results_nx_graphs, 4, to_run)
 
 
-def add_result_to_last_graph(snn_graphs, result_per_type: dict):
+def add_result_to_last_graph(snn_graphs: dict, result_per_type: dict) -> None:
     """Checks whether the incoming snn_graph is a list of graphs or single
     graph.
 
@@ -118,16 +118,7 @@ def add_result_to_last_graph(snn_graphs, result_per_type: dict):
     """
     if isinstance(snn_graphs, nx.DiGraph):
         snn_graphs.graph["results"] = result_per_type
-    # elif isinstance(snn_graphs, List):
-    #    raise Exception("Unexpected snn graphs type: list.")
-    #    snn_graphs[-1].graph["results"] = result_per_type
     else:
         raise Exception(
             "Error, unsupported snn graph type:" + f"{type(snn_graphs)}"
         )
-
-
-# def query_results(graph_type: str, passed: bool, stage_4_graphs: dict):
-#    """Returns all graphs of type: graph_type that have failed/passed the
-#    test."""
-#    # TODO: implement

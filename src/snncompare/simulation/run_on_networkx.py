@@ -69,7 +69,7 @@ def run_snn_on_networkx(G: nx.DiGraph, sim_duration: int) -> None:
     verify_networkx_graph_dimensions(G, sim_duration)
 
 
-def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t):
+def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t: int) -> None:
     """Creates a new neuron for the next timestep, by copying the old neuron.
 
     TODO: determine what to do with the synapses.
@@ -78,7 +78,7 @@ def copy_old_neurons_into_new_neuron_element(G: nx.DiGraph, t):
         G.nodes[node]["nx_LIF"].append(G.nodes[node]["nx_LIF"][t])
 
 
-def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration):
+def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration: int) -> None:
     """Ensures the graph contains at least sim_duration SNN neurons of a single
     name. This is because each neuron, with a single name, needs to be
     simulated for sim_duration timesteps. This simulation is done by storing
@@ -116,7 +116,7 @@ def verify_networkx_graph_dimensions(G: nx.DiGraph, sim_duration):
                 )
 
 
-def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph, t) -> None:
+def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph, t: int) -> None:
     """Runs the networkx simulation of the network for 1 timestep. The results
     of the simulation are stored in the G.nodes network.
 
@@ -158,7 +158,7 @@ def run_simulation_with_networkx_for_1_timestep(G: nx.DiGraph, t) -> None:
         nx_lif.a_in = nx_lif.a_in_next
 
 
-def reset_a_in_next_for_all_neurons(G, t: int):
+def reset_a_in_next_for_all_neurons(G: nx.DiGraph, t: int) -> None:
     """Resets the a_in_next for all neurons to 0.
 
     :param G: The original graph on which the MDSA algorithm is ran.

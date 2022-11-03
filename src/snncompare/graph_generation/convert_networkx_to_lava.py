@@ -243,7 +243,9 @@ def add_recurrent_edge(G: DiGraph, nodename: int, neuron: LIF) -> None:
         create_recurrent_synapse(neuron, weight)
 
 
-def get_neuron_properties(G: nx.DiGraph, nodename: str, t: int):
+def get_neuron_properties(
+    G: nx.DiGraph, nodename: str, t: int
+) -> Tuple[float, float, float, float]:
     """Returns the bias,du,dv and vth of a node of the MDSA SNN graph.
 
     :param G: The original graph on which the MDSA algorithm is ran. Networkx
@@ -258,7 +260,9 @@ def get_neuron_properties(G: nx.DiGraph, nodename: str, t: int):
     return bias, du, dv, vth
 
 
-def get_neuron_properties_old(G, node):
+def get_neuron_properties_old(
+    G: nx.DiGraph, node: int
+) -> Tuple[float, float, float, float]:
     """Returns the neuron properties for the old implementation of the graph.
 
     # TODO: remove the necesity for this method by only generating networkx
@@ -287,7 +291,7 @@ def create_recurrent_synapse(neuron: LIF, weight: float) -> LIF:
     return neuron
 
 
-def create_weighted_synapse(weight_value: float):
+def create_weighted_synapse(weight_value: float) -> Dense:
     """Creates a weighted synapse between neuron a and neuron b.
 
     :param w: Synaptic weight.

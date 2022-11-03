@@ -22,7 +22,7 @@ from src.snncompare.graph_generation.stage_1_get_input_graphs import (
 
 def verify_stage_1_graphs(
     experiment_config: dict, run_config: dict, graphs: dict
-):
+) -> None:
     """Verifies the generated graphs are compliant and complete for the
     specified run configuration.
 

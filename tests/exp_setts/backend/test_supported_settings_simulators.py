@@ -21,7 +21,7 @@ class Test_simulators_settings(unittest.TestCase):
     invalid simulators settings.."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # self.supp_exp_setts = Supported_experiment_settings()
 

@@ -49,7 +49,7 @@ def create_default_exp_setts() -> None:
     """Generates the default experiment settings json file."""
 
 
-def default_experiment_config():
+def default_experiment_config() -> dict:
     """Creates example experiment configuration setting."""
     # Create prerequisites
     supp_exp_setts = Supported_experiment_settings()
@@ -58,8 +58,6 @@ def default_experiment_config():
 
     # Create the experiment configuration settings for a run with adaptation
     # and with radiation.
-    print(get_algo_configs(MDSA(list(range(0, 4, 1))).__dict__))
-
     with_adaptation_with_radiation = {
         # TODO: set using a verification setting.
         "algorithms": {

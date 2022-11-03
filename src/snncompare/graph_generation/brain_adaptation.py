@@ -1,5 +1,8 @@
 """Applies brain adaptation to a MDSA SNN graph."""
 import copy
+from typing import Any, List, Tuple
+
+import networkx as nx
 
 from src.snncompare.graph_generation.helper_network_structure import (
     plot_coordinated_graph,
@@ -12,14 +15,14 @@ from tests.exp_setts.unsorted.test_create_testobject import add_monitor_to_dict
 
 
 def adaptation_mech_2_networkx_and_snn(
-    has_radiation,
-    latest_millis,
-    latest_time,
-    m,
-    rad_dam,
-    sim_time,
-    test_object,
-):
+    has_radiation: bool,
+    latest_millis: Any,
+    latest_time: Any,
+    m: int,
+    rad_dam: Any,
+    sim_time: int,
+    test_object: Any,
+) -> Tuple[List[str], Any, Any]:
     """TODO: delete this method as it is not used.
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -62,13 +65,13 @@ def adaptation_mech_2_networkx_and_snn(
 
 
 def implement_adaptation_mechanism(
-    get_degree,
-    has_radiation,
-    m,
-    rad_dam,
-    test_object,
-    plot_graph=False,
-):
+    get_degree: nx.DiGraph,
+    has_radiation: bool,
+    m: int,
+    rad_dam: Any,
+    test_object: Any,
+    plot_graph: bool = False,
+) -> List[str]:
     """
     :param get_degree: Graph with the MDSA SNN approximation solution.
     :param has_radiation: Indicates whether the experiment simulates radiation
@@ -136,7 +139,7 @@ def implement_adaptation_mechanism(
     return dead_neuron_names
 
 
-def store_input_synapses(get_degree, node_name):
+def store_input_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -150,7 +153,7 @@ def store_input_synapses(get_degree, node_name):
     get_degree.nodes[node_name]["input_edges"] = input_edges
 
 
-def store_output_synapses(get_degree, node_name):
+def store_output_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -164,7 +167,9 @@ def store_output_synapses(get_degree, node_name):
     get_degree.nodes[node_name]["output_edges"] = output_edges
 
 
-def create_redundant_node(d, get_degree, node_name):
+def create_redundant_node(
+    d: float, get_degree: nx.DiGraph, node_name: str
+) -> None:
     """Create neuron and set coordinate position.
 
     :param d: Unit length of the spacing used in the positions of the nodes for
@@ -189,7 +194,7 @@ def create_redundant_node(d, get_degree, node_name):
 
 
 # pylint: disable=R0801
-def compute_vth_for_delay(get_degree, node_name):
+def compute_vth_for_delay(get_degree: nx.DiGraph, node_name: str) -> float:
     """Increases vth with 1 to realise a delay of t=1 for the redundant
     spike_once neurons, rand neurons and selector neurons.
 
@@ -210,7 +215,7 @@ def compute_vth_for_delay(get_degree, node_name):
     return vth
 
 
-def add_input_synapses(get_degree, node_name):
+def add_input_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -229,7 +234,7 @@ def add_input_synapses(get_degree, node_name):
         )
 
 
-def add_output_synapses(get_degree, node_name):
+def add_output_synapses(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -249,7 +254,7 @@ def add_output_synapses(get_degree, node_name):
         )
 
 
-def add_inhibitory_synapse(get_degree, node_name):
+def add_inhibitory_synapse(get_degree: nx.DiGraph, node_name: str) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -262,7 +267,9 @@ def add_inhibitory_synapse(get_degree, node_name):
     # TODO: set edge weight
 
 
-def add_recurrent_inhibitiory_synapses(get_degree, nodename):
+def add_recurrent_inhibitiory_synapses(
+    get_degree: nx.DiGraph, nodename: str
+) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -281,7 +288,7 @@ def add_recurrent_inhibitiory_synapses(get_degree, nodename):
         )
 
 
-def convert_new_graph_to_snn(test_object, sim_time):
+def convert_new_graph_to_snn(test_object: Any, sim_time: int) -> Any:
     """
 
     :param test_object: Object containing test settings.

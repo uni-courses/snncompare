@@ -13,6 +13,7 @@ plt_tex.plotSingleLine(plt_tex,range(0, len(dataseries)),dataseries,"x-axis
 label [units]","y-axis label [units]",lineLabel,"3b",4,11)"""
 
 import os
+from typing import Any, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,22 +35,22 @@ from matplotlib import lines
 class Plot_to_tex:
     """Object used to output plots to latex directory of project."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.script_dir = self.get_script_dir()
 
     # plot graph (legendPosition = integer 1 to 4)
     def plotSingleLine(
         self,
-        x_path,
-        y_series,
-        x_axis_label,
-        y_axis_label,
-        label,
-        filename,
-        legendPosition,
-        project_name,
-    ):
-        """
+        x_path: Any,
+        y_series: Any,
+        x_axis_label: Any,
+        y_axis_label: Any,
+        label: str,
+        filename: str,
+        legendPosition: Any,
+        project_name: str,
+    ) -> None:
+        """# TODO: delete or update function.
 
         :param x_path: param y_series:
         :param x_axis_label: param y_axis_label:
@@ -59,7 +60,6 @@ class Plot_to_tex:
         :param filename: param project_name:
         :param y_axis_label: param project_name:
         :param project_name:
-
         """
         # pylint: disable=R0913
         # TODO: reduce 9/5 arguments to at most 5/5 arguments.
@@ -82,16 +82,16 @@ class Plot_to_tex:
     # plot graphs
     def plotMultipleLines(
         self,
-        x,
-        y_series,
-        x_label,
-        y_label,
-        label,
-        filename,
-        legendPosition,
-        project_name,
-    ):
-        """
+        x: List,
+        y_series: Any,
+        x_label: Any,
+        y_label: Any,
+        label: str,
+        filename: str,
+        legendPosition: Any,
+        project_name: str,
+    ) -> None:
+        """# TODO: delete or update function.
 
         :param x: param y_series:
         :param x_label: param y_label:
@@ -101,7 +101,6 @@ class Plot_to_tex:
         :param filename: param project_name:
         :param y_label: param project_name:
         :param project_name:
-
         """
         # pylint: disable=R0913
         # TODO: reduce 9/5 arguments to at most 5/5 arguments.
@@ -142,7 +141,7 @@ class Plot_to_tex:
     # Generate random line colours
     # Source: https://stackoverflow.com/questions/14720331/
     # how-to-generate-random-colors-in-matplotlib
-    def get_cmap(self, n, name="hsv"):
+    def get_cmap(self, n: int, name: str = "hsv") -> Any:
         """Returns a function that maps each index in 0, 1, ..., n-1 to a
         distinct RGB color; the keyword argument name must be a standard mpl
         colormap name.
@@ -152,7 +151,7 @@ class Plot_to_tex:
         """
         return plt.cm.get_cmap(name, n)
 
-    def generateLineTypes(self, y_series):
+    def generateLineTypes(self, y_series: List) -> List:
         """
 
         :param y_series:
@@ -176,7 +175,9 @@ class Plot_to_tex:
 
     # Create a table with: table_matrix = np.zeros((4,4),dtype=object) and pass
     # it to this object
-    def put_table_in_tex(self, table_matrix, filename, project_name):
+    def put_table_in_tex(
+        self, table_matrix: Any, filename: str, project_name: str
+    ) -> None:
         """
 
         :param table_matrix: param filename:
@@ -198,13 +199,13 @@ class Plot_to_tex:
             + ".txt",
             table_matrix,
             delimiter=" & ",
-            fmt=format,
+            fmt=format,  # type: ignore[arg-type]
             newline="  \\\\ \\hline \n",
         )
 
     # replace this with your own table creation and then pass it to
     # put_table_in_tex(..)
-    def example_create_a_table(self):
+    def example_create_a_table(self) -> None:
         """Example on how to create a latex table from Python."""
         project_name = "1"
         table_name = "example_table_name"
@@ -221,12 +222,12 @@ class Plot_to_tex:
 
         self.put_table_in_tex(table_matrix, table_name, project_name)
 
-    def get_script_dir(self):
+    def get_script_dir(self) -> str:
         """returns the directory of this script regardless of from which level
         the code is executed."""
         return os.path.dirname(__file__)
 
-    def export_plot(self, some_plt, filename):
+    def export_plot(self, some_plt: Any, filename: str) -> None:
         """
 
         :param plt:
@@ -238,7 +239,9 @@ class Plot_to_tex:
             "latex/Images/" + "graphs/" + filename + ".png", dpi=200
         )
 
-    def create_target_dir_if_not_exists(self, path, new_dir_name):
+    def create_target_dir_if_not_exists(
+        self, path: str, new_dir_name: str
+    ) -> None:
         """
 
         :param path:

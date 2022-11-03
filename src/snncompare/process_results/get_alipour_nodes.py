@@ -1,6 +1,8 @@
 """Computes which nodes are selected by the MDSA algorithm presented by Alipour
 et al."""
 
+from typing import Any, Dict
+
 import networkx as nx
 
 from src.snncompare.helper import (
@@ -10,11 +12,15 @@ from src.snncompare.helper import (
 )
 
 
+# pylint: disable=R0913
 def get_alipour_nodes(
     G: nx.Graph,
+    iteration: int,
     m_val: int,
-    rand_props,
-):
+    rand_props: Dict[str, Any],
+    seed: int,
+    size: int,
+) -> Dict[str, int]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -42,14 +48,14 @@ def get_alipour_nodes(
     compute_mark(delta, G, rand_ceil)
 
     compute_marks_for_m_larger_than_one(
-        delta,
-        G,
-        inhibition,
-        None,
-        m_val,
-        None,
-        None,
-        rand_ceil,
+        delta=delta,
+        G=G,
+        inhibition=inhibition,
+        iteration=iteration,
+        m=m_val,
+        seed=seed,
+        size=size,
+        rand_ceil=rand_ceil,
         export=False,
         show=False,
     )

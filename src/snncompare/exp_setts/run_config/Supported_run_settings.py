@@ -75,7 +75,9 @@ class Supported_run_settings:
         verify_run_config(self, run_config, has_unique_id=False, strict=False)
         return run_config
 
-    def assert_has_key(self, some_dict: dict, key: str, some_type: type):
+    def assert_has_key(
+        self, some_dict: dict, key: str, some_type: type
+    ) -> None:
         """Asserts a dictionary has some key with a value of a certain type.
 
         Throws error if the key does not exist, or if the value is of an

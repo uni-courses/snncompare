@@ -1,8 +1,11 @@
 """Loads pickle test result files ."""
-import pickle  # nosec - User is trusted not to load malicious pickle files.
+import pickle  # nosec
+from typing import Any, List, Tuple  # nosec
+
+import networkx as nx
 
 
-def get_desired_properties_for_graph_printing():
+def get_desired_properties_for_graph_printing() -> List[str]:
     """Returns the properties that are to be printed to CLI."""
     desired_properties = [
         "bias",
@@ -16,7 +19,9 @@ def get_desired_properties_for_graph_printing():
     return desired_properties
 
 
-def get_neurons(G, sim_type, neuron_types):
+def get_neurons(
+    G: nx.DiGraph, sim_type: str, neuron_types: str
+) -> Tuple[List, dict]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -24,7 +29,7 @@ def get_neurons(G, sim_type, neuron_types):
     :param neuron_types:
 
     """
-    neurons_dict_per_type = {}
+    neurons_dict_per_type: dict = {}
     if sim_type not in ["nx_LIF", "lava_LIF"]:
         raise Exception(f"Unexpected simulation type demanded:{sim_type}")
     for neuron_type in neuron_types:
@@ -50,8 +55,9 @@ def get_neurons(G, sim_type, neuron_types):
     return neurons, neurons_dict_per_type
 
 
-def load_pickle(pickle_filename):
-    """TODO: change to load hierarchic objects instead of parameter list."""
+def load_pickle(pickle_filename: str) -> Any:
+    """TODO: change to load hierarchic objects instead of parameter list.
+    TODO: delete"""
     # pylint: disable=R0914
     # TODO: reduce the amount of local variables from 27/15 to at most 15/15.
 

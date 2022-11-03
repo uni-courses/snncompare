@@ -41,7 +41,17 @@ repos:
    rev: v0.950
    hooks:
     - id: mypy
-      #args: ["--disallow-untyped-calls", "--disallow-untyped-defs", "--disallow-incomplete-defs", "--strict"]
+      args: ["--disallow-untyped-calls", "--disallow-untyped-defs"]
+
+  # TODO:
+  #--strict
+  #--disallow-incomplete-defs
+  #--disallow-any-unimported
+  #--disallow-any-expr
+  #--disallow-any-decorated
+  #--disallow-any-explicit
+  #--disallow-any-generics
+  #--disallow-subclassing-any
 
 # Tests if there are spelling errors in the code.
  - repo: https://github.com/codespell-project/codespell

@@ -7,7 +7,7 @@ import time
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List, Tuple
 
 import networkx as nx
 import pylab as plt
@@ -29,13 +29,13 @@ from src.snncompare.simulation.verify_graph_is_snn import (
 
 
 def fill_dictionary(
-    neuron_dict,
-    neurons,
-    previous_us,
-    previous_vs,
-    previous_selector=None,
-    previous_has_spiked=None,
-):
+    neuron_dict: dict,
+    neurons: List,
+    previous_us: dict,
+    previous_vs: dict,
+    previous_selector: dict = None,
+    previous_has_spiked: dict = None,
+) -> Tuple[dict, dict, Any, Any]:
     """
 
     :param neuron_dict:
@@ -72,16 +72,18 @@ def fill_dictionary(
     return previous_us, previous_vs, None, None
 
 
-def sort_neurons(neurons, neuron_dict):
+def sort_neurons(neurons: List, neuron_dict: dict) -> List:
     """
 
     :param neurons:
     :param neuron_dict:
 
     """
-    sorted_neurons = []
+    sorted_neurons: List = []
     # Sort by value.
-    sorted_dict = dict(sorted(neuron_dict.items(), key=lambda item: item[1]))
+    sorted_dict: dict = dict(
+        sorted(neuron_dict.items(), key=lambda item: item[1])
+    )
     for neuron, _ in sorted_dict.items():
         if neuron in neurons:
             sorted_neurons.append(neuron)
@@ -115,7 +117,7 @@ def generate_list_of_n_random_nrs(
     )
 
 
-def get_y_position(G, node, neighbour, d):
+def get_y_position(G: nx.Graph, node: int, neighbour: int, d: float) -> float:
     """Ensures the degree receiver nodes per node are aligned with continuous
     interval.
 
@@ -133,7 +135,7 @@ def get_y_position(G, node, neighbour, d):
     return float((node + neighbour / len(G)) * 4 * d)
 
 
-def delete_files_in_folder(folder):
+def delete_files_in_folder(folder: str) -> None:
     """
 
     :param folder:
@@ -147,7 +149,7 @@ def delete_files_in_folder(folder):
     os.makedirs(folder, exist_ok=False)
 
 
-def delete_file_if_exists(filepath):
+def delete_file_if_exists(filepath: str) -> None:
     """Deletes a file if it exists."""
     try:
         os.remove(filepath)
@@ -156,19 +158,19 @@ def delete_file_if_exists(filepath):
 
 
 def export_get_degree_graph(
-    has_adaptation,
-    has_radiation,
-    G,
-    get_degree,
-    iteration,
-    m,
-    neuron_death_probability,
-    rand_props,
-    seed,
-    sim_time,
-    size,
-    test_object,
-):
+    has_adaptation: bool,
+    has_radiation: bool,
+    G: nx.DiGraph,
+    get_degree: dict,
+    iteration: int,
+    m: int,
+    neuron_death_probability: float,
+    rand_props: Dict[str, Any],
+    seed: int,
+    sim_time: int,
+    size: int,
+    test_object: Any,
+) -> None:
     """
 
     :param has_adaptation:
@@ -237,7 +239,7 @@ def export_get_degree_graph(
         )
 
 
-def remove_monitors_from_get_degree(get_degree):
+def remove_monitors_from_get_degree(get_degree: nx.DiGraph) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -249,7 +251,9 @@ def remove_monitors_from_get_degree(get_degree):
         get_degree.nodes[node_name]["spike_monitor_id"] = None
 
 
-def get_counter_neurons_from_dict(expected_nr_of_neurons, neuron_dict, m):
+def get_counter_neurons_from_dict(
+    expected_nr_of_neurons: int, neuron_dict: dict, m: int
+) -> List:
     """
 
         :param expected_nr_of_neurons:
@@ -278,7 +282,9 @@ def get_counter_neurons_from_dict(expected_nr_of_neurons, neuron_dict, m):
     return counter_neurons
 
 
-def get_neuron_from_dict(neuron_dict, neurons, neuron_name):
+def get_neuron_from_dict(
+    neuron_dict: dict, neurons: List, neuron_name: str
+) -> Any:
     """
 
     :param neuron_dict:
@@ -289,10 +295,10 @@ def get_neuron_from_dict(neuron_dict, neurons, neuron_name):
     for neuron in neurons:
         if neuron_dict[neuron] == neuron_name:
             return neuron
-    raise Exception("Did not find neuron:{neuron_name} in dict:{neuron_dict}")
+    raise Exception(f"Did not find neuron:{neuron_name} in dict:{neuron_dict}")
 
 
-def print_time(status, previous_millis):
+def print_time(status: Any, previous_millis: int) -> Tuple[Any, int]:
     """
 
     :param status:
@@ -313,8 +319,13 @@ def print_time(status, previous_millis):
 
 
 def write_results_to_file(
-    has_passed, m, G, iteration, G_alipour, counter_neurons
-):
+    has_passed: bool,
+    m: int,
+    G: nx.DiGraph,
+    iteration: int,
+    G_alipour: nx.DiGraph,
+    counter_neurons: List,
+) -> None:
     """
 
         :param has_passed:
@@ -352,7 +363,7 @@ def write_results_to_file(
         file1.close()
 
 
-def create_neuron_monitors(test_object, sim_time):
+def create_neuron_monitors(test_object: Any, sim_time: int) -> None:
     """
 
     :param test_object: Object containing test settings.
@@ -396,7 +407,7 @@ def create_neuron_monitors(test_object, sim_time):
             ] = monitor_process_id
 
 
-def store_spike_values_in_neurons(get_degree, t):
+def store_spike_values_in_neurons(get_degree: nx.DiGraph, t: int) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -430,16 +441,19 @@ def store_spike_values_in_neurons(get_degree, t):
 
 
 def full_alipour(
-    iteration,
-    G,
-    m,
-    rand_props,
-    seed,
-    size,
-    show=False,
-    export=False,
-):
-    """param iteration: The initialisation iteration that is used.
+    iteration: int,
+    G: nx.DiGraph,
+    m: int,
+    rand_props: Any,
+    seed: int,
+    size: int,
+    show: bool = False,
+    export: bool = False,
+) -> nx.DiGraph:
+    """TODO: remove return, the results are stored in the graph, even without
+    returning the graph.
+
+        param iteration: The initialisation iteration that is used.
 
         :param G: The original graph on which the MDSA algorithm is ran.
         :param m: The amount of approximation iterations used in the MDSA
@@ -478,14 +492,14 @@ def full_alipour(
     compute_mark(delta, G, rand_ceil)
 
     compute_marks_for_m_larger_than_one(
-        delta,
-        G,
-        inhibition,
-        iteration,
-        m,
-        seed,
-        size,
-        rand_ceil,
+        delta=delta,
+        G=G,
+        inhibition=inhibition,
+        iteration=iteration,
+        m=m,
+        seed=seed,
+        size=size,
+        rand_ceil=rand_ceil,
         export=False,
         show=False,
     )
@@ -495,7 +509,7 @@ def full_alipour(
     return G
 
 
-def compute_mark(delta, G, rand_ceil):
+def compute_mark(delta: float, G: nx.DiGraph, rand_ceil: float) -> None:
     """Computes the mark at the counter neurons after the simulation is
     completed."""
     # Compute the mark based on degree+randomness=weight
@@ -523,8 +537,15 @@ def compute_mark(delta, G, rand_ceil):
 
 
 def plot_alipour(
-    configuration, iteration, seed, size, m, G, export=True, show=False
-):
+    configuration: str,
+    iteration: int,
+    seed: int,
+    size: int,
+    m: int,
+    G: nx.DiGraph,
+    export: bool = True,
+    show: bool = False,
+) -> None:
     """
 
     :param configuration:
@@ -561,7 +582,7 @@ def plot_alipour(
     plt.close()
 
 
-def get_alipour_labels(G, configuration):
+def get_alipour_labels(G: nx.DiGraph, configuration: str) -> Dict[str, str]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -601,18 +622,18 @@ def file_exists(filepath: str) -> bool:
 
 
 def compute_marks_for_m_larger_than_one(
-    delta,
-    G,
-    inhibition,
-    iteration,
-    m,
-    seed,
-    size,
-    rand_ceil,
-    export=False,
-    show=False,
-):
-    """Returns a list with the counter neuron node names."""
+    delta: float,
+    G: nx.DiGraph,
+    inhibition: float,
+    iteration: int,
+    m: int,
+    seed: int,
+    size: int,
+    rand_ceil: int,
+    export: bool = False,
+    show: bool = False,
+) -> None:
+    """Stores the marks in the counter nodes of the graph.."""
     # pylint: disable=R0913
     # TODO: reduce 10/5 arguments to at most 5/5.
     # Don't compute for m=0
@@ -651,8 +672,13 @@ def compute_marks_for_m_larger_than_one(
 
 
 def set_node_default_values(
-    delta, G, inhibition, node, rand_ceil, uninhibited_spread_rand_nrs
-):
+    delta: float,
+    G: nx.DiGraph,
+    inhibition: int,
+    node: int,
+    rand_ceil: float,
+    uninhibited_spread_rand_nrs: List[float],
+) -> None:
     """Initialises the starting values of the node attributes."""
     # pylint: disable=R0913
     # TODO: reduce 6/5 arguments to at most 5/5.
@@ -695,7 +721,7 @@ def is_identical(
     return True
 
 
-def get_extensions_list(run_config, stage_index) -> list:
+def get_extensions_list(run_config: dict, stage_index: int) -> List:
     """
 
     :param run_config: param stage_index:
@@ -706,7 +732,7 @@ def get_extensions_list(run_config, stage_index) -> list:
     return list(get_extensions_dict(run_config, stage_index).values())
 
 
-def get_extensions_dict(run_config, stage_index) -> dict:
+def get_extensions_dict(run_config: dict, stage_index: int) -> dict:
     """Returns the file extensions of the output types. The dictionary key
     describes the content of the file, and the extension is given as the value.
     Config_and_graphs means that the experiment or run config is included in
@@ -731,7 +757,9 @@ def get_extensions_dict(run_config, stage_index) -> dict:
     raise Exception("Unsupported experiment stage.")
 
 
-def add_stage_completion_to_graph(some_graph: nx.DiGraph, stage_index: int):
+def add_stage_completion_to_graph(
+    some_graph: nx.DiGraph, stage_index: int
+) -> None:
     """Adds the completed stage to the list of completed stages for the
     incoming graph."""
     # Initialise the completed_stages key.

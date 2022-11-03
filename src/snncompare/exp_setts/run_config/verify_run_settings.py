@@ -20,7 +20,12 @@ if TYPE_CHECKING:
 
 
 # pylint: disable=W0613
-def verify_run_config(supp_run_setts, run_config, has_unique_id, strict: bool):
+def verify_run_config(
+    supp_run_setts: Supported_run_settings,
+    run_config: str | dict | None,
+    has_unique_id: bool,
+    strict: bool,
+) -> dict:
     """Verifies the selected experiment configuration settings are valid.
 
     :param run_config: param has_unique_id:
@@ -83,8 +88,8 @@ def verify_run_config_dict_is_complete(
 
 
 def verify_run_config_dict_contains_only_valid_entries(
-    supp_run_setts, run_config, strict: bool
-):
+    supp_run_setts: Supported_run_settings, run_config: dict, strict: bool
+) -> None:
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in run_config.keys():
@@ -105,7 +110,7 @@ def verify_run_config_dict_contains_only_valid_entries(
                 )
 
 
-def verify_has_unique_id(run_config):
+def verify_has_unique_id(run_config: dict) -> None:
     """Verifies the config setting has a unique id."""
     if not isinstance(run_config, dict):
         raise Exception(

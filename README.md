@@ -261,3 +261,9 @@ Coverage XML written to file cov.xml
 =================== 82 passed, 1 warning in 415.57s (0:06:55) =======================
 
 ```
+
+And for type checking:
+
+```
+mypy --disallow-untyped-calls --disallow-untyped-defs tests/export_results/performed_stage/test_performed_stage_TTFF.py
+```

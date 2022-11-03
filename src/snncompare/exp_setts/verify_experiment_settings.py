@@ -2,21 +2,28 @@
 
 (The values of the settings may vary, yet the types should be the same.)
 """
-from typing import Any, Dict, List, Optional, Tuple, Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.algos.verify_algos import (
     verify_algos_in_experiment_config,
 )
-from src.snncompare.exp_setts.Supported_experiment_settings import (
-    Supported_experiment_settings,
-)
+
+if TYPE_CHECKING:
+    from src.snncompare.exp_setts.Supported_experiment_settings import (
+        Supported_experiment_settings,
+    )
 
 
 # pylint: disable=W0613
 def verify_experiment_config(
-    supp_exp_setts, experiment_config, has_unique_id, strict: bool
-):
+    supp_exp_setts: Supported_experiment_settings,
+    experiment_config: None | str | dict,
+    has_unique_id: bool,
+    strict: bool,
+) -> None:
     """Verifies the selected experiment configuration settings are valid.
 
     :param experiment_config: param has_unique_id:
@@ -93,12 +100,10 @@ def verify_experiment_config(
     verify_bool_setting(experiment_config["overwrite_sim_results"])
     verify_bool_setting(experiment_config["overwrite_visualisation"])
 
-    return experiment_config
-
 
 def verify_experiment_config_dict_is_complete(
     supp_exp_setts: Supported_experiment_settings,
-    experiment_config: Dict[str, Any],
+    experiment_config: dict[str, Any],
 ) -> None:
     """Verifies the configuration settings dictionary is complete."""
     for expected_key in supp_exp_setts.parameters:
@@ -110,8 +115,10 @@ def verify_experiment_config_dict_is_complete(
 
 
 def verify_experiment_config_dict_contains_only_valid_entries(
-    supp_exp_setts, experiment_config, strict: bool
-):
+    supp_exp_setts: Supported_experiment_settings,
+    experiment_config: dict,
+    strict: bool,
+) -> None:
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in experiment_config.keys():
@@ -180,7 +187,7 @@ def verify_list_setting(
 
 def get_expected_range(
     setting_name: str, supp_exp_setts: Supported_experiment_settings
-) -> Union[List[int], List[str]]:
+) -> list[int] | list[str]:
     """Returns the ranges as specified in the Supported_experiment_settings
     object for the asked setting.
 
@@ -202,7 +209,7 @@ def get_expected_range(
 
 def verify_size_and_max_graphs_settings(
     supp_exp_setts: Supported_experiment_settings,
-    size_and_max_graphs_setting: Union[List[Tuple[int, int]], None],
+    size_and_max_graphs_setting: list[tuple[int, int]] | None,
 ) -> None:
     """Verifies the configuration setting size_and_max_graphs_setting values
     are a list of tuples with at least 1 tuple, and that its values are within
@@ -234,9 +241,9 @@ def verify_size_and_max_graphs_settings(
 
 
 def verify_integer_settings(
-    integer_setting: Optional[int],
-    min_val: Optional[int] = None,
-    max_val: Optional[int] = None,
+    integer_setting: int | None,
+    min_val: int | None = None,
+    max_val: int | None = None,
 ) -> None:
     """Verifies an integer setting is of type integer and that it is within the
     supported minimum and maximum value range..
@@ -281,7 +288,7 @@ def verify_min_max(min_val: int, max_val: int) -> None:
         )
 
 
-def verify_bool_setting(bool_setting: Union[None, bool, str]) -> None:
+def verify_bool_setting(bool_setting: None | bool | str) -> None:
     """Verifies the bool_setting value is of type: boolean.
 
     :param bool_setting:
@@ -294,7 +301,7 @@ def verify_bool_setting(bool_setting: Union[None, bool, str]) -> None:
 
 
 def verify_object_type(
-    obj: Union[float, List, Tuple],
+    obj: float | list | tuple,
     expected_type: type,
     element_type: type = None,
 ) -> None:
@@ -332,7 +339,9 @@ def verify_object_type(
 
 
 def verify_adap_and_rad_settings(
-    supp_exp_setts, some_dict, check_type
+    supp_exp_setts: Supported_experiment_settings,
+    some_dict: dict | str | None,
+    check_type: str,
 ) -> dict:
     """Verifies the settings of adaptations or radiations property are valid.
     Returns a dictionary with the adaptations setting if the settngs are valid.
@@ -344,7 +353,7 @@ def verify_adap_and_rad_settings(
 
     # Load the example settings from the Supported_experiment_settings object.
     if check_type == "adaptations":
-        reference_object: Dict[str, Any] = supp_exp_setts.adaptations
+        reference_object: dict[str, Any] = supp_exp_setts.adaptations
     elif check_type == "radiations":
         reference_object = supp_exp_setts.radiations
     else:
@@ -374,12 +383,16 @@ def verify_adap_and_rad_settings(
     )
 
 
-def verify_algorithm_settings(supp_exp_setts, some_dict, check_type) -> dict:
+def verify_algorithm_settings(
+    supp_exp_setts: Supported_experiment_settings,
+    some_dict: dict,
+    check_type: str,
+) -> dict:
     """TODO: Verifies the settings of the algorithm are valid."""
 
 
 def verify_adaptation_values(
-    supp_exp_setts, adaptations: dict, key: str
+    supp_exp_setts: Supported_experiment_settings, adaptations: dict, key: str
 ) -> None:
     """The configuration settings contain key named: adaptations. The value of
     belonging to this key is a dictionary, which also has several keys.
@@ -419,7 +432,7 @@ def verify_adaptation_values(
 
 
 def verify_radiations_values(
-    supp_exp_setts, radiations: dict, key: str
+    supp_exp_setts: Supported_experiment_settings, radiations: dict, key: str
 ) -> None:
     """The configuration settings contain key named: radiations. The value of
     belonging to this key is a dictionary, which also has several keys.
@@ -475,7 +488,7 @@ def verify_radiations_values(
                 )
 
 
-def verify_has_unique_id(experiment_config):
+def verify_has_unique_id(experiment_config: dict) -> None:
     """Verifies the config setting has a unique id."""
     if not isinstance(experiment_config, dict):
         raise Exception(

@@ -75,7 +75,9 @@ def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
     return graphs_dict
 
 
-def get_graph_attributes_from_dict_and_return_nx_graph(json_graph: dict):
+def get_graph_attributes_from_dict_and_return_nx_graph(
+    json_graph: dict,
+) -> nx.DiGraph:
     """Takes a json input graph, which is a dictionary.
 
     Then gets the graph attributes from that dict, converts the json

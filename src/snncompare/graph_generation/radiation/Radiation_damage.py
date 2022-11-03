@@ -14,12 +14,12 @@ import networkx as nx
 class Radiation_damage:
     """Creates expected properties of the spike_once neuron."""
 
-    def __init__(self, probability):
+    def __init__(self, probability: float):
         self.neuron_death_probability = (
             probability  # % of neurons that will decay.
         )
 
-    def get_random_list_of_len_n(self, n, max_val):
+    def get_random_list_of_len_n(self, n: int, max_val: int) -> List[int]:
         """Does not include max, only below.
 
         :param n:
@@ -32,7 +32,9 @@ class Radiation_damage:
 
         return randomlist
 
-    def inject_simulated_radiation(self, get_degree, probability, seed):
+    def inject_simulated_radiation(
+        self, get_degree: dict, probability: float, seed: int
+    ) -> List[str]:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -56,7 +58,7 @@ class Radiation_damage:
 
     def get_random_neurons(
         self, get_degree: nx.DiGraph, probability: float, seed: int
-    ):
+    ) -> List[str]:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -92,7 +94,7 @@ class Radiation_damage:
         # dead_neuron_names.append(node_name)
         return dead_neuron_names
 
-    def kill_neuron(self, probability):
+    def kill_neuron(self, probability: float) -> bool:
         """probabiltiy: 0 to 1 (exc. 1)
         Returns bool true or false
 
@@ -102,7 +104,7 @@ class Radiation_damage:
 
         return random.random() < probability  # nosec - using a random seed.
 
-    def get_list_of_dead_neurons(self, get_degree):
+    def get_list_of_dead_neurons(self, get_degree: nx.DiGraph) -> List[str]:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -113,7 +115,7 @@ class Radiation_damage:
         self.get_degree_receiver_nodes(get_degree)
         return spike_once_neurons
 
-    def get_spike_once_nodes(self, get_degree):
+    def get_spike_once_nodes(self, get_degree: nx.DiGraph) -> List[str]:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -131,7 +133,7 @@ class Radiation_damage:
         # if node_name == "spike_once_0":
         #    vth = 9999
 
-    def get_degree_receiver_nodes(self, get_degree):
+    def get_degree_receiver_nodes(self, get_degree: nx.DiGraph) -> List[str]:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -145,7 +147,7 @@ class Radiation_damage:
                 degree_receiver_nodes.append(node_name)
         return degree_receiver_nodes
 
-    def get_selector_nodes(self, get_degree):
+    def get_selector_nodes(self, get_degree: nx.DiGraph) -> List[str]:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -159,7 +161,9 @@ class Radiation_damage:
                 selector_nodes.append(node_name)
         return selector_nodes
 
-    def kill_neurons(self, get_degree, dead_node_names):
+    def kill_neurons(
+        self, get_degree: nx.DiGraph, dead_node_names: List[str]
+    ) -> None:
         """Simulates dead neurons by setting spiking voltage threshold to near
         infinity.
 
@@ -173,7 +177,9 @@ class Radiation_damage:
                 get_degree.nodes[node_name]["vth"] = 9999
 
 
-def store_dead_neuron_names_in_graph(G, dead_neuron_names):
+def store_dead_neuron_names_in_graph(
+    G: nx.DiGraph, dead_neuron_names: List[str]
+) -> None:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -190,7 +196,7 @@ def store_dead_neuron_names_in_graph(G, dead_neuron_names):
 
 def verify_radiation_is_applied(
     some_graph: nx.DiGraph, dead_neuron_names: List[str], rad_type: str
-):
+) -> None:
     """Goes through the dead neuron names, and verifies the radiation is
     applied correctly."""
 

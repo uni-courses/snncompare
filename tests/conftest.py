@@ -3,14 +3,14 @@
 Thanks to Guilherme Salgado.
 """
 
-from typing import Iterator
+from typing import Any, Iterator
 
 import pytest
 from pyannotate_runtime import collect_types
 
 
 # pylint: disable=W0613
-def pytest_collection_finish(session):
+def pytest_collection_finish(session: Any) -> None:
     """Handle the pytest collection finish hook: configure pyannotate.
 
     Explicitly delay importing `collect_types` until all tests have been
@@ -32,6 +32,6 @@ def collect_types_fixture() -> Iterator:
 
 
 # pylint: disable=W0613
-def pytest_sessionfinish(session, exitstatus):
+def pytest_sessionfinish(session: Any, exitstatus: Any) -> None:
     """Performs unknown activity."""
     collect_types.dump_stats("type_info.json")

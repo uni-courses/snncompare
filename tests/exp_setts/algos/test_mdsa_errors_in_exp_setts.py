@@ -23,7 +23,7 @@ class Test_mdsa(unittest.TestCase):
     specifications."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.mdsa = MDSA(list(range(0, 4, 1)))
         self.mdsa_configs = get_algo_configs(self.mdsa.__dict__)

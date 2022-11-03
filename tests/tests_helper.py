@@ -5,7 +5,7 @@ import copy
 import pathlib
 import random
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Any, List
 
 import jsons
 import networkx as nx
@@ -29,12 +29,18 @@ if TYPE_CHECKING:
     )
 
 
-def get_n_random_run_configs(run_configs, n: int, seed: int = None):
-    """Returns n random experiment configurations."""
+def get_n_random_run_configs(
+    run_configs: list[dict], n: int, seed: int = None
+) -> Any:
+    """Returns n random experiment configurations.
+
+    TODO: specify what to do if seed is None.
+    """
     if seed is not None:
         random.seed(seed)
     if n > len(run_configs):
         n = len(run_configs)
+
     return random.sample(run_configs, n)
 
 
@@ -48,7 +54,7 @@ def assertIsFile(path: PosixPath) -> None:
         raise AssertionError("File does not exist: %s" % str(path))
 
 
-def assertIsNotFile(path):
+def assertIsNotFile(path: str) -> None:
     """Asserts a file does not exists.
 
     Throws error if the file does exist.
@@ -61,10 +67,10 @@ def assertIsNotFile(path):
 def create_result_file_for_testing(
     json_filepath: str,
     graph_names: list[str],
-    completed_stages: list[str],
+    completed_stages: list[int],
     input_graph: nx.DiGraph,
     run_config: dict,
-):
+) -> None:
     """Creates a dummy .json result file that can be used to test functions
     that recognise which stages have been computed already or not.
 
@@ -96,7 +102,7 @@ def create_result_file_for_testing(
 
 def create_results_dict_for_testing_stage_1(
     graph_names: list[str],
-    completed_stages: list[str],
+    completed_stages: list[int],
     input_graph: nx.DiGraph,
     run_config: dict,
 ) -> dict:
@@ -132,7 +138,7 @@ def create_results_dict_for_testing_stage_1(
 
 def create_results_dict_for_testing_stage_2(
     graph_names: list[str],
-    completed_stages: list[str],
+    completed_stages: list[int],
     input_graph: nx.DiGraph,
     run_config: dict,
 ) -> dict:
@@ -189,7 +195,7 @@ def create_dummy_output_images_stage_3(
     graph_names: list[str],
     input_graph: nx.DiGraph,
     run_config: dict,
-    extensions,
+    extensions: list[str],
 ) -> None:
     """Creates the dummy output images that would be created as output for
     stage 3, if exporting is on."""

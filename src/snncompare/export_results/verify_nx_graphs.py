@@ -12,7 +12,7 @@ from src.snncompare.verification_generic import verify_completed_stages_list
 
 def verify_results_nx_graphs_contain_expected_stages(
     results_nx_graphs: dict, stage_index: int, to_run: dict
-):
+) -> None:
     """Verifies that the nx_graphs dict contains the expected completed stages
     in each nxgraph.graph dict.
 
@@ -30,7 +30,9 @@ def verify_results_nx_graphs_contain_expected_stages(
 
 
 # pylint: disable=R0912
-def verify_results_nx_graphs(results_nx_graphs: dict, run_config: dict):
+def verify_results_nx_graphs(
+    results_nx_graphs: dict, run_config: dict
+) -> None:
     """Verifies the results that are loaded from json file are of the expected
     format.
 

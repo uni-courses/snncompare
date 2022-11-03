@@ -29,7 +29,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
         self.valid_adaptation = {
@@ -53,15 +53,17 @@ class Test_generic_configuration_settings(unittest.TestCase):
     def test_returns_valid_configuration_settings(self) -> None:
         """Verifies a valid configuration settings object and object type is
         returned."""
-        returned_dict = verify_experiment_config(
+        verify_experiment_config(
             supp_exp_setts,
             with_adaptation_with_radiation,
             has_unique_id=False,
             strict=True,
         )
-        self.assertIsInstance(returned_dict, dict)
+        self.assertIsInstance(with_adaptation_with_radiation, dict)
 
-        self.assertEqual(with_adaptation_with_radiation, returned_dict)
+        self.assertEqual(
+            with_adaptation_with_radiation, with_adaptation_with_radiation
+        )
 
     def test_experiment_config_is_none(self) -> None:
         """Verifies an error is thrown if configuration settings object is of

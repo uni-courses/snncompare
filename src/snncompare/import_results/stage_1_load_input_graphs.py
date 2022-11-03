@@ -47,11 +47,12 @@ def load_results_stage_1(run_config: dict) -> dict:
     for graph_name, some_graph in stage_1_dict["graphs_dict"][
         "stage_1"
     ].items():
+        # TODO: update typing and name of "stage1 graphs"
         stage_1_graphs[graph_name] = json_to_digraph(some_graph)
     return stage_1_graphs
 
 
-def load_stage_2_output_dict(relative_output_dir, filename) -> dict:
+def load_stage_2_output_dict(relative_output_dir: str, filename: str) -> dict:
     """Loads the stage_2 output dictionary from a file.
 
     # TODO: Determine why the file does not yet exist at this positinoc.

@@ -15,7 +15,7 @@ class Test_dummy(unittest.TestCase):
     specifications."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.dummy = DUMMY(
             some_vals=list(range(4, 8, 1)),

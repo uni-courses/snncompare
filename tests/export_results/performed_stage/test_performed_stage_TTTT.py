@@ -8,6 +8,7 @@ Stage4=Done.
 
 import os
 import shutil
+import typing
 import unittest
 
 import networkx as nx
@@ -33,9 +34,7 @@ from src.snncompare.helper import get_extensions_list
 from src.snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
-from src.snncompare.import_results.stage_1_load_input_graphs import (
-    load_results_from_json,
-)
+from src.snncompare.import_results.read_json import load_results_from_json
 from tests.tests_helper import (
     create_dummy_output_images_stage_3,
     create_result_file_for_testing,
@@ -50,7 +49,7 @@ class Test_stage_1_output_json(unittest.TestCase):
     files."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
         # Remove results directory if it exists.
@@ -61,7 +60,9 @@ class Test_stage_1_output_json(unittest.TestCase):
         create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
-        self.experiment_config: dict = default_experiment_config()
+        self.experiment_config: typing.Dict[
+            str, typing.Union[str, int]
+        ] = default_experiment_config()
         # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2, 3, 4]

@@ -109,7 +109,7 @@ class Supported_experiment_settings:
         # Generate the supported radiations settings.
         self.specify_supported_radiations_settings()
 
-    def specify_supported_radiations_settings(self):
+    def specify_supported_radiations_settings(self) -> None:
         """Specifies types of supported radiations settings. Some settings
         consist of a list of tuples, with the probability of a change
         occurring, followed by the average magnitude of the change.
@@ -168,7 +168,7 @@ class Supported_experiment_settings:
             "delta_vth": self.delta_vth,
         }
 
-    def specify_supported_adaptation_settings(self):
+    def specify_supported_adaptation_settings(self) -> None:
         """Specifies all the supported types of adaptation settings."""
 
         # Specify the (to be) supported adaptation types.
@@ -187,7 +187,7 @@ class Supported_experiment_settings:
             # impact.
         }
 
-    def has_unique_config_id(self, experiment_config):
+    def has_unique_config_id(self, experiment_config: dict) -> bool:
         """
 
         :param experiment_config:

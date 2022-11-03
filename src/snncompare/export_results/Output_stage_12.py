@@ -5,8 +5,8 @@ from src.snncompare.export_results.Output import output_stage_json
 
 
 def output_files_stage_1_and_2(
-    results_nx_graphs: dict, stage_index, to_run: dict
-):
+    results_nx_graphs: dict, stage_index: int, to_run: dict
+) -> None:
 
     """Converts the graphs of the incoming results dict into json dict graphs,
 

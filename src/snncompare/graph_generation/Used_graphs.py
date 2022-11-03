@@ -13,7 +13,7 @@ class Used_graphs:
         self.four = self.get_graphs_with_4_neurons()
         self.five = self.get_graphs_with_5_neurons()
 
-    def get_graphs(self, size: int):
+    def get_graphs(self, size: int) -> List[nx.Graph]:
         """Returns the graphs that are used for testing, per selected size.
 
         :param size: Nr of nodes in the original graph on which test is ran.
@@ -222,21 +222,21 @@ class Run:
 
     def __init__(
         self,
-        dead_neuron_names,
-        G,
-        get_degree,
-        has_adaptation,
-        iteration,
-        neuron_death_probability,
-        m,
-        has_passed,
-        rand_ceil,
-        rand_values,
-        selected_alipour_nodes,
-        selected_snn_nodes,
-        sim_time,
-        size,
-    ):
+        dead_neuron_names: List[str],
+        G: nx.DiGraph,
+        get_degree: nx.DiGraph,
+        has_adaptation: bool,
+        iteration: int,
+        neuron_death_probability: float,
+        m: int,
+        has_passed: bool,
+        rand_ceil: int,
+        rand_values: List[int],
+        selected_alipour_nodes: List[int],
+        selected_snn_nodes: List[int],
+        sim_time: int,
+        size: int,
+    ) -> None:
         """Called at end of run."""
         # pylint: disable=R0913
         # TODO: reduce 15/5 arguments to at most 5/5.
@@ -259,9 +259,9 @@ class Run:
         self.amount_synapses = self.get_amount_synapses(self.get_degree)
         # pylint: disable=E1128
         # TODO: resolve.
-        self.nr_of_spikes = self.get_nr_of_spikes()
+        # self.nr_of_spikes = self.get_nr_of_spikes()
 
-    def get_amount_of_neurons(self, get_degree):
+    def get_amount_of_neurons(self, get_degree: nx.DiGraph) -> int:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -269,7 +269,7 @@ class Run:
         """
         return len(get_degree)
 
-    def get_amount_synapses(self, get_degree):
+    def get_amount_synapses(self, get_degree: nx.DiGraph) -> int:
         """
 
         :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -277,7 +277,7 @@ class Run:
         """
         return len(get_degree.edges)
 
-    def get_nr_of_spikes(self):
+    def get_nr_of_spikes(self) -> None:
         """TODO: implement this method to store the number of spikes if it is
         found.
 

@@ -61,7 +61,7 @@ def get_expected_image_paths_stage_3(
     graph_names: List[str],
     input_graph: nx.DiGraph,
     run_config: dict,
-    extensions,
+    extensions: List[str],
 ) -> List:
     """Returns the expected image filepaths for stage 3.
 

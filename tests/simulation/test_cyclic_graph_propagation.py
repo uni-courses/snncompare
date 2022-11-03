@@ -48,7 +48,7 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
     """
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
         # self.test_scope = Scope_of_tests()

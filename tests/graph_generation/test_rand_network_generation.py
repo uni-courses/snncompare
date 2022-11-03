@@ -27,7 +27,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
     the networkx simulation."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 

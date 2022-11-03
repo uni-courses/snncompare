@@ -11,7 +11,7 @@ class Test_get_graph(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
     def test_returns_2_nodes(self) -> None:

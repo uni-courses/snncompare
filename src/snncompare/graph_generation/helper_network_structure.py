@@ -2,13 +2,22 @@
 the MDSA approximation."""
 
 
+from typing import Any, Dict, List, Tuple, Union
+
 import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 
 from src.snncompare.export_results.Plot_to_tex import Plot_to_tex
 
 
-def create_synapses_and_spike_dicts(G, get_degree, left, m, rand_ceil, right):
+def create_synapses_and_spike_dicts(
+    G: nx.DiGraph,
+    get_degree: nx.DiGraph,
+    left: List[dict],
+    m: int,
+    rand_ceil: float,
+    right: List[dict],
+) -> None:
     """Creates some synapses and the spike dictionary."""
     # pylint: disable=R0913
     # 6/5 arguments are currently used in the synapse creation method.
@@ -31,8 +40,12 @@ def create_synapses_and_spike_dicts(G, get_degree, left, m, rand_ceil, right):
 
 
 def create_degree_synapses_for_m_is_zero(
-    get_degree, left, m, rand_ceil, right
-):
+    get_degree: nx.DiGraph,
+    left: List[dict],
+    m: int,
+    rand_ceil: float,
+    right: List[dict],
+) -> nx.DiGraph:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -63,7 +76,9 @@ def create_degree_synapses_for_m_is_zero(
     return get_degree
 
 
-def retry_create_degree_synapses(G, get_degree, m, rand_ceil):
+def retry_create_degree_synapses(
+    G: nx.Graph, get_degree: nx.DiGraph, m: int, rand_ceil: float
+) -> nx.DiGraph:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -100,13 +115,13 @@ def retry_create_degree_synapses(G, get_degree, m, rand_ceil):
 
 # pylint: disable=R0913
 def plot_coordinated_graph(
-    G,
-    desired_properties,
-    t,
-    show=False,
-    filename="no_filename",
-    title=None,
-):
+    G: Union[nx.Graph, nx.DiGraph],
+    desired_properties: Union[List, None],
+    t: int,
+    show: bool = False,
+    filename: str = "no_filename",
+    title: str = None,
+) -> None:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -172,8 +187,13 @@ def plot_coordinated_graph(
 
 # pylint: disable=R0913
 def add_neuron_properties_to_plot(
-    axis, desired_properties, G, nodenames, pos, t: int
-):
+    axis: Any,
+    desired_properties: List,
+    G: nx.DiGraph,
+    nodenames: List[str],
+    pos: Any,
+    t: int,
+) -> None:
     """Adds a text (annotation) to each neuron with the desired neuron
     properties.
 
@@ -209,7 +229,9 @@ def add_neuron_properties_to_plot(
         )
 
 
-def get_annotation_text(desired_properties, G, nodename, t):
+def get_annotation_text(
+    desired_properties: List[str], G: nx.Graph, nodename: str, t: int
+) -> str:
     """Returns a string with the annotation text.
 
     :param desired_properties:
@@ -250,7 +272,7 @@ def get_annotation_text(desired_properties, G, nodename, t):
     return annotation
 
 
-def plot_unstructured_graph(G, show=False):
+def plot_unstructured_graph(G: nx.DiGraph, show: bool = False) -> None:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -269,7 +291,7 @@ def plot_unstructured_graph(G, show=False):
     plt.close()
 
 
-def set_nx_node_colours(G, t: int):
+def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
     """Returns a list of node colours in order of G.nodes.
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -299,7 +321,7 @@ def set_nx_node_colours(G, t: int):
     return color_map, spiking_edges
 
 
-def set_node_colours(G, t):
+def set_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List, List]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -330,7 +352,7 @@ def set_node_colours(G, t):
     return color_map, spiking_edges, unseen_edges
 
 
-def set_edge_colours(G, spiking_edges):
+def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -347,7 +369,7 @@ def set_edge_colours(G, spiking_edges):
     return edge_color_map
 
 
-def get_labels(G, current=True):
+def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -378,7 +400,7 @@ def get_labels(G, current=True):
     return node_labels
 
 
-def add_recursive_edges_to_graph(G):
+def add_recursive_edges_to_graph(G: nx.DiGraph) -> None:
     """Adds recursive edges to graph for nodes that have the recur attribute.
 
     :param G: The original graph on which the MDSA algorithm is ran.

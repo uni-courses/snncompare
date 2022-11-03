@@ -3,6 +3,7 @@ specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
+from typing import Any
 
 from src.snncompare.exp_setts.run_config.Supported_run_settings import (
     Supported_run_settings,
@@ -47,7 +48,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_run_settings = Supported_run_settings()
         self.valid_run_setting = with_adaptation_with_radiation
@@ -133,8 +134,11 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
 
 def verify_error_is_thrown_on_invalid_configuration_setting_value(
-    invalid_config_setting_value, experiment_config, expected_type, test_object
-):
+    invalid_config_setting_value: Any,
+    experiment_config: dict,
+    expected_type: type,
+    test_object: Any,
+) -> None:
     """Verifies an error is thrown on an invalid configuration setting value.
 
     This method is called by other test files and is genereric for most

@@ -1,5 +1,8 @@
 """File represents LIF neuron object."""
 
+from typing import Any, List
+
+import networkx as nx
 import numpy as np
 from lava.proc.lif.process import LIF
 
@@ -54,7 +57,7 @@ class LIF_neuron:
         return self.spikes
 
     # TODO: make this function only accessible to object itself.
-    def set_compute_u(self, a_in):
+    def set_compute_u(self, a_in: int) -> None:
         """Computes the new current u based on the previous current u, du, and
         the incoming input signal/value of a_in. After computation overwrites
         the previous value of the u with the new value for u.
@@ -195,7 +198,12 @@ class Vth:
 
 
 # pylint: disable=R0912
-def print_neuron_properties(neurons, static, ids=None, spikes=None):
+def print_neuron_properties(
+    neurons: List[Any],
+    static: bool,
+    ids: List[Any] = None,
+    spikes: List[Any] = None,
+) -> None:
     """Prints the neuron properties in human readable format.
 
     :param neurons:
@@ -251,7 +259,7 @@ def print_neuron_properties(neurons, static, ids=None, spikes=None):
     print("")
 
 
-def round_if_array(value):
+def round_if_array(value: Any) -> float:
     """Rounds an incoming value up to 2 decimals and unpacks array if lif
     neuron property is returns as array.
 
@@ -262,7 +270,9 @@ def round_if_array(value):
     return round(value, 2)
 
 
-def print_neuron_properties_per_graph(G, static, t):
+def print_neuron_properties_per_graph(
+    G: nx.DiGraph, static: Any, t: int
+) -> None:
     """Prints bias,du,dv,vth of neuron.
 
     Supports both lava and networkx neurons.

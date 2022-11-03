@@ -1,6 +1,6 @@
 """Returns a list with all possible algorithm configurations."""
 import itertools
-from typing import List
+from typing import Any, Dict, List
 
 from src.snncompare.exp_setts.algos.DUMMY import DUMMY, DUMMY_config
 from src.snncompare.exp_setts.algos.MDSA import MDSA, MDSA_config
@@ -8,7 +8,7 @@ from src.snncompare.exp_setts.algos.MDSA import MDSA, MDSA_config
 
 def get_algo_configs(algo_spec: dict) -> List[dict]:
     """Returns a list of MDSA_config objects."""
-    algo_configs = []
+    algo_configs: List[Dict[str, Any]] = []
 
     keys = algo_spec["alg_parameters"].keys()
     values = (algo_spec["alg_parameters"][key] for key in keys)

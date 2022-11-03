@@ -36,7 +36,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
     the networkx simulation."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
@@ -125,7 +125,8 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             #    self, G, starter_neuron, sim_duration=20
                             # )
 
-    def compare_dynamic_snn_properties(self, G, t):
+    # TODO: remove duplicate into separate test helper function.
+    def compare_dynamic_snn_properties(self, G: nx.DiGraph, t: int) -> None:
         """Performs comparison of static neuron properties at each timestep.
 
         :param G: The original graph on which the MDSA algorithm is ran.

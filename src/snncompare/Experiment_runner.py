@@ -5,6 +5,8 @@ setting of the experiment configuration settings.
 """
 
 
+from typing import Any, Dict, List, Tuple
+
 from src.snncompare.exp_setts.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
@@ -103,14 +105,16 @@ class Experiment_runner:
         self.run_configs = self.__perform_run(self.experiment_config)
 
     # pylint: disable=W0238
-    def __perform_run(self, experiment_config: dict):
+    def __perform_run(self, experiment_config: dict) -> List[dict]:
         """Private method that performs a run of the experiment.
 
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
         # Generate run configurations.
-        run_configs = experiment_config_to_run_configs(experiment_config)
+        run_configs: List[dict] = experiment_config_to_run_configs(
+            experiment_config
+        )
 
         for run_config in run_configs:
             to_run = determine_what_to_run(run_config)
@@ -129,7 +133,7 @@ class Experiment_runner:
 
     def __perform_run_stage_1(
         self, experiment_config: dict, run_config: dict, to_run: dict
-    ):
+    ) -> dict:
         """Performs the run for stage 1 or loads the data from file depending
         on the run configuration.
 
@@ -159,7 +163,7 @@ class Experiment_runner:
         self,
         results_nx_graphs: dict,
         to_run: dict,
-    ):
+    ) -> None:
         """Performs the run for stage 2 or loads the data from file depending
         on the run configuration.
 
@@ -245,7 +249,9 @@ class Experiment_runner:
         assert_stage_is_completed(results_nx_graphs["run_config"], 4, to_run)
 
 
-def experiment_config_to_run_configs(experiment_config: dict):
+def experiment_config_to_run_configs(
+    experiment_config: Dict[str, Any]
+) -> List[Dict[str, Any]]:
     """Generates all the run_config dictionaries of a single experiment
     configuration. Then verifies whether each run_config is valid.
 
@@ -316,18 +322,19 @@ def experiment_config_to_run_configs(experiment_config: dict):
 
 # pylint: disable=R0913
 def run_parameters_to_dict(
-    adaptation,
-    algorithm,
-    iteration,
-    size_and_max_graph,
-    graph_nr,
-    radiation,
-    experiment_config,
-    simulator,
-):
+    adaptation: Dict[str, Any],
+    algorithm: Dict[str, Any],
+    iteration: int,
+    size_and_max_graph: Tuple[int, int],
+    graph_nr: int,
+    radiation: Dict[str, Any],
+    experiment_config: Dict[str, Any],
+    simulator: str,
+) -> dict:
     """Stores selected parameters into a dictionary.
 
-    Written as separate argument to keep code width under 80 lines.
+    Written as separate argument to keep code width under 80 lines. #
+    TODO: verify typing.
     """
     return {
         "adaptation": adaptation,
@@ -345,7 +352,7 @@ def run_parameters_to_dict(
     }
 
 
-def determine_what_to_run(run_config) -> dict:
+def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
     """Scans for existing output and then combines the run configuration
     settings to determine what still should be computed."""
     # Initialise default: run everything.

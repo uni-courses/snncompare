@@ -9,7 +9,7 @@ class Scope_of_tests:
     # pylint: disable=too-many-instance-attributes
     # Eleven is considered is reasonable in this case.
 
-    def __init__(self, export=True, show=False) -> None:
+    def __init__(self, export: bool = True, show: bool = False) -> None:
 
         self.export = export  # Export the graph that is generated to .png
 
@@ -52,7 +52,7 @@ class Long_scope_of_tests:
     # pylint: disable=too-many-instance-attributes
     # Eleven is considered is reasonable in this case.
 
-    def __init__(self, export=True, show=False) -> None:
+    def __init__(self, export: bool = True, show: bool = False) -> None:
 
         self.export = export  # Export the graph that is generated to .png
 

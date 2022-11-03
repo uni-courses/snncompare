@@ -9,7 +9,7 @@ from src.snncompare.export_results.verify_json_graphs import (
 
 def json_graphs_contain_correct_stages(
     json_graphs: dict, expected_stages: List[int], run_config: dict
-):
+) -> bool:
     """Returns True if the json graphs are valid, False otherwise."""
     try:
         verify_json_graphs_dict_contain_correct_stages(

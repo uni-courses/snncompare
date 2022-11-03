@@ -21,7 +21,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
     invalid size_and_max_graphs settings.."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # self.supp_exp_setts = Supported_experiment_settings()
 

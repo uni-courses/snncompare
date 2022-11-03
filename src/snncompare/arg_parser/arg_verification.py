@@ -2,13 +2,14 @@
 other."""
 
 import json
+from typing import Any
 
 import networkx as nx
 
 from src.snncompare.helper import file_exists
 
 
-def verify_args(args) -> None:
+def verify_args(args: Any) -> None:
     """Performs the checks to verify the parser."""
     verify_input_graph_path(args.graph_filepath)
     verify_experiment_settings(args.experiment_settings_path)

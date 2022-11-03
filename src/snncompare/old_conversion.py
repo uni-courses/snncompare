@@ -1,4 +1,6 @@
 """Old code used to convert the networkx graph to an MDSA SNN algorithm."""
+from typing import Any, Dict, List, Tuple, Union
+
 import networkx as nx
 
 from src.snncompare.graph_generation.convert_networkx_to_lava import (
@@ -9,7 +11,9 @@ from src.snncompare.graph_generation.convert_networkx_to_lava import (
 )
 
 
-def convert_networkx_graph_to_snn_with_one_neuron(G):
+def convert_networkx_graph_to_snn_with_one_neuron(
+    G: nx.DiGraph,
+) -> Tuple[List, List, List, Any, dict]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -21,7 +25,7 @@ def convert_networkx_graph_to_snn_with_one_neuron(G):
     first_node = list(G.nodes)[0]
 
     # Append dictionary as property to G.
-    neuron_dict = {}
+    neuron_dict: dict = {}
 
     (
         converted_nodes,
@@ -35,8 +39,15 @@ def convert_networkx_graph_to_snn_with_one_neuron(G):
 
 
 def retry_build_snn(
-    G, converted_nodes, neurons, lhs_node, visited_nodes, neuron_dict=None
-):
+    G: nx.DiGraph,
+    converted_nodes: List,
+    neurons: List,
+    lhs_node: Any,
+    visited_nodes: List,
+    neuron_dict: dict = None,
+) -> Tuple[
+    List, Any, List, Any, Union[Dict[Any, int], Dict[Any, Any]], List[Any]
+]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -147,7 +158,9 @@ def retry_build_snn(
     )
 
 
-def get_neuron_belonging_to_node_from_list(neurons, node, nodes):
+def get_neuron_belonging_to_node_from_list(
+    neurons: List[Any], node: int, nodes: List[int]
+) -> List[Any]:
     """
 
     :param neurons: param node:
@@ -159,7 +172,9 @@ def get_neuron_belonging_to_node_from_list(neurons, node, nodes):
     return neurons[index]
 
 
-def get_node_belonging_to_neuron_from_list(neuron, neurons, nodes):
+def get_node_belonging_to_neuron_from_list(
+    neuron: int, neurons: List[int], nodes: List[int]
+) -> int:
     """
 
     :param neuron: Lava neuron object. param neurons:
@@ -171,7 +186,9 @@ def get_node_belonging_to_neuron_from_list(neuron, neurons, nodes):
     return nodes[index]
 
 
-def get_edge_if_exists(G, lhs_node, rhs_node):
+def get_edge_if_exists(
+    G: nx.DiGraph, lhs_node: int, rhs_node: int
+) -> Union[None, Tuple[int, int]]:
     """Returns the edge object if the graph G has an edge between the two
     nodes.
 
@@ -201,7 +218,9 @@ def get_edge_if_exists(G, lhs_node, rhs_node):
     return None
 
 
-def assert_all_neuron_properties_are_specified(G, node):
+def assert_all_neuron_properties_are_specified(
+    G: nx.DiGraph, node: str
+) -> None:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -215,7 +234,7 @@ def assert_all_neuron_properties_are_specified(G, node):
         )
 
 
-def all_neuron_properties_are_specified(G, node):
+def all_neuron_properties_are_specified(G: nx.Digraph, node: str) -> bool:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -232,7 +251,7 @@ def all_neuron_properties_are_specified(G, node):
     return False
 
 
-def get_neuron_property_names(G, node):
+def get_neuron_property_names(G: nx.DiGraph, node: str) -> List:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.

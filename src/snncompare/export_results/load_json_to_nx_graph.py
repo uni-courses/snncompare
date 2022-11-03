@@ -4,6 +4,7 @@ import json
 from pprint import pprint
 from typing import List
 
+import networkx as nx
 from networkx.readwrite import json_graph
 
 from src.snncompare.export_results.check_nx_graphs import (
@@ -22,7 +23,7 @@ from src.snncompare.export_results.verify_stage_1_graphs import (
 from src.snncompare.helper import file_exists, get_expected_stages
 
 
-def json_to_digraph(json_data):
+def json_to_digraph(json_data: dict) -> nx.DiGraph:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.

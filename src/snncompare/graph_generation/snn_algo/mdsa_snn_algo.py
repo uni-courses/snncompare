@@ -82,8 +82,8 @@ def input_graph_to_mdsa_snn_graph(
     mdsa_snn_graph.graph = copy.deepcopy(input_graph.graph)
 
     # Define list of m mappings for sets of tuples containing synapses
-    left: List = [{} for _ in range(shifted_m)]
-    right: List = [{} for _ in range(shifted_m)]
+    left: List[dict] = [{} for _ in range(shifted_m)]
+    right: List[dict] = [{} for _ in range(shifted_m)]
 
     # Create a node to make the graph connected. (Otherwise, recurrent snn
     # builder can not span/cross the network.)

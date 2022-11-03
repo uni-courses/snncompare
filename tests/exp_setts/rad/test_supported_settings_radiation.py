@@ -21,7 +21,7 @@ class Test_radiations_settings(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_exp_setts = supp_exp_setts
         self.adap_sets = adap_sets

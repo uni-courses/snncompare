@@ -9,6 +9,8 @@ and the SNN match.
 These results are returned in the form of a dict.
 """
 
+from typing import Dict
+
 import networkx as nx
 
 from src.snncompare.helper import get_sim_duration
@@ -29,9 +31,12 @@ def set_mdsa_snn_results(
     # Get Alipour count.
     # Compute the count for each node according to Alipour et al.'s algorithm.
     alipour_counter_marks = get_alipour_nodes(
-        stage_2_graphs["input_graph"],
-        m_val,
-        stage_2_graphs["input_graph"].graph["alg_props"],
+        G=stage_2_graphs["input_graph"],
+        iteration=run_config["iteration"],
+        m_val=m_val,
+        rand_props=stage_2_graphs["input_graph"].graph["alg_props"],
+        seed=run_config["seed"],
+        size=run_config["size"],
     )
 
     # Compute SNN results
@@ -84,13 +89,13 @@ def set_mdsa_snn_results(
 
 # pylint: disable=R0913
 def get_snn_results(
-    alipour_counter_marks,
-    input_graph,
-    m_val,
-    redundant,
+    alipour_counter_marks: Dict[str, int],
+    input_graph: nx.Graph,
+    m_val: int,
+    redundant: bool,
     run_config: dict,
     snn_graph: nx.DiGraph,
-):
+) -> dict:
     """Returns the marks per node that are selected by the snn simulation.
 
     If the simulation is ran with adaptation in the form of redundancy,
@@ -127,7 +132,7 @@ def get_snn_results(
 
 def get_nx_LIF_count_without_redundancy(
     input_graph: nx.DiGraph, nx_SNN_G: nx.DiGraph, m_val: int, t: int
-):
+) -> dict:
     """Creates a dictionary with the node name and the the current as node
     count.
 
@@ -154,7 +159,7 @@ def get_nx_LIF_count_with_redundancy(
     adapted_nx_snn_graph: nx.DiGraph,
     m_val: int,
     t: int,
-):
+) -> dict:
     """Creates a dictionary with the node name and the the current as node
     count.
 
@@ -190,7 +195,9 @@ def get_nx_LIF_count_with_redundancy(
     return node_counts
 
 
-def counter_neuron_died(snn_graph: nx.DiGraph, counter_neuron_name):
+def counter_neuron_died(
+    snn_graph: nx.DiGraph, counter_neuron_name: str
+) -> bool:
     """Returns True if the counter neuron died, and False otherwise. This
     method assumes the chip is able to probe a particular neuron to determine
     if it is affected by radiation or not, after the algorithm is completed.
@@ -205,7 +212,7 @@ def counter_neuron_died(snn_graph: nx.DiGraph, counter_neuron_name):
     return False
 
 
-def graph_has_dead_neurons(snn_graph: nx.DiGraph):
+def graph_has_dead_neurons(snn_graph: nx.DiGraph) -> bool:
     """Checks whether the "rad_death" key is in any of the nodes of the graph,
     and if it is, verifies it is in all of the nodes."""
     rad_death_found = False

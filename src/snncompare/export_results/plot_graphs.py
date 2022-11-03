@@ -6,15 +6,14 @@ from typing import Dict, Union
 import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.classes.digraph import DiGraph
-from numpy import float64
 
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
 def plot_circular_graph(
-    density: float64,
+    density: float,
     G: DiGraph,
-    recurrent_edge_density: Union[int, float64],
+    recurrent_edge_density: Union[int, float],
     test_scope: Long_scope_of_tests,
 ) -> None:
     """Generates a circular plot of a (directed) graph.
@@ -49,7 +48,7 @@ def plot_circular_graph(
     plt.close()
 
 
-def plot_uncoordinated_graph(G, show=True):
+def plot_uncoordinated_graph(G: nx.DiGraph, show: bool = True) -> None:
     """Generates a circular plot of a (directed) graph.
 
     :param density: param G:

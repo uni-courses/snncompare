@@ -9,7 +9,7 @@ SubInput: Run configuration within an experiment.
     mechanism.
 """
 import pathlib
-from typing import List
+from typing import List, Optional
 
 import jsons
 
@@ -93,7 +93,7 @@ def output_files_stage_4(
     nodes_alipour: List[int],
     nodes_snn: List[int],
     run_config: dict,
-):
+) -> None:
     """This only outputs the algorithm performance and adaptation performance
     on the specific graph.
 
@@ -187,7 +187,7 @@ class Stage_4_graphs:
 
 def output_stage_json(
     results_nx_graphs: dict, filename: str, stage_index: int, to_run: dict
-):
+) -> None:
     """Exports results dict to a json file."""
 
     if results_nx_graphs["graphs_dict"] == {}:
@@ -223,7 +223,7 @@ def output_stage_json(
 
 def plot_graph_behaviours(
     filepath: str, stage_2_graphs: dict, run_config: dict
-):
+) -> None:
     """Exports the plots of the graphs per time step of the run
     configuration."""
 
@@ -261,8 +261,12 @@ def plot_graph_behaviours(
 
 # pylint: disable=R0912
 # pylint: disable=R0915
-def create_custom_plot_titles(graph_name, t: int, seed: int):
+def create_custom_plot_titles(
+    graph_name: str, t: int, seed: int
+) -> Optional[str]:
     """Creates custom titles for the SNN graphs for seed = 42."""
+    # TODO: update to specify specific run_config instead of seed, to ensure
+    #  the description is accurate/consistent with the SNN propagation.
     if seed == 42:
         title = None
         if graph_name == "snn_algo_graph":

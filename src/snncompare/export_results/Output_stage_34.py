@@ -8,8 +8,8 @@ from src.snncompare.export_results.Output import (
 
 
 def output_stage_files_3_and_4(
-    results_nx_graphs, stage_index: int, to_run: dict
-):
+    results_nx_graphs: dict, stage_index: int, to_run: dict
+) -> None:
     """Merges the experiment configuration dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
     are passed into this method.

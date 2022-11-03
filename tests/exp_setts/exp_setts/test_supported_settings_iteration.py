@@ -21,7 +21,7 @@ class Test_iterations_settings(unittest.TestCase):
     iterations settings."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # self.supp_exp_setts = Supported_experiment_settings()
         self.maxDiff = None  # Display full error message.

@@ -1,13 +1,13 @@
 """Converts the nx graphs into json objects."""
 
 import copy
-from typing import List
+from typing import Any, Dict, List, Union
 
 import networkx as nx
 from networkx.readwrite import json_graph
 
 
-def digraph_to_json(G: nx.DiGraph):
+def digraph_to_json(G: nx.DiGraph) -> Any:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -44,7 +44,9 @@ def convert_digraphs_to_json(
     return results_json_graphs
 
 
-def convert_stage_1_digraphs_to_json(graphs):
+def convert_stage_1_digraphs_to_json(
+    graphs: Union[nx.Graph, nx.DiGraph]
+) -> Dict[str, Any]:
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
@@ -63,7 +65,9 @@ def convert_stage_1_digraphs_to_json(graphs):
     return graphs_dict_stage_1
 
 
-def convert_stage_2_digraphs_to_json(graphs):
+def convert_stage_2_digraphs_to_json(
+    graphs: Dict[str, Union[Union[nx.Graph, nx.DiGraph], List]]
+) -> Dict[str, Any]:
     """Puts all the graphs of stage 2 into a single graph."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():

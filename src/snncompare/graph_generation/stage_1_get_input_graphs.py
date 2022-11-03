@@ -211,7 +211,9 @@ def get_redundant_graph(
     )
 
 
-def get_radiation_graph(snn_graph, run_config: dict, seed) -> nx.DiGraph:
+def get_radiation_graph(
+    snn_graph: nx.DiGraph, run_config: dict, seed: int
+) -> nx.DiGraph:
     """Makes a deep copy of the incoming graph and applies radiation to it.
 
     Then returns the graph with the radiation, as well as a list of
