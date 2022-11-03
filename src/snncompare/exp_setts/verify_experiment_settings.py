@@ -4,7 +4,7 @@
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union
 
 from typeguard import typechecked
 
@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 
 
 # pylint: disable=W0613
-@typechecked
 def verify_experiment_config(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: None | str | dict,
@@ -104,7 +103,6 @@ def verify_experiment_config(
     verify_bool_setting(experiment_config["overwrite_visualisation"])
 
 
-@typechecked
 def verify_experiment_config_dict_is_complete(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: dict[str, Any],
@@ -118,7 +116,6 @@ def verify_experiment_config_dict_is_complete(
             )
 
 
-@typechecked
 def verify_experiment_config_dict_contains_only_valid_entries(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: dict,
@@ -160,7 +157,6 @@ def verify_list_element_types_and_list_len(
         )
 
 
-@typechecked
 def verify_list_setting(
     supp_exp_setts: Supported_experiment_settings,
     setting: Any,
@@ -192,7 +188,6 @@ def verify_list_setting(
             )
 
 
-@typechecked
 def get_expected_range(
     setting_name: str, supp_exp_setts: Supported_experiment_settings
 ) -> list[int] | list[str]:
@@ -215,7 +210,6 @@ def get_expected_range(
     raise Exception("Error, unsupported parameter requested.")
 
 
-@typechecked
 def verify_size_and_max_graphs_settings(
     supp_exp_setts: Supported_experiment_settings,
     size_and_max_graphs_setting: list[tuple[int, int]] | None,
@@ -251,8 +245,8 @@ def verify_size_and_max_graphs_settings(
 
 @typechecked
 def verify_integer_settings(
-    integer_setting: int | None,
-    min_val: int | None = None,
+    integer_setting: int,
+    min_val: Union[int, None] = None,
     max_val: int | None = None,
 ) -> None:
     """Verifies an integer setting is of type integer and that it is within the
@@ -312,7 +306,7 @@ def verify_bool_setting(bool_setting: None | bool | str) -> None:
         )
 
 
-@typechecked
+# TODO: determine why this can not be typechecked.
 def verify_object_type(
     obj: float | list | tuple,
     expected_type: type,
@@ -351,7 +345,6 @@ def verify_object_type(
             )
 
 
-@typechecked
 def verify_adap_and_rad_settings(
     supp_exp_setts: Supported_experiment_settings,
     some_dict: dict | str | None,
@@ -397,7 +390,6 @@ def verify_adap_and_rad_settings(
     )
 
 
-@typechecked
 def verify_algorithm_settings(
     supp_exp_setts: Supported_experiment_settings,
     some_dict: dict,
@@ -406,7 +398,6 @@ def verify_algorithm_settings(
     """TODO: Verifies the settings of the algorithm are valid."""
 
 
-@typechecked
 def verify_adaptation_values(
     supp_exp_setts: Supported_experiment_settings, adaptations: dict, key: str
 ) -> None:
@@ -447,7 +438,6 @@ def verify_adaptation_values(
             verify_object_type(setting, float, None)
 
 
-@typechecked
 def verify_radiations_values(
     supp_exp_setts: Supported_experiment_settings, radiations: dict, key: str
 ) -> None:

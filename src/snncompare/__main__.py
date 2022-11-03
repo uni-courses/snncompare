@@ -4,6 +4,9 @@ that invokes this script."""
 # Import code belonging to this project.
 import os
 import shutil
+from pprint import pprint
+
+import typeguard
 
 from src.snncompare.exp_setts.algos.get_alg_configs import (
     get_algo_configs,
@@ -18,6 +21,8 @@ from src.snncompare.Experiment_runner import Experiment_runner
 from src.snncompare.export_results.plot_graphs import (
     create_root_dir_if_not_exists,
 )
+
+pprint(typeguard.__dict__)
 
 # Remove results directory if it exists.
 if os.path.exists("results"):

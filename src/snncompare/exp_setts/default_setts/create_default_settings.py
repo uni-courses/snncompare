@@ -30,7 +30,7 @@ from src.snncompare.graph_generation.Used_graphs import Used_graphs
 def create_default_graph_json() -> None:
     """Generates a default input graph and exports it to a json file."""
     used_graphs = Used_graphs()
-    default_nx_graph: nx.DiGraph = used_graphs.five[0]
+    default_nx_graph: nx.Graph = used_graphs.five[0]
 
     # Convert nx.DiGraph to dict.
     default_json_graph = digraph_to_json(default_nx_graph)

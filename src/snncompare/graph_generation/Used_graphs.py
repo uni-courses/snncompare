@@ -2,7 +2,6 @@
 from typing import List
 
 import networkx as nx
-from networkx.classes.graph import Graph
 from typeguard import typechecked
 
 
@@ -30,17 +29,17 @@ class Used_graphs:
         raise Exception("Graph size of: {size} is currently not supported.")
 
     @typechecked
-    def get_graphs_with_3_neurons(self) -> List[Graph]:
+    def get_graphs_with_3_neurons(self) -> List[nx.Graph]:
         """Returns list of graphs of size 3."""
         return [self.three_a()]
 
     @typechecked
-    def get_graphs_with_4_neurons(self) -> List[Graph]:
+    def get_graphs_with_4_neurons(self) -> List[nx.Graph]:
         """Returns list of graphs of size 4."""
         return [self.four_a(), self.four_b(), self.four_c()]
 
     @typechecked
-    def get_graphs_with_5_neurons(self) -> List[Graph]:
+    def get_graphs_with_5_neurons(self) -> List[nx.Graph]:
         """Returns list of graphs of size 5."""
         return [
             self.five_a(),
@@ -52,7 +51,7 @@ class Used_graphs:
         ]
 
     @typechecked
-    def three_a(self) -> nx.DiGraph:
+    def three_a(self) -> nx.Graph:
         """Creates two different graphs of size 3."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -68,7 +67,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def four_a(self) -> nx.DiGraph:
+    def four_a(self) -> nx.Graph:
         """Straight line."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -85,7 +84,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def four_b(self) -> nx.DiGraph:
+    def four_b(self) -> nx.Graph:
         """Y"""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -102,7 +101,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def four_c(self) -> nx.DiGraph:
+    def four_c(self) -> nx.Graph:
         """Square."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -120,7 +119,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def five_a(self) -> nx.DiGraph:
+    def five_a(self) -> nx.Graph:
         """Straight line."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -138,7 +137,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def five_b(self) -> nx.DiGraph:
+    def five_b(self) -> nx.Graph:
         """Y-long-tail."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -156,7 +155,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def five_c(self) -> nx.DiGraph:
+    def five_c(self) -> nx.Graph:
         """Y with 3 arms."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -174,7 +173,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def five_d(self) -> nx.DiGraph:
+    def five_d(self) -> nx.Graph:
         """Pentagon."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -193,7 +192,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def five_e(self) -> nx.DiGraph:
+    def five_e(self) -> nx.Graph:
         """Square-with-tail."""
         graph = nx.Graph()
         graph.add_nodes_from(
@@ -212,7 +211,7 @@ class Used_graphs:
         return graph
 
     @typechecked
-    def five_f(self) -> nx.DiGraph:
+    def five_f(self) -> nx.Graph:
         """Square."""
         graph = nx.Graph()
         graph.add_nodes_from(

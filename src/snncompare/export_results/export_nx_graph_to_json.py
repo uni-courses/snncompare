@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 
 @typechecked
-def digraph_to_json(G: nx.DiGraph) -> Any:
+def digraph_to_json(G: nx.Graph) -> Any:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
