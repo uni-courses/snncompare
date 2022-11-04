@@ -1,6 +1,6 @@
 """Verifies the graph represents a connected and valid SNN, with all required
 neuron and synapse properties specified."""
-from typing import Tuple
+from typing import Tuple, Union
 
 # Import the networkx module.
 import networkx as nx
@@ -64,7 +64,7 @@ def assert_synaptic_edgeweight_type_is_correct(
 
 @typechecked
 def assert_synapse_properties_are_specified(
-    G: DiGraph, edge: Tuple[str, str]
+    G: DiGraph, edge: Union[Tuple[int, int], Tuple[str, str]]
 ) -> None:
     """
 

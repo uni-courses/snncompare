@@ -91,8 +91,10 @@ class Test_max_graph_size_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, expected type:<class 'int'>, yet it was:"
-            + f"{type(None)} for:{None}",
+            # "Error, expected type:<class 'int'>, yet it was:"
+            # + f"{type(None)} for:{None}",
+            'type of argument "integer_setting" must be int; got NoneType '
+            "instead",
             str(context.exception),
         )
 

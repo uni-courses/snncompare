@@ -90,6 +90,7 @@ class Test_iterations_settings(unittest.TestCase):
                 experiment_config,
                 expected_type,
                 self,
+                True,
             )
 
     @typechecked

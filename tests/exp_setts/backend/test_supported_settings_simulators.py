@@ -85,6 +85,7 @@ class Test_simulators_settings(unittest.TestCase):
                 experiment_config,
                 expected_type,
                 self,
+                True,
             )
 
     @typechecked

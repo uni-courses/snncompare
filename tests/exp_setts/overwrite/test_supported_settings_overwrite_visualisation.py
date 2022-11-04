@@ -99,7 +99,9 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, expected type:<class 'bool'>, yet it was:"
-            + f"{type(None)} for:{None}",
+            # "Error, expected type:<class 'bool'>, yet it was:"
+            # + f"{type(None)} for:{None}",
+            'type of argument "bool_setting" must be bool; got NoneType '
+            "instead",
             str(context.exception),
         )

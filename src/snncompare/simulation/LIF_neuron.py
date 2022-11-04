@@ -1,5 +1,5 @@
 """File represents LIF neuron object."""
-from typing import Any, List
+from typing import Any, List, Union
 
 import networkx as nx
 import numpy as np
@@ -23,13 +23,18 @@ class LIF_neuron:
     # Eleven is considered is reasonable in this case.
     @typechecked
     def __init__(
-        self, name: str, bias: float, du: float, dv: float, vth: float
+        self,
+        name: Union[str, int],
+        bias: float,
+        du: float,
+        dv: float,
+        vth: float,
     ) -> None:
         # pylint: disable=R0913
         self.bias = Bias(bias)  # Amount of voltage added every timestep.
         self.du = Du(du)  # Change in current over time.
         self.dv = Dv(dv)  # Change in voltage over time.
-        self.name: str = name  # Set the identifier of the neuron.
+        self.name: Union[str, int] = name  # Set the identifier of the neuron.
         self.vth = Vth(vth)  # Threshold Voltage of the neuron.
 
         # Initialise default values.

@@ -77,7 +77,7 @@ class Test_dummy(unittest.TestCase):
             verify_algo_configs("DUMMY", self.dummy_configs)
 
         self.assertEqual(
-            "some_val is not of type:int. Instead it is of " + f"type:{str}",
+            'type of argument "some_vals"[0] must be int; got str instead',
             str(context.exception),
         )
 
@@ -95,7 +95,7 @@ class Test_dummy(unittest.TestCase):
             verify_algo_configs("DUMMY", self.dummy_configs)
 
         self.assertEqual(
-            "other_val is not of type:str. Instead it is of " + f"type:{int}",
+            'type of argument "other_vals"[0] must be str; got int instead',
             str(context.exception),
         )
 

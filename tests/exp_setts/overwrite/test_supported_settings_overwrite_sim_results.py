@@ -95,4 +95,5 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
                 experiment_config,
                 expected_type,
                 self,
+                alternative_var_name="bool_setting",
             )

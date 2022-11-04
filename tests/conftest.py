@@ -6,11 +6,9 @@ from typing import Any, Iterator
 
 import pytest
 from pyannotate_runtime import collect_types
-from typeguard import typechecked
 
 
 # pylint: disable=W0613
-@typechecked
 def pytest_collection_finish(session: Any) -> None:
     """Handle the pytest collection finish hook: configure pyannotate.
 
@@ -24,7 +22,6 @@ def pytest_collection_finish(session: Any) -> None:
 
 # pylint: disable=W0613
 @pytest.fixture(autouse=True)
-@typechecked
 def collect_types_fixture() -> Iterator:
     """Performs unknown activity."""
 
@@ -34,7 +31,6 @@ def collect_types_fixture() -> Iterator:
 
 
 # pylint: disable=W0613
-@typechecked
 def pytest_sessionfinish(session: Any, exitstatus: Any) -> None:
     """Performs unknown activity."""
     collect_types.dump_stats("type_info.json")

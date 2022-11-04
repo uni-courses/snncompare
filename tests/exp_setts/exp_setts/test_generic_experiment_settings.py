@@ -138,17 +138,24 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
 
 
+# pylint: disable=R0913
 @typechecked
 def verify_error_is_thrown_on_invalid_configuration_setting_value(
     invalid_config_setting_value: Optional[str],
     experiment_config: Dict[str, Any],
     expected_type: type,
     test_object: Any,
+    non_typechecked_error: bool = False,
+    alternative_var_name: str = None,
 ) -> None:
     """Verifies an error is thrown on an invalid configuration setting value.
 
     This method is called by other test files and is genereric for most
     configuration setting parameters.
+
+    TODO: simplify this method.
+    Possibly separate it into submethods, or generalize it better
+    using input argument improvement.
     """
     actual_type = type(invalid_config_setting_value)
     if not isinstance(actual_type, type) and not isinstance(
@@ -166,8 +173,36 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
             strict=True,
         )
 
-    test_object.assertEqual(
-        f"Error, expected type:{expected_type}, yet it was:"
-        + f"{actual_type} for:{invalid_config_setting_value}",
-        str(context.exception),
-    )
+    # Create expected output message.
+    if isinstance(invalid_config_setting_value, type(None)):
+        str_of_actual_type = "NoneType"
+    if isinstance(invalid_config_setting_value, str):
+        str_of_actual_type = "str"
+    if isinstance(invalid_config_setting_value, bool):
+        str_of_actual_type = "bool"
+
+    if alternative_var_name is None:
+        var_name = "integer_setting"
+        str_of_expected_type = "int"
+    else:
+        var_name = alternative_var_name
+        str_of_expected_type = "bool"
+
+    if non_typechecked_error:
+        # Some functions take the Supported_..() type as argument, which means
+        # they, currently, cannot be typechecked with the @decorator. That
+        # means the manual type-checking error is raised inside the function.
+        test_object.assertEqual(
+            f"Error, expected type:{expected_type}, yet it was:"
+            + f"{type(invalid_config_setting_value)} for:"
+            + f"{invalid_config_setting_value}",
+            str(context.exception),
+        )
+    else:
+        # This is the default typechecked error that is raised if an
+        # invalid type is passed into the function.
+        test_object.assertEqual(
+            f'type of argument "{var_name}" must be {str_of_expected_type}; '
+            + f"got {str_of_actual_type} instead",
+            str(context.exception),
+        )

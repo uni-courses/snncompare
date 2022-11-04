@@ -56,7 +56,7 @@ class Test_mdsa(unittest.TestCase):
             verify_algo_configs("MDSA", self.mdsa_configs)
 
         self.assertEqual(
-            "m_val is not of type:int. Instead it is of " + f"type:{str}",
+            'type of argument "m_vals"[0] must be int; got str instead',
             str(context.exception),
         )
 

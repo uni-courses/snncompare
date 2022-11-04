@@ -93,6 +93,7 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
                 experiment_config,
                 expected_type,
                 self,
+                True,
             )
 
     @typechecked

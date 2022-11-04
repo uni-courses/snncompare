@@ -81,7 +81,8 @@ class Test_seed_settings(unittest.TestCase):
         expected_type = type(self.supp_exp_setts.seed)
 
         # Verify it throws an error on None and string.
-        for invalid_config_setting_value in [None, ""]:
+        # TODO: change str into somestring and make the test work.
+        for invalid_config_setting_value in [None, "stro"]:
             experiment_config["seed"] = invalid_config_setting_value
             verify_error_is_thrown_on_invalid_configuration_setting_value(
                 invalid_config_setting_value,
