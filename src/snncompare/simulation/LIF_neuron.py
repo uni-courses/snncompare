@@ -164,7 +164,7 @@ class LIF_neuron:
         self.a_in_next: float = 0.0
 
     @typechecked
-    def simulate_neuron_one_timestep(self, a_in: int) -> bool:
+    def simulate_neuron_one_timestep(self, a_in: float) -> bool:
         """Computes what the new current u and new voltage v will be based on
         the default neuron properties, du,dv, bias, previous current u,
         previous voltage v, and the incoming input signal/value of a_in. Based
@@ -172,9 +172,7 @@ class LIF_neuron:
         returns the boolean signal indicating whether it will spike (True) or
         not (False).
 
-        :param a_in: int: the input current into this neuron.
-        :param a_in: int:
-        :param a_in: int:
+        :param a_in: float: the input current into this neuron.
         """
         self.set_compute_u(a_in)
         self.set_compute_v()  # Also sets self.spikes
@@ -182,12 +180,12 @@ class LIF_neuron:
 
     # TODO: make this function only accessible to object itself.
     @typechecked
-    def set_compute_u(self, a_in: int) -> None:
+    def set_compute_u(self, a_in: float) -> None:
         """Computes the new current u based on the previous current u, du, and
         the incoming input signal/value of a_in. After computation overwrites
         the previous value of the u with the new value for u.
 
-        :param a_in: int: the input current into this neuron.
+        :param a_in: float: the input current into this neuron.
         """
         self.u = U(self.u.get() * (1 - self.du.get()) + a_in)
 

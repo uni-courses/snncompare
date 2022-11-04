@@ -25,7 +25,6 @@ from src.snncompare.helper import add_stage_completion_to_graph
 
 
 @typechecked
-@typechecked
 def get_used_graphs(run_config: dict) -> dict:
     """First gets the input graph.
 
@@ -64,7 +63,6 @@ def get_used_graphs(run_config: dict) -> dict:
 
 
 @typechecked
-@typechecked
 def get_input_graph(run_config: dict) -> nx.Graph:
     """TODO: support retrieving graph sizes larger than size 5.
     TODO: ensure those graphs have valid properties, e.g. triangle-free and
@@ -79,13 +77,11 @@ def get_input_graph(run_config: dict) -> nx.Graph:
 
 
 @typechecked
-@typechecked
 def get_the_input_graph(run_config: dict) -> nx.Graph:
     """Returns a specific input graph from the list of input graphs."""
     return get_input_graphs(run_config)[run_config["graph_nr"]]
 
 
-@typechecked
 @typechecked
 def get_input_graphs(run_config: dict) -> List[nx.Graph]:
     """Removes graphs that are not used, because of a maximum nr of graphs that
@@ -118,7 +114,6 @@ def get_input_graphs(run_config: dict) -> List[nx.Graph]:
 
 
 @typechecked
-@typechecked
 def get_snn_algo_graph(input_graph: nx.Graph, run_config: dict) -> nx.DiGraph:
     """Takes the input graph and converts it to an snn that solves some
     algorithm when it is being ran.
@@ -143,7 +138,6 @@ def get_snn_algo_graph(input_graph: nx.Graph, run_config: dict) -> nx.DiGraph:
     return snn_algo_graph
 
 
-@typechecked
 @typechecked
 def get_adapted_graph(
     snn_algo_graph: nx.DiGraph, run_config: dict
@@ -176,7 +170,6 @@ def get_adapted_graph(
 
 
 @typechecked
-@typechecked
 def has_adaptation(run_config: Dict[str, Any]) -> bool:
     """Checks if the adaptation contains a None setting.
 
@@ -191,7 +184,6 @@ def has_adaptation(run_config: Dict[str, Any]) -> bool:
 
 
 @typechecked
-@typechecked
 def has_radiation(run_config: Dict[str, Any]) -> bool:
     """Checks if the radiation contains a None setting.
 
@@ -205,7 +197,6 @@ def has_radiation(run_config: Dict[str, Any]) -> bool:
     return False
 
 
-@typechecked
 @typechecked
 def get_redundant_graph(
     snn_algo_graph: nx.DiGraph, red_lev: float
@@ -228,7 +219,6 @@ def get_redundant_graph(
     )
 
 
-@typechecked
 @typechecked
 def get_radiation_graph(
     snn_graph: nx.DiGraph, run_config: dict, seed: int

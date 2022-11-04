@@ -12,7 +12,6 @@ from tests.exp_setts.unsorted.test_create_testobject import add_monitor_to_dict
 
 
 @typechecked
-@typechecked
 def implement_adaptation_mechanism(
     adaptation_graph: nx.DiGraph,
     # m,
@@ -56,7 +55,6 @@ def implement_adaptation_mechanism(
 
 
 @typechecked
-@typechecked
 def store_input_synapses(adaptation_graph: nx.DiGraph, node_name: str) -> None:
     """
 
@@ -71,7 +69,6 @@ def store_input_synapses(adaptation_graph: nx.DiGraph, node_name: str) -> None:
     adaptation_graph.nodes[node_name]["input_edges"] = input_edges
 
 
-@typechecked
 @typechecked
 def store_output_synapses(
     adaptation_graph: nx.digraph, node_name: str
@@ -89,7 +86,6 @@ def store_output_synapses(
     adaptation_graph.nodes[node_name]["output_edges"] = output_edges
 
 
-@typechecked
 @typechecked
 def create_redundant_node(
     adaptation_graph: nx.digraph, node_name: str
@@ -125,7 +121,6 @@ def create_redundant_node(
 
 
 @typechecked
-@typechecked
 def compute_vth_for_delay(
     adaptation_graph: nx.digraph, node_name: str
 ) -> float:
@@ -150,7 +145,6 @@ def compute_vth_for_delay(
 
 
 @typechecked
-@typechecked
 def add_input_synapses(adaptation_graph: nx.digraph, node_name: str) -> None:
     """
 
@@ -170,7 +164,6 @@ def add_input_synapses(adaptation_graph: nx.digraph, node_name: str) -> None:
         )
 
 
-@typechecked
 @typechecked
 def add_output_synapses(adaptation_graph: nx.digraph, node_name: str) -> None:
     """
@@ -195,7 +188,6 @@ def add_output_synapses(adaptation_graph: nx.digraph, node_name: str) -> None:
 
 
 @typechecked
-@typechecked
 def add_inhibitory_synapse(
     adaptation_graph: nx.DiGraph, node_name: str
 ) -> None:
@@ -213,7 +205,6 @@ def add_inhibitory_synapse(
     # TODO: set edge weight
 
 
-@typechecked
 @typechecked
 def add_recurrent_inhibitiory_synapses(
     adaptation_graph: nx.DiGraph, nodename: str
@@ -236,7 +227,6 @@ def add_recurrent_inhibitiory_synapses(
         )
 
 
-@typechecked
 @typechecked
 def convert_new_graph_to_snn(test_object: Any, sim_time: int) -> Any:
     """

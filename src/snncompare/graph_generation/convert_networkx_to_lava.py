@@ -1,6 +1,5 @@
 """Converts networkx graph representing lava spiking-neural-network into
 SNN."""
-from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
 import networkx as nx
@@ -250,7 +249,6 @@ def add_recurrent_edge(G: DiGraph, nodename: int, neuron: LIF) -> None:
 
 
 @typechecked
-@typechecked
 def get_neuron_properties(
     G: nx.DiGraph, nodename: Union[int, str], t: int
 ) -> Tuple[float, float, float, float]:
@@ -261,14 +259,8 @@ def get_neuron_properties(
     :param nodename: Node of the name of a networkx graph. Name of the node of
      the networkx graph.
     """
-    pprint(G.__dict__)
-    print(f"nodename={nodename}")
-    print(f"nodename={type(nodename)}")
-
     if int(nodename) in G.nodes:
-        pprint(G.nodes[int(nodename)])
         if "nx_LIF" in G.nodes[int(nodename)]:
-            pprint(G.nodes[int(nodename)]["nx_LIF"])
             bias = G.nodes[int(nodename)]["nx_LIF"][t].bias.get()
             du = G.nodes[int(nodename)]["nx_LIF"][t].du.get()
             dv = G.nodes[int(nodename)]["nx_LIF"][t].dv.get()
