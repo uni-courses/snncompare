@@ -6,7 +6,7 @@
 # So to resolve that, a mirror is created that includes such a file.
 
 default_language_version:
-    python: python3.8.  # or python3
+    python: python3.10.  # or python3
 
 
 repos:
@@ -41,6 +41,17 @@ repos:
    rev: v0.950
    hooks:
     - id: mypy
+      args: ["--disallow-untyped-calls", "--disallow-untyped-defs"]
+
+  # TODO:
+  #--strict
+  #--disallow-incomplete-defs
+  #--disallow-any-unimported
+  #--disallow-any-expr
+  #--disallow-any-decorated
+  #--disallow-any-explicit
+  #--disallow-any-generics
+  #--disallow-subclassing-any
 
 # Tests if there are spelling errors in the code.
  - repo: https://github.com/codespell-project/codespell
@@ -144,6 +155,7 @@ repos:
    rev: 0.7.14
    hooks:
    - id: mdformat
+     #args: ["-r ~MD013"]
      additional_dependencies:
      - mdformat-toc
      - mdformat-gfm

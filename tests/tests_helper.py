@@ -1,33 +1,53 @@
 """Contains functions used to help the tests."""
+from __future__ import annotations
+
 import copy
 import pathlib
 import random
-from typing import List
+from pathlib import PosixPath
+from typing import TYPE_CHECKING, Any, List
 
 import jsons
 import networkx as nx
+from typeguard import typechecked
 
-from src.snnalgocompare.export_results.export_json_results import (
+from src.snncompare.export_results.export_json_results import (
     write_dict_to_json,
 )
-from src.snnalgocompare.export_results.helper import (
+from src.snncompare.export_results.helper import (
     get_expected_image_paths_stage_3,
 )
-from src.snnalgocompare.graph_generation.snn_algo.mdsa_snn_algo import (
+from src.snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
     Alipour_properties,
 )
 
+if TYPE_CHECKING:
+    from tests.simulation.test_cyclic_graph_propagation import (
+        Test_cyclic_propagation_with_recurrent_edges,
+    )
+    from tests.simulation.test_rand_network_propagation import (
+        Test_propagation_with_recurrent_edges,
+    )
 
-def get_n_random_run_configs(run_configs, n: int, seed: int = None):
-    """Returns n random experiment configurations."""
+
+@typechecked
+def get_n_random_run_configs(
+    run_configs: list[dict], n: int, seed: int = None
+) -> Any:
+    """Returns n random experiment configurations.
+
+    TODO: specify what to do if seed is None.
+    """
     if seed is not None:
         random.seed(seed)
     if n > len(run_configs):
         n = len(run_configs)
+
     return random.sample(run_configs, n)
 
 
-def assertIsFile(path):
+@typechecked
+def assertIsFile(path: PosixPath) -> None:
     """Asserts a file exists.
 
     Throws error if a file does not exist.
@@ -37,7 +57,8 @@ def assertIsFile(path):
         raise AssertionError("File does not exist: %s" % str(path))
 
 
-def assertIsNotFile(path):
+@typechecked
+def assertIsNotFile(path: str) -> None:
     """Asserts a file does not exists.
 
     Throws error if the file does exist.
@@ -47,13 +68,14 @@ def assertIsNotFile(path):
         raise AssertionError("File exist: %s" % str(path))
 
 
+@typechecked
 def create_result_file_for_testing(
     json_filepath: str,
-    graph_names: List[str],
-    completed_stages: List[str],
-    input_graph: nx.DiGraph,
+    graph_names: list[str],
+    completed_stages: list[int],
+    input_graph: nx.Graph,
     run_config: dict,
-):
+) -> None:
     """Creates a dummy .json result file that can be used to test functions
     that recognise which stages have been computed already or not.
 
@@ -79,14 +101,15 @@ def create_result_file_for_testing(
     write_dict_to_json(json_filepath, jsons.dump(dummy_result))
 
     # Verify output JSON file exists.
-    filepath = pathlib.Path(json_filepath)
+    filepath = pathlib.PosixPath(json_filepath)
     assertIsFile(filepath)
 
 
+@typechecked
 def create_results_dict_for_testing_stage_1(
-    graph_names: List[str],
-    completed_stages: List[str],
-    input_graph: nx.DiGraph,
+    graph_names: list[str],
+    completed_stages: list[int],
+    input_graph: nx.Graph,
     run_config: dict,
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
@@ -119,10 +142,11 @@ def create_results_dict_for_testing_stage_1(
     return dummy_result
 
 
+@typechecked
 def create_results_dict_for_testing_stage_2(
-    graph_names: List[str],
-    completed_stages: List[str],
-    input_graph: nx.DiGraph,
+    graph_names: list[str],
+    completed_stages: list[int],
+    input_graph: nx.Graph,
     run_config: dict,
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
@@ -165,6 +189,7 @@ def create_results_dict_for_testing_stage_2(
     return dummy_result
 
 
+@typechecked
 def add_results_to_stage_4(dummy_nx_results: dict) -> None:
     """Creates dummy results in the last timestep/list element of the graph for
     stage 4."""
@@ -174,11 +199,12 @@ def add_results_to_stage_4(dummy_nx_results: dict) -> None:
             nx_graph_list[-1]["graph"]["results"] = "Filler"
 
 
+@typechecked
 def create_dummy_output_images_stage_3(
-    graph_names: List[str],
-    input_graph: nx.DiGraph,
+    graph_names: list[str],
+    input_graph: nx.Graph,
     run_config: dict,
-    extensions,
+    extensions: list[str],
 ) -> None:
     """Creates the dummy output images that would be created as output for
     stage 3, if exporting is on."""
@@ -192,5 +218,78 @@ def create_dummy_output_images_stage_3(
             pass
 
         # Verify output JSON file exists.
-        filepath = pathlib.Path(image_filepath)
+        filepath = pathlib.PosixPath(image_filepath)
         assertIsFile(filepath)
+
+
+@typechecked
+def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
+    """Gets a cyclic graph with nodes that cannot be reached following the
+    directed edges, to test if the Lava simulation imposes some requirements on
+    the graph properties."""
+    graph = nx.DiGraph()
+    graph.add_nodes_from(
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        color="w",
+    )
+    graph.add_edges_from(
+        [
+            (1, 0),
+            (1, 2),
+            (3, 2),
+            (4, 3),
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 5),
+            (8, 7),
+        ],
+        weight=float(10),
+    )
+    return graph
+
+
+def compare_static_snn_properties(
+    test_object: (
+        Test_propagation_with_recurrent_edges
+        | Test_cyclic_propagation_with_recurrent_edges
+    ),
+    G: nx.DiGraph,
+    t: int = 0,
+) -> None:
+    """Performs comparison of static neuron properties at each timestep.
+
+    :param G: The original graph on which the MDSA algorithm is ran.
+    """
+    for node in G.nodes:
+        lava_neuron = G.nodes[node]["lava_LIF"]
+        nx_neuron = G.nodes[node]["nx_LIF"][t]
+
+        # Assert bias is equal.
+        test_object.assertEqual(
+            lava_neuron.bias_mant.get(), nx_neuron.bias.get()
+        )
+
+        # dicts
+        # print(f"lava_neuron.__dict__={lava_neuron.__dict__}")
+        # print(f"lava_neuron.__dict__={nx_neuron.__dict__}")
+
+        # Assert du is equal.
+        test_object.assertEqual(lava_neuron.du.get(), nx_neuron.du.get())
+        #
+
+        # Assert dv is equal.
+        test_object.assertEqual(lava_neuron.dv.get(), nx_neuron.dv.get())
+
+        # print(f"lava_neuron.name.get()={lava_neuron.name.get()}")
+        # print(f"lava_neuron.name.get()={nx_neuron.name.get()}")
+        # Assert name is equal.
+        # self.assertEqual(lava_neuron.name, nx_neuron.name)
+
+        # Assert vth is equal.
+        test_object.assertEqual(lava_neuron.vth.get(), nx_neuron.vth.get())
+
+        # Assert v_reset is equal. (Not yet implemented in Lava.)
+        # self.assertEqual(
+        #    lava_neuron.v_reset.get(), nx_neuron.v_reset.get()
+        # )

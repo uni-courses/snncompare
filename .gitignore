@@ -7,6 +7,8 @@ Images/*
 pickles/*
 results/*
 results.txt
+monkeytype.sqlite3
+type_info.json
 
 # Don't include code visualisation structure.
 pycallgraph.png

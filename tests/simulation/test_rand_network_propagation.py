@@ -1,35 +1,33 @@
 """Performs tests that verify lava simulation produces the same results as the
 networkx simulation."""
-
 import math
 import unittest
 
 import networkx as nx
 import numpy as np
+from typeguard import typechecked
 
-from src.snnalgocompare.exp_setts.Scope_of_tests import Long_scope_of_tests
-from src.snnalgocompare.graph_generation.get_graph import (
+from src.snncompare.graph_generation.get_graph import (
     gnp_random_connected_graph,
 )
-from src.snnalgocompare.simulation.LIF_neuron import (
+from src.snncompare.simulation.LIF_neuron import (
     print_neuron_properties_per_graph,
 )
-from src.snnalgocompare.simulation.run_on_lava import (
+from src.snncompare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
 )
-from src.snnalgocompare.simulation.run_on_networkx import (
+from src.snncompare.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
 )
-from src.snnalgocompare.simulation.verify_graph_is_networkx_snn import (
+from src.snncompare.simulation.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
 )
-from src.snnalgocompare.simulation.verify_graph_is_snn import (
+from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
-from tests.simulation.test_cyclic_graph_propagation import (
-    compare_static_snn_properties,
-)
+from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
+from tests.tests_helper import compare_static_snn_properties
 
 
 class Test_propagation_with_recurrent_edges(unittest.TestCase):
@@ -37,15 +35,17 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
     the networkx simulation."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    @typechecked
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
     # pylint: disable=R0801
+    @typechecked
     def test_random_networks_are_propagated_the_same_on_networkx_and_lava(
         self,
-    ):
+    ) -> None:
         """Tests whether the random_snn_networks that are generated yield the
         same behaviour on lava as on networkx."""
         # pylint: disable=R1702
@@ -126,7 +126,9 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             #    self, G, starter_neuron, sim_duration=20
                             # )
 
-    def compare_dynamic_snn_properties(self, G, t):
+    # TODO: remove duplicate into separate test helper function.
+    @typechecked
+    def compare_dynamic_snn_properties(self, G: nx.DiGraph, t: int) -> None:
         """Performs comparison of static neuron properties at each timestep.
 
         :param G: The original graph on which the MDSA algorithm is ran.

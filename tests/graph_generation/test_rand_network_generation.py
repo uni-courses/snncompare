@@ -1,23 +1,23 @@
 """Performs tests that verify lava simulation produces the same results as the
 networkx simulation."""
-
 import math
 import unittest
 
 import networkx as nx
 import numpy as np
+from typeguard import typechecked
 
-from src.snnalgocompare.exp_setts.Scope_of_tests import Long_scope_of_tests
-from src.snnalgocompare.graph_generation.get_graph import (
+from src.snncompare.graph_generation.get_graph import (
     gnp_random_connected_graph,
 )
-from src.snnalgocompare.simulation.verify_graph_is_networkx_snn import (
+from src.snncompare.simulation.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
 )
-from src.snnalgocompare.simulation.verify_graph_is_snn import (
+from src.snncompare.simulation.verify_graph_is_snn import (
     verify_networkx_snn_spec,
 )
+from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
 class Test_networkx_and_lava_snn_simulation_produce_identical_results(
@@ -27,11 +27,15 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
     the networkx simulation."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    @typechecked
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
-    def test_generates_valid_snn_networks_without_recursive_edges(self):
+    @typechecked
+    def test_generates_valid_snn_networks_without_recursive_edges(
+        self,
+    ) -> None:
         """Tests whether the random_snn_networks that are generated are valid
         snn networks.
         TODO: separate into testing for lava and for nx backend.
@@ -83,7 +87,8 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     # Assert all neuron properties are specified.
                     verify_networkx_snn_spec(G, t=0, backend="nx")
 
-    def test_generates_valid_snn_networks_with_recursive_edges(self):
+    @typechecked
+    def test_generates_valid_snn_networks_with_recursive_edges(self) -> None:
         """Tests whether the random_snn_networks that are generated are valid
         snn networks.
 

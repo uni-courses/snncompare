@@ -1,7 +1,9 @@
 """Verifies 2 nodes are included in the networkx graph."""
 import unittest
 
-from src.snnalgocompare.graph_generation.get_graph import (
+from typeguard import typechecked
+
+from src.snncompare.graph_generation.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
 
@@ -11,10 +13,12 @@ class Test_get_graph(unittest.TestCase):
     returns a graph with 2 nodes."""
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    @typechecked
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
 
-    def test_returns_2_nodes(self):
+    @typechecked
+    def test_returns_2_nodes(self) -> None:
         """Tests whether the get_networkx_graph_of_2_neurons function returns a
         graph with two nodes."""
 

@@ -1,12 +1,13 @@
 """Performs tests that verify the behaviour of a recurrent edge in the
 network."""
-
 import unittest
 
-from src.snnalgocompare.graph_generation.get_graph import (
+from typeguard import typechecked
+
+from src.snncompare.graph_generation.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
-from src.snnalgocompare.simulation.run_on_lava import (
+from src.snncompare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
@@ -19,11 +20,13 @@ class Test_get_graph_on_lava(unittest.TestCase):
     """
 
     # Initialize test object
-    def __init__(self, *args, **kwargs):
+    @typechecked
+    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.starter_node_name = 0
 
-    def test_returns_2_nodes(self):
+    @typechecked
+    def test_returns_2_nodes(self) -> None:
         """Tests whether the get_networkx_graph_of_2_neurons function returns a
         graph with two nodes."""
         # pylint: disable=R0801
@@ -50,7 +53,10 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Assert the edges go from node 0 to node 1, and from 0 to 0.
         self.assertEqual(set(G.edges), {(0, 0), (0, 1)})
 
-    def test_verify_recurrent_edge_without_weight_throws_error(self):
+    @typechecked
+    def test_verify_recurrent_edge_without_weight_throws_error(
+        self,
+    ) -> None:
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
         over time.
 
@@ -95,7 +101,10 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Terminate Loihi simulation.
         G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
-    def test_neuron_properties_after_1_sec_without_recurrent_connection(self):
+    @typechecked
+    def test_neuron_properties_after_1_sec_without_recurrent_connection(
+        self,
+    ) -> None:
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
         over time.
 
@@ -144,7 +153,8 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Terminate Loihi simulation.
         G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
-    def test_neuron_properties_without_recurrent_connection(self):
+    @typechecked
+    def test_neuron_properties_without_recurrent_connection(self) -> None:
         """Creates an SNN consisting of 2 neurons, and verifies their behaviour
         over time.
 
@@ -227,7 +237,8 @@ class Test_get_graph_on_lava(unittest.TestCase):
         # Terminate Loihi simulation.
         G.nodes[self.starter_node_name]["lava_LIF"].stop()
 
-    def test_neuron_properties_with_recurrent_connection(self):
+    @typechecked
+    def test_neuron_properties_with_recurrent_connection(self) -> None:
         """Creates an SNN consisting of 2 neurons, adds an inhibitory recurrent
         synapse to the excitatory neuron (at node 0), and verifies the SNN
         behaviour over time.

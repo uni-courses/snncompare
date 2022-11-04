@@ -53,7 +53,7 @@ disable=[
 # An xml report is generated and results are output to the terminal
 
 # TODO: Disable this line to disable CLI coverage reports when running tests.
-addopts = "--cov --cov-report xml:cov.xml --cov-report term"
+# addopts = "--cov --cov-report xml:cov.xml --cov-report term"
 
 # Sets the minimum allowed pytest version
 minversion = 5.0
