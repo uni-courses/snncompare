@@ -47,7 +47,7 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
 
 
 @typechecked
-def set_graph_attributes(graphs_dict: dict) -> nx.DiGraph:
+def set_graph_attributes(graphs_dict: dict) -> dict:
     """First loads the graph attributes from a graph dict and stores them as a
     dict.
 

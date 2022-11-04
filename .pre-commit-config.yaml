@@ -6,7 +6,7 @@
 # So to resolve that, a mirror is created that includes such a file.
 
 default_language_version:
-    python: python3.8.  # or python3
+    python: python3.10.  # or python3
 
 
 repos:

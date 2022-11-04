@@ -12,5 +12,9 @@ matplotlib
 networkx==2.8.7
 # Perform scientific computations.
 numpy
+# Allow for auto generation of type-hints during runtime.
+pyannotate
 # Run python tests.
 pytest-cov
+# Ensure the python function arguments are verified at runtime.
+typeguard

@@ -20,7 +20,7 @@ channels:
   - conda-forge
 dependencies:
 # Specify specific python version.
-  - python=3.8
+  - python=3.10
   # Generate plots.
   - matplotlib
 # Pre-commit packages for code quality:
@@ -49,7 +49,7 @@ dependencies:
 # Auto check static typing.
   - mypy
   # Run graph software quickly.
-  # Lava depends on networkx 2.8.0
+  # Lava depends on networkx 2.8.7
   - networkx==2.8.7
 # Another static type checker for python like mypy.
   - pyright
@@ -63,12 +63,9 @@ dependencies:
   - pyment
 # Auto check programming style aspects.
   - pylint
-# Auto check static typing.
-  - mypy
-# Auto format Markdown files.
-  - mdformat
-# Auto sort the import statements.
-  - isort
+# Ensure the python function arguments are verified at runtime.
+  - typeguard
+# pip packages:
   - pip
   - pip:
     # Run pip install on .tar.gz file in GitHub repository (For lava-nc only).
@@ -85,7 +82,11 @@ dependencies:
     - pytaggit
     # Identify and remove dead code.
     - vulture
-    # Creating a pip package for this.
+    # Enable creating the pip package.
     - setuptools
     - wheel
-    - pipreqs
+    # Enable publishing the pip package.
+    - twine
+    #- pipreqs
+    # Allow for auto generation of type-hints during runtime.
+    - pyannotate
