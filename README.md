@@ -1,27 +1,37 @@
-# networkx-to-lava-nc
+# Spiking Neural Network Performance Tool
 
-This module compares SNN algorithms to their default/Neumann implementations.
+[![Python 3.10][python_badge]](https://www.python.org/downloads/release/python-3106/)
+[![License: AGPL v3][agpl3_badge]](https://www.gnu.org/licenses/agpl-3.0)
+[![Code Style: Black][black_badge]](https://github.com/ambv/black)
+[![Code Coverage][codecov_badge]](https://codecov.io/gh/a-t-0/snnalgos)
+
+This module compares SNN [algorithms] to their default/Neumann implementations.
 The user can specify an SNN and "normal" algorithm which take as input a
 networkx graph, and compute some graph property as output. The output of the
 SNN is then compared to the "normal" algorithm as "ground truth", in terms of:
 
-- Score: How many results the SNN algorithm computed correctly (from a set of input
+- Score\*: How many results the SNN algorithm computed correctly (from a set of input
   graphs).
 - Runtime
-  In theory, the score should always be 100% for the SNN, as it should be an
-  exact SNN implementation of the ground truth algorithm. This comparison is
-  mainly relevant for the additions of brain adaptation and simulated radiation.
+- Energy Complexity (nr of spikes)
+- Space Complexity (nr of neurons)
+- Connectivity (nr of synapses)
+- Radiation Robustness
+
+\*In theory, the score should always be 100% for the SNN, as it should be an
+exact SNN implementation of the ground truth algorithm. This comparison is
+mainly relevant for the additions of brain adaptation and simulated radiation.
 
 ## Brain adaptation
 
 For each SNN algorithm that the user specifies, the user can also specify a
 form of brain-inspired adaptation. This serves to increase the robustness of
-the SNN against radiation effects. The brain adaptation can be called from a
-separate pip package called: `adaptivesnn`.
+the SNN against radiation effects. The [brain-adaptation] can be called from a
+separate pip package called: `snnadaptation`.
 
 ## Radiation
 
-A basic form of radiation effects is modelled on the SNNs. For example,
+A basic form of [radiation] effects is modelled on the SNNs. For example,
 radiation is modelled as yielding permanent activity termination for random
 neurons.
 
@@ -149,120 +159,7 @@ ulimit -n 800000
 python -m pytest
 ```
 
-And the respective output is listed below, with a test coverage of `65%`:
-
-```
-============================ test session starts ==============================
-platform linux -- Python 3.8.13, pytest-7.2.0, pluggy-1.0.0
-rootdir: /home/name/git/snncompare, configfile: pyproject.toml, testpaths: tests
-plugins: cov-4.0.0
-collected 82 items
-
-experiment_settings/test_generic_experiment_settings.py ....           \[ 4%\]
-experiment_settings/test_generic_run_settings.py ....                  \[ 9%\]
-experiment_settings/test_supported_settings_adaptation.py ......       \[17%\]
-experiment_settings/test_supported_settings_iteration.py .....         \[23%\]
-experiment_settings/test_supported_settings_m_vals.py .....            \[29%\]
-experiment_settings/test_supported_settings_max_graph_size.py .....    \[35%\]
-experiment_settings/test_supported_settings_max_max_graphs.py .....    \[41%\]
-experiment_settings/test_supported_settings_min_graph_size.py ....     \[46%\]
-experiment_settings/test_supported_settings_min_max_graphs.py ....     \[51%\]
-experiment_settings/test_supported_settings_overwrite_sim_results.py ..\[53%\]
-experiment_settings/test_supported_settings_overwrite_visualisation.py \[56%\]
-experiment_settings/test_supported_settings_radiation.py ......        \[63%\]
-experiment_settings/test_supported_settings_seed.py ..                 \[65%\]
-experiment_settings/test_supported_settings_simulators.py ....         \[70%\]
-experiment_settings/test_supported_settings_size_and_max_graphs.py ....\[76%\]
-export_results/performed_stage/test_performed_stage_TFFF.py .          \[78%\]
-export_results/performed_stage/test_performed_stage_TTFF.py .          \[79%\]
-export_results/performed_stage/test_performed_stage_TTTF.py .          \[80%\]
-export_results/performed_stage/test_performed_stage_TTTT.py .          \[81%\]
-graph_generation/test_get_graph.py .                                   \[82%\]
-graph_generation/test_rand_network_generation.py ..                    \[85%\]
-simulation/test_cyclic_graph_propagation.py .                          \[86%\]
-simulation/test_has_recurrent_edge_lava.py .....                       \[92%\]
-simulation/test_has_recurrent_edge_networkx.py .....                   \[98%\]
-simulation/test_rand_network_propagation.py .                          \[00%\]
-
-## ---------- coverage: platform linux, python 3.8.13-final-0 -----------
-Name                                                       Stmts   Miss  Cover
-
-## src/__init__.py                                                0    0  100%
-
-src/snncompare/__init__.py                                        2    0  100%
-src/snncompare/__main__.py                                       13   13    0%
-src/snncompare/exp_setts/Adaptation_Rad_settings.py              16    0  100%
-src/snncompare/exp_setts/Experiment_runner.py                   110    9   92%
-src/snncompare/exp_setts/Scope_of_tests.py                       39   17   56%
-src/snncompare/exp_setts/Supported_algorithms.py                  5    0  100%
-src/snncompare/exp_setts/Supported_experiment_settings.py        57    4   93%
-src/snncompare/exp_setts/Supported_run_settings.py               18    2   89%
-src/snncompare/exp_setts/__init__.py                              0    0  100%
-src/snncompare/exp_setts/create_testobject.py                    61   45   26%
-src/snncompare/exp_setts/verify_experiment_settings.py          123   12   90%
-src/snncompare/exp_setts/verify_run_completion.py                 4    1   75%
-src/snncompare/exp_setts/verify_run_settings.py                  31    8   74%
-src/snncompare/export_results/Output.py                         114   80   30%
-src/snncompare/export_results/Output_stage_12.py                  5    0  100%
-src/snncompare/export_results/Output_stage_34.py                 13    5   62%
-src/snncompare/export_results/Plot_to_tex.py                     75   59   21%
-src/snncompare/export_results/__init__.py                         0    0  100%
-src/snncompare/export_results/check_json_graphs.py               12   12    0%
-src/snncompare/export_results/check_nx_graphs.py                  9    7   22%
-src/snncompare/export_results/export_json_results.py             37   21   43%
-src/snncompare/export_results/export_nx_graph_to_json.py         42    8   81%
-src/snncompare/export_results/helper.py                          39    2   95%
-src/snncompare/export_results/load_json_to_nx_graph.py           64   31   52%
-src/snncompare/export_results/load_pickles_get_results.py        22   18   18%
-src/snncompare/export_results/plot_graphs.py                     36    9   75%
-src/snncompare/export_results/verify_json_graphs.py              21    5   76%
-src/snncompare/export_results/verify_nx_graphs.py                42   10   76%
-src/snncompare/export_results/verify_stage_1_graphs.py           23   10   57%
-src/snncompare/export_results/verify_stage_2_graphs.py            1    0  100%
-src/snncompare/export_results/verify_stage_3_graphs.py            1    0  100%
-src/snncompare/export_results/verify_stage_4_graphs.py            1    0  100%
-src/snncompare/graph_generation/Used_graphs.py                   95   25   74%
-src/snncompare/graph_generation/__init__.py                       0    0  100%
-src/snncompare/graph_generation/adaptation/__init__.py            0    0  100%
-src/snncompare/graph_generation/adaptation/redundancy.py         59    5   92%
-src/snncompare/graph_generation/brain_adaptation.py              78   78    0%
-src/snncompare/graph_generation/convert_networkx_to_lava.py     117    9   92%
-src/snncompare/graph_generation/get_graph.py                     76    3   96%
-src/snncompare/graph_generation/helper_network_structure.py     144  114   21%
-src/snncompare/graph_generation/radiation/Radiation_damage.py    71   28   61%
-src/snncompare/graph_generation/radiation/__init__.py             0    0  100%
-src/snncompare/graph_generation/snn_algo/__init__.py              0    0  100%
-src/snncompare/graph_generation/snn_algo/mdsa_snn_algo.py       110    1   99%
-src/snncompare/graph_generation/stage_1_get_input_graphs.py      85   14   84%
-src/snncompare/helper.py                                        276  167   39%
-src/snncompare/import_results/__init__.py                         0    0  100%
-src/snncompare/import_results/check_completed_stages.py          77   21   73%
-src/snncompare/import_results/read_json.py                       37    4   89%
-src/snncompare/import_results/stage_1_load_input_graphs.py       28   20   29%
-src/snncompare/old_conversion.py                                 59   49   17%
-src/snncompare/process_results/__init__.py                        0    0  100%
-src/snncompare/process_results/get_alipour_nodes.py              17    0  100%
-src/snncompare/process_results/get_mdsa_results.py               54    3   94%
-src/snncompare/process_results/process_results.py                36    3   92%
-src/snncompare/process_results/stage_2_propagate_graphs.py        0    0  100%
-src/snncompare/simulation/LIF_neuron.py                         120   11   91%
-src/snncompare/simulation/__init__.py                             0    0  100%
-src/snncompare/simulation/run_on_lava.py                         24    2   92%
-src/snncompare/simulation/run_on_networkx.py                     51    3   94%
-src/snncompare/simulation/stage2_sim.py                          25    3   88%
-src/snncompare/simulation/verify_graph_is_lava_snn.py            14    4   71%
-src/snncompare/simulation/verify_graph_is_networkx_snn.py        31    7   77%
-src/snncompare/simulation/verify_graph_is_snn.py                 12    0  100%
-src/snncompare/verification_generic.py                           10    2   80%
-
-TOTAL                                                            2742    964    65%
-Coverage XML written to file cov.xml
-
-=================== 82 passed, 1 warning in 415.57s (0:06:55) =======================
-
-```
-
-And for type checking:
+Currently the test coverage is `65%`. For type checking:
 
 ```
 mypy --disallow-untyped-calls --disallow-untyped-defs tests/export_results/performed_stage/test_performed_stage_TTFF.py
@@ -283,3 +180,13 @@ Followed by updating the package with:
 python3 setup.py sdist bdist_wheel
 python -m twine upload dist/*
 ```
+
+<!-- Un-wrapped URL's (Badges and Hyperlinks) -->
+
+[agpl3_badge]: https://img.shields.io/badge/License-AGPL_v3-blue.svg
+[algorithms]: https://github.com/a-t-0/snnalgos
+[black_badge]: https://img.shields.io/badge/code%20style-black-000000.svg
+[brain-adaptation]: https://github.com/a-t-0/snnadaptation
+[codecov_badge]: https://codecov.io/gh/a-t-0/snn/branch/main/graph/badge.svg
+[python_badge]: https://img.shields.io/badge/python-3.10-blue.svg
+[radiation]: https://github.com/a-t-0/snnradiation
