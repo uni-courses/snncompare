@@ -145,7 +145,6 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
             self.assertEqual(lava_neuron.v.get(), nx_neuron.v.get())
 
 
-@typechecked
 def run_simulation_for_t_steps(
     test_object: (
         Test_propagation_with_recurrent_edges

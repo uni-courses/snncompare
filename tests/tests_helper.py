@@ -249,7 +249,6 @@ def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
     return graph
 
 
-@typechecked
 def compare_static_snn_properties(
     test_object: (
         Test_propagation_with_recurrent_edges

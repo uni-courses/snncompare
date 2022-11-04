@@ -1,7 +1,7 @@
 """Converts networkx graph representing lava spiking-neural-network into
 SNN."""
 from pprint import pprint
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import networkx as nx
 
@@ -252,7 +252,7 @@ def add_recurrent_edge(G: DiGraph, nodename: int, neuron: LIF) -> None:
 @typechecked
 @typechecked
 def get_neuron_properties(
-    G: nx.DiGraph, nodename: int, t: int
+    G: nx.DiGraph, nodename: Union[int, str], t: int
 ) -> Tuple[float, float, float, float]:
     """Returns the bias,du,dv and vth of a node of the MDSA SNN graph.
 
@@ -266,15 +266,15 @@ def get_neuron_properties(
     print(f"nodename={type(nodename)}")
 
     if int(nodename) in G.nodes:
-        pprint(G.nodes[nodename])
-        if "nx_LIF" in G.nodes[nodename]:
-            pprint(G.nodes[nodename]["nx_LIF"])
-            bias = G.nodes[nodename]["nx_LIF"][t].bias.get()
-            du = G.nodes[nodename]["nx_LIF"][t].du.get()
-            dv = G.nodes[nodename]["nx_LIF"][t].dv.get()
-            vth = G.nodes[nodename]["nx_LIF"][t].vth.get()
+        pprint(G.nodes[int(nodename)])
+        if "nx_LIF" in G.nodes[int(nodename)]:
+            pprint(G.nodes[int(nodename)]["nx_LIF"])
+            bias = G.nodes[int(nodename)]["nx_LIF"][t].bias.get()
+            du = G.nodes[int(nodename)]["nx_LIF"][t].du.get()
+            dv = G.nodes[int(nodename)]["nx_LIF"][t].dv.get()
+            vth = G.nodes[int(nodename)]["nx_LIF"][t].vth.get()
             return bias, du, dv, vth
-        raise Exception(f"node does not have nx_LIF:{G.nodes[nodename]}.")
+        raise Exception(f"node does not have nx_LIF:{G.nodes[int(nodename)]}.")
     raise Exception(f"nodename:{nodename} not in G.nodes:{G.nodes}.")
 
 

@@ -223,7 +223,7 @@ class Vth:
 def print_neuron_properties(
     neurons: List[Any],
     static: bool,
-    ids: List[Any] = None,
+    ids: nx.classes.reportviews.NodeView = None,
     spikes: List[Any] = None,
 ) -> None:
     """Prints the neuron properties in human readable format.
