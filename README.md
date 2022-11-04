@@ -54,7 +54,7 @@ radiation robustness.
 ## Backends
 
 Since the effectiveness of the adaptation mechanisms, in terms of radiation
-robustness, is a function of neuromorphic hardware platform, multiple backends
+robustness, is a function of neuromorphic hardware platform, multiple [backends]
 are supported. These backends also allow for different neuronal and synaptic
 models. Currently the following backends are supported:
 
@@ -185,6 +185,7 @@ python -m twine upload dist/*
 
 [agpl3_badge]: https://img.shields.io/badge/License-AGPL_v3-blue.svg
 [algorithms]: https://github.com/a-t-0/snnalgos
+[backends]: https://github.com/a-t-0/snnbackends
 [black_badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [brain-adaptation]: https://github.com/a-t-0/snnadaptation
 [codecov_badge]: https://codecov.io/gh/a-t-0/snn/branch/main/graph/badge.svg
