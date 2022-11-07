@@ -11,9 +11,7 @@ from snnalgorithms.verify_algos import verify_algos_in_experiment_config
 from typeguard import typechecked
 
 if TYPE_CHECKING:
-    from src.snncompare.exp_setts.Supported_experiment_settings import (
-        Supported_experiment_settings,
-    )
+    from .Supported_experiment_settings import Supported_experiment_settings
 
 
 # pylint: disable=W0613

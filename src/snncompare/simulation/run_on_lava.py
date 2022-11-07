@@ -14,12 +14,10 @@ from lava.magma.core.run_configs import Loihi1SimCfg
 from lava.proc.lif.process import LIF
 from typeguard import typechecked
 
-from src.snncompare.graph_generation.convert_networkx_to_lava import (
+from ..graph_generation.convert_networkx_to_lava import (
     initialise_networkx_to_snn_conversion,
 )
-from src.snncompare.simulation.verify_graph_is_snn import (
-    verify_networkx_snn_spec,
-)
+from .verify_graph_is_snn import verify_networkx_snn_spec
 
 
 @typechecked

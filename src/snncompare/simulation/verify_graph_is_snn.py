@@ -4,10 +4,10 @@ neuron and synapse properties specified."""
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.simulation.verify_graph_is_lava_snn import (
+from .verify_graph_is_lava_snn import (
     verify_lava_neuron_properties_are_specified,
 )
-from src.snncompare.simulation.verify_graph_is_networkx_snn import (
+from .verify_graph_is_networkx_snn import (
     assert_synapse_properties_are_specified,
     verify_nx_neuron_properties_are_specified,
 )

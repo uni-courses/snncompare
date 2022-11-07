@@ -9,10 +9,8 @@ from typing import List
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.simulation.LIF_neuron import LIF_neuron
-from src.snncompare.simulation.verify_graph_is_snn import (
-    verify_networkx_snn_spec,
-)
+from .LIF_neuron import LIF_neuron
+from .verify_graph_is_snn import verify_networkx_snn_spec
 
 # Import external libraries.
 

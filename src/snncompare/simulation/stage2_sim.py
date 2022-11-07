@@ -4,22 +4,20 @@ timestep."""
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.helper import (
+from ..helper import (
     add_stage_completion_to_graph,
     get_sim_duration,
     old_graph_to_new_graph_properties,
 )
-from src.snncompare.simulation.run_on_networkx import (
+from .run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
 )
-from src.snncompare.simulation.verify_graph_is_networkx_snn import (
+from .verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
 )
-from src.snncompare.simulation.verify_graph_is_snn import (
-    verify_networkx_snn_spec,
-)
+from .verify_graph_is_snn import verify_networkx_snn_spec
 
 
 @typechecked

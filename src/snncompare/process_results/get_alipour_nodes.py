@@ -5,7 +5,7 @@ from typing import Any, Dict
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.helper import (
+from ..helper import (
     compute_mark,
     compute_marks_for_m_larger_than_one,
     set_node_default_values,

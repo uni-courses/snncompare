@@ -15,18 +15,14 @@ from lava.proc.monitor.process import Monitor
 from networkx.classes.graph import Graph
 from typeguard import typechecked
 
-from src.snncompare.export_results.export_json_results import get_unique_hash
-from src.snncompare.export_results.plot_graphs import (
-    create_root_dir_if_not_exists,
-)
-from src.snncompare.export_results.Plot_to_tex import Plot_to_tex
-from src.snncompare.graph_generation.radiation.Radiation_damage import (
+from .export_results.export_json_results import get_unique_hash
+from .export_results.plot_graphs import create_root_dir_if_not_exists
+from .export_results.Plot_to_tex import Plot_to_tex
+from .graph_generation.radiation.Radiation_damage import (
     store_dead_neuron_names_in_graph,
 )
-from src.snncompare.simulation.LIF_neuron import LIF_neuron
-from src.snncompare.simulation.verify_graph_is_snn import (
-    verify_networkx_snn_spec,
-)
+from .simulation.LIF_neuron import LIF_neuron
+from .simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 @typechecked

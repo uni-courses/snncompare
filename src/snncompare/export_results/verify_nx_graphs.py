@@ -4,11 +4,9 @@ from typing import List
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.export_results.verify_stage_1_graphs import (
-    get_expected_stage_1_graph_names,
-)
-from src.snncompare.helper import get_expected_stages
-from src.snncompare.verification_generic import verify_completed_stages_list
+from ..helper import get_expected_stages
+from ..verification_generic import verify_completed_stages_list
+from .verify_stage_1_graphs import get_expected_stage_1_graph_names
 
 
 @typechecked

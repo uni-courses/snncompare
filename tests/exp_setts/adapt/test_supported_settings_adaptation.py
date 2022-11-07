@@ -5,7 +5,7 @@ import unittest
 
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.verify_experiment_settings import (
+from snncompare.exp_setts.verify_experiment_settings import (
     verify_adap_and_rad_settings,
     verify_experiment_config,
 )

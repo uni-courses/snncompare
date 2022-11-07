@@ -4,10 +4,10 @@ import unittest
 
 from typeguard import typechecked
 
-from src.snncompare.graph_generation.get_graph import (
+from snncompare.graph_generation.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
-from src.snncompare.simulation.run_on_lava import (
+from snncompare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )

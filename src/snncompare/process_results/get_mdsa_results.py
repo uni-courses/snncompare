@@ -13,8 +13,8 @@ from typing import Dict
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.helper import get_sim_duration
-from src.snncompare.process_results.get_alipour_nodes import get_alipour_nodes
+from ..helper import get_sim_duration
+from .get_alipour_nodes import get_alipour_nodes
 
 
 @typechecked

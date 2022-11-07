@@ -6,17 +6,17 @@ from typing import Any, Dict, Optional
 
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
+from snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
-from src.snncompare.exp_setts.default_setts.create_default_settings import (
+from snncompare.exp_setts.default_setts.create_default_settings import (
     default_experiment_config,
 )
-from src.snncompare.exp_setts.Supported_experiment_settings import (
+from snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from src.snncompare.exp_setts.verify_experiment_settings import (
+from snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
 

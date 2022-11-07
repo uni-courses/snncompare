@@ -4,20 +4,18 @@ import unittest
 
 from typeguard import typechecked
 
-from src.snncompare.graph_generation.get_graph import (
+from snncompare.graph_generation.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
-from src.snncompare.simulation.run_on_lava import (
+from snncompare.simulation.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
 )
-from src.snncompare.simulation.run_on_networkx import (
+from snncompare.simulation.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
     run_snn_on_networkx,
 )
-from src.snncompare.simulation.verify_graph_is_snn import (
-    verify_networkx_snn_spec,
-)
+from snncompare.simulation.verify_graph_is_snn import verify_networkx_snn_spec
 
 
 class Test_get_graph_on_networkx(unittest.TestCase):

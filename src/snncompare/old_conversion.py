@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.graph_generation.convert_networkx_to_lava import (
+from .graph_generation.convert_networkx_to_lava import (
     add_neuron_to_dict,
     add_synapse_between_nodes,
     create_neuron_from_node,

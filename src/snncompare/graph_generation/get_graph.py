@@ -1,8 +1,10 @@
 """File used to generate graphs that are used for testing."""
+from __future__ import annotations
+
 import math
 import random
 from itertools import combinations, groupby
-from typing import Any, List, Union
+from typing import TYPE_CHECKING, Any
 
 import networkx as nx
 import numpy as np
@@ -10,9 +12,11 @@ from networkx.classes.digraph import DiGraph
 from numpy import ndarray
 from typeguard import typechecked
 
-from src.snncompare.export_results.plot_graphs import plot_circular_graph
-from src.snncompare.simulation.LIF_neuron import LIF_neuron
-from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
+from ..export_results.plot_graphs import plot_circular_graph
+from ..simulation.LIF_neuron import LIF_neuron
+
+if TYPE_CHECKING:
+    from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
 @typechecked
@@ -46,7 +50,7 @@ def get_networkx_graph_of_2_neurons() -> nx.DiGraph:
 @typechecked
 def gnp_random_connected_graph(
     density: float,
-    recurrent_density: Union[int, float],
+    recurrent_density: int | float,
     size: int,
     test_scope: Long_scope_of_tests,
 ) -> DiGraph:
@@ -240,8 +244,8 @@ def get_list_with_rand_floats_in_range(
 
 @typechecked
 def get_list_with_rand_bools(
-    length: int, recurrent_edge_density: Union[int, float], seed: int
-) -> List[bool]:
+    length: int, recurrent_edge_density: int | float, seed: int
+) -> list[bool]:
     """Generates and returns a list with random booleans of length length. The
     amount of True values is determined by: recurrent_edge_density*length.
 

@@ -6,7 +6,7 @@ import unittest
 
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.verify_experiment_settings import (
+from snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
 from tests.exp_setts.exp_setts.test_generic_experiment_settings import (

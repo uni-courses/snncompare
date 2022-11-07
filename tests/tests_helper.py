@@ -11,13 +11,9 @@ import jsons
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.export_results.export_json_results import (
-    write_dict_to_json,
-)
-from src.snncompare.export_results.helper import (
-    get_expected_image_paths_stage_3,
-)
-from src.snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
+from snncompare.export_results.export_json_results import write_dict_to_json
+from snncompare.export_results.helper import get_expected_image_paths_stage_3
+from snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
     Alipour_properties,
 )
 

@@ -9,19 +9,17 @@ from typing import Any, Dict, List
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.graph_generation.adaptation.redundancy import (
-    implement_adaptation_mechanism,
-)
-from src.snncompare.graph_generation.radiation.Radiation_damage import (
+from ..helper import add_stage_completion_to_graph
+from .adaptation.redundancy import implement_adaptation_mechanism
+from .radiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
 )
-from src.snncompare.graph_generation.snn_algo.mdsa_snn_algo import (
+from .snn_algo.mdsa_snn_algo import (
     Alipour_properties,
     specify_mdsa_network_properties,
 )
-from src.snncompare.graph_generation.Used_graphs import Used_graphs
-from src.snncompare.helper import add_stage_completion_to_graph
+from .Used_graphs import Used_graphs
 
 
 @typechecked

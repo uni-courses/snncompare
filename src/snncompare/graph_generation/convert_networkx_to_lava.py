@@ -11,7 +11,7 @@ from lava.proc.lif.process import LIF
 from networkx.classes.digraph import DiGraph
 from typeguard import typechecked
 
-from src.snncompare.simulation.verify_graph_is_networkx_snn import (
+from ..simulation.verify_graph_is_networkx_snn import (
     assert_synapse_properties_are_specified,
 )
 

@@ -6,7 +6,7 @@ import networkx as nx
 import pylab as plt  # TODO: verify not matplotlib.
 from typeguard import typechecked
 
-from src.snncompare.export_results.Plot_to_tex import Plot_to_tex
+from ..export_results.Plot_to_tex import Plot_to_tex
 
 
 @typechecked

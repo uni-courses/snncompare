@@ -11,22 +11,15 @@ import copy
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.export_results.Output_stage_34 import (
-    output_stage_files_3_and_4,
-)
-from src.snncompare.export_results.verify_nx_graphs import (
+from ..export_results.Output_stage_34 import output_stage_files_3_and_4
+from ..export_results.verify_nx_graphs import (
     verify_nx_graph_contains_correct_stages,
 )
-from src.snncompare.helper import (
-    add_stage_completion_to_graph,
-    get_expected_stages,
-)
-from src.snncompare.import_results.check_completed_stages import (
+from ..helper import add_stage_completion_to_graph, get_expected_stages
+from ..import_results.check_completed_stages import (
     nx_graphs_have_completed_stage,
 )
-from src.snncompare.process_results.get_mdsa_results import (
-    set_mdsa_snn_results,
-)
+from .get_mdsa_results import set_mdsa_snn_results
 
 
 @typechecked

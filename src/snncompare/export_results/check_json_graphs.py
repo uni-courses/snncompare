@@ -3,9 +3,7 @@ from typing import List
 
 from typeguard import typechecked
 
-from src.snncompare.export_results.verify_json_graphs import (
-    verify_json_graphs_dict_contain_correct_stages,
-)
+from .verify_json_graphs import verify_json_graphs_dict_contain_correct_stages
 
 
 @typechecked

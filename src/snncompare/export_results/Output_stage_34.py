@@ -1,11 +1,8 @@
 """"Outputs the results for stage 3 and/or 4."""
 from typeguard import typechecked
 
-from src.snncompare.export_results.helper import run_config_to_filename
-from src.snncompare.export_results.Output import (
-    output_stage_json,
-    plot_graph_behaviours,
-)
+from .helper import run_config_to_filename
+from .Output import output_stage_json, plot_graph_behaviours
 
 
 @typechecked

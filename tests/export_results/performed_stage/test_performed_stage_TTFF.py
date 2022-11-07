@@ -13,27 +13,25 @@ import unittest
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.default_setts.create_default_settings import (
+from snncompare.exp_setts.default_setts.create_default_settings import (
     default_experiment_config,
 )
-from src.snncompare.Experiment_runner import (
+from snncompare.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
 )
-from src.snncompare.export_results.helper import run_config_to_filename
-from src.snncompare.export_results.plot_graphs import (
-    create_root_dir_if_not_exists,
-)
-from src.snncompare.export_results.verify_stage_1_graphs import (
+from snncompare.export_results.helper import run_config_to_filename
+from snncompare.export_results.plot_graphs import create_root_dir_if_not_exists
+from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from src.snncompare.graph_generation.stage_1_get_input_graphs import (
+from snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
-from src.snncompare.import_results.check_completed_stages import (
+from snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
-from src.snncompare.import_results.read_json import load_results_from_json
+from snncompare.import_results.read_json import load_results_from_json
 from tests.tests_helper import (
     create_result_file_for_testing,
     get_n_random_run_configs,

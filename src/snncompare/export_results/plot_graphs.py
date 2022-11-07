@@ -1,20 +1,23 @@
 """File used to generate graph plots."""
+from __future__ import annotations
+
 import os
-from typing import Dict, Union
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.classes.digraph import DiGraph
 from typeguard import typechecked
 
-from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
+if TYPE_CHECKING:
+    from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 
 
 @typechecked
 def plot_circular_graph(
     density: float,
     G: DiGraph,
-    recurrent_edge_density: Union[int, float],
+    recurrent_edge_density: int | float,
     test_scope: Long_scope_of_tests,
 ) -> None:
     """Generates a circular plot of a (directed) graph.
@@ -101,7 +104,7 @@ def create_root_dir_if_not_exists(root_dir_name: str) -> None:
 
 
 @typechecked
-def get_labels(G: DiGraph, configuration: str) -> Dict[int, str]:
+def get_labels(G: DiGraph, configuration: str) -> dict[int, str]:
     """Returns the labels for the plot nodes.
 
     :param G: The original graph on which the MDSA algorithm is ran.

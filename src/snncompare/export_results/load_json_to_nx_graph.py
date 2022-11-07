@@ -7,20 +7,14 @@ import networkx as nx
 from networkx.readwrite import json_graph
 from typeguard import typechecked
 
-from src.snncompare.export_results.check_nx_graphs import (
-    json_graphs_contain_expected_stages,
-)
-from src.snncompare.export_results.helper import run_config_to_filename
-from src.snncompare.export_results.verify_json_graphs import (
+from ..helper import file_exists, get_expected_stages
+from .check_nx_graphs import json_graphs_contain_expected_stages
+from .helper import run_config_to_filename
+from .verify_json_graphs import (
     verify_results_json_graphs_contain_correct_stages,
 )
-from src.snncompare.export_results.verify_nx_graphs import (
-    verify_results_nx_graphs_contain_expected_stages,
-)
-from src.snncompare.export_results.verify_stage_1_graphs import (
-    get_expected_stage_1_graph_names,
-)
-from src.snncompare.helper import file_exists, get_expected_stages
+from .verify_nx_graphs import verify_results_nx_graphs_contain_expected_stages
+from .verify_stage_1_graphs import get_expected_stage_1_graph_names
 
 
 @typechecked

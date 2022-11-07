@@ -7,12 +7,8 @@ from typing import Any, Generator, List
 import networkx as nx
 from typeguard import typechecked
 
-from src.snncompare.export_results.export_nx_graph_to_json import (
-    digraph_to_json,
-)
-from src.snncompare.export_results.plot_graphs import (
-    create_root_dir_if_not_exists,
-)
+from .export_nx_graph_to_json import digraph_to_json
+from .plot_graphs import create_root_dir_if_not_exists
 
 
 @typechecked

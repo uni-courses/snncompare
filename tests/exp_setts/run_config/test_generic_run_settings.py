@@ -7,10 +7,10 @@ from typing import Any
 
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.run_config.Supported_run_settings import (
+from snncompare.exp_setts.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
-from src.snncompare.exp_setts.run_config.verify_run_settings import (
+from snncompare.exp_setts.run_config.verify_run_settings import (
     verify_run_config,
 )
 

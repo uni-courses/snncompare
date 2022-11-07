@@ -2,9 +2,8 @@
 settings."""
 from typing import List
 
+from snnalgorithms.helper import assert_parameter_is_list
 from typeguard import typechecked
-
-from src.snncompare.exp_setts.algos.algo_helper import assert_parameter_is_list
 
 
 # pylint: disable=R0903

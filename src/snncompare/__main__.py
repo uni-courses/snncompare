@@ -8,14 +8,12 @@ import shutil
 from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
 from snnalgorithms.population.MDSA import MDSA
 
-from src.snncompare.exp_setts.default_setts.create_default_settings import (
+from .exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,
     default_experiment_config,
 )
-from src.snncompare.Experiment_runner import Experiment_runner
-from src.snncompare.export_results.plot_graphs import (
-    create_root_dir_if_not_exists,
-)
+from .Experiment_runner import Experiment_runner
+from .export_results.plot_graphs import create_root_dir_if_not_exists
 
 # Remove results directory if it exists.
 if os.path.exists("results"):

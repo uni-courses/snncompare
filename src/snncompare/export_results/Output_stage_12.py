@@ -1,8 +1,8 @@
 """"Outputs the results for stage 1 and/or 2."""
 from typeguard import typechecked
 
-from src.snncompare.export_results.helper import run_config_to_filename
-from src.snncompare.export_results.Output import output_stage_json
+from .helper import run_config_to_filename
+from .Output import output_stage_json
 
 
 @typechecked

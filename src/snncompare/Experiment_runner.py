@@ -7,51 +7,33 @@ from typing import Any, Dict, List, Tuple
 
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.run_config.Supported_run_settings import (
-    Supported_run_settings,
-)
-from src.snncompare.exp_setts.run_config.verify_run_completion import (
+from .exp_setts.run_config.Supported_run_settings import Supported_run_settings
+from .exp_setts.run_config.verify_run_completion import (
     assert_stage_is_completed,
 )
-from src.snncompare.exp_setts.run_config.verify_run_settings import (
-    verify_run_config,
-)
-from src.snncompare.exp_setts.Supported_experiment_settings import (
+from .exp_setts.run_config.verify_run_settings import verify_run_config
+from .exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from src.snncompare.exp_setts.verify_experiment_settings import (
+from .exp_setts.verify_experiment_settings import (
     verify_experiment_config,
     verify_has_unique_id,
 )
-from src.snncompare.export_results.load_json_to_nx_graph import (
+from .export_results.load_json_to_nx_graph import (
     load_json_to_nx_graph_from_file,
 )
-from src.snncompare.export_results.Output_stage_12 import (
-    output_files_stage_1_and_2,
-)
-from src.snncompare.export_results.Output_stage_34 import (
-    output_stage_files_3_and_4,
-)
-from src.snncompare.export_results.plot_graphs import (
-    create_root_dir_if_not_exists,
-)
-from src.snncompare.export_results.verify_nx_graphs import (
-    verify_results_nx_graphs,
-)
-from src.snncompare.graph_generation.stage_1_get_input_graphs import (
-    get_used_graphs,
-)
-from src.snncompare.import_results.check_completed_stages import (
-    has_outputted_stage,
-)
-from src.snncompare.import_results.stage_1_load_input_graphs import (
-    load_results_stage_1,
-)
-from src.snncompare.process_results.process_results import (
+from .export_results.Output_stage_12 import output_files_stage_1_and_2
+from .export_results.Output_stage_34 import output_stage_files_3_and_4
+from .export_results.plot_graphs import create_root_dir_if_not_exists
+from .export_results.verify_nx_graphs import verify_results_nx_graphs
+from .graph_generation.stage_1_get_input_graphs import get_used_graphs
+from .import_results.check_completed_stages import has_outputted_stage
+from .import_results.stage_1_load_input_graphs import load_results_stage_1
+from .process_results.process_results import (
     export_results_to_json,
     set_results,
 )
-from src.snncompare.simulation.stage2_sim import sim_graphs
+from .simulation.stage2_sim import sim_graphs
 
 
 class Experiment_runner:

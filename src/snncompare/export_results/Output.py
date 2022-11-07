@@ -14,36 +14,20 @@ from typing import List, Optional
 import jsons
 from typeguard import typechecked
 
-from src.snncompare.export_results.export_json_results import (
-    write_dict_to_json,
-)
-from src.snncompare.export_results.export_nx_graph_to_json import (
-    convert_digraphs_to_json,
-)
-from src.snncompare.export_results.helper import run_config_to_filename
-from src.snncompare.export_results.load_pickles_get_results import (
-    get_desired_properties_for_graph_printing,
-)
-from src.snncompare.export_results.verify_nx_graphs import (
+from ..graph_generation.helper_network_structure import plot_coordinated_graph
+from ..helper import get_sim_duration
+from .export_json_results import write_dict_to_json
+from .export_nx_graph_to_json import convert_digraphs_to_json
+from .helper import run_config_to_filename
+from .load_pickles_get_results import get_desired_properties_for_graph_printing
+from .verify_nx_graphs import (
     verify_results_nx_graphs,
     verify_results_nx_graphs_contain_expected_stages,
 )
-from src.snncompare.export_results.verify_stage_1_graphs import (
-    verify_stage_1_graphs,
-)
-from src.snncompare.export_results.verify_stage_2_graphs import (
-    verify_stage_2_graphs,
-)
-from src.snncompare.export_results.verify_stage_3_graphs import (
-    verify_stage_3_graphs,
-)
-from src.snncompare.export_results.verify_stage_4_graphs import (
-    verify_stage_4_graphs,
-)
-from src.snncompare.graph_generation.helper_network_structure import (
-    plot_coordinated_graph,
-)
-from src.snncompare.helper import get_sim_duration
+from .verify_stage_1_graphs import verify_stage_1_graphs
+from .verify_stage_2_graphs import verify_stage_2_graphs
+from .verify_stage_3_graphs import verify_stage_3_graphs
+from .verify_stage_4_graphs import verify_stage_4_graphs
 
 # pylint: disable=W0613 # work in progress.
 

@@ -6,12 +6,8 @@ setting types should be identical.)
 """
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.run_config.verify_run_settings import (
-    verify_run_config,
-)
-from src.snncompare.exp_setts.Supported_experiment_settings import (
-    dict_to_frozen_set,
-)
+from ..Supported_experiment_settings import dict_to_frozen_set
+from .verify_run_settings import verify_run_config
 
 # pylint: disable=R0902
 # The settings object contains all the settings as a dictionary, hence no

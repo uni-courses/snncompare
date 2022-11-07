@@ -4,7 +4,7 @@ from typing import Any, List, Tuple
 from lava.proc.monitor.process import Monitor
 from typeguard import typechecked
 
-from src.snncompare.helper import fill_dictionary
+from snncompare.helper import fill_dictionary
 
 
 @typechecked
