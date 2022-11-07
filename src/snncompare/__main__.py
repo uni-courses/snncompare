@@ -5,11 +5,9 @@ that invokes this script."""
 import os
 import shutil
 
-from src.snncompare.exp_setts.algos.get_alg_configs import (
-    get_algo_configs,
-    verify_algo_configs,
-)
-from src.snncompare.exp_setts.algos.MDSA import MDSA
+from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
+from snnalgorithms.population.MDSA import MDSA
+
 from src.snncompare.exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,
     default_experiment_config,

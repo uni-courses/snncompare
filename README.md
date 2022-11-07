@@ -181,6 +181,18 @@ python3 setup.py sdist bdist_wheel
 python -m twine upload dist/*
 ```
 
+### Developer pip install
+
+If you want to quickly test if your changes work, you can go into the root dir
+of this project and run:
+
+```
+pip install -e .
+```
+
+that installs the latest changes into the pip package locally (into your conda
+environment).
+
 <!-- Un-wrapped URL's (Badges and Hyperlinks) -->
 
 [agpl3_badge]: https://img.shields.io/badge/License-AGPL_v3-blue.svg

@@ -3,13 +3,9 @@ specifications."""
 # pylint: disable=R0801
 import unittest
 
+from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
+from snnalgorithms.population.DUMMY import DUMMY
 from typeguard import typechecked
-
-from src.snncompare.exp_setts.algos.DUMMY import DUMMY
-from src.snncompare.exp_setts.algos.get_alg_configs import (
-    get_algo_configs,
-    verify_algo_configs,
-)
 
 
 class Test_dummy(unittest.TestCase):

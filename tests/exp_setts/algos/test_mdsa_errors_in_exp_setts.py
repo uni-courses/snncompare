@@ -4,13 +4,10 @@ specifications."""
 import copy
 import unittest
 
+from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
+from snnalgorithms.population.MDSA import MDSA
 from typeguard import typechecked
 
-from src.snncompare.exp_setts.algos.get_alg_configs import (
-    get_algo_configs,
-    verify_algo_configs,
-)
-from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )

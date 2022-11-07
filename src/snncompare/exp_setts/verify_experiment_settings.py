@@ -6,12 +6,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
+from snnalgorithms.population.MDSA import MDSA
+from snnalgorithms.verify_algos import verify_algos_in_experiment_config
 from typeguard import typechecked
-
-from src.snncompare.exp_setts.algos.MDSA import MDSA
-from src.snncompare.exp_setts.algos.verify_algos import (
-    verify_algos_in_experiment_config,
-)
 
 if TYPE_CHECKING:
     from src.snncompare.exp_setts.Supported_experiment_settings import (

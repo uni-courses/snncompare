@@ -2,6 +2,8 @@
 configuration settings, default input graph and default input graphs."""
 import jsons
 import networkx as nx
+from snnalgorithms.get_alg_configs import get_algo_configs
+from snnalgorithms.population.MDSA import MDSA
 from typeguard import typechecked
 
 from src.snncompare.arg_parser.arg_verification import verify_input_graph_path
@@ -9,8 +11,6 @@ from src.snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
-from src.snncompare.exp_setts.algos.get_alg_configs import get_algo_configs
-from src.snncompare.exp_setts.algos.MDSA import MDSA
 from src.snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )

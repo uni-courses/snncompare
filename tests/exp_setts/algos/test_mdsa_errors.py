@@ -3,13 +3,9 @@ specifications."""
 # pylint: disable=R0801
 import unittest
 
+from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
+from snnalgorithms.population.MDSA import MDSA
 from typeguard import typechecked
-
-from src.snncompare.exp_setts.algos.get_alg_configs import (
-    get_algo_configs,
-    verify_algo_configs,
-)
-from src.snncompare.exp_setts.algos.MDSA import MDSA
 
 
 class Test_mdsa(unittest.TestCase):

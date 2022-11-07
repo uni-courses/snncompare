@@ -2,11 +2,8 @@
 settings."""
 from typing import List
 
+from snnalgorithms.verify_algos import verify_list_with_numbers
 from typeguard import typechecked
-
-from src.snncompare.exp_setts.algos.verify_algos import (
-    verify_list_with_numbers,
-)
 
 
 # pylint: disable=R0903
