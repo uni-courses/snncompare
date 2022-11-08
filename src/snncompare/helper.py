@@ -1,6 +1,5 @@
 """Contains helper functions that are used throughout this repository."""
 import os
-import pickle  # nosec - User is trusted not to load malicious pickle files.
 import random
 import shutil
 import time
@@ -14,12 +13,9 @@ import pylab as plt
 from lava.proc.monitor.process import Monitor
 from networkx.classes.graph import Graph
 from snnbackends.networkx.LIF_neuron import LIF_neuron
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
-from snnradiation.Radiation_damage import store_dead_neuron_names_in_graph
 from typeguard import typechecked
 
-from .export_results.export_json_results import get_unique_hash
 from .export_results.Plot_to_tex import Plot_to_tex
 
 
@@ -156,89 +152,6 @@ def delete_file_if_exists(filepath: str) -> None:
         os.remove(filepath)
     except OSError:
         pass
-
-
-@typechecked
-def export_get_degree_graph(
-    has_adaptation: bool,
-    has_radiation: bool,
-    G: nx.DiGraph,
-    get_degree: dict,
-    iteration: int,
-    m: int,
-    neuron_death_probability: float,
-    rand_props: Dict[str, Any],
-    seed: int,
-    sim_time: int,
-    size: int,
-    test_object: Any,
-) -> None:
-    """
-
-    :param has_adaptation:
-    :param has_radiation: Indicates whether the experiment simulates
-    radiation or not.
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param get_degree: Graph with the MDSA SNN approximation solution.
-    :param iteration: The initialisation iteration that is used.
-    :param m: The amount of approximation iterations used in the MDSA
-    approximation.
-    :param neuron_death_probability:
-    :param rand_props:
-    :param run_result:
-    :param seed: The value of the random seed used for this test.
-    :param sim_time: Nr. of timesteps for which the experiment is ran.
-    :param size: Nr of nodes in the original graph on which test is ran.
-    :param test_object: Object containing test settings.
-
-    """
-    # pylint: disable=R0913
-    # TODO: reduce 12/5 arguments.
-    # TODO: remove unused function.
-    remove_monitors_from_get_degree(get_degree)
-    # pylint: disable=R0801
-    unique_hash = get_unique_hash(
-        test_object.final_dead_neuron_names,
-        has_adaptation,
-        has_radiation,
-        iteration,
-        m,
-        neuron_death_probability,
-        seed,
-        sim_time,
-    )
-
-    if test_object.rad_damaged_graph is not None:
-        store_dead_neuron_names_in_graph(
-            test_object.rad_damaged_graph,
-            test_object.final_dead_neuron_names,
-        )
-    create_root_dir_if_not_exists("pickles")
-    with open(
-        f"pickles/probability_{neuron_death_probability}"
-        + f"adapt_{has_adaptation}_{seed}_size{size}_m{m}_iter"
-        + f"{iteration}_{unique_hash}.pkl",
-        "wb",
-    ) as fh:
-        pickle.dump(
-            [
-                has_adaptation,
-                G,
-                has_radiation,
-                iteration,
-                m,
-                neuron_death_probability,
-                rand_props,
-                seed,
-                sim_time,
-                test_object.mdsa_graph,
-                test_object.brain_adaptation_graph,
-                test_object.rad_damaged_graph,
-                test_object.final_dead_neuron_names,
-                unique_hash,
-            ],
-            fh,
-        )
 
 
 @typechecked

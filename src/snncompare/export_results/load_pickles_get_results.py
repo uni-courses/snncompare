@@ -1,6 +1,5 @@
-"""Loads pickle test result files ."""
-import pickle  # nosec
-from typing import Any, List, Tuple  # nosec
+"""TODO: change filename."""
+from typing import List, Tuple  # nosec
 
 import networkx as nx
 from typeguard import typechecked
@@ -56,54 +55,3 @@ def get_neurons(
                 )
 
     return neurons, neurons_dict_per_type
-
-
-@typechecked
-def load_pickle(pickle_filename: str) -> Any:
-    """TODO: change to load hierarchic objects instead of parameter list.
-    TODO: delete"""
-    # pylint: disable=R0914
-    # TODO: reduce the amount of local variables from 27/15 to at most 15/15.
-
-    # Load graphs with encoded SNNs from pickle file.
-    with open(
-        pickle_filename,
-        "rb",
-    ) as pickle_off:
-        # pylint: disable=R0801
-        [
-            has_adaptation,
-            G,
-            has_radiation,
-            iteration,
-            m,
-            neuron_death_probability,
-            rand_props,
-            seed,
-            sim_time,
-            mdsa_graph,
-            brain_adaptation_graph,
-            rad_damaged_graph,
-            dead_neuron_names,
-            unique_hash,
-        ] = pickle.load(  # nosec - User is trusted not to load malicious
-            # pickle files.
-            pickle_off
-        )
-    # pylint: disable=R0801
-    return (
-        has_adaptation,
-        G,
-        has_radiation,
-        iteration,
-        m,
-        neuron_death_probability,
-        rand_props,
-        seed,
-        sim_time,
-        mdsa_graph,
-        brain_adaptation_graph,
-        rad_damaged_graph,
-        dead_neuron_names,
-        unique_hash,
-    )

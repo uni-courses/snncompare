@@ -4,7 +4,6 @@
 demo/*
 latex/Images/graphs/*
 Images/*
-pickles/*
 results/*
 results.txt
 monkeytype.sqlite3
