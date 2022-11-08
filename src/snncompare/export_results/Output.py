@@ -23,7 +23,6 @@ from ..helper import get_sim_duration
 from .export_json_results import write_dict_to_json
 from .export_nx_graph_to_json import convert_digraphs_to_json
 from .helper import run_config_to_filename
-from .load_pickles_get_results import get_desired_properties_for_graph_printing
 from .verify_stage_1_graphs import verify_stage_1_graphs
 from .verify_stage_2_graphs import verify_stage_2_graphs
 from .verify_stage_3_graphs import verify_stage_3_graphs
@@ -355,3 +354,18 @@ def create_custom_plot_titles(
             if t == 25:
                 title = "."
     return title
+
+
+@typechecked
+def get_desired_properties_for_graph_printing() -> List[str]:
+    """Returns the properties that are to be printed to CLI."""
+    desired_properties = [
+        "bias",
+        # "du",
+        # "dv",
+        "u",
+        "v",
+        "vth",
+        "a_in_next",
+    ]
+    return desired_properties
