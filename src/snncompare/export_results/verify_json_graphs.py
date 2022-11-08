@@ -5,7 +5,7 @@ from typeguard import typechecked
 
 
 @typechecked
-def verify_results_json_graphs_contain_correct_stages(
+def verify_results_safely_check_json_graphs_contain_expected_stages(
     results_json_graphs: dict, expected_stages: List[int]
 ) -> None:
     """Checks whether the loaded graphs from json contain at least the expected

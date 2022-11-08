@@ -14,7 +14,7 @@ from ..helper import file_exists, get_expected_stages
 from .check_nx_graphs import json_graphs_contain_expected_stages
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
-    verify_results_json_graphs_contain_correct_stages,
+    verify_results_safely_check_json_graphs_contain_expected_stages,
 )
 from .verify_stage_1_graphs import get_expected_stage_1_graph_names
 
@@ -121,7 +121,7 @@ def load_verified_json_graphs_from_json(
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
     print("contains correct stages.")
-    verify_results_json_graphs_contain_correct_stages(
+    verify_results_safely_check_json_graphs_contain_expected_stages(
         results_json_graphs, expected_stages
     )
 
