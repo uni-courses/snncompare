@@ -11,7 +11,7 @@ from snnbackends.verify_nx_graphs import (
 from typeguard import typechecked
 
 from ..helper import file_exists, get_expected_stages
-from .check_nx_graphs import json_graphs_contain_expected_stages
+from .check_json_graphs import json_graphs_contain_expected_stages
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
     verify_results_safely_check_json_graphs_contain_expected_stages,
