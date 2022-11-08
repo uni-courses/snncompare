@@ -7,7 +7,7 @@ setting types should be identical.)
 import copy
 
 from snnalgorithms.get_alg_configs import get_algo_configs
-from snnalgorithms.population.MDSA import MDSA
+from snnalgorithms.sparse.MDSA.MDSA import MDSA
 from typeguard import typechecked
 
 from .verify_experiment_settings import (

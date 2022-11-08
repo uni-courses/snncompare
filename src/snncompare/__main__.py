@@ -6,7 +6,7 @@ import os
 import shutil
 
 from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
-from snnalgorithms.population.MDSA import MDSA
+from snnalgorithms.sparse.MDSA.MDSA import MDSA
 
 from .exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,

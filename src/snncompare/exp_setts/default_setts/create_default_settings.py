@@ -3,7 +3,7 @@ configuration settings, default input graph and default input graphs."""
 import jsons
 import networkx as nx
 from snnalgorithms.get_alg_configs import get_algo_configs
-from snnalgorithms.population.MDSA import MDSA
+from snnalgorithms.sparse.MDSA.MDSA import MDSA
 from typeguard import typechecked
 
 from ...arg_parser.arg_verification import verify_input_graph_path
