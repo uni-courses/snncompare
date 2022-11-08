@@ -7,6 +7,10 @@ import copy
 from typing import Any, Dict, List
 
 import networkx as nx
+from snnalgorithms.sparse.MDSA.mdsa_snn_algo import (
+    Alipour_properties,
+    specify_mdsa_network_properties,
+)
 from typeguard import typechecked
 
 from ..helper import add_stage_completion_to_graph
@@ -14,10 +18,6 @@ from .adaptation.redundancy import implement_adaptation_mechanism
 from .radiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
-)
-from .snn_algo.mdsa_snn_algo import (
-    Alipour_properties,
-    specify_mdsa_network_properties,
 )
 from .Used_graphs import Used_graphs
 

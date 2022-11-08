@@ -2,6 +2,14 @@
 timestep."""
 
 import networkx as nx
+from snnbackends.networkx.run_on_networkx import (
+    add_nx_neurons_to_networkx_graph,
+    run_snn_on_networkx,
+)
+from snnbackends.networkx.verify_graph_is_networkx_snn import (
+    assert_no_duplicate_edges_exist,
+    assert_synaptic_edgeweight_type_is_correct,
+)
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
@@ -9,14 +17,6 @@ from ..helper import (
     add_stage_completion_to_graph,
     get_sim_duration,
     old_graph_to_new_graph_properties,
-)
-from .run_on_networkx import (
-    add_nx_neurons_to_networkx_graph,
-    run_snn_on_networkx,
-)
-from .verify_graph_is_networkx_snn import (
-    assert_no_duplicate_edges_exist,
-    assert_synaptic_edgeweight_type_is_correct,
 )
 
 

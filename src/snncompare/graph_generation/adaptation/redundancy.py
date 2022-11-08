@@ -3,13 +3,12 @@ import copy
 from typing import Any
 
 import networkx as nx
+from snnalgorithms.sparse.MDSA.old_conversion import (
+    convert_networkx_graph_to_snn_with_one_neuron,
+)
 from typeguard import typechecked
 
 from tests.exp_setts.unsorted.test_create_testobject import add_monitor_to_dict
-
-from .snnalgorithms.sparse.MDSA.old_conversion import (
-    convert_networkx_graph_to_snn_with_one_neuron,
-)
 
 
 @typechecked

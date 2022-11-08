@@ -5,21 +5,19 @@ import unittest
 
 import networkx as nx
 import numpy as np
-from typeguard import typechecked
-
-from snncompare.graph_generation.get_graph import gnp_random_connected_graph
-from snncompare.simulation.LIF_neuron import print_neuron_properties_per_graph
-from snncompare.simulation.run_on_lava import (
-    add_lava_neurons_to_networkx_graph,
-)
-from snncompare.simulation.run_on_networkx import (
+from snnbackends.lava.run_on_lava import add_lava_neurons_to_networkx_graph
+from snnbackends.networkx.LIF_neuron import print_neuron_properties_per_graph
+from snnbackends.networkx.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
 )
-from snncompare.simulation.verify_graph_is_networkx_snn import (
+from snnbackends.networkx.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
 )
-from snncompare.simulation.verify_graph_is_snn import verify_networkx_snn_spec
+from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
+from typeguard import typechecked
+
+from snncompare.graph_generation.get_graph import gnp_random_connected_graph
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 from tests.tests_helper import compare_static_snn_properties
 
