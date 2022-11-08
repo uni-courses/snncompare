@@ -2,6 +2,7 @@
 timestep."""
 
 import networkx as nx
+from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
 from ..helper import (
@@ -17,7 +18,6 @@ from .verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
 )
-from .verify_graph_is_snn import verify_networkx_snn_spec
 
 
 @typechecked
