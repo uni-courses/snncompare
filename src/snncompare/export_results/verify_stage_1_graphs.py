@@ -14,7 +14,7 @@ from typing import List
 
 from typeguard import typechecked
 
-from snncompare.graph_generation.stage_1_get_input_graphs import (
+from ..graph_generation.stage_1_get_input_graphs import (
     has_adaptation,
     has_radiation,
 )

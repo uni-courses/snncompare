@@ -2,19 +2,19 @@
 from pathlib import Path
 from typing import List
 
+from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
-from snncompare.export_results.helper import (
+from ..export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
 )
-from snncompare.export_results.load_json_to_nx_graph import load_pre_existing_graph_dict
-from snnbackends.verify_nx_graphs import verify_completed_stages_list
-from snncompare.export_results.verify_stage_1_graphs import (
+from ..export_results.load_json_to_nx_graph import load_pre_existing_graph_dict
+from ..export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from snncompare.graph_generation.stage_1_get_input_graphs import get_input_graph
-from snncompare.helper import get_expected_stages, get_extensions_list
+from ..graph_generation.stage_1_get_input_graphs import get_input_graph
+from ..helper import get_expected_stages, get_extensions_list
 
 
 # pylint: disable=R0912

@@ -4,13 +4,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from networkx.classes.digraph import DiGraph
+from snnalgorithms.get_graph import set_rand_neuron_properties
 from snnbackends.lava.run_on_lava import add_lava_neurons_to_networkx_graph
 from snnbackends.networkx.run_on_networkx import (
     add_nx_neurons_to_networkx_graph,
 )
 from typeguard import typechecked
 
-from snnalgorithms.get_graph import set_rand_neuron_properties
 from tests.tests_helper import get_cyclic_graph_without_directed_path
 
 if TYPE_CHECKING:

@@ -7,20 +7,21 @@ import copy
 from typing import Any, Dict, List
 
 import networkx as nx
-from snnadaptation.redundancy.redundancy import other_implement_adaptation_mechanism
+from snnadaptation.redundancy.redundancy import (
+    other_implement_adaptation_mechanism,
+)
 from snnalgorithms.sparse.MDSA.mdsa_snn_algo import (
     Alipour_properties,
     specify_mdsa_network_properties,
 )
-from typeguard import typechecked
-
-from snncompare.helper import add_stage_completion_to_graph
-
+from snnalgorithms.Used_graphs import Used_graphs
 from snnradiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
 )
-from snnalgorithms.Used_graphs import Used_graphs
+from typeguard import typechecked
+
+from ..helper import add_stage_completion_to_graph
 
 
 @typechecked

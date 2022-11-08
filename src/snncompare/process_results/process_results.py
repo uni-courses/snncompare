@@ -9,17 +9,17 @@ respective SNN graph.
 import copy
 
 import networkx as nx
-from typeguard import typechecked
-
-from snncompare.export_results.Output_stage_34 import output_stage_files_3_and_4
+from snnalgorithms.sparse.MDSA.get_mdsa_results import set_mdsa_snn_results
 from snnbackends.verify_nx_graphs import (
     verify_nx_graph_contains_correct_stages,
 )
-from snncompare.helper import add_stage_completion_to_graph, get_expected_stages
-from snncompare.import_results.check_completed_stages import (
+from typeguard import typechecked
+
+from ..export_results.Output_stage_34 import output_stage_files_3_and_4
+from ..helper import add_stage_completion_to_graph, get_expected_stages
+from ..import_results.check_completed_stages import (
     nx_graphs_have_completed_stage,
 )
-from snnalgorithms.sparse.MDSA.get_mdsa_results import set_mdsa_snn_results
 
 
 @typechecked

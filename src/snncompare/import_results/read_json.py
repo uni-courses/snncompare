@@ -10,9 +10,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import networkx as nx
-from typeguard import typechecked
-
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
+from typeguard import typechecked
 
 
 @typechecked

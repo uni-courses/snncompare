@@ -2,6 +2,7 @@
 network."""
 import unittest
 
+from snnalgorithms.get_graph import get_networkx_graph_of_2_neurons
 from snnbackends.lava.run_on_lava import (
     add_lava_neurons_to_networkx_graph,
     simulate_snn_on_lava,
@@ -12,10 +13,6 @@ from snnbackends.networkx.run_on_networkx import (
 )
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
-
-from snnalgorithms.get_graph import (
-    get_networkx_graph_of_2_neurons,
-)
 
 
 class Test_get_graph_on_networkx(unittest.TestCase):

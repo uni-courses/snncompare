@@ -12,19 +12,19 @@ import pathlib
 from typing import List, Optional
 
 import jsons
-from typeguard import typechecked
-
 from snnalgorithms.helper_network_structure import plot_coordinated_graph
-from snncompare.helper import get_sim_duration
-from .export_json_results import write_dict_to_json
-from .export_nx_graph_to_json import convert_digraphs_to_json
-from .helper import run_config_to_filename
-from .load_pickles_get_results import get_desired_properties_for_graph_printing
 from snnbackends.verify_nx_graphs import (
     verify_results_nx_graphs,
     verify_results_nx_graphs_contain_expected_stages,
 )
-from snncompare.export_results.verify_stage_1_graphs import verify_stage_1_graphs
+from typeguard import typechecked
+
+from ..helper import get_sim_duration
+from .export_json_results import write_dict_to_json
+from .export_nx_graph_to_json import convert_digraphs_to_json
+from .helper import run_config_to_filename
+from .load_pickles_get_results import get_desired_properties_for_graph_printing
+from .verify_stage_1_graphs import verify_stage_1_graphs
 from .verify_stage_2_graphs import verify_stage_2_graphs
 from .verify_stage_3_graphs import verify_stage_3_graphs
 from .verify_stage_4_graphs import verify_stage_4_graphs

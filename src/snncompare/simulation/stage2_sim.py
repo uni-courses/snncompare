@@ -13,7 +13,7 @@ from snnbackends.networkx.verify_graph_is_networkx_snn import (
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
-from snncompare.helper import (
+from ..helper import (
     add_stage_completion_to_graph,
     get_sim_duration,
     old_graph_to_new_graph_properties,

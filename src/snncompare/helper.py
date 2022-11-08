@@ -16,13 +16,11 @@ from networkx.classes.graph import Graph
 from snnbackends.networkx.LIF_neuron import LIF_neuron
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
+from snnradiation.Radiation_damage import store_dead_neuron_names_in_graph
 from typeguard import typechecked
 
 from .export_results.export_json_results import get_unique_hash
 from .export_results.Plot_to_tex import Plot_to_tex
-from snnradiation.Radiation_damage import (
-    store_dead_neuron_names_in_graph,
-)
 
 
 @typechecked
@@ -527,6 +525,7 @@ def compute_mark(
 ) -> None:
     """Computes the mark at the counter neurons after the simulation is
     completed.
+
     TODO: move into algorithms module.
     """
     # Compute the mark based on degree+randomness=weight

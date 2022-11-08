@@ -4,12 +4,12 @@ import copy
 import unittest
 from typing import Any, Dict, Optional
 
-from typeguard import typechecked
-
 from snnadaptation.redundancy.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
+from typeguard import typechecked
+
 from snncompare.exp_setts.default_setts.create_default_settings import (
     default_experiment_config,
 )

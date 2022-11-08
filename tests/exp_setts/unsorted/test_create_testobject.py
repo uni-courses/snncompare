@@ -1,7 +1,6 @@
 """Creates test object."""
 from typing import Any, List, Tuple
 
-from lava.proc.monitor.process import Monitor
 from typeguard import typechecked
 
 from snncompare.helper import fill_dictionary
@@ -99,9 +98,6 @@ def get_counter_previous_property_dicts(
         counter_previous_a_in,
     )
     return counter_previous_a_in, counter_previous_us, counter_previous_vs
-
-
-
 
 
 class Selector_neuron:
