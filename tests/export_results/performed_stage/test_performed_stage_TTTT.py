@@ -21,7 +21,7 @@ from snncompare.Experiment_runner import (
     determine_what_to_run,
 )
 from snncompare.export_results.helper import run_config_to_filename
-from snncompare.export_results.plot_graphs import create_root_dir_if_not_exists
+from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )

@@ -13,7 +13,7 @@ from .exp_setts.default_setts.create_default_settings import (
     default_experiment_config,
 )
 from .Experiment_runner import Experiment_runner
-from .export_results.plot_graphs import create_root_dir_if_not_exists
+from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 # Remove results directory if it exists.
 if os.path.exists("results"):

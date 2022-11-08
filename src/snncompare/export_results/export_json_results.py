@@ -8,7 +8,7 @@ import networkx as nx
 from typeguard import typechecked
 
 from .export_nx_graph_to_json import digraph_to_json
-from .plot_graphs import create_root_dir_if_not_exists
+from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 
 @typechecked
