@@ -17,7 +17,7 @@ from snnbackends.networkx.verify_graph_is_networkx_snn import (
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
-from snncompare.graph_generation.get_graph import gnp_random_connected_graph
+from snnalgorithms.get_graph import gnp_random_connected_graph
 from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 from tests.tests_helper import compare_static_snn_properties
 

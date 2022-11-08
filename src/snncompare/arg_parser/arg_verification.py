@@ -6,7 +6,7 @@ from typing import Any
 import networkx as nx
 from typeguard import typechecked
 
-from ..helper import file_exists
+from snncompare.helper import file_exists
 
 
 @typechecked

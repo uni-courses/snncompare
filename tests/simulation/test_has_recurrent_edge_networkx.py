@@ -13,7 +13,7 @@ from snnbackends.networkx.run_on_networkx import (
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
-from snncompare.graph_generation.get_graph import (
+from snnalgorithms.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
 

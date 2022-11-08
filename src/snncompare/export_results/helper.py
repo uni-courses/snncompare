@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Union
 import networkx as nx
 from typeguard import typechecked
 
-from ..helper import get_sim_duration
+from snncompare.helper import get_sim_duration
 
 
 @typechecked

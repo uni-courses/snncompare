@@ -7,19 +7,20 @@ import copy
 from typing import Any, Dict, List
 
 import networkx as nx
+from snnadaptation.redundancy.redundancy import other_implement_adaptation_mechanism
 from snnalgorithms.sparse.MDSA.mdsa_snn_algo import (
     Alipour_properties,
     specify_mdsa_network_properties,
 )
 from typeguard import typechecked
 
-from ..helper import add_stage_completion_to_graph
-from .adaptation.redundancy import implement_adaptation_mechanism
-from .radiation.Radiation_damage import (
+from snncompare.helper import add_stage_completion_to_graph
+
+from snnradiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
 )
-from .Used_graphs import Used_graphs
+from snnalgorithms.Used_graphs import Used_graphs
 
 
 @typechecked
@@ -207,7 +208,7 @@ def get_redundant_graph(
     if red_lev == 1:
         adaptation_graph = copy.deepcopy(snn_algo_graph)
         # TODO: apply redundancy
-        implement_adaptation_mechanism(
+        other_implement_adaptation_mechanism(
             adaptation_graph,
         )
         return adaptation_graph

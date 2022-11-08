@@ -1,7 +1,7 @@
 """Used to verify stages are completed."""
 from typeguard import typechecked
 
-from ...import_results.check_completed_stages import has_outputted_stage
+from snncompare.import_results.check_completed_stages import has_outputted_stage
 
 
 @typechecked

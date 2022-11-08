@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 
 from typeguard import typechecked
 
-from snncompare.exp_setts.adapt.Adaptation_Rad_settings import (
+from snnadaptation.redundancy.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )

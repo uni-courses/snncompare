@@ -6,16 +6,16 @@ from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.MDSA import MDSA
 from typeguard import typechecked
 
-from ...arg_parser.arg_verification import verify_input_graph_path
-from ...export_results.export_json_results import write_dict_to_json
-from ...export_results.export_nx_graph_to_json import digraph_to_json
-from ...graph_generation.Used_graphs import Used_graphs
-from ..adapt.Adaptation_Rad_settings import (
+from snncompare.arg_parser.arg_verification import verify_input_graph_path
+from snncompare.export_results.export_json_results import write_dict_to_json
+from snncompare.export_results.export_nx_graph_to_json import digraph_to_json
+from snnalgorithms.Used_graphs import Used_graphs
+from snnadaptation.redundancy.Adaptation_Rad_settings import (
     Adaptations_settings,
     Radiation_settings,
 )
-from ..Supported_experiment_settings import Supported_experiment_settings
-from ..verify_experiment_settings import verify_adap_and_rad_settings
+from snncompare.exp_setts.Supported_experiment_settings import Supported_experiment_settings
+from snncompare.exp_setts.verify_experiment_settings import verify_adap_and_rad_settings
 
 
 @typechecked

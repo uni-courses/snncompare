@@ -3,7 +3,7 @@ import unittest
 
 from typeguard import typechecked
 
-from snncompare.graph_generation.get_graph import (
+from snnalgorithms.get_graph import (
     get_networkx_graph_of_2_neurons,
 )
 

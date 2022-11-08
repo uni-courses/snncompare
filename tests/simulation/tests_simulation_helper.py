@@ -10,7 +10,7 @@ from snnbackends.networkx.run_on_networkx import (
 )
 from typeguard import typechecked
 
-from snncompare.graph_generation.get_graph import set_rand_neuron_properties
+from snnalgorithms.get_graph import set_rand_neuron_properties
 from tests.tests_helper import get_cyclic_graph_without_directed_path
 
 if TYPE_CHECKING:

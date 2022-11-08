@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from typeguard import typechecked
 
-from ..verify_experiment_settings import verify_integer_settings
+from snncompare.exp_setts.verify_experiment_settings import verify_integer_settings
 
 # pylint: disable=R0801
 

@@ -25,7 +25,7 @@ from .export_results.load_json_to_nx_graph import (
 )
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
-from .export_results.verify_nx_graphs import verify_results_nx_graphs
+from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from .graph_generation.stage_1_get_input_graphs import get_used_graphs
 from .import_results.check_completed_stages import has_outputted_stage
 from .import_results.stage_1_load_input_graphs import load_results_stage_1

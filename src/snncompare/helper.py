@@ -20,7 +20,7 @@ from typeguard import typechecked
 
 from .export_results.export_json_results import get_unique_hash
 from .export_results.Plot_to_tex import Plot_to_tex
-from .graph_generation.radiation.Radiation_damage import (
+from snnradiation.Radiation_damage import (
     store_dead_neuron_names_in_graph,
 )
 
@@ -526,7 +526,9 @@ def compute_mark(
     delta: float, input_graph: nx.Graph, rand_ceil: float
 ) -> None:
     """Computes the mark at the counter neurons after the simulation is
-    completed."""
+    completed.
+    TODO: move into algorithms module.
+    """
     # Compute the mark based on degree+randomness=weight
     for node in input_graph.nodes:
         max_weight = max(

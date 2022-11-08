@@ -6,7 +6,7 @@ setting types should be identical.)
 """
 from typeguard import typechecked
 
-from ..Supported_experiment_settings import dict_to_frozen_set
+from snncompare.exp_setts.Supported_experiment_settings import dict_to_frozen_set
 from .verify_run_settings import verify_run_config
 
 # pylint: disable=R0902
