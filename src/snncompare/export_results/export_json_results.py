@@ -5,10 +5,10 @@ from pathlib import Path
 from typing import Any, Generator, List
 
 import networkx as nx
+from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
 from .export_nx_graph_to_json import digraph_to_json
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 
 @typechecked

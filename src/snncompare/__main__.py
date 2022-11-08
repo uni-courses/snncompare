@@ -7,13 +7,13 @@ import shutil
 
 from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
 from snnalgorithms.sparse.MDSA.MDSA import MDSA
+from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 from .exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,
     default_experiment_config,
 )
 from .Experiment_runner import Experiment_runner
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 # Remove results directory if it exists.
 if os.path.exists("results"):

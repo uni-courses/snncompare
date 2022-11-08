@@ -11,9 +11,8 @@ import numpy as np
 from networkx.classes.digraph import DiGraph
 from numpy import ndarray
 from snnbackends.networkx.LIF_neuron import LIF_neuron
-from typeguard import typechecked
-
 from snnbackends.plot_graphs import plot_circular_graph
+from typeguard import typechecked
 
 if TYPE_CHECKING:
     from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
