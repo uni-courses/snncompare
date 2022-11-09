@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, List
 
 import jsons
 import networkx as nx
-from snnalgorithms.sparse.MDSA.mdsa_snn_algo import Alipour_properties
+from snnalgorithms.sparse.MDSA.create_snns import Alipour_properties
 from typeguard import typechecked
 
 from snncompare.export_results.export_json_results import write_dict_to_json

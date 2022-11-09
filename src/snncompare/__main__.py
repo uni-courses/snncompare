@@ -6,7 +6,7 @@ import os
 import shutil
 
 from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
-from snnalgorithms.sparse.MDSA.MDSA import MDSA
+from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 from .exp_setts.default_setts.create_default_settings import (

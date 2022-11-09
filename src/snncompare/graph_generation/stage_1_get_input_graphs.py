@@ -10,7 +10,7 @@ import networkx as nx
 from snnadaptation.redundancy.redundancy import (
     other_implement_adaptation_mechanism,
 )
-from snnalgorithms.sparse.MDSA.mdsa_snn_algo import (
+from snnalgorithms.sparse.MDSA.create_snns import (
     Alipour_properties,
     specify_mdsa_network_properties,
 )

@@ -9,7 +9,9 @@ respective SNN graph.
 import copy
 
 import networkx as nx
-from snnalgorithms.sparse.MDSA.get_mdsa_results import set_mdsa_snn_results
+from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
+    set_mdsa_snn_results,
+)
 from snnbackends.verify_nx_graphs import (
     verify_nx_graph_contains_correct_stages,
 )

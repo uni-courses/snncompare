@@ -7,7 +7,7 @@ from snnadaptation.redundancy.Adaptation_Rad_settings import (
     Radiation_settings,
 )
 from snnalgorithms.get_alg_configs import get_algo_configs
-from snnalgorithms.sparse.MDSA.MDSA import MDSA
+from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.Used_graphs import Used_graphs
 from typeguard import typechecked
 
