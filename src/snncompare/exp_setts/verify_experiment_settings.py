@@ -39,6 +39,7 @@ def verify_experiment_config(
     verify_experiment_config_dict_is_complete(
         supp_exp_setts, experiment_config
     )
+
     # Verify no unknown configuration settings are presented.
     verify_experiment_config_dict_contains_only_valid_entries(
         supp_exp_setts, experiment_config, strict

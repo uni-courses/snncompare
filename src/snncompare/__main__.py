@@ -4,12 +4,14 @@ that invokes this script."""
 # Import code belonging to this project.
 import os
 import shutil
+import sys
 
 from snnalgorithms.get_alg_configs import get_algo_configs, verify_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 from .arg_parser.arg_parser import parse_cli_args
+from .arg_parser.perform_args import process_args
 from .exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,
     default_experiment_config,
@@ -25,6 +27,8 @@ if os.path.exists("latex"):
 
 # Parse command line interface arguments to determine what this script does.
 args = parse_cli_args()
+process_args(args)
+sys.exit()
 
 mdsa = MDSA(list(range(0, 4, 1)))
 mdsa_configs = get_algo_configs(mdsa.__dict__)
