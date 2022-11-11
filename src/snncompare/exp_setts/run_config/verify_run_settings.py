@@ -94,8 +94,6 @@ def verify_run_config_dict_contains_only_valid_entries(
 ) -> None:
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
-    print(f"has_unique_id={has_unique_id}")
-    print(f"allow_optional={allow_optional}")
     for actual_key in run_config.keys():
         if actual_key not in supp_run_setts.parameters:
             if not allow_optional:

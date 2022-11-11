@@ -17,6 +17,7 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
         raise KeyError("Error, key: run_config not in output_dict.")
     if "graphs_dict" not in results_json_graphs:
         raise KeyError("Error, key: graphs_dict not in output_dict.")
+
     verify_json_graphs_dict_contain_correct_stages(
         results_json_graphs["graphs_dict"],
         expected_stages,
@@ -33,9 +34,19 @@ def verify_json_graphs_dict_contain_correct_stages(
     for expected_stage in expected_stages:
         for graph_name, json_graph in json_graphs.items():
             if expected_stages[-1] == 1:
-                completed_stages = json_graph["graph"]["completed_stages"]
+                # TODO: determine why this can be a list.
+                if isinstance(json_graph, list):
+                    if len(json_graph) > 1:
+                        raise Exception(
+                            "Error, the json graph was a list with "
+                            f"more than 1 elements:{json_graph}"
+                        )
+                    json_graph = json_graph[0]
 
+                completed_stages = json_graph["graph"]["completed_stages"]
+                print(f"completed_stages={completed_stages}")
             elif expected_stages[-1] in [2, 4]:
+
                 # TODO: determine why this is a list of graphs, instead of a
                 # graph with list of nodes.
                 # Completed stages are only stored in the last timestep of the
@@ -54,6 +65,7 @@ def verify_json_graphs_dict_contain_correct_stages(
                     f"Error, stage:{expected_stages[-1]} is "
                     "not yet supported in this check."
                 )
+
             if expected_stage not in completed_stages:
                 raise ValueError(
                     "Error, for run_config: "

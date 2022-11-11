@@ -20,7 +20,7 @@ from ..helper import get_expected_stages, get_extensions_list
 # pylint: disable=R0912
 @typechecked
 def has_outputted_stage(
-    run_config: dict, stage_index: int, to_run: dict
+    run_config: dict, stage_index: int, to_run: dict, verbose: bool = False
 ) -> bool:
     """Checks whether the the required output files exist, for a given
     simulation and whether their content is valid. Returns True if the file
@@ -56,6 +56,8 @@ def has_outputted_stage(
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
+            if verbose:
+                print(f"File={filepath} missing.")
             return False
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.
@@ -66,10 +68,16 @@ def has_outputted_stage(
                 )
             # pylint: disable=R0801
             except KeyError:
+                if verbose:
+                    print(f"KeyError for: {filepath}")
                 return False
             except ValueError:
+                if verbose:
+                    print(f"ValueError for: {filepath}")
                 return False
             except TypeError:
+                if verbose:
+                    print(f"TypeError for: {filepath}")
                 return False
             if stage_index == 4:
                 return has_valid_json_results(json_graphs, run_config, to_run)

@@ -104,6 +104,7 @@ class Experiment_runner:
             results_nx_graphs = self.__perform_run_stage_1(
                 experiment_config, run_config, to_run
             )
+            pprint(results_nx_graphs)
             self.__perform_run_stage_2(results_nx_graphs, to_run)
             self.__perform_run_stage_3(results_nx_graphs, to_run)
             self.__perform_run_stage_4(
@@ -185,7 +186,9 @@ class Experiment_runner:
                 results_nx_graphs["run_config"],
             )
             output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
-        assert_stage_is_completed(results_nx_graphs["run_config"], 2, to_run)
+        assert_stage_is_completed(
+            results_nx_graphs["run_config"], 2, to_run, verbose=True
+        )
 
     @typechecked
     def __perform_run_stage_3(

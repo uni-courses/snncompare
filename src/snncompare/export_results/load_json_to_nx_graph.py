@@ -120,10 +120,11 @@ def load_verified_json_graphs_from_json(
     # Read output JSON file into dict.
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
-    print("contains correct stages.")
+    print("Before contains correct stages.")
     verify_results_safely_check_json_graphs_contain_expected_stages(
         results_json_graphs, expected_stages
     )
+    print("contains correct stages.")
 
     if results_json_graphs["run_config"] != run_config:
         print("Current run_config:")
