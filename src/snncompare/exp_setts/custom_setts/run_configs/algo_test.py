@@ -28,7 +28,7 @@ def store_experiment_config_to_file(exp_config: dict, filename: str) -> None:
         Supported_experiment_settings(),
         exp_config,
         has_unique_id=False,
-        strict=True,
+        allow_optional=False,
     )
 
     # epxort to file.
@@ -55,7 +55,7 @@ def load_experiment_config_from_file(filename: str) -> dict:
             Supported_experiment_settings(),
             exp_config,
             has_unique_id=False,
-            strict=True,
+            allow_optional=False,
         )
         return exp_config
     raise FileNotFoundError(f"Error, {filepath} was not found.")

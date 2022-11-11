@@ -63,13 +63,17 @@ class Supported_run_settings:
                 + "already contains a unique identifier."
             )
 
-        verify_run_config(self, run_config, has_unique_id=False, strict=True)
+        verify_run_config(
+            self, run_config, has_unique_id=False, allow_optional=False
+        )
 
         # hash_set = frozenset(run_config.values())
         hash_set = dict_to_frozen_set(run_config)
         unique_id = hash(hash_set)
         run_config["unique_id"] = unique_id
-        verify_run_config(self, run_config, has_unique_id=False, strict=False)
+        verify_run_config(
+            self, run_config, has_unique_id=False, allow_optional=False
+        )
         return run_config
 
     @typechecked

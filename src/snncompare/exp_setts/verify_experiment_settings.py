@@ -19,7 +19,7 @@ def verify_experiment_config(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: None | str | dict,
     has_unique_id: bool,
-    strict: bool,
+    allow_optional: bool,
 ) -> None:
     """Verifies the selected experiment configuration settings are valid.
 
@@ -42,7 +42,7 @@ def verify_experiment_config(
 
     # Verify no unknown configuration settings are presented.
     verify_experiment_config_dict_contains_only_valid_entries(
-        supp_exp_setts, experiment_config, strict
+        supp_exp_setts, experiment_config, allow_optional, has_unique_id
     )
 
     # Verify the algorithms
@@ -115,17 +115,19 @@ def verify_experiment_config_dict_is_complete(
 def verify_experiment_config_dict_contains_only_valid_entries(
     supp_exp_setts: Supported_experiment_settings,
     experiment_config: dict,
-    strict: bool,
+    allow_optional: bool,
+    has_unique_id: bool,
 ) -> None:
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in experiment_config.keys():
         if actual_key not in supp_exp_setts.parameters:
-            if strict:
-                raise Exception(
-                    f"Error:{actual_key} is not supported by the configuration"
-                    + f" settings:{supp_exp_setts.parameters}"
-                )
+            if not allow_optional:
+                if not (has_unique_id and actual_key == "unique_id"):
+                    raise Exception(
+                        f"Error:{actual_key} is not supported by the "
+                        + f"configuration settings:{supp_exp_setts.parameters}"
+                    )
             if actual_key not in supp_exp_setts.optional_parameters:
                 raise Exception(
                     f"Error:{actual_key} is not supported by the configuration"

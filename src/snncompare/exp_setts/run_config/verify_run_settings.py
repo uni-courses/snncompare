@@ -23,7 +23,7 @@ def verify_run_config(
     supp_run_setts: Supported_run_settings,
     run_config: dict,
     has_unique_id: bool,
-    strict: bool,
+    allow_optional: bool,
 ) -> dict:
     """Verifies the selected experiment configuration settings are valid.
 
@@ -44,7 +44,7 @@ def verify_run_config(
 
     # Verify no unknown configuration settings are presented.
     verify_run_config_dict_contains_only_valid_entries(
-        supp_run_setts, run_config, strict
+        supp_run_setts, run_config, allow_optional
     )
 
     verify_parameter_types(supp_run_setts, run_config)
@@ -87,13 +87,15 @@ def verify_run_config_dict_is_complete(
 
 
 def verify_run_config_dict_contains_only_valid_entries(
-    supp_run_setts: Supported_run_settings, run_config: dict, strict: bool
+    supp_run_setts: Supported_run_settings,
+    run_config: dict,
+    allow_optional: bool,
 ) -> None:
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
     for actual_key in run_config.keys():
         if actual_key not in supp_run_setts.parameters:
-            if strict:
+            if not allow_optional:
                 # TODO: allow for optional arguments:
                 # stage, show, export, duration
                 raise Exception(

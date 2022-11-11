@@ -5,6 +5,7 @@ setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
 import copy
+from pprint import pprint
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -218,17 +219,20 @@ class Supported_experiment_settings:
             )
 
         verify_experiment_config(
-            self, experiment_config, has_unique_id=False, strict=True
+            self, experiment_config, has_unique_id=False, allow_optional=True
         )
 
         # Compute a unique code belonging to this particular experiment
         # configuration.
-        hash_set = dict_to_frozen_set(experiment_config)
-
+        # TODO: remove optional arguments from config.
+        exp_setts_without_unique_id = remove_optional_exp_setts(
+            copy.deepcopy(experiment_config)
+        )
+        hash_set = dict_to_frozen_set(exp_setts_without_unique_id)
         unique_id = hash(hash_set)
         experiment_config["unique_id"] = unique_id
         verify_experiment_config(
-            self, experiment_config, has_unique_id=True, strict=False
+            self, experiment_config, has_unique_id=True, allow_optional=True
         )
         return experiment_config
 
@@ -242,3 +246,28 @@ def dict_to_frozen_set(experiment_config: dict) -> frozenset:
         if isinstance(value, dict):
             value = dict_to_frozen_set(value)
     return frozenset(some_dict)
+
+
+@typechecked
+def remove_optional_exp_setts(exp_setts: dict) -> dict:
+    """Eliminates all optional settings from an incoming experiment config."""
+    supp_setts = Supported_experiment_settings()
+    to_pop = []
+    for key in exp_setts.keys():
+        if key in supp_setts.optional_parameters:
+            to_pop.append(key)
+    print(f"to_pop={to_pop}")
+    for pop_key in to_pop:
+        exp_setts.pop(pop_key)
+    print(f"exp_setts={exp_setts}")
+    pprint(exp_setts)
+    for key in exp_setts.keys():
+        if key not in supp_setts.parameters:
+            raise Exception(
+                f"Error, key:{key} not in mandatory parameters:"
+                + f"{supp_setts.parameters}"
+            )
+    verify_experiment_config(
+        supp_setts, exp_setts, has_unique_id=False, allow_optional=False
+    )
+    return exp_setts

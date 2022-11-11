@@ -61,7 +61,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             supp_exp_setts,
             with_adaptation_with_radiation,
             has_unique_id=False,
-            strict=True,
+            allow_optional=False,
         )
         self.assertIsInstance(with_adaptation_with_radiation, dict)
 
@@ -77,7 +77,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
             verify_experiment_config(
-                supp_exp_setts, None, has_unique_id=False, strict=True
+                supp_exp_setts, None, has_unique_id=False, allow_optional=False
             )
 
         self.assertEqual(
@@ -101,7 +101,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
                 supp_exp_setts,
                 "string_instead_of_dict",
                 has_unique_id=False,
-                strict=True,
+                allow_optional=False,
             )
         self.assertEqual(
             "Error, the experiment_config is of type:"
@@ -128,7 +128,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
                 supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
-                strict=True,
+                allow_optional=False,
             )
         self.assertEqual(
             f"Error:{self.invalid_adaptation_key} is not supported by the"
@@ -170,7 +170,7 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
             test_object.supp_exp_setts,
             experiment_config,
             has_unique_id=False,
-            strict=True,
+            allow_optional=False,
         )
 
     # Create expected output message.

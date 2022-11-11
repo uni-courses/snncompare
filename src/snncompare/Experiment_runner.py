@@ -47,10 +47,7 @@ class Experiment_runner:
     # pylint: disable=R0903
 
     @typechecked
-    @typechecked
-    def __init__(
-        self, experiment_config: dict, export_images: bool, show_snns: bool
-    ) -> None:
+    def __init__(self, experiment_config: dict) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists("results")
@@ -67,7 +64,7 @@ class Experiment_runner:
             self.supp_exp_setts,
             experiment_config,
             has_unique_id=False,
-            strict=True,
+            allow_optional=True,
         )
 
         # If the experiment experiment_config does not contain a hash-code,
@@ -80,16 +77,11 @@ class Experiment_runner:
         # Verify the unique hash code for this configuration is valid.
         verify_has_unique_id(self.experiment_config)
 
-        # Append the export_images and show_snns arguments.
-        self.experiment_config["export_images"] = export_images
-        self.experiment_config["show_snns"] = show_snns
-
         # Perform runs accordingly.
         # TODO: see if self.run_configs can be removed.
         self.run_configs = self.__perform_run(self.experiment_config)
 
     # pylint: disable=W0238
-    @typechecked
     @typechecked
     def __perform_run(self, experiment_config: dict) -> List[dict]:
         """Private method that performs a run of the experiment.
@@ -117,7 +109,6 @@ class Experiment_runner:
 
         return run_configs
 
-    @typechecked
     @typechecked
     def __perform_run_stage_1(
         self, experiment_config: dict, run_config: dict, to_run: dict
@@ -147,7 +138,6 @@ class Experiment_runner:
         assert_stage_is_completed(run_config, 1, to_run)
         return results_nx_graphs
 
-    @typechecked
     @typechecked
     def __perform_run_stage_2(
         self,
@@ -193,7 +183,6 @@ class Experiment_runner:
         assert_stage_is_completed(results_nx_graphs["run_config"], 2, to_run)
 
     @typechecked
-    @typechecked
     def __perform_run_stage_3(
         self,
         results_nx_graphs: dict,
@@ -224,7 +213,6 @@ class Experiment_runner:
                 results_nx_graphs["run_config"], 3, to_run
             )
 
-    @typechecked
     @typechecked
     def __perform_run_stage_4(
         self, export_images: bool, results_nx_graphs: dict, to_run: dict
@@ -301,7 +289,10 @@ def experiment_config_to_run_configs(
 
     for run_config in run_configs:
         verify_run_config(
-            supp_run_setts, run_config, has_unique_id=False, strict=True
+            supp_run_setts,
+            run_config,
+            has_unique_id=False,
+            allow_optional=False,
         )
 
         # Append unique_id to run_config
