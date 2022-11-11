@@ -65,7 +65,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.expected_completed_stages = [1, 2, 3]
         self.export_images = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
-        self.experiment_config["show_snn"] = False
+        self.experiment_config["show_snns"] = False
         self.experiment_config["export_images"] = self.export_images
         self.experiment_runner = Experiment_runner(
             self.experiment_config,
