@@ -4,7 +4,6 @@ that invokes this script."""
 # Import code belonging to this project.
 import os
 import shutil
-import sys
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
@@ -31,8 +30,3 @@ create_default_graph_json()
 # Parse command line interface arguments to determine what this script does.
 args = parse_cli_args()
 process_args(args)
-sys.exit()
-
-# mdsa = MDSA(list(range(0, 4, 1)))
-# mdsa_configs = get_algo_configs(mdsa.__dict__)
-# verify_algo_configs("MDSA", mdsa_configs)
