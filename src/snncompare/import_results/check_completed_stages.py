@@ -145,12 +145,17 @@ def has_valid_json_results(
     for algo_name, algo_settings in run_config["algorithm"].items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
-                graphnames_with_results = [
-                    "snn_algo_graph",
-                    "adapted_snn_graph",
-                    "rad_snn_algo_graph",
-                    "rad_adapted_snn_graph",
-                ]
+                graphnames_with_results = get_expected_stage_1_graph_names(
+                    run_config
+                )
+                graphnames_with_results.remove("input_graph")
+                # [
+                #    "snn_algo_graph",
+                #    "adapted_snn_graph",
+                #    "rad_snn_algo_graph",
+                #    "rad_adapted_snn_graph",
+                # ]
+                print(f"graphnames_with_results={graphnames_with_results}")
                 if not set(graphnames_with_results).issubset(
                     json_graphs.keys()
                 ):
