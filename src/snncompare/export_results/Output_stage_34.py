@@ -50,8 +50,6 @@ def output_stage_files_3_and_4(
                 stage_index,
                 to_run,
             )
-        else:
-            raise Exception("Error export_images should not be exported.")
 
         # TODO: Check if plots are already generated and if they must be
         # overwritten.

@@ -44,14 +44,15 @@ def has_outputted_stage(
             # TODO: append expected_filepath to run_config per stage.
 
         if stage_index == 3:
-            expected_filepaths.extend(
-                get_expected_image_paths_stage_3(
-                    get_expected_stage_1_graph_names(run_config),
-                    get_input_graph(run_config),
-                    run_config,
-                    extensions,
+            if run_config["export_images"]:
+                expected_filepaths.extend(
+                    get_expected_image_paths_stage_3(
+                        get_expected_stage_1_graph_names(run_config),
+                        get_input_graph(run_config),
+                        run_config,
+                        extensions,
+                    )
                 )
-            )
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:

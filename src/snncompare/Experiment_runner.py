@@ -218,7 +218,7 @@ class Experiment_runner:
             output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
             print('"Done generating output plots for stage 3.')
             assert_stage_is_completed(
-                results_nx_graphs["run_config"], 3, to_run
+                results_nx_graphs["run_config"], 3, to_run, verbose=True
             )
 
     @typechecked

@@ -811,7 +811,7 @@ def get_expected_stages(
     experiment."""
     expected_stages = list(range(1, stage_index + 1))
 
-    if not to_run["stage_3"]:
+    if not to_run["stage_3"] or not export_images:
         if 3 in expected_stages:
             expected_stages.remove(3)
     if export_images:
