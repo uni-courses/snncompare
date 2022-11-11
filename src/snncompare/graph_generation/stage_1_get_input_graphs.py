@@ -56,6 +56,7 @@ def get_used_graphs(run_config: dict) -> dict:
             graphs["adapted_snn_graph"], run_config, run_config["seed"]
         )
 
+    # TODO: move this into a separate location/function.
     # Indicate the graphs have completed stage 1.
     for graph in graphs.values():
         add_stage_completion_to_graph(graph, 1)
