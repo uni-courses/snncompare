@@ -135,7 +135,7 @@ def delete_files_in_folder(folder: str) -> None:
     """
 
     :param folder:
-
+    # TODO: delete unused function.
     """
     os.makedirs(folder, exist_ok=True)
     try:

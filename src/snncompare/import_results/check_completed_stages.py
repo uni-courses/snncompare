@@ -184,7 +184,6 @@ def has_valid_json_results(
                                 "not yet supported in this check."
                             )
                         if "results" not in graph_properties.keys():
-                            print(graph_properties.keys())
                             return False
                 return True
             raise Exception(
