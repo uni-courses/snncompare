@@ -3,7 +3,9 @@ setting of the experiment configuration settings.
 
 (The values of the settings may vary, yet the types should be the same.)
 """
-from typing import Any, Dict, List, Tuple
+
+from pprint import pprint
+from typing import Any, Dict, List, Tuple, Union
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
@@ -72,7 +74,10 @@ class Experiment_runner:
         if not self.supp_exp_setts.has_unique_config_id(
             self.experiment_config
         ):
-            self.supp_exp_setts.append_unique_config_id(self.experiment_config)
+            self.supp_exp_setts.append_unique_experiment_config_id(
+                self.experiment_config,
+                allow_optional=True,
+            )
 
         # Verify the unique hash code for this configuration is valid.
         verify_has_unique_id(self.experiment_config)
@@ -247,56 +252,47 @@ def experiment_config_to_run_configs(
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
     # for algorithm in experiment_config["algorithms"]:
+    pprint(experiment_config)
     for algorithm_name, algo_specs in experiment_config["algorithms"].items():
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
-            for adaptation_name, adaptation_setts_list in experiment_config[
-                "adaptations"
-            ].items():
-                for adaptation_config in adaptation_setts_list:
-                    adaptation = {adaptation_name: adaptation_config}
 
-                    for (
-                        radiation_name,
-                        radiation_setts_list,
-                    ) in experiment_config["radiations"].items():
-                        # TODO: verify it is of type list.
-                        for rad_config in radiation_setts_list:
-                            radiation = {radiation_name: rad_config}
+            for adaptation, radiation in get_adaptation_and_radiations(
+                experiment_config
+            ):
+                print(adaptation, radiation)
 
-                            for iteration in experiment_config["iterations"]:
-                                for size_and_max_graph in experiment_config[
-                                    "size_and_max_graphs"
-                                ]:
-                                    for simulator in experiment_config[
-                                        "simulators"
-                                    ]:
-                                        for graph_nr in range(
-                                            0, size_and_max_graph[1]
-                                        ):
-                                            run_configs.append(
-                                                run_parameters_to_dict(
-                                                    adaptation,
-                                                    algorithm,
-                                                    iteration,
-                                                    size_and_max_graph,
-                                                    graph_nr,
-                                                    radiation,
-                                                    experiment_config,
-                                                    simulator,
-                                                )
-                                            )
+                for iteration in experiment_config["iterations"]:
+                    for size_and_max_graph in experiment_config[
+                        "size_and_max_graphs"
+                    ]:
+                        for simulator in experiment_config["simulators"]:
+                            for graph_nr in range(0, size_and_max_graph[1]):
+                                run_configs.append(
+                                    run_parameters_to_dict(
+                                        adaptation,
+                                        algorithm,
+                                        iteration,
+                                        size_and_max_graph,
+                                        graph_nr,
+                                        radiation,
+                                        experiment_config,
+                                        simulator,
+                                    )
+                                )
 
     for run_config in run_configs:
         verify_run_config(
             supp_run_setts,
             run_config,
             has_unique_id=False,
-            allow_optional=False,
+            allow_optional=True,
         )
 
         # Append unique_id to run_config
-        supp_run_setts.append_unique_config_id(run_config)
+        supp_run_setts.append_unique_run_config_id(
+            run_config, allow_optional=True
+        )
 
         # Append show_snns and export_images to run config.
         supp_run_setts.assert_has_key(experiment_config, "show_snns", bool)
@@ -309,12 +305,12 @@ def experiment_config_to_run_configs(
 # pylint: disable=R0913
 @typechecked
 def run_parameters_to_dict(
-    adaptation: Dict[str, Any],
+    adaptation: Union[None, Dict[str, Any]],
     algorithm: Dict[str, Any],
     iteration: int,
     size_and_max_graph: Tuple[int, int],
     graph_nr: int,
-    radiation: Dict[str, Any],
+    radiation: Union[None, Dict[str, Any]],
     experiment_config: Dict[str, Any],
     simulator: str,
 ) -> dict:
@@ -397,3 +393,46 @@ def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
             + "try this again with:overwrite_visualisation=True"
         )
     return to_run
+
+
+def get_adaptation_and_radiations(experiment_config: dict) -> List[tuple]:
+    """Returns a list of adaptations and radiations that will be used for the
+    experiment."""
+
+    adaptations_radiations: List[tuple] = []
+    if experiment_config["adaptations"] is None:
+        adaptation = None
+        adaptations_radiations.extend(
+            get_radiations(experiment_config, adaptation)
+        )
+    else:
+        for adaptation_name, adaptation_setts_list in experiment_config[
+            "adaptations"
+        ].items():
+            for adaptation_config in adaptation_setts_list:
+                adaptation = {adaptation_name: adaptation_config}
+                adaptations_radiations.extend(
+                    get_radiations(experiment_config, adaptation)
+                )
+    return adaptations_radiations
+
+
+def get_radiations(
+    experiment_config: dict, adaptation: Union[None, dict]
+) -> List[Tuple[Union[None, dict], Union[None, dict]]]:
+    """Returns the radiations."""
+    adaptation_and_radiations: List[
+        Tuple[Union[None, dict], Union[None, dict]]
+    ] = []
+    if experiment_config["radiations"] is None:
+        adaptation_and_radiations.append((adaptation, None))
+    else:
+        for (
+            radiation_name,
+            radiation_setts_list,
+        ) in experiment_config["radiations"].items():
+            # TODO: verify it is of type list.
+            for rad_config in radiation_setts_list:
+                radiation = {radiation_name: rad_config}
+                adaptation_and_radiations.append((adaptation, radiation))
+    return adaptation_and_radiations

@@ -177,6 +177,8 @@ def has_adaptation(run_config: Dict[str, Any]) -> bool:
     TODO: throw an error if the adaptation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
     """
+    if run_config["adaptation"] is None:
+        return False
     for adaptation_name in run_config["adaptation"].keys():
         if adaptation_name is not None:
             return True
@@ -191,6 +193,8 @@ def has_radiation(run_config: Dict[str, Any]) -> bool:
     TODO: throw an error if the radiation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
     """
+    if run_config["radiation"] is None:
+        return False
     for radiation_name in run_config["radiation"].keys():
         if radiation_name is not None:
             return True

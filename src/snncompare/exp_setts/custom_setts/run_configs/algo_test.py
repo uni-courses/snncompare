@@ -75,7 +75,6 @@ def experiment_config_for_mdsa_testing() -> dict:
         "algorithms": {
             "MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)
         },
-        # "iterations": list(range(0, 3, 1)),
         "iterations": list(range(0, 1, 1)),
         # TODO: Change into list with "Seeds"
         "seed": 7,

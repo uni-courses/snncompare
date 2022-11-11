@@ -5,7 +5,6 @@ setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
 import copy
-from pprint import pprint
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -204,7 +203,11 @@ class Supported_experiment_settings:
         return False
 
     @typechecked
-    def append_unique_config_id(self, experiment_config: dict) -> dict:
+    def append_unique_experiment_config_id(
+        self,
+        experiment_config: dict,
+        allow_optional: bool = True,
+    ) -> dict:
         """Checks if an experiment configuration dictionary already has a
         unique identifier, and if not it computes and appends it.
 
@@ -219,7 +222,10 @@ class Supported_experiment_settings:
             )
 
         verify_experiment_config(
-            self, experiment_config, has_unique_id=False, allow_optional=True
+            self,
+            experiment_config,
+            has_unique_id=False,
+            allow_optional=allow_optional,
         )
 
         # Compute a unique code belonging to this particular experiment
@@ -232,7 +238,10 @@ class Supported_experiment_settings:
         unique_id = hash(hash_set)
         experiment_config["unique_id"] = unique_id
         verify_experiment_config(
-            self, experiment_config, has_unique_id=True, allow_optional=True
+            self,
+            experiment_config,
+            has_unique_id=True,
+            allow_optional=allow_optional,
         )
         return experiment_config
 
@@ -256,11 +265,8 @@ def remove_optional_exp_setts(exp_setts: dict) -> dict:
     for key in exp_setts.keys():
         if key in supp_setts.optional_parameters:
             to_pop.append(key)
-    print(f"to_pop={to_pop}")
     for pop_key in to_pop:
         exp_setts.pop(pop_key)
-    print(f"exp_setts={exp_setts}")
-    pprint(exp_setts)
     for key in exp_setts.keys():
         if key not in supp_setts.parameters:
             raise Exception(

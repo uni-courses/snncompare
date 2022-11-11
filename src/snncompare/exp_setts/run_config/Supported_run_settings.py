@@ -4,6 +4,8 @@
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
+from typing import Any, Union
+
 from typeguard import typechecked
 
 from ..Supported_experiment_settings import dict_to_frozen_set
@@ -28,13 +30,14 @@ class Supported_run_settings:
         self,
     ) -> None:
         # experiment_config dictionary keys:
-        self.parameters = {
-            "adaptation": dict,
+        self.parameters: dict[str, Any] = {
+            # "adaptation": Union[type(None), dict],
+            "adaptation": Union[None, dict],
             "algorithm": dict,
             "iteration": int,
             "graph_size": int,
             "graph_nr": int,
-            "radiation": dict,
+            "radiation": Union[None, dict],
             "overwrite_sim_results": bool,
             "overwrite_visualisation": bool,
             "seed": int,
@@ -49,7 +52,9 @@ class Supported_run_settings:
         }
 
     @typechecked
-    def append_unique_config_id(self, run_config: dict) -> dict:
+    def append_unique_run_config_id(
+        self, run_config: dict, allow_optional: bool
+    ) -> dict:
         """Checks if an run configuration dictionary already has a unique
         identifier, and if not it computes and appends it.
 
@@ -64,15 +69,22 @@ class Supported_run_settings:
             )
 
         verify_run_config(
-            self, run_config, has_unique_id=False, allow_optional=False
+            self,
+            run_config,
+            has_unique_id=False,
+            allow_optional=allow_optional,
         )
+        # TODO: determine what to do if it already has a unique id.
 
         # hash_set = frozenset(run_config.values())
         hash_set = dict_to_frozen_set(run_config)
         unique_id = hash(hash_set)
         run_config["unique_id"] = unique_id
         verify_run_config(
-            self, run_config, has_unique_id=False, allow_optional=False
+            self,
+            run_config,
+            has_unique_id=True,
+            allow_optional=allow_optional,
         )
         return run_config
 

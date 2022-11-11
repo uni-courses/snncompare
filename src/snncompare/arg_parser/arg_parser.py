@@ -50,6 +50,17 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
+    # Ensure SNN behaviour visualisation in stage 3 is exported to images.
+    parser.add_argument(
+        "-x",
+        "--export-images",
+        action="store_true",
+        default=False,
+        help=(
+            "Ensures the SNN behaviour visualisation is exported as images."
+        ),
+    )
+
     # Ensure SNN behaviour is visualised in stage 3.
     parser.add_argument(
         "-v",

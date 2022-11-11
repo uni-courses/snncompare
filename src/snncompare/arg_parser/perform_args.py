@@ -1,7 +1,6 @@
 """Completes the tasks specified in the arg_parser."""
 
 import argparse
-from pprint import pprint
 
 from typeguard import typechecked
 
@@ -30,11 +29,20 @@ def process_args(args: argparse.Namespace) -> None:
         exp_setts = load_experiment_config_from_file(
             "mdsa_creation_only_size_3_4"
         )
-        pprint(exp_setts)
 
     if args.visualise_snn:
-        # TODO: check if it is supported
         exp_setts["show_snns"] = True
+    else:
+        exp_setts["show_snns"] = False
+
+    if args.export_images:
+        exp_setts["export_images"] = True
+    else:
+        exp_setts["export_images"] = False
+
+    # if not args.overwrite_visualisation:
+    #    exp_setts["export_images"] = True
+    #    exp_setts["overwrite_images"] = True
 
     verify_experiment_config(
         Supported_experiment_settings(),
@@ -42,9 +50,8 @@ def process_args(args: argparse.Namespace) -> None:
         has_unique_id=False,
         allow_optional=True,
     )
+
     # python -m src.snncompare -e mdsa_creation_only_size_3_4 -v
     Experiment_runner(exp_setts)
     # TODO: verify expected output results have been generated successfully.
-
-    pprint(exp_setts)
     print("Done")
