@@ -13,6 +13,7 @@ from typing import List, Optional
 
 import jsons
 from snnalgorithms.helper_network_structure import plot_coordinated_graph
+from snnbackends.plot_graphs import plot_uncoordinated_graph
 from snnbackends.verify_nx_graphs import (
     verify_results_nx_graphs,
     verify_results_nx_graphs_contain_expected_stages,
@@ -227,13 +228,13 @@ def plot_graph_behaviours(
             stage_2_graphs["input_graph"],
             run_config,
         )
-        for t in range(
-            0,
-            sim_duration,
-        ):
-            print(f"Plotting graph:{graph_name}, t={t}")
-            # TODO: include circular input graph output.
-            if graph_name != "input_graph":
+        if graph_name != "input_graph":
+            for t in range(
+                0,
+                sim_duration,
+            ):
+                print(f"Plotting graph:{graph_name}, t={t}")
+                # TODO: include circular input graph output.
 
                 # TODO: Include verify that graph len remains unmodified.
                 # pylint: disable=R0913
@@ -244,10 +245,14 @@ def plot_graph_behaviours(
                     t,
                     False,
                     f"{graph_name}_{filepath}_{t}",
-                    title=create_custom_plot_titles(
-                        graph_name, t, run_config["seed"]
-                    ),
+                    # title=create_custom_plot_titles(
+                    #    graph_name, t, run_config["seed"]
+                    # ),
                 )
+        else:
+            plot_uncoordinated_graph(
+                graph, f"results/{graph_name}_{filepath}.png", show=False
+            )
 
 
 # pylint: disable=R0912

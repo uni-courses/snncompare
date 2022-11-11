@@ -142,9 +142,7 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test for stage 1, 2, and 4.
             self.assertFalse(has_outputted_stage(run_config, 2, to_run))
-            self.assertEqual(
-                has_outputted_stage(run_config, 3, to_run), self.export_images
-            )
+            self.assertEqual(has_outputted_stage(run_config, 3, to_run), True)
             self.assertFalse(has_outputted_stage(run_config, 4, to_run))
 
             # TODO: write test for stage 3.

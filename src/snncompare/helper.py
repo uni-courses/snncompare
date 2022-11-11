@@ -814,7 +814,8 @@ def get_expected_stages(
     if not to_run["stage_3"] or not export_images:
         if 3 in expected_stages:
             expected_stages.remove(3)
-    if export_images:
+    if export_images and stage_index > 2:
+
         if 3 not in expected_stages:
             expected_stages.append(3)
     # Sort and remove dupes.
