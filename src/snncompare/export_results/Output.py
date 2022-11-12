@@ -12,13 +12,14 @@ import pathlib
 from typing import List, Optional
 
 import jsons
-from snnalgorithms.helper_network_structure import plot_coordinated_graph
 from snnbackends.plot_graphs import plot_uncoordinated_graph
 from snnbackends.verify_nx_graphs import (
     verify_results_nx_graphs,
     verify_results_nx_graphs_contain_expected_stages,
 )
 from typeguard import typechecked
+
+from snncompare.export_results.get_plot_data import plot_coordinated_graph
 
 from ..helper import get_sim_duration
 from .export_json_results import write_dict_to_json
@@ -234,8 +235,6 @@ def plot_graph_behaviours(
                 sim_duration,
             ):
                 print(f"Plotting graph:{graph_name}, t={t}")
-                # TODO: include circular input graph output.
-
                 # TODO: Include verify that graph len remains unmodified.
                 # pylint: disable=R0913
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.

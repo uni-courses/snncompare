@@ -30,3 +30,14 @@ create_default_graph_json()
 # Parse command line interface arguments to determine what this script does.
 args = parse_cli_args()
 process_args(args)
+
+print(
+    "TODO: determine why the selector_2_x neurons keep increasing their."
+    "u, whereas selector_1_x gets inhibited. Hypothesis I:"
+    "The degree_receiver_2_x does not inhibit the selector_2_x after it has "
+    "spiked."
+    "Hypothesis II:"
+    "The delay_1 (bottom right) neuron keeps spiking which keeps increasing "
+    "the U of the selector_2_x neurons. This may be resolved by "
+    "self-inhibition of the delay_1 (bottom right) neuron."
+)

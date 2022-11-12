@@ -25,10 +25,13 @@ def process_args(args: argparse.Namespace) -> None:
     TODO: --run-config
     """
     print(f"args={args}")
+    # TODO: just try it instead of hardcoding list of options.
     if args.experiment_settings_name == "mdsa_creation_only_size_3_4":
         exp_setts = load_experiment_config_from_file(
             "mdsa_creation_only_size_3_4"
         )
+    elif args.experiment_settings_name == "mdsa_size5_m4":
+        exp_setts = load_experiment_config_from_file("mdsa_size5_m4")
 
     if args.visualise_snn:
         exp_setts["show_snns"] = True

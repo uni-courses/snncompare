@@ -3,7 +3,7 @@
   "algorithms": {
     "MDSA": [
       {
-        "m_val": 1
+        "m_val": 4
       }
     ]
   },
@@ -27,8 +27,7 @@
     "nx"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [3, 1]}",
-    "{\"__tuple__\": true, \"items\": [4, 1]}"
+    "{\"__tuple__\": true, \"items\": [7, 1]}"
   ],
   "synaptic_models": [
     "LIF"

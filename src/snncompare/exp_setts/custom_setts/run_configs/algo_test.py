@@ -73,7 +73,7 @@ def experiment_config_for_mdsa_testing() -> dict:
         "adaptations": None,
         # TODO: set using a verification setting.
         "algorithms": {
-            "MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)
+            "MDSA": get_algo_configs(MDSA(list(range(1, 2, 1))).__dict__)
         },
         "iterations": list(range(0, 1, 1)),
         # TODO: Change into list with "Seeds"
@@ -100,3 +100,13 @@ def experiment_config_for_mdsa_testing() -> dict:
         "synaptic_models": ["LIF"],
     }
     return mdsa_creation_only_size_3_4
+
+
+def get_exp_setts_mdsa_size5_m4() -> dict:
+    """Returns a default experiment setting with  graph size 7, m=4."""
+    mdsa_creation_only_size_7_m_4: dict = experiment_config_for_mdsa_testing()
+    mdsa_creation_only_size_7_m_4["algorithms"] = {
+        "MDSA": get_algo_configs(MDSA(list(range(4, 5, 1))).__dict__)
+    }
+    mdsa_creation_only_size_7_m_4["size_and_max_graphs"] = [(5, 1)]
+    return mdsa_creation_only_size_7_m_4

@@ -2,6 +2,7 @@
 
 from snncompare.exp_setts.custom_setts.run_configs.algo_test import (
     experiment_config_for_mdsa_testing,
+    get_exp_setts_mdsa_size5_m4,
     load_experiment_config_from_file,
     store_experiment_config_to_file,
 )
@@ -15,3 +16,7 @@ def create_basic_test_config() -> None:
         mdsa_creation_only_size_3_4, "mdsa_creation_only_size_3_4"
     )
     load_experiment_config_from_file("mdsa_creation_only_size_3_4")
+
+    mdsa_size5_m4: dict = get_exp_setts_mdsa_size5_m4()
+    store_experiment_config_to_file(mdsa_size5_m4, "mdsa_size5_m4")
+    load_experiment_config_from_file("mdsa_size5_m4")

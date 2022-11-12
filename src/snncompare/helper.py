@@ -329,7 +329,7 @@ def create_neuron_monitors(test_object: Any, sim_time: int) -> None:
 
 
 @typechecked
-def store_spike_values_in_neurons(get_degree: nx.DiGraph, t: int) -> None:
+def store_spike_values_in_lava_neurons(get_degree: nx.DiGraph, t: int) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.

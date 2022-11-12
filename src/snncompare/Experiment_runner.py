@@ -4,7 +4,6 @@ setting of the experiment configuration settings.
 (The values of the settings may vary, yet the types should be the same.)
 """
 
-from pprint import pprint
 from typing import Any, Dict, List, Tuple, Union
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
@@ -104,7 +103,6 @@ class Experiment_runner:
             results_nx_graphs = self.__perform_run_stage_1(
                 experiment_config, run_config, to_run
             )
-            pprint(results_nx_graphs)
             self.__perform_run_stage_2(results_nx_graphs, to_run)
             self.__perform_run_stage_3(results_nx_graphs, to_run)
             self.__perform_run_stage_4(
@@ -255,7 +253,6 @@ def experiment_config_to_run_configs(
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
     # for algorithm in experiment_config["algorithms"]:
-    pprint(experiment_config)
     for algorithm_name, algo_specs in experiment_config["algorithms"].items():
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}

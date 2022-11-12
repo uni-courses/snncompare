@@ -20,9 +20,6 @@ def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
     back into a nx.DiGraph object."""
     # Load the json dictionary of results.
     results_json_graphs: dict = load_json_file_into_dict(json_filepath)
-    # print(json_filepath)
-    # print("results_json_graphs")
-    # pprint(results_json_graphs)
 
     # Verify the dict contains a key for the graph dict.
     if "graphs_dict" not in results_json_graphs:
