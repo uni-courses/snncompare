@@ -75,6 +75,10 @@ class Supported_run_settings:
             allow_optional=allow_optional,
         )
         # TODO: determine what to do if it already has a unique id.
+        if "unique_id" in run_config.keys():
+            raise Exception(
+                f"Error, unique_id is already in run_config:{run_config}"
+            )
 
         # hash_set = frozenset(run_config.values())
         hash_set = dict_to_frozen_set(run_config)

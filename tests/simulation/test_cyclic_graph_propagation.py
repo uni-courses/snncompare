@@ -108,7 +108,6 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
 
                 # Verify the simulations produce identical static
                 # neuron properties.
-                print("")
                 compare_static_snn_properties(self, G, t=0)
 
                 print_neuron_properties_per_graph(G, True, t=0)

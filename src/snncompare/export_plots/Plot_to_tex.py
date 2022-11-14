@@ -220,7 +220,6 @@ class Plot_to_tex:
         columns = 4
         table_matrix = np.zeros((rows, columns), dtype=object)
         table_matrix[:, :] = ""  # replace the standard zeros with empty cell
-        print(table_matrix)
         for column in range(0, columns):
             for row in range(0, rows):
                 table_matrix[row, column] = row + column

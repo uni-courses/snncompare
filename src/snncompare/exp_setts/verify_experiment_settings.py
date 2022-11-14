@@ -198,8 +198,6 @@ def get_expected_range(
     if setting_name == "iterations":
         return supp_exp_setts.iterations
     if setting_name == "m_val":
-        print(f"supp_exp_setts.algorithms={supp_exp_setts.algorithms}")
-        # return supp_exp_setts.algorithms["MDSA"]
         return list(range(MDSA([1]).min_m_vals, MDSA([1]).max_m_vals, 1))
     if setting_name == "simulators":
         return supp_exp_setts.simulators

@@ -137,7 +137,6 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
-            print("first test")
             self.assertTrue(has_outputted_stage(run_config, 1, to_run))
 
             # Test for stage 1, 2, and 4.

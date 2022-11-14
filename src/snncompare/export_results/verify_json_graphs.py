@@ -44,7 +44,6 @@ def verify_json_graphs_dict_contain_correct_stages(
                     json_graph = json_graph[0]
 
                 completed_stages = json_graph["graph"]["completed_stages"]
-                print(f"completed_stages={completed_stages}")
             elif expected_stages[-1] in [2, 4]:
 
                 # TODO: determine why this is a list of graphs, instead of a

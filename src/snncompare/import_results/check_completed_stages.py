@@ -149,17 +149,9 @@ def has_valid_json_results(
                     run_config
                 )
                 graphnames_with_results.remove("input_graph")
-                # [
-                #    "snn_algo_graph",
-                #    "adapted_snn_graph",
-                #    "rad_snn_algo_graph",
-                #    "rad_adapted_snn_graph",
-                # ]
-                print(f"graphnames_with_results={graphnames_with_results}")
                 if not set(graphnames_with_results).issubset(
                     json_graphs.keys()
                 ):
-                    print("Graph name not set")
                     return False
 
                 expected_stages = get_expected_stages(

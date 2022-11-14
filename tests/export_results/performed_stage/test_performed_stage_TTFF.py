@@ -151,7 +151,6 @@ class Test_stage_1_output_json(unittest.TestCase):
             self.assertTrue(has_outputted_stage(run_config, 1, to_run))
 
             # Test for stage 1, 2, and 4.
-            print("ASSERTING output stage 2 is completed.")
             self.assertTrue(has_outputted_stage(run_config, 2, to_run))
             self.assertEqual(
                 has_outputted_stage(run_config, 3, to_run), self.export_images

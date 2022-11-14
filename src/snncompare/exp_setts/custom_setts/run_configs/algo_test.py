@@ -99,6 +99,13 @@ def experiment_config_for_mdsa_testing() -> dict:
         "neuron_models": ["LIF"],
         "synaptic_models": ["LIF"],
     }
+
+    verify_experiment_config(
+        Supported_experiment_settings(),
+        mdsa_creation_only_size_3_4,
+        has_unique_id=False,
+        allow_optional=True,
+    )
     return mdsa_creation_only_size_3_4
 
 

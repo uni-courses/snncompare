@@ -24,7 +24,6 @@ def process_args(args: argparse.Namespace) -> None:
     TODO: --graph-filepath
     TODO: --run-config
     """
-    print(f"args={args}")
     # TODO: just try it instead of hardcoding list of options.
     if args.experiment_settings_name == "mdsa_creation_only_size_3_4":
         exp_setts = load_experiment_config_from_file(

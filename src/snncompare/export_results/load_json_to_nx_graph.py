@@ -96,6 +96,7 @@ def load_pre_existing_graph_dict(
     if stage_index == 2:
         if not run_config["overwrite_sim_results"]:
             # Load graphs stages 1, 2, 3, 4
+            print(f'run_config["unique_id"]={run_config["unique_id"]}')
             return load_verified_json_graphs_from_json(run_config, [1, 2])
         return load_verified_json_graphs_from_json(run_config, [1])
     if stage_index == 3:
@@ -123,11 +124,10 @@ def load_verified_json_graphs_from_json(
     # Read output JSON file into dict.
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
-    print("Before contains correct stages.")
+
     verify_results_safely_check_json_graphs_contain_expected_stages(
         results_json_graphs, expected_stages
     )
-    print("contains correct stages.")
 
     if results_json_graphs["run_config"] != run_config:
         print("Current run_config:")
