@@ -48,9 +48,6 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_setts = copy.deepcopy(self.exp_setts)
 
-        # Remove key and value of m.
-        # experiment_config.pop("seed")
-
         # Generate run configurations.
         run_configs: List[dict] = experiment_config_to_run_configs(exp_setts)
         self.assertGreaterEqual(len(run_configs), 2)
