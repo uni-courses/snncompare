@@ -1,11 +1,11 @@
 # Spiking Neural Network Performance Tool
 
-[![Python 3.10][python_badge]](https://www.python.org/downloads/release/python-3106/)
-[![License: AGPL v3][agpl3_badge]](https://www.gnu.org/licenses/agpl-3.0)
-[![Code Style: Black][black_badge]](https://github.com/ambv/black)
-[![Code Coverage][codecov_badge]](https://codecov.io/gh/a-t-0/snnalgos)
+[!\[Python 3.10\]\[python_badge\]](https://www.python.org/downloads/release/python-3106/)
+[!\[License: AGPL v3\]\[agpl3_badge\]](https://www.gnu.org/licenses/agpl-3.0)
+[!\[Code Style: Black\]\[black_badge\]](https://github.com/ambv/black)
+[!\[Code Coverage\]\[codecov_badge\]](https://codecov.io/gh/a-t-0/snnalgos)
 
-This module compares SNN [algorithms] to their default/Neumann implementations.
+This module compares SNN \[algorithms\] to their default/Neumann implementations.
 The user can specify an SNN and "normal" algorithm which take as input a
 networkx graph, and compute some graph property as output. The output of the
 SNN is then compared to the "normal" algorithm as "ground truth", in terms of:
@@ -22,16 +22,24 @@ SNN is then compared to the "normal" algorithm as "ground truth", in terms of:
 exact SNN implementation of the ground truth algorithm. This comparison is
 mainly relevant for the additions of brain adaptation and simulated radiation.
 
+## Example
+
+Below is an example of the SNN behaviour of the MDSA algorithm without
+adaptation, without radiation, on a (non-triangular) input graph of 3 nodes.
+<img src="example.gif" width="1280" height="960" />
+
+The green dots are when the neurons spike, non-spiking neurons are not visible.
+
 ## Brain adaptation
 
 For each SNN algorithm that the user specifies, the user can also specify a
 form of brain-inspired adaptation. This serves to increase the robustness of
-the SNN against radiation effects. The [brain-adaptation] can be called from a
+the SNN against radiation effects. The \[brain-adaptation\] can be called from a
 separate pip package called: `snnadaptation`.
 
 ## Radiation
 
-A basic form of [radiation] effects is modelled on the SNNs. For example,
+A basic form of \[radiation\] effects is modelled on the SNNs. For example,
 radiation is modelled as yielding permanent activity termination for random
 neurons.
 
@@ -54,7 +62,7 @@ radiation robustness.
 ## Backends
 
 Since the effectiveness of the adaptation mechanisms, in terms of radiation
-robustness, is a function of neuromorphic hardware platform, multiple [backends]
+robustness, is a function of neuromorphic hardware platform, multiple \[backends\]
 are supported. These backends also allow for different neuronal and synaptic
 models. Currently the following backends are supported:
 
@@ -122,26 +130,40 @@ mechanism.
 
 ## Running Experiment
 
-You can run the experiment with command (to run the experiment using the
-networkx backend):
+First satisfy the prerequisites:
 
 ```
 pip install snncompare
 pip install https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
 ulimit -n 800000
-python -m src
+```
+
+You can run the experiment with command:
+
+```
+python -m src.snncompare -e mdsa_creation_only_size_3_4 -v -x
+```
+
+which is the same as:
+
+```
+python -m src.snncompare --experiment-settings-name mdsa_creation_only_size_3_4 -visualise-snn --export-images
+```
+
+For more info, run:
+
+```
+python -m src.snncompare --help
+```
+
 ```
 
 And run tests with:
 
 ```
+
 python -m pytest
-```
 
-Get help with:
-
-```
-python -m src --halp
 ```
 
 This generates the graphs from the default experiment configurations, and
@@ -153,16 +175,20 @@ the graph behaviour to: `latex/Images/graphs/`.
 Developers can use:
 
 ```
+
 conda env create --file environment.yml
 conda activate snncompare
 ulimit -n 800000
 python -m pytest
+
 ```
 
 Currently the test coverage is `65%`. For type checking:
 
 ```
+
 mypy --disallow-untyped-calls --disallow-untyped-defs tests/export_results/performed_stage/test_performed_stage_TTFF.py
+
 ```
 
 ### Releasing pip package update
@@ -170,15 +196,19 @@ mypy --disallow-untyped-calls --disallow-untyped-defs tests/export_results/perfo
 To udate the Python pip package, one can first satisfy the following requirements:
 
 ```
+
 pip install --upgrade pip setuptools wheel
 pip install twine
+
 ```
 
 Followed by updating the package with:
 
 ```
+
 python3 setup.py sdist bdist_wheel
-python -m twine upload dist/*
+python -m twine upload dist/\*
+
 ```
 
 ### Developer pip install
@@ -187,7 +217,9 @@ If you want to quickly test if your changes work, you can go into the root dir
 of this project and run:
 
 ```
+
 pip install -e .
+
 ```
 
 that installs the latest changes into the pip package locally (into your conda
@@ -203,3 +235,4 @@ environment).
 [codecov_badge]: https://codecov.io/gh/a-t-0/snn/branch/main/graph/badge.svg
 [python_badge]: https://img.shields.io/badge/python-3.10-blue.svg
 [radiation]: https://github.com/a-t-0/snnradiation
+```

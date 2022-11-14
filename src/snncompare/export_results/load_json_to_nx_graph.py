@@ -1,4 +1,5 @@
 """Converts the json graphs back into nx graphs."""
+import copy
 import json
 from pprint import pprint
 from typing import List
@@ -10,13 +11,16 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
+from snncompare.export_results.verify_stage_1_graphs import (
+    get_expected_stage_1_graph_names,
+)
+
 from ..helper import file_exists, get_expected_stages
 from .check_json_graphs import json_graphs_contain_expected_stages
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
     verify_results_safely_check_json_graphs_contain_expected_stages,
 )
-from .verify_stage_1_graphs import get_expected_stage_1_graph_names
 
 
 @typechecked
@@ -93,6 +97,7 @@ def load_pre_existing_graph_dict(
     if stage_index == 2:
         if not run_config["overwrite_sim_results"]:
             # Load graphs stages 1, 2, 3, 4
+            print(f'run_config["unique_id"]={run_config["unique_id"]}')
             return load_verified_json_graphs_from_json(run_config, [1, 2])
         return load_verified_json_graphs_from_json(run_config, [1])
     if stage_index == 3:
@@ -120,12 +125,14 @@ def load_verified_json_graphs_from_json(
     # Read output JSON file into dict.
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
-    print("contains correct stages.")
+
     verify_results_safely_check_json_graphs_contain_expected_stages(
         results_json_graphs, expected_stages
     )
 
-    if results_json_graphs["run_config"] != run_config:
+    if not run_configs_are_equal(
+        results_json_graphs["run_config"], run_config, without_unique_id=False
+    ):
         print("Current run_config:")
         pprint(run_config)
         print("Loaded run_config:")
@@ -133,6 +140,22 @@ def load_verified_json_graphs_from_json(
         raise Exception("Error, difference in experiment configs, see above.")
 
     return results_json_graphs["graphs_dict"]
+
+
+@typechecked
+def run_configs_are_equal(
+    left: dict, right: dict, without_unique_id: bool
+) -> bool:
+    """Determines whether two run configurations are equal or not."""
+    if without_unique_id:
+        left_copy = copy.deepcopy(left)
+        right_copy = copy.deepcopy(right)
+        if "unique_id" in left_copy:
+            left_copy.pop("unique_id")
+        if "unique_id" in right_copy:
+            right_copy.pop("unique_id")
+        return left_copy == right_copy
+    return left == right
 
 
 @typechecked

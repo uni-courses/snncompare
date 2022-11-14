@@ -16,7 +16,7 @@ from snnbackends.networkx.LIF_neuron import LIF_neuron
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
-from .export_results.Plot_to_tex import Plot_to_tex
+from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 @typechecked
@@ -135,7 +135,7 @@ def delete_files_in_folder(folder: str) -> None:
     """
 
     :param folder:
-
+    # TODO: delete unused function.
     """
     os.makedirs(folder, exist_ok=True)
     try:
@@ -329,7 +329,7 @@ def create_neuron_monitors(test_object: Any, sim_time: int) -> None:
 
 
 @typechecked
-def store_spike_values_in_neurons(get_degree: nx.DiGraph, t: int) -> None:
+def store_spike_values_in_lava_neurons(get_degree: nx.DiGraph, t: int) -> None:
     """
 
     :param get_degree: Graph with the MDSA SNN approximation solution.
@@ -766,8 +766,8 @@ def get_sim_duration(
 
             sim_time: int = (
                 input_graph.graph["alg_props"]["inhibition"]
-                * (algo_settings["m_val"] + 1)
-                + 10
+                * (algo_settings["m_val"] + 2)
+                + 30
             )
 
             if not isinstance(sim_time, int):
@@ -775,8 +775,8 @@ def get_sim_duration(
                     "Error, sim_time is not an int."
                     + 'snn_graph.graph["alg_props"]["inhibition"]='
                     + f'{input_graph.graph["alg_props"]["inhibition"]}'
-                    + '(algo_settings["m_val"] + 1)='
-                    + f'{(algo_settings["m_val"] + 1)}'
+                    + '(algo_settings["m_val"] + 2)='
+                    + f'{(algo_settings["m_val"] + 2)}'
                 )
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
@@ -811,10 +811,11 @@ def get_expected_stages(
     experiment."""
     expected_stages = list(range(1, stage_index + 1))
 
-    if not to_run["stage_3"]:
+    if not to_run["stage_3"] or not export_images:
         if 3 in expected_stages:
             expected_stages.remove(3)
-    if export_images:
+    if export_images and stage_index > 2:
+
         if 3 not in expected_stages:
             expected_stages.append(3)
     # Sort and remove dupes.

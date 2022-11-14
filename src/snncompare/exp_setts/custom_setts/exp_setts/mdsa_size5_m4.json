@@ -1,0 +1,35 @@
+{
+  "adaptations": null,
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 4
+      }
+    ]
+  },
+  "iterations": [
+    0
+  ],
+  "max_graph_size": 4,
+  "max_max_graphs": 2,
+  "min_graph_size": 3,
+  "min_max_graphs": 1,
+  "neuron_models": [
+    "LIF"
+  ],
+  "overwrite_sim_results": true,
+  "overwrite_snn_creation": true,
+  "overwrite_snn_propagation": true,
+  "overwrite_visualisation": true,
+  "radiations": null,
+  "seed": 7,
+  "simulators": [
+    "nx"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [5, 1]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ]
+}

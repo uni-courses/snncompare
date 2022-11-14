@@ -79,6 +79,7 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
             for starter_neuron in range(size):
                 G = get_graph_for_cyclic_propagation(self.test_scope)
 
+                # pylint: disable=R0801
                 # Assert graph is connected.
                 # self.assertTrue(nx.is_connected(G))
                 self.assertFalse(
@@ -108,7 +109,6 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
 
                 # Verify the simulations produce identical static
                 # neuron properties.
-                print("")
                 compare_static_snn_properties(self, G, t=0)
 
                 print_neuron_properties_per_graph(G, True, t=0)

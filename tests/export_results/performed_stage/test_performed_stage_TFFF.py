@@ -64,10 +64,10 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.expected_completed_stages = [1]
         self.export_images = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
+        self.experiment_config["show_snns"] = False
+        self.experiment_config["export_images"] = self.export_images
         self.experiment_runner = Experiment_runner(
             self.experiment_config,
-            export_images=self.export_images,
-            show_snns=False,
         )
         # TODO: verify the to_run is computed correctly.
 
@@ -137,14 +137,11 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
-            print("first test")
             self.assertTrue(has_outputted_stage(run_config, 1, to_run))
 
             # Test for stage 1, 2, and 4.
             self.assertFalse(has_outputted_stage(run_config, 2, to_run))
-            self.assertEqual(
-                has_outputted_stage(run_config, 3, to_run), self.export_images
-            )
+            self.assertEqual(has_outputted_stage(run_config, 3, to_run), True)
             self.assertFalse(has_outputted_stage(run_config, 4, to_run))
 
             # TODO: write test for stage 3.

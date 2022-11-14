@@ -5,6 +5,8 @@ setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
 import copy
+import hashlib
+import json
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -73,7 +75,9 @@ class Supported_experiment_settings:
 
         # Create dictionary with algorithm name as key, and algorithm settings
         # object as value.
-        self.algorithms = get_algo_configs(MDSA(list(range(0, 4, 1))).__dict__)
+        self.algorithms = get_algo_configs(
+            MDSA(list(range(0, 200, 1))).__dict__
+        )
 
         # The number of times the experiment is repeated.
         self.iterations = list(range(0, 3, 1))
@@ -203,7 +207,11 @@ class Supported_experiment_settings:
         return False
 
     @typechecked
-    def append_unique_config_id(self, experiment_config: dict) -> dict:
+    def append_unique_experiment_config_id(
+        self,
+        experiment_config: dict,
+        allow_optional: bool = True,
+    ) -> dict:
         """Checks if an experiment configuration dictionary already has a
         unique identifier, and if not it computes and appends it.
 
@@ -218,27 +226,49 @@ class Supported_experiment_settings:
             )
 
         verify_experiment_config(
-            self, experiment_config, has_unique_id=False, strict=True
+            self,
+            experiment_config,
+            has_unique_id=False,
+            allow_optional=allow_optional,
         )
 
         # Compute a unique code belonging to this particular experiment
         # configuration.
-        hash_set = dict_to_frozen_set(experiment_config)
+        # TODO: remove optional arguments from config.
+        exp_setts_without_unique_id = remove_optional_exp_setts(
+            copy.deepcopy(experiment_config)
+        )
 
-        unique_id = hash(hash_set)
+        unique_id = hashlib.sha256(
+            json.dumps(exp_setts_without_unique_id).encode("utf-8")
+        ).hexdigest()
         experiment_config["unique_id"] = unique_id
         verify_experiment_config(
-            self, experiment_config, has_unique_id=True, strict=False
+            self,
+            experiment_config,
+            has_unique_id=True,
+            allow_optional=allow_optional,
         )
         return experiment_config
 
 
 @typechecked
-def dict_to_frozen_set(experiment_config: dict) -> frozenset:
-    """Converts a dictionary into a frozenset, such that a hash code of the
-    dict can be computed."""
-    some_dict = copy.deepcopy(experiment_config)
-    for value in some_dict.values():
-        if isinstance(value, dict):
-            value = dict_to_frozen_set(value)
-    return frozenset(some_dict)
+def remove_optional_exp_setts(exp_setts: dict) -> dict:
+    """Eliminates all optional settings from an incoming experiment config."""
+    supp_setts = Supported_experiment_settings()
+    to_pop = []
+    for key in exp_setts.keys():
+        if key in supp_setts.optional_parameters:
+            to_pop.append(key)
+    for pop_key in to_pop:
+        exp_setts.pop(pop_key)
+    for key in exp_setts.keys():
+        if key not in supp_setts.parameters:
+            raise Exception(
+                f"Error, key:{key} not in mandatory parameters:"
+                + f"{supp_setts.parameters}"
+            )
+    verify_experiment_config(
+        supp_setts, exp_setts, has_unique_id=False, allow_optional=False
+    )
+    return exp_setts

@@ -1,6 +1,8 @@
 """"Outputs the results for stage 3 and/or 4."""
 from typeguard import typechecked
 
+from snncompare.helper import add_stage_completion_to_graph
+
 from .helper import run_config_to_filename
 from .Output import output_stage_json, plot_graph_behaviours
 
@@ -37,22 +39,7 @@ def output_stage_files_3_and_4(
     # TODO: merge experiment config, results_nx_graphs['run_config'] into
     # single dict.
     if results_nx_graphs["run_config"]["simulator"] == "nx":
-
-        if (
-            results_nx_graphs["run_config"]["export_images"]
-            or stage_index == 4
-        ):
-            # Output the json dictionary of the files.
-            filename = run_config_to_filename(results_nx_graphs["run_config"])
-            output_stage_json(
-                results_nx_graphs,
-                filename,
-                stage_index,
-                to_run,
-            )
-        else:
-            raise Exception("Error export_images should not be exported.")
-
+        filename = run_config_to_filename(results_nx_graphs["run_config"])
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
         # TODO: Distinguish between showing snns and outputting snns.
@@ -65,6 +52,21 @@ def output_stage_files_3_and_4(
                 filename,
                 results_nx_graphs["graphs_dict"],
                 results_nx_graphs["run_config"],
+            )
+            for nx_graph in results_nx_graphs["graphs_dict"].values():
+                add_stage_completion_to_graph(nx_graph, 3)
+
+        if (
+            # results_nx_graphs["run_config"]["export_images"] or
+            stage_index
+            == 4
+        ):
+            # Output the json dictionary of the files.
+            output_stage_json(
+                results_nx_graphs,
+                filename,
+                stage_index,
+                to_run,
             )
 
     elif results_nx_graphs["run_config"]["simulator"] == "lava":

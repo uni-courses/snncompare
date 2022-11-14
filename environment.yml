@@ -72,6 +72,8 @@ dependencies:
     #- https://github.com/lava-nc/lava/releases/download/v0.3.0/lava-nc-0.3.0.tar.gz
     #- https://github.com/lava-nc/lava/releases/download/v0.5.0/lava-nc-0.5.0.tar.gz
     - https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
+    # Create gif of SNN behaviour.
+    - imageio
     # Support parsing Json files.
     - jsons
     # Auto generate documentation.

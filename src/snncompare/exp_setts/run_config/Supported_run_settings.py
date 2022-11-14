@@ -4,9 +4,12 @@
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
+import hashlib
+import json
+from typing import Any, Union
+
 from typeguard import typechecked
 
-from ..Supported_experiment_settings import dict_to_frozen_set
 from .verify_run_settings import verify_run_config
 
 # pylint: disable=R0902
@@ -28,13 +31,14 @@ class Supported_run_settings:
         self,
     ) -> None:
         # experiment_config dictionary keys:
-        self.parameters = {
-            "adaptation": dict,
+        self.parameters: dict[str, Any] = {
+            # "adaptation": Union[type(None), dict],
+            "adaptation": Union[None, dict],
             "algorithm": dict,
             "iteration": int,
             "graph_size": int,
             "graph_nr": int,
-            "radiation": dict,
+            "radiation": Union[None, dict],
             "overwrite_sim_results": bool,
             "overwrite_visualisation": bool,
             "seed": int,
@@ -49,7 +53,9 @@ class Supported_run_settings:
         }
 
     @typechecked
-    def append_unique_config_id(self, run_config: dict) -> dict:
+    def append_unique_run_config_id(
+        self, run_config: dict, allow_optional: bool
+    ) -> dict:
         """Checks if an run configuration dictionary already has a unique
         identifier, and if not it computes and appends it.
 
@@ -63,13 +69,23 @@ class Supported_run_settings:
                 + "already contains a unique identifier."
             )
 
-        verify_run_config(self, run_config, has_unique_id=False, strict=True)
+        verify_run_config(
+            self,
+            run_config,
+            has_unique_id=False,
+            allow_optional=allow_optional,
+        )
 
-        # hash_set = frozenset(run_config.values())
-        hash_set = dict_to_frozen_set(run_config)
-        unique_id = hash(hash_set)
+        unique_id = hashlib.sha256(
+            json.dumps(run_config).encode("utf-8")
+        ).hexdigest()
         run_config["unique_id"] = unique_id
-        verify_run_config(self, run_config, has_unique_id=False, strict=False)
+        verify_run_config(
+            self,
+            run_config,
+            has_unique_id=True,
+            allow_optional=allow_optional,
+        )
         return run_config
 
     @typechecked

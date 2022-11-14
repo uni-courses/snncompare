@@ -56,6 +56,7 @@ def get_used_graphs(run_config: dict) -> dict:
             graphs["adapted_snn_graph"], run_config, run_config["seed"]
         )
 
+    # TODO: move this into a separate location/function.
     # Indicate the graphs have completed stage 1.
     for graph in graphs.values():
         add_stage_completion_to_graph(graph, 1)
@@ -177,6 +178,8 @@ def has_adaptation(run_config: Dict[str, Any]) -> bool:
     TODO: throw an error if the adaptation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
     """
+    if run_config["adaptation"] is None:
+        return False
     for adaptation_name in run_config["adaptation"].keys():
         if adaptation_name is not None:
             return True
@@ -191,6 +194,8 @@ def has_radiation(run_config: Dict[str, Any]) -> bool:
     TODO: throw an error if the radiation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
     """
+    if run_config["radiation"] is None:
+        return False
     for radiation_name in run_config["radiation"].keys():
         if radiation_name is not None:
             return True

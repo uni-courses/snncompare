@@ -69,7 +69,6 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     self.assertEqual(size, len(G))
 
                     # Assert number of edges without recurrent edges.
-                    print(f"size={size},density={density}")
                     # self.assertGreaterEqual(G.number_of_edges(),math.floor(size*density))
                     # self.assertLessEqual(G.number_of_edges(),math.ceil(size*density))
 
@@ -123,7 +122,6 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                     self.assertEqual(size, len(G))
 
                     # Assert number of edges without recurrent edges.
-                    print(f"size={size},density={density}")
                     # self.assertGreaterEqual(G.number_of_edges(),math.floor(size*density))
                     # self.assertLessEqual(G.number_of_edges(),math.ceil(size*density))
 

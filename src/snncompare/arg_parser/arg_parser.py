@@ -30,11 +30,11 @@ def parse_cli_args() -> argparse.Namespace:
     # Run experiment on a particular experiment_settings json file.
     parser.add_argument(
         "-e",
-        "--experiment-settings-path",
+        "--experiment-settings-name",
         action="store",
         type=str,
         help=(
-            "Give filepath to experiment settings json on which to run "
+            "Give filename to experiment settings json on which to run "
             + "the experiment."
         ),
     )
@@ -47,6 +47,17 @@ def parse_cli_args() -> argparse.Namespace:
         type=str,
         help=(
             "Give filepath to run settings json on which to run " + "the run."
+        ),
+    )
+
+    # Ensure SNN behaviour visualisation in stage 3 is exported to images.
+    parser.add_argument(
+        "-x",
+        "--export-images",
+        action="store_true",
+        default=False,
+        help=(
+            "Ensures the SNN behaviour visualisation is exported as images."
         ),
     )
 

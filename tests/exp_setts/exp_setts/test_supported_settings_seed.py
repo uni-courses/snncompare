@@ -57,7 +57,7 @@ class Test_seed_settings(unittest.TestCase):
                 self.supp_exp_setts,
                 experiment_config,
                 has_unique_id=False,
-                strict=True,
+                allow_optional=False,
             )
 
         self.assertEqual(

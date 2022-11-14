@@ -20,7 +20,7 @@ from ..helper import get_expected_stages, get_extensions_list
 # pylint: disable=R0912
 @typechecked
 def has_outputted_stage(
-    run_config: dict, stage_index: int, to_run: dict
+    run_config: dict, stage_index: int, to_run: dict, verbose: bool = False
 ) -> bool:
     """Checks whether the the required output files exist, for a given
     simulation and whether their content is valid. Returns True if the file
@@ -44,18 +44,21 @@ def has_outputted_stage(
             # TODO: append expected_filepath to run_config per stage.
 
         if stage_index == 3:
-            expected_filepaths.extend(
-                get_expected_image_paths_stage_3(
-                    get_expected_stage_1_graph_names(run_config),
-                    get_input_graph(run_config),
-                    run_config,
-                    extensions,
+            if run_config["export_images"]:
+                expected_filepaths.extend(
+                    get_expected_image_paths_stage_3(
+                        get_expected_stage_1_graph_names(run_config),
+                        get_input_graph(run_config),
+                        run_config,
+                        extensions,
+                    )
                 )
-            )
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
         if not Path(filepath).is_file():
+            if verbose:
+                print(f"File={filepath} missing.")
             return False
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.
@@ -66,10 +69,16 @@ def has_outputted_stage(
                 )
             # pylint: disable=R0801
             except KeyError:
+                if verbose:
+                    print(f"KeyError for: {filepath}")
                 return False
             except ValueError:
+                if verbose:
+                    print(f"ValueError for: {filepath}")
                 return False
             except TypeError:
+                if verbose:
+                    print(f"TypeError for: {filepath}")
                 return False
             if stage_index == 4:
                 return has_valid_json_results(json_graphs, run_config, to_run)
@@ -136,16 +145,13 @@ def has_valid_json_results(
     for algo_name, algo_settings in run_config["algorithm"].items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
-                graphnames_with_results = [
-                    "snn_algo_graph",
-                    "adapted_snn_graph",
-                    "rad_snn_algo_graph",
-                    "rad_adapted_snn_graph",
-                ]
+                graphnames_with_results = get_expected_stage_1_graph_names(
+                    run_config
+                )
+                graphnames_with_results.remove("input_graph")
                 if not set(graphnames_with_results).issubset(
                     json_graphs.keys()
                 ):
-                    print("Graph name not set")
                     return False
 
                 expected_stages = get_expected_stages(
@@ -170,7 +176,6 @@ def has_valid_json_results(
                                 "not yet supported in this check."
                             )
                         if "results" not in graph_properties.keys():
-                            print(graph_properties.keys())
                             return False
                 return True
             raise Exception(
