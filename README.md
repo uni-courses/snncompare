@@ -22,6 +22,14 @@ SNN is then compared to the "normal" algorithm as "ground truth", in terms of:
 exact SNN implementation of the ground truth algorithm. This comparison is
 mainly relevant for the additions of brain adaptation and simulated radiation.
 
+## Example
+
+Below is an example of the SNN behaviour of the MDSA algorithm without
+adaptation, without radiation, on a (non-triangular) input graph of 3 nodes.
+<img src="example.gif" width="1280" height="960" />
+
+The green dots are when the neurons spike, non-spiking neurons are not visible.
+
 ## Brain adaptation
 
 For each SNN algorithm that the user specifies, the user can also specify a

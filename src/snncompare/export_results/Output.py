@@ -234,7 +234,7 @@ def plot_graph_behaviours(
                 0,
                 sim_duration,
             ):
-                print(f"Plotting graph:{graph_name}, t={t}")
+                print(f"Plotting:{graph_name}, t={t}/{sim_duration}")
                 # TODO: Include verify that graph len remains unmodified.
                 # pylint: disable=R0913
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
