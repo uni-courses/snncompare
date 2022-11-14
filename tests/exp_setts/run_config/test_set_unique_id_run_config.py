@@ -18,6 +18,9 @@ from snncompare.exp_setts.verify_experiment_settings import (
     verify_experiment_config,
 )
 from snncompare.Experiment_runner import experiment_config_to_run_configs
+from tests.exp_setts.exp_setts.test_set_unique_id_exp_setts import (
+    get_config_one,
+)
 
 
 class Test_setting_unique_id_run_config(unittest.TestCase):
@@ -31,6 +34,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         super().__init__(*args, **kwargs)
         # Generate default experiment config.
         self.exp_setts: dict = experiment_config_for_mdsa_testing()
+        self.exp_setts: dict = get_config_one()
 
         self.exp_setts["show_snns"] = False
         self.exp_setts["export_images"] = False
