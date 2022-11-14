@@ -16,7 +16,7 @@ from snnbackends.networkx.LIF_neuron import LIF_neuron
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
-from .export_results.Plot_to_tex import Plot_to_tex
+from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 @typechecked
@@ -766,8 +766,8 @@ def get_sim_duration(
 
             sim_time: int = (
                 input_graph.graph["alg_props"]["inhibition"]
-                * (algo_settings["m_val"] + 1)
-                + 10
+                * (algo_settings["m_val"] + 2)
+                + 30
             )
 
             if not isinstance(sim_time, int):
@@ -775,8 +775,8 @@ def get_sim_duration(
                     "Error, sim_time is not an int."
                     + 'snn_graph.graph["alg_props"]["inhibition"]='
                     + f'{input_graph.graph["alg_props"]["inhibition"]}'
-                    + '(algo_settings["m_val"] + 1)='
-                    + f'{(algo_settings["m_val"] + 1)}'
+                    + '(algo_settings["m_val"] + 2)='
+                    + f'{(algo_settings["m_val"] + 2)}'
                 )
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")

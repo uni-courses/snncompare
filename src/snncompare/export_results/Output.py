@@ -19,7 +19,7 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
-from snncompare.export_results.get_plot_data import plot_coordinated_graph
+from snncompare.export_plots.get_plot_data import plot_coordinated_graph
 
 from ..helper import get_sim_duration
 from .export_json_results import write_dict_to_json

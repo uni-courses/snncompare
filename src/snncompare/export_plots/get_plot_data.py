@@ -9,7 +9,7 @@ import networkx as nx
 from matplotlib import pyplot as plt
 from typeguard import typechecked
 
-from snncompare.export_results.Plot_to_tex import Plot_to_tex
+from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 # pylint: disable=R0913

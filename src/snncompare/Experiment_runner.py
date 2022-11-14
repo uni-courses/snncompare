@@ -10,6 +10,8 @@ from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
+from snncompare.export_plots.create_snn_gif import create_gif_of_run_config
+
 from .exp_setts.run_config.Supported_run_settings import Supported_run_settings
 from .exp_setts.run_config.verify_run_completion import (
     assert_stage_is_completed,
@@ -218,6 +220,8 @@ class Experiment_runner:
             assert_stage_is_completed(
                 results_nx_graphs["run_config"], 3, to_run, verbose=True
             )
+            create_gif_of_run_config(results_nx_graphs["run_config"])
+            # TODO: assert gif file exists
 
     @typechecked
     def __perform_run_stage_4(
