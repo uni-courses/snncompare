@@ -1,4 +1,5 @@
 """Converts the json graphs back into nx graphs."""
+import copy
 import json
 from pprint import pprint
 from typing import List
@@ -129,7 +130,9 @@ def load_verified_json_graphs_from_json(
         results_json_graphs, expected_stages
     )
 
-    if results_json_graphs["run_config"] != run_config:
+    if not run_configs_are_equal(
+        results_json_graphs["run_config"], run_config, without_unique_id=False
+    ):
         print("Current run_config:")
         pprint(run_config)
         print("Loaded run_config:")
@@ -137,6 +140,22 @@ def load_verified_json_graphs_from_json(
         raise Exception("Error, difference in experiment configs, see above.")
 
     return results_json_graphs["graphs_dict"]
+
+
+@typechecked
+def run_configs_are_equal(
+    left: dict, right: dict, without_unique_id: bool
+) -> bool:
+    """Determines whether two run configurations are equal or not."""
+    if without_unique_id:
+        left_copy = copy.deepcopy(left)
+        right_copy = copy.deepcopy(right)
+        if "unique_id" in left_copy:
+            left_copy.pop("unique_id")
+        if "unique_id" in right_copy:
+            right_copy.pop("unique_id")
+        return left_copy == right_copy
+    return left == right
 
 
 @typechecked
