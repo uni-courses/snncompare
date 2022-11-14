@@ -208,8 +208,8 @@ def create_dummy_output_images_stage_3(
     )
     for image_filepath in image_filepaths:
         # ensure output images exist.
-        with open(image_filepath, "w", encoding="utf-8"):
-            pass
+        with open(image_filepath, "w", encoding="utf-8") as some_file:
+            some_file.close()
 
         # Verify output JSON file exists.
         filepath = pathlib.PosixPath(image_filepath)

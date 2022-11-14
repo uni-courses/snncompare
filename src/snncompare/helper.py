@@ -652,34 +652,6 @@ def set_node_default_values(
 
 
 @typechecked
-def is_identical(
-    original: dict, other: dict, excluded_keys: List[str]
-) -> bool:
-    """Compares dictionaries whether the left dict contains the same keys, as
-    the right keys, for each key verifies the values are identical.
-
-    The keys and values in excluded_keys do not need to be similar.
-    TODO: specify whether the keys need to be at least in the dict or not.
-    """
-
-    # Check whether all values in original dict are in the excluded keys
-    for key in original.keys():
-        if key not in other.keys():
-            if key not in excluded_keys:
-                return False
-
-        # Check if the values are identical for the given key.
-        else:
-            if isinstance(other[key], type(original[key])):
-                if other[key] != original[key]:
-                    if key not in excluded_keys:
-                        return False
-            else:
-                return False
-    return True
-
-
-@typechecked
 def get_extensions_list(run_config: dict, stage_index: int) -> List:
     """
 

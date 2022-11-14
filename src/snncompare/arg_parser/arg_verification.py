@@ -27,6 +27,7 @@ def verify_input_graph_path(graph_path: str) -> None:
     # Read output JSON file into dict.
     with open(graph_path, encoding="utf-8") as json_file:
         json_graph = json.load(json_file)
+        json_file.close()
 
     # Convert json_graph back to nx.DiGraph
     nx_graph = nx.node_link_graph(json_graph)
@@ -53,3 +54,4 @@ def verify_experiment_settings(exp_setts_path: str) -> None:
     # Read output JSON file into dict.
     with open(exp_setts_path, encoding="utf-8") as json_file:
         json.load(json_file)
+        json_file.close()

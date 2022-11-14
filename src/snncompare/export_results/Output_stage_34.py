@@ -1,6 +1,7 @@
 """"Outputs the results for stage 3 and/or 4."""
 from typeguard import typechecked
 
+from snncompare.export_plots.create_snn_gif import create_gif_of_run_config
 from snncompare.helper import add_stage_completion_to_graph
 
 from .helper import run_config_to_filename
@@ -53,6 +54,7 @@ def output_stage_files_3_and_4(
                 results_nx_graphs["graphs_dict"],
                 results_nx_graphs["run_config"],
             )
+            create_gif_of_run_config(results_nx_graphs["run_config"])
             for nx_graph in results_nx_graphs["graphs_dict"].values():
                 add_stage_completion_to_graph(nx_graph, 3)
 

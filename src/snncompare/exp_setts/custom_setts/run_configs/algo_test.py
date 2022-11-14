@@ -48,6 +48,7 @@ def load_experiment_config_from_file(filename: str) -> dict:
         with open(filepath, encoding="utf-8") as json_file:
             encoded_exp_config = json.load(json_file)
             exp_config = encode_tuples(encoded_exp_config, decode=True)
+            json_file.close()
 
         # Verify the experiment experiment_config are complete and valid.
         # pylint: disable=R0801

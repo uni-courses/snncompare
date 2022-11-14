@@ -97,7 +97,6 @@ def load_pre_existing_graph_dict(
     if stage_index == 2:
         if not run_config["overwrite_sim_results"]:
             # Load graphs stages 1, 2, 3, 4
-            print(f'run_config["unique_id"]={run_config["unique_id"]}')
             return load_verified_json_graphs_from_json(run_config, [1, 2])
         return load_verified_json_graphs_from_json(run_config, [1])
     if stage_index == 3:
@@ -122,30 +121,32 @@ def load_verified_json_graphs_from_json(
     filename: str = run_config_to_filename(run_config)
     json_filepath = f"results/{filename}.json"
 
+    if not file_exists(json_filepath):
+        raise FileNotFoundError(f"Error, {json_filepath} was not found.")
+
     # Read output JSON file into dict.
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
+        json_file.close()
 
     verify_results_safely_check_json_graphs_contain_expected_stages(
         results_json_graphs, expected_stages
     )
 
-    if not run_configs_are_equal(
-        results_json_graphs["run_config"], run_config, without_unique_id=False
+    if not dicts_are_equal(
+        results_json_graphs["run_config"], run_config, without_unique_id=True
     ):
         print("Current run_config:")
         pprint(run_config)
         print("Loaded run_config:")
         pprint(results_json_graphs["run_config"])
-        raise Exception("Error, difference in experiment configs, see above.")
+        raise Exception("Error, difference in run configs, see above.")
 
     return results_json_graphs["graphs_dict"]
 
 
 @typechecked
-def run_configs_are_equal(
-    left: dict, right: dict, without_unique_id: bool
-) -> bool:
+def dicts_are_equal(left: dict, right: dict, without_unique_id: bool) -> bool:
     """Determines whether two run configurations are equal or not."""
     if without_unique_id:
         left_copy = copy.deepcopy(left)
@@ -170,4 +171,5 @@ def load_json_graphs_from_json(run_config: dict) -> dict:
     # Read output JSON file into dict.
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
+        json_file.close()
     return results_json_graphs["graphs_dict"]

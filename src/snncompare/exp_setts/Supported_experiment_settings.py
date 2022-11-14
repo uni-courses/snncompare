@@ -56,7 +56,7 @@ class Exp_setts_typing:
         self.optional_parameters = {
             "show_snns": bool,
             "export_images": bool,
-            "unique_id": int,
+            "unique_id": str,
         }
 
 
@@ -239,9 +239,11 @@ class Supported_experiment_settings:
             copy.deepcopy(experiment_config)
         )
 
-        unique_id = hashlib.sha256(
-            json.dumps(exp_setts_without_unique_id).encode("utf-8")
-        ).hexdigest()
+        unique_id = str(
+            hashlib.sha256(
+                json.dumps(exp_setts_without_unique_id).encode("utf-8")
+            ).hexdigest()
+        )
         experiment_config["unique_id"] = unique_id
         verify_experiment_config(
             self,

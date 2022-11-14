@@ -49,7 +49,7 @@ class Supported_run_settings:
             "export_images": bool,
             "show_snns": bool,
             "stage": int,  # TODO: remove this parameter.
-            "unique_id": int,
+            "unique_id": str,
         }
 
     @typechecked
@@ -76,9 +76,9 @@ class Supported_run_settings:
             allow_optional=allow_optional,
         )
 
-        unique_id = hashlib.sha256(
-            json.dumps(run_config).encode("utf-8")
-        ).hexdigest()
+        unique_id = str(
+            hashlib.sha256(json.dumps(run_config).encode("utf-8")).hexdigest()
+        )
         run_config["unique_id"] = unique_id
         verify_run_config(
             self,
