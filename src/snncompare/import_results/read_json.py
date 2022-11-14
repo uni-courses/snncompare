@@ -106,4 +106,5 @@ def load_json_file_into_dict(
     # TODO: verify json formatting is valid.
     with open(json_filepath, encoding="utf-8") as json_file:
         the_dict = json.load(json_file)
+        json_file.close()
     return the_dict

@@ -1,12 +1,16 @@
 """Parses the graph json files to recreate the graphs."""
 import json
+from pprint import pprint
 
 from typeguard import typechecked
 
 from ..export_results.helper import run_config_to_filename
-from ..export_results.load_json_to_nx_graph import json_to_digraph
+from ..export_results.load_json_to_nx_graph import (
+    dicts_are_equal,
+    json_to_digraph,
+)
 from ..export_results.verify_stage_1_graphs import assert_graphs_are_in_dict
-from ..helper import get_extensions_list, is_identical
+from ..helper import get_extensions_list
 from .read_json import load_results_from_json
 
 
@@ -33,11 +37,14 @@ def load_results_stage_1(run_config: dict) -> dict:
     loaded_run_config = stage_1_dict["run_config"]
 
     # Verify the run_dict is valid.
-    # TODO: determine why the unique ID is different for the same dict.
-    # TODO: Verify passing the same dict to get hash with popped unique id
-    # returns the same id.
-    if not is_identical(run_config, loaded_run_config, ["unique_id"]):
-        raise Exception("Error, wrong run config was loaded.")
+    if not dicts_are_equal(
+        run_config, loaded_run_config, without_unique_id=True
+    ):
+        print("Current run_config:")
+        pprint(run_config)
+        print("Loaded run_config:")
+        pprint(loaded_run_config)
+        raise Exception("Error, difference in run configs, see above.")
 
     # Verify the graph names are as expected for the graph name.
     assert_graphs_are_in_dict(run_config, stage_1_dict["graphs_dict"], 1)
@@ -65,4 +72,5 @@ def load_stage_2_output_dict(relative_output_dir: str, filename: str) -> dict:
     stage_2_output_dict_filepath = relative_output_dir + filename
     with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
         stage_2_output_dict = json.load(json_file)
+        json_file.close()
     return stage_2_output_dict
