@@ -5,6 +5,8 @@ setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
 import copy
+import hashlib
+import json
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -236,8 +238,10 @@ class Supported_experiment_settings:
         exp_setts_without_unique_id = remove_optional_exp_setts(
             copy.deepcopy(experiment_config)
         )
-        hash_set = dict_to_frozen_set(exp_setts_without_unique_id)
-        unique_id = hash(hash_set)
+
+        unique_id = hashlib.sha256(
+            json.dumps(exp_setts_without_unique_id).encode("utf-8")
+        ).hexdigest()
         experiment_config["unique_id"] = unique_id
         verify_experiment_config(
             self,
@@ -246,17 +250,6 @@ class Supported_experiment_settings:
             allow_optional=allow_optional,
         )
         return experiment_config
-
-
-@typechecked
-def dict_to_frozen_set(experiment_config: dict) -> frozenset:
-    """Converts a dictionary into a frozenset, such that a hash code of the
-    dict can be computed."""
-    some_dict = copy.deepcopy(experiment_config)
-    for value in some_dict.values():
-        if isinstance(value, dict):
-            value = dict_to_frozen_set(value)
-    return frozenset(some_dict)
 
 
 @typechecked

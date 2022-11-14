@@ -4,11 +4,12 @@
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
+import hashlib
+import json
 from typing import Any, Union
 
 from typeguard import typechecked
 
-from ..Supported_experiment_settings import dict_to_frozen_set
 from .verify_run_settings import verify_run_config
 
 # pylint: disable=R0902
@@ -74,15 +75,10 @@ class Supported_run_settings:
             has_unique_id=False,
             allow_optional=allow_optional,
         )
-        # TODO: determine what to do if it already has a unique id.
-        if "unique_id" in run_config.keys():
-            raise Exception(
-                f"Error, unique_id is already in run_config:{run_config}"
-            )
 
-        # hash_set = frozenset(run_config.values())
-        hash_set = dict_to_frozen_set(run_config)
-        unique_id = hash(hash_set)
+        unique_id = hashlib.sha256(
+            json.dumps(run_config).encode("utf-8")
+        ).hexdigest()
         run_config["unique_id"] = unique_id
         verify_run_config(
             self,
