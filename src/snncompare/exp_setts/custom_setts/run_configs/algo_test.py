@@ -117,7 +117,7 @@ def long_exp_setts_for_mdsa_testing() -> dict:
 def minimal_mdsa_test_exp_setts() -> dict:
     """Returns a experiment config for minimal MDSA testing."""
     minimal_mdsa_testing = long_exp_setts_for_mdsa_testing()
-    minimal_mdsa_testing["size_and_max_graphs"] = ([(3, 1)],)
+    minimal_mdsa_testing["size_and_max_graphs"] = [(3, 1)]
     minimal_mdsa_testing["algorithms"] = (
         {"MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)},
     )
@@ -127,7 +127,7 @@ def minimal_mdsa_test_exp_setts() -> dict:
 def short_mdsa_test_exp_setts() -> dict:
     """Returns a experiment config for short MDSA testing."""
     short_mdsa_testing = long_exp_setts_for_mdsa_testing()
-    short_mdsa_testing["size_and_max_graphs"] = ([(3, 1), (5, 1)],)
+    short_mdsa_testing["size_and_max_graphs"] = [(3, 1), (5, 1)]
     short_mdsa_testing["algorithms"] = (
         {"MDSA": get_algo_configs(MDSA(list(range(0, 2, 1))).__dict__)},
     )

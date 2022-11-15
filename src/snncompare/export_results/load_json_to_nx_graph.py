@@ -108,7 +108,7 @@ def load_pre_existing_graph_dict(
                 run_config["export_images"], stage_index, to_run
             ),
         )
-    raise Exception("Error, unexpected stage_index.")
+    raise Exception(f"Error, unexpected stage_index:{stage_index}")
 
 
 @typechecked

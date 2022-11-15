@@ -102,33 +102,33 @@ class Experiment_runner:
         the run in the way the processed configuration settings specify.
         """
 
-        run_configs = self.generate_run_configs(
+        self.run_configs = self.generate_run_configs(
             experiment_config, specific_run_config
         )
         print("\nexperiment_config=")
         pprint(experiment_config)
-        print(f"Consists of: {len(run_configs)} runs.")
+        print(f"Consists of: {len(self.run_configs)} runs.")
 
-        for i, run_config in enumerate(run_configs):
-            print(f"\n{i+1}/{len(run_configs)} [runs]")
+        for i, run_config in enumerate(self.run_configs):
+            print(f"\n{i+1}/{len(self.run_configs)} [runs]")
             pprint(run_config)
-            to_run = determine_what_to_run(run_config)
+            self.to_run = determine_what_to_run(run_config)
             print("start stage I")
             results_nx_graphs = self.__perform_run_stage_1(
-                experiment_config, run_config, to_run
+                experiment_config, run_config, self.to_run
             )
             print("Done stage I, start stage II")
-            self.__perform_run_stage_2(results_nx_graphs, to_run)
+            self.__perform_run_stage_2(results_nx_graphs, self.to_run)
             print("Done stage II, start stage III")
-            self.__perform_run_stage_3(results_nx_graphs, to_run)
+            self.__perform_run_stage_3(results_nx_graphs, self.to_run)
             print("Done stage III, start stage IV")
             self.__perform_run_stage_4(
                 self.experiment_config["export_images"],
                 results_nx_graphs,
-                to_run,
+                self.to_run,
             )
             print("Done stage IV")
-        return run_configs
+        return self.run_configs
 
     def generate_run_configs(
         self, experiment_config: dict, run_config: Union[None, dict]
