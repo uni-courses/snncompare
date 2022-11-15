@@ -45,8 +45,10 @@ class Supported_run_settings:
         self.optional_parameters = {
             "export_images": bool,
             "max_duration": int,
-            "overwrite_sim_results": bool,
+            "overwrite_snn_creation": bool,
+            "overwrite_snn_propagation": bool,
             "overwrite_visualisation": bool,
+            "overwrite_sim_results": bool,
             "show_snns": bool,
             "unique_id": str,
         }

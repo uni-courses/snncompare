@@ -63,6 +63,9 @@ def has_outputted_stage(
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.
             # TODO: separate loading and checking if it can be loaded.
+            json_graphs = load_pre_existing_graph_dict(
+                run_config, stage_index, to_run
+            )
             try:
                 json_graphs = load_pre_existing_graph_dict(
                     run_config, stage_index, to_run
@@ -169,7 +172,7 @@ def has_valid_json_results(
                             # instead of a graph with list of nodes.
                             # Completed stages are only stored in the last
                             # timestep of the graph.
-                            graph_properties = json_graph[-1]["graph"]
+                            graph_properties = json_graph["graph"]
                         else:
                             raise Exception(
                                 "Error, stage:{expected_stages[-1]} is "

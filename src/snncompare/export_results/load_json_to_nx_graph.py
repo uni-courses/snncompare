@@ -76,8 +76,11 @@ def load_json_to_nx_graph_from_file(
         nx_graph = json_graph.node_link_graph(graph)
         nx_graphs_dict[graph_name] = nx_graph
     verify_results_nx_graphs_contain_expected_stages(
-        {"graphs_dict": nx_graphs_dict}, stage_index, to_run
+        json_graphs_dict, stage_index, to_run
     )
+    # verify_results_nx_graphs_contain_expected_stages(
+    # {"graphs_dict": nx_graphs_dict}, stage_index, to_run
+    # )
     return nx_graphs_dict
 
 

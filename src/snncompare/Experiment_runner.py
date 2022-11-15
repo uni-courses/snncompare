@@ -290,7 +290,9 @@ class Experiment_runner:
             results_nx_graphs["graphs_dict"],
         )
         export_results_to_json(export_images, results_nx_graphs, 4, to_run)
-        assert_stage_is_completed(results_nx_graphs["run_config"], 4, to_run)
+        assert_stage_is_completed(
+            results_nx_graphs["run_config"], 4, to_run, verbose=True
+        )
 
 
 @typechecked

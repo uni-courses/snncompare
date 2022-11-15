@@ -33,38 +33,12 @@ def verify_json_graphs_dict_contain_correct_stages(
     graph."""
     for expected_stage in expected_stages:
         for graph_name, json_graph in json_graphs.items():
-            if expected_stages[-1] == 1:
-                # TODO: determine why this can be a list.
-                if isinstance(json_graph, list):
-                    if len(json_graph) > 1:
-                        raise Exception(
-                            "Error, the json graph was a list with "
-                            f"more than 1 elements:{json_graph}"
-                        )
-                    json_graph = json_graph[0]
-
-                completed_stages = json_graph["graph"]["completed_stages"]
-            elif expected_stages[-1] in [2, 4]:
-
-                # TODO: determine why this is a list of graphs, instead of a
-                # graph with list of nodes.
-                # Completed stages are only stored in the last timestep of the
-                # graph.
-                if not isinstance(json_graph, List):
-                    raise TypeError(
-                        "Error, the json_graph is of type:"
-                        f"{type(json_graph)}, with content:"
-                    )
-                # The non input SNN graphs are lists of graphs, 1 per
-                # timestep, so get the completed stages property from the
-                # last one of that list.
-                completed_stages = json_graph[-1]["graph"]["completed_stages"]
-            else:
-                raise Exception(
-                    f"Error, stage:{expected_stages[-1]} is "
-                    "not yet supported in this check."
+            if not isinstance(json_graph, dict):
+                raise TypeError(
+                    "Error, the json_graph is of type:"
+                    f"{type(json_graph)}, with content:{json_graph}"
                 )
-
+            completed_stages = json_graph["graph"]["completed_stages"]
             if expected_stage not in completed_stages:
                 raise ValueError(
                     "Error, for run_config: "
