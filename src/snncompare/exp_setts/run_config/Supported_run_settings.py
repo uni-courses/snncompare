@@ -4,9 +4,10 @@
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
+import copy
 import hashlib
 import json
-from typing import Any, Union
+from typing import Any, List, Union
 
 from typeguard import typechecked
 
@@ -32,23 +33,21 @@ class Supported_run_settings:
     ) -> None:
         # experiment_config dictionary keys:
         self.parameters: dict[str, Any] = {
-            # "adaptation": Union[type(None), dict],
             "adaptation": Union[None, dict],
             "algorithm": dict,
             "iteration": int,
             "graph_size": int,
             "graph_nr": int,
             "radiation": Union[None, dict],
-            "overwrite_sim_results": bool,
-            "overwrite_visualisation": bool,
             "seed": int,
             "simulator": str,
         }
         self.optional_parameters = {
-            "duration": int,
             "export_images": bool,
+            "max_duration": int,
+            "overwrite_sim_results": bool,
+            "overwrite_visualisation": bool,
             "show_snns": bool,
-            "stage": int,  # TODO: remove this parameter.
             "unique_id": str,
         }
 
@@ -76,8 +75,13 @@ class Supported_run_settings:
             allow_optional=allow_optional,
         )
 
+        minimal_run_config = self.remove_optional_args(
+            copy.deepcopy(run_config)
+        )
         unique_id = str(
-            hashlib.sha256(json.dumps(run_config).encode("utf-8")).hexdigest()
+            hashlib.sha256(
+                json.dumps(minimal_run_config).encode("utf-8")
+            ).hexdigest()
         )
         run_config["unique_id"] = unique_id
         verify_run_config(
@@ -87,6 +91,22 @@ class Supported_run_settings:
             allow_optional=allow_optional,
         )
         return run_config
+
+    def remove_optional_args(self, copied_run_config: dict) -> List[Any]:
+        """removes the optional arguments from a run config."""
+        optional_keys = []
+        for key in copied_run_config.keys():
+            if key in self.optional_parameters:
+                optional_keys.append(key)
+        for key in optional_keys:
+            copied_run_config.pop(key)
+        verify_run_config(
+            self,
+            copied_run_config,
+            has_unique_id=False,
+            allow_optional=False,
+        )
+        return sorted(copied_run_config)
 
     @typechecked
     def assert_has_key(

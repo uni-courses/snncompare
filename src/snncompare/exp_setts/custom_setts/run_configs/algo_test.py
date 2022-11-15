@@ -1,11 +1,15 @@
 """Contains a default run configuration used to test the MDSA algorithm."""
 
 import json
+from pprint import pprint
 
 import jsons
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 
+from snncompare.exp_setts.run_config.Supported_run_settings import (
+    Supported_run_settings,
+)
 from snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -146,6 +150,10 @@ def run_config_with_error() -> dict:
         "show_snns": False,
         "simulator": "nx",
     }
+    Supported_run_settings().append_unique_run_config_id(
+        some_run_config, allow_optional=True
+    )
+    pprint(some_run_config)
     return some_run_config
 
 

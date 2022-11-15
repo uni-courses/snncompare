@@ -24,6 +24,7 @@ from .exp_setts.verify_experiment_settings import (
     verify_has_unique_id,
 )
 from .export_results.load_json_to_nx_graph import (
+    dicts_are_equal,
     load_json_to_nx_graph_from_file,
 )
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
@@ -49,7 +50,9 @@ class Experiment_runner:
     # pylint: disable=R0903
 
     @typechecked
-    def __init__(self, experiment_config: dict) -> None:
+    def __init__(
+        self, experiment_config: dict, run_config: Union[None, dict] = None
+    ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists("results")
@@ -84,20 +87,23 @@ class Experiment_runner:
 
         # Perform runs accordingly.
         # TODO: see if self.run_configs can be removed.
-        self.run_configs = self.__perform_run(self.experiment_config)
+        self.run_configs = self.__perform_run(
+            self.experiment_config, run_config
+        )
 
     # pylint: disable=W0238
     @typechecked
-    def __perform_run(self, experiment_config: dict) -> List[dict]:
+    def __perform_run(
+        self, experiment_config: dict, specific_run_config: Union[None, dict]
+    ) -> List[dict]:
         """Private method that performs a run of the experiment.
 
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
 
-        # Generate run configurations.
-        run_configs: List[dict] = experiment_config_to_run_configs(
-            experiment_config
+        run_configs = self.generate_run_configs(
+            experiment_config, specific_run_config
         )
         print("\nexperiment_config=")
         pprint(experiment_config)
@@ -122,6 +128,46 @@ class Experiment_runner:
                 to_run,
             )
             print("Done stage IV")
+        return run_configs
+
+    def generate_run_configs(
+        self, experiment_config: dict, run_config: Union[None, dict]
+    ) -> List[dict]:
+        """Generates the run configs belonging to an experiment config, and
+        then removes all run configs except for the desired run config.
+
+        Throws an error if the desired run config is not within the
+        expected run configs.
+        """
+        found_run_config = False
+        # Generate run configurations.
+        run_configs: List[dict] = experiment_config_to_run_configs(
+            experiment_config
+        )
+        if run_config is not None:
+            if "unique_id" not in run_config:
+                # Append unique_id to run_config
+                Supported_run_settings().append_unique_run_config_id(
+                    run_config, allow_optional=True
+                )
+            for gen_run_config in run_configs:
+                if dicts_are_equal(
+                    gen_run_config, run_config, without_unique_id=True
+                ):
+                    found_run_config = True
+                    if gen_run_config["unique_id"] != run_config["unique_id"]:
+                        raise Exception(
+                            "Error, equal dict but unequal unique_ids."
+                        )
+                    break
+
+            if not found_run_config:
+                pprint(run_configs)
+                raise Exception(
+                    f"The expected run config:{run_config} was not" "found."
+                )
+            run_configs = [run_config]
+
         return run_configs
 
     @typechecked
