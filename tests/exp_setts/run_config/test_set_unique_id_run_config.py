@@ -9,7 +9,7 @@ from typing import List
 from typeguard import typechecked
 
 from snncompare.exp_setts.custom_setts.run_configs.algo_test import (
-    experiment_config_for_mdsa_testing,
+    long_exp_setts_for_mdsa_testing,
 )
 from snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
@@ -33,7 +33,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # Generate default experiment config.
-        self.exp_setts: dict = experiment_config_for_mdsa_testing()
+        self.exp_setts: dict = long_exp_setts_for_mdsa_testing()
         self.exp_setts: dict = get_config_one()
 
         self.exp_setts["show_snns"] = False

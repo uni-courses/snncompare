@@ -10,7 +10,7 @@ from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from typeguard import typechecked
 
 from snncompare.exp_setts.custom_setts.run_configs.algo_test import (
-    experiment_config_for_mdsa_testing,
+    long_exp_setts_for_mdsa_testing,
 )
 from snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
@@ -134,7 +134,7 @@ def get_config_one() -> dict:
 
 def get_config_two() -> dict:
     """Returns a default experiment setting with  graph size 7, m=4."""
-    mdsa_creation_only_size_7_m_4: dict = experiment_config_for_mdsa_testing()
+    mdsa_creation_only_size_7_m_4: dict = long_exp_setts_for_mdsa_testing()
     mdsa_creation_only_size_7_m_4["algorithms"] = {
         "MDSA": get_algo_configs(MDSA(list(range(4, 5, 1))).__dict__)
     }

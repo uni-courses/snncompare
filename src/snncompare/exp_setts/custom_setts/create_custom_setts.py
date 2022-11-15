@@ -1,9 +1,9 @@
 """Used to create custom experiment and run configuration files."""
 
 from snncompare.exp_setts.custom_setts.run_configs.algo_test import (
-    experiment_config_for_mdsa_testing,
     get_exp_setts_mdsa_size5_m4,
     load_experiment_config_from_file,
+    long_exp_setts_for_mdsa_testing,
     store_experiment_config_to_file,
 )
 
@@ -11,7 +11,7 @@ from snncompare.exp_setts.custom_setts.run_configs.algo_test import (
 def create_basic_test_config() -> None:
     """Creates and exports an experiment setup that can be used to quickly test
     the MDSA algorithm."""
-    mdsa_creation_only_size_3_4: dict = experiment_config_for_mdsa_testing()
+    mdsa_creation_only_size_3_4: dict = long_exp_setts_for_mdsa_testing()
     store_experiment_config_to_file(
         mdsa_creation_only_size_3_4, "mdsa_creation_only_size_3_4"
     )

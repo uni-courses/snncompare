@@ -4,6 +4,7 @@ setting of the experiment configuration settings.
 (The values of the settings may vary, yet the types should be the same.)
 """
 
+from pprint import pprint
 from typing import Any, Dict, List, Tuple, Union
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
@@ -93,24 +94,34 @@ class Experiment_runner:
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
+
         # Generate run configurations.
         run_configs: List[dict] = experiment_config_to_run_configs(
             experiment_config
         )
+        print("\nexperiment_config=")
+        pprint(experiment_config)
+        print(f"Consists of: {len(run_configs)} runs.")
 
-        for run_config in run_configs:
+        for i, run_config in enumerate(run_configs):
+            print(f"\n{i+1}/{len(run_configs)} [runs]")
+            pprint(run_config)
             to_run = determine_what_to_run(run_config)
+            print("start stage I")
             results_nx_graphs = self.__perform_run_stage_1(
                 experiment_config, run_config, to_run
             )
+            print("Done stage I, start stage II")
             self.__perform_run_stage_2(results_nx_graphs, to_run)
+            print("Done stage II, start stage III")
             self.__perform_run_stage_3(results_nx_graphs, to_run)
+            print("Done stage III, start stage IV")
             self.__perform_run_stage_4(
                 self.experiment_config["export_images"],
                 results_nx_graphs,
                 to_run,
             )
-
+            print("Done stage IV")
         return run_configs
 
     @typechecked
@@ -210,11 +221,9 @@ class Experiment_runner:
         """
         if to_run["stage_3"]:
             # Generate output json dicts (and plots) of propagated graphs.
-            print("Generating plots for stage 3.")
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
             output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
-            print('"Done generating output plots for stage 3.')
             assert_stage_is_completed(
                 results_nx_graphs["run_config"], 3, to_run, verbose=True
             )
@@ -261,8 +270,6 @@ def experiment_config_to_run_configs(
             for adaptation, radiation in get_adaptation_and_radiations(
                 experiment_config
             ):
-                print(adaptation, radiation)
-
                 for iteration in experiment_config["iterations"]:
                     for size_and_max_graph in experiment_config[
                         "size_and_max_graphs"
