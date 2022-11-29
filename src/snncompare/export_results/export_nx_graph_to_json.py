@@ -1,6 +1,6 @@
 """Converts the nx graphs into json objects."""
 import copy
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, Union
 
 import networkx as nx
 from networkx.readwrite import json_graph
@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 
 @typechecked
-def digraph_to_json(G: nx.Graph) -> Any:
+def digraph_to_json(G: nx.Graph) -> dict:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -16,7 +16,13 @@ def digraph_to_json(G: nx.Graph) -> Any:
 
     """
     if G is not None:
-        return json_graph.node_link_data(G)
+        some_json_graph: dict = json_graph.node_link_data(G)
+        if not isinstance(some_json_graph, dict):
+            raise TypeError(
+                "Error, json graph type is not dict, it is:"
+                + f"{type(some_json_graph)}"
+            )
+        return some_json_graph
         # return json_graph.dumps(G)
     raise Exception("Error, incoming graph was None.")
 
@@ -67,20 +73,15 @@ def convert_stage_1_digraphs_to_json(graphs: dict) -> Dict[str, Any]:
 
 @typechecked
 def convert_stage_2_digraphs_to_json(
-    graphs: Dict[str, Union[Union[nx.Graph, nx.DiGraph], List]]
-) -> Dict[str, Any]:
-    """Puts all the graphs of stage 2 into a single graph."""
+    graphs: Dict[str, Union[nx.Graph, nx.DiGraph]]
+) -> Dict[str, dict]:
+    """Puts all the graphs of stage 2 into a single graph dict."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():
-        graphs_per_type = []
         if isinstance(graph_container, (nx.DiGraph, nx.Graph)):
-            graphs_per_type.append(digraph_to_json(graph_container))
-        elif isinstance(graph_container, List):
-            for graph in graph_container:
-                graphs_per_type.append(digraph_to_json(graph))
+            graphs_dict_stage_2[graph_name] = digraph_to_json(graph_container)
         else:
             raise Exception(f"Error, unsupported type:{type(graph_container)}")
-        graphs_dict_stage_2[graph_name] = graphs_per_type
     if not graphs_dict_stage_2:  # checks if dict not empty like: {}
         raise Exception(
             f"Error, len(graphs)={len(graphs)} stage=2, graphs_dict_stage_2"

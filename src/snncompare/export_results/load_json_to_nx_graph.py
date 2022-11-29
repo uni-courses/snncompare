@@ -75,9 +75,19 @@ def load_json_to_nx_graph_from_file(
     for graph_name, graph in json_graphs_dict.items():
         nx_graph = json_graph.node_link_graph(graph)
         nx_graphs_dict[graph_name] = nx_graph
+    results_nx_graphs = {
+        "run_config": run_config,
+        "graphs_dict": nx_graphs_dict,
+    }
     verify_results_nx_graphs_contain_expected_stages(
-        {"graphs_dict": nx_graphs_dict}, stage_index, to_run
+        # json_graphs_dict, stage_index, to_run
+        results_nx_graphs,
+        stage_index,
+        to_run,
     )
+    # verify_results_nx_graphs_contain_expected_stages(
+    # {"graphs_dict": nx_graphs_dict}, stage_index, to_run
+    # )
     return nx_graphs_dict
 
 
@@ -108,7 +118,7 @@ def load_pre_existing_graph_dict(
                 run_config["export_images"], stage_index, to_run
             ),
         )
-    raise Exception("Error, unexpected stage_index.")
+    raise Exception(f"Error, unexpected stage_index:{stage_index}")
 
 
 @typechecked

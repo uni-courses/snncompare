@@ -33,7 +33,7 @@ def set_results(run_config: dict, stage_2_graphs: dict) -> None:
                 set_mdsa_snn_results(
                     algo_settings["m_val"], run_config, stage_2_graphs
                 )
-                # Set completed stage.
+
                 # Indicate the graphs have completed stage 1.
                 for nx_graph in stage_2_graphs.values():
                     add_stage_completion_to_graph(nx_graph, 4)

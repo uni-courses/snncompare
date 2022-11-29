@@ -4,6 +4,7 @@ setting of the experiment configuration settings.
 (The values of the settings may vary, yet the types should be the same.)
 """
 
+from pprint import pprint
 from typing import Any, Dict, List, Tuple, Union
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
@@ -23,6 +24,7 @@ from .exp_setts.verify_experiment_settings import (
     verify_has_unique_id,
 )
 from .export_results.load_json_to_nx_graph import (
+    dicts_are_equal,
     load_json_to_nx_graph_from_file,
 )
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
@@ -48,7 +50,9 @@ class Experiment_runner:
     # pylint: disable=R0903
 
     @typechecked
-    def __init__(self, experiment_config: dict) -> None:
+    def __init__(
+        self, experiment_config: dict, run_config: Union[None, dict] = None
+    ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists("results")
@@ -83,33 +87,86 @@ class Experiment_runner:
 
         # Perform runs accordingly.
         # TODO: see if self.run_configs can be removed.
-        self.run_configs = self.__perform_run(self.experiment_config)
+        self.run_configs = self.__perform_run(
+            self.experiment_config, run_config
+        )
 
     # pylint: disable=W0238
     @typechecked
-    def __perform_run(self, experiment_config: dict) -> List[dict]:
+    def __perform_run(
+        self, experiment_config: dict, specific_run_config: Union[None, dict]
+    ) -> List[dict]:
         """Private method that performs a run of the experiment.
 
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
+
+        self.run_configs = self.generate_run_configs(
+            experiment_config, specific_run_config
+        )
+        print("\nexperiment_config=")
+        pprint(experiment_config)
+        print(f"Consists of: {len(self.run_configs)} runs.")
+
+        for i, run_config in enumerate(self.run_configs):
+            print(f"\n{i+1}/{len(self.run_configs)} [runs]")
+            pprint(run_config)
+            self.to_run = determine_what_to_run(run_config)
+            print("start stage I")
+            results_nx_graphs = self.__perform_run_stage_1(
+                experiment_config, run_config, self.to_run
+            )
+            print("Done stage I, start stage II")
+            self.__perform_run_stage_2(results_nx_graphs, self.to_run)
+            print("Done stage II, start stage III")
+            self.__perform_run_stage_3(results_nx_graphs, self.to_run)
+            print("Done stage III, start stage IV")
+            self.__perform_run_stage_4(
+                self.experiment_config["export_images"],
+                results_nx_graphs,
+                self.to_run,
+            )
+            print("Done stage IV")
+        return self.run_configs
+
+    def generate_run_configs(
+        self, experiment_config: dict, run_config: Union[None, dict]
+    ) -> List[dict]:
+        """Generates the run configs belonging to an experiment config, and
+        then removes all run configs except for the desired run config.
+
+        Throws an error if the desired run config is not within the
+        expected run configs.
+        """
+        found_run_config = False
         # Generate run configurations.
         run_configs: List[dict] = experiment_config_to_run_configs(
             experiment_config
         )
+        if run_config is not None:
+            if "unique_id" not in run_config:
+                # Append unique_id to run_config
+                Supported_run_settings().append_unique_run_config_id(
+                    run_config, allow_optional=True
+                )
+            for gen_run_config in run_configs:
+                if dicts_are_equal(
+                    gen_run_config, run_config, without_unique_id=True
+                ):
+                    found_run_config = True
+                    if gen_run_config["unique_id"] != run_config["unique_id"]:
+                        raise Exception(
+                            "Error, equal dict but unequal unique_ids."
+                        )
+                    break
 
-        for run_config in run_configs:
-            to_run = determine_what_to_run(run_config)
-            results_nx_graphs = self.__perform_run_stage_1(
-                experiment_config, run_config, to_run
-            )
-            self.__perform_run_stage_2(results_nx_graphs, to_run)
-            self.__perform_run_stage_3(results_nx_graphs, to_run)
-            self.__perform_run_stage_4(
-                self.experiment_config["export_images"],
-                results_nx_graphs,
-                to_run,
-            )
+            if not found_run_config:
+                pprint(run_configs)
+                raise Exception(
+                    f"The expected run config:{run_config} was not" "found."
+                )
+            run_configs = [run_config]
 
         return run_configs
 
@@ -210,11 +267,9 @@ class Experiment_runner:
         """
         if to_run["stage_3"]:
             # Generate output json dicts (and plots) of propagated graphs.
-            print("Generating plots for stage 3.")
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
             output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
-            print('"Done generating output plots for stage 3.')
             assert_stage_is_completed(
                 results_nx_graphs["run_config"], 3, to_run, verbose=True
             )
@@ -235,7 +290,9 @@ class Experiment_runner:
             results_nx_graphs["graphs_dict"],
         )
         export_results_to_json(export_images, results_nx_graphs, 4, to_run)
-        assert_stage_is_completed(results_nx_graphs["run_config"], 4, to_run)
+        assert_stage_is_completed(
+            results_nx_graphs["run_config"], 4, to_run, verbose=True
+        )
 
 
 @typechecked
@@ -261,8 +318,6 @@ def experiment_config_to_run_configs(
             for adaptation, radiation in get_adaptation_and_radiations(
                 experiment_config
             ):
-                print(adaptation, radiation)
-
                 for iteration in experiment_config["iterations"]:
                     for size_and_max_graph in experiment_config[
                         "size_and_max_graphs"
@@ -387,7 +442,7 @@ def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
         and run_config["overwrite_sim_results"]
         and not run_config["overwrite_visualisation"]
     ):
-        input(
+        print(
             "Warning, if you have changed the graph behaviour without "
             + "overwrite_visualisation=True, your visualisation may/will "
             + "not match with what the graphs actually do. We suggest you "

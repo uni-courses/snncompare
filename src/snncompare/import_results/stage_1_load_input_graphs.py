@@ -63,9 +63,6 @@ def load_results_stage_1(run_config: dict) -> dict:
 def load_stage_2_output_dict(relative_output_dir: str, filename: str) -> dict:
     """Loads the stage_2 output dictionary from a file.
 
-    # TODO: Determine why the file does not yet exist at this positinoc.
-    # TODO: Output dict to json format.
-
     :param relative_output_dir: param filename:
     :param filename:
     """
@@ -73,4 +70,8 @@ def load_stage_2_output_dict(relative_output_dir: str, filename: str) -> dict:
     with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
         stage_2_output_dict = json.load(json_file)
         json_file.close()
+
+    # TODO: Verify stage 2 is completed.
+
+    # TODO: Verify results are valid.
     return stage_2_output_dict
