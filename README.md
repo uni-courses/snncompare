@@ -212,15 +212,22 @@ python -m twine upload dist/\*
 
 ### Developer pip install
 
+```bash
+mkdir -p ~/bin
+cp snn_rebuild.sh ~/bin/snnrb
+chmod +x ~/bin/snnrb
+```
+
+Then you can rebuild and locally re-install all 5 repositories with the command:
+```bash
+snnrb
+```
+
 If you want to quickly test if your changes work, you can go into the root dir
 of this project and run:
-
 ```
-
 pip install -e .
-
 ```
-
 that installs the latest changes into the pip package locally (into your conda
 environment).
 

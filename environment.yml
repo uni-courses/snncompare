@@ -51,6 +51,8 @@ dependencies:
   # Run graph software quickly.
   # Lava depends on networkx 2.8.7
   - networkx==2.8.7
+# Auto generate documentation.
+  - pdoc3
 # Another static type checker for python like mypy.
   - pyright
 # Include GitHub pre-commit hook.
@@ -63,8 +65,13 @@ dependencies:
   - pyment
 # Auto check programming style aspects.
   - pylint
+# Enable publishing the pip package.
+  - twine
 # Ensure the python function arguments are verified at runtime.
   - typeguard
+# Enable creating the pip package.
+  - setuptools
+  - wheel
 # pip packages:
   - pip
   - pip:
@@ -76,19 +83,12 @@ dependencies:
     - imageio
     # Support parsing Json files.
     - jsons
-    # Auto generate documentation.
-    - pdoc3
     # Seems to be an autoformatter like black, but installed using npm instead of pip.
     - prettier
     # Tag files using Python.
     - pytaggit
     # Identify and remove dead code.
     - vulture
-    # Enable creating the pip package.
-    - setuptools
-    - wheel
-    # Enable publishing the pip package.
-    - twine
     #- pipreqs
     # Allow for auto generation of type-hints during runtime.
     - pyannotate
