@@ -442,7 +442,7 @@ def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
         and run_config["overwrite_sim_results"]
         and not run_config["overwrite_visualisation"]
     ):
-        input(
+        print(
             "Warning, if you have changed the graph behaviour without "
             + "overwrite_visualisation=True, your visualisation may/will "
             + "not match with what the graphs actually do. We suggest you "
