@@ -75,10 +75,15 @@ def load_json_to_nx_graph_from_file(
     for graph_name, graph in json_graphs_dict.items():
         nx_graph = json_graph.node_link_graph(graph)
         nx_graphs_dict[graph_name] = nx_graph
-    results_nx_graphs={"run_config":run_config, "graphs_dict":nx_graphs_dict}
+    results_nx_graphs = {
+        "run_config": run_config,
+        "graphs_dict": nx_graphs_dict,
+    }
     verify_results_nx_graphs_contain_expected_stages(
-        #json_graphs_dict, stage_index, to_run
-        results_nx_graphs, stage_index, to_run
+        # json_graphs_dict, stage_index, to_run
+        results_nx_graphs,
+        stage_index,
+        to_run,
     )
     # verify_results_nx_graphs_contain_expected_stages(
     # {"graphs_dict": nx_graphs_dict}, stage_index, to_run

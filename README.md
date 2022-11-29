@@ -5,7 +5,7 @@
 [![Code Style: Black][black_badge]](https://github.com/ambv/black)
 [![Code Coverage][codecov_badge]](https://codecov.io/gh/a-t-0/snnalgos)
 
-This module compares SNN [algorithms\] to their default/Neumann implementations.
+This module compares SNN \[algorithms\] to their default/Neumann implementations.
 The user can specify an SNN and "normal" algorithm which take as input a
 networkx graph, and compute some graph property as output. The output of the
 SNN is then compared to the "normal" algorithm as "ground truth", in terms of:
@@ -34,12 +34,12 @@ The green dots are when the neurons spike, non-spiking neurons are not visible.
 
 For each SNN algorithm that the user specifies, the user can also specify a
 form of brain-inspired adaptation. This serves to increase the robustness of
-the SNN against radiation effects. The [brain-adaptation\] can be called from a
+the SNN against radiation effects. The \[brain-adaptation\] can be called from a
 separate pip package called: `snnadaptation`.
 
 ## Radiation
 
-A basic form of [radiation\] effects is modelled on the SNNs. For example,
+A basic form of \[radiation\] effects is modelled on the SNNs. For example,
 radiation is modelled as yielding permanent activity termination for random
 neurons.
 
@@ -62,7 +62,7 @@ radiation robustness.
 ## Backends
 
 Since the effectiveness of the adaptation mechanisms, in terms of radiation
-robustness, is a function of neuromorphic hardware platform, multiple [backends\]
+robustness, is a function of neuromorphic hardware platform, multiple \[backends\]
 are supported. These backends also allow for different neuronal and synaptic
 models. Currently the following backends are supported:
 
@@ -156,7 +156,6 @@ For more info, run:
 python -m src.snncompare --help
 ```
 
-
 And run tests with:
 
 ```
@@ -227,8 +226,6 @@ environment).
 <!-- Un-wrapped URL's (Badges and Hyperlinks) -->
 
 [agpl3_badge]: https://img.shields.io/badge/License-AGPL_v3-blue.svg
-[backends]: https://github.com/a-t-0/snnbackends
 [black_badge]: https://img.shields.io/badge/code%20style-black-000000.svg
-[brain-adaptation]: https://github.com/a-t-0/snnadaptation
 [codecov_badge]: https://codecov.io/gh/a-t-0/snn/branch/main/graph/badge.svg
 [python_badge]: https://img.shields.io/badge/python-3.10-blue.svg
