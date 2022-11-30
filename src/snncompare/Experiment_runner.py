@@ -51,7 +51,10 @@ class Experiment_runner:
 
     @typechecked
     def __init__(
-        self, experiment_config: dict, run_config: Union[None, dict] = None
+        self,
+        experiment_config: dict,
+        specific_run_config: Union[None, dict] = None,
+        perform_run: bool = True,
     ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
@@ -85,32 +88,31 @@ class Experiment_runner:
         # Verify the unique hash code for this configuration is valid.
         verify_has_unique_id(self.experiment_config)
 
-        # Perform runs accordingly.
-        # TODO: see if self.run_configs can be removed.
-        self.run_configs = self.__perform_run(
-            self.experiment_config, run_config
+        self.run_configs = self.generate_run_configs(
+            experiment_config, specific_run_config
         )
+
+        # Perform runs accordingly.
+        if perform_run:
+            self.__perform_run(self.experiment_config, self.run_configs)
 
     # pylint: disable=W0238
     @typechecked
     def __perform_run(
-        self, experiment_config: dict, specific_run_config: Union[None, dict]
-    ) -> List[dict]:
+        self, experiment_config: dict, run_configs: List[Union[None, dict]]
+    ) -> None:
         """Private method that performs a run of the experiment.
 
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
 
-        self.run_configs = self.generate_run_configs(
-            experiment_config, specific_run_config
-        )
         print("\nexperiment_config=")
         pprint(experiment_config)
-        print(f"Consists of: {len(self.run_configs)} runs.")
+        print(f"Consists of: {len(run_configs)} runs.")
 
-        for i, run_config in enumerate(self.run_configs):
-            print(f"\n{i+1}/{len(self.run_configs)} [runs]")
+        for i, run_config in enumerate(run_configs):
+            print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config)
             self.to_run = determine_what_to_run(run_config)
             print("start stage I")
@@ -128,7 +130,6 @@ class Experiment_runner:
                 self.to_run,
             )
             print("Done stage IV")
-        return self.run_configs
 
     def generate_run_configs(
         self, experiment_config: dict, run_config: Union[None, dict]

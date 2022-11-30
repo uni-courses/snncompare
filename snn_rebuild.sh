@@ -12,7 +12,7 @@ CONDA_ENVIRONMENT_NAME="snncompare"
 # Globals:
 #  None.
 # Arguments:
-#  Relative folderpath of folder whose existance is verified.
+#  Relative folderpath of folder whose existence is verified.
 # Returns:
 #  0 If folder was found.
 #  31 If the folder was not found.
@@ -29,17 +29,17 @@ manual_assert_dir_exists() {
 
 
 #######################################
-# 
+#
 # Local variables:
-#  
+#
 # Globals:
-#  
+#
 # Arguments:
-#  
+#
 # Returns:
-#  0 If function was evaluated succesfull.
+#  0 If function was evaluated successful.
 # Outputs:
-#  
+#
 # TODO(a-t-0):
 #######################################
 # Source: https://stackoverflow.com/questions/70597896/check-if-conda-env-exists-and-create-if-not-in-bash
@@ -49,17 +49,17 @@ find_in_conda_env(){
 
 
 #######################################
-# 
+#
 # Local variables:
-#  
+#
 # Globals:
-#  
+#
 # Arguments:
-#  
+#
 # Returns:
-#  0 If function was evaluated succesfull.
+#  0 If function was evaluated successful.
 # Outputs:
-#  
+#
 # TODO(a-t-0):
 #######################################
 conda_env_exists() {
@@ -106,12 +106,12 @@ do
    echo ""
    # Assert the required folders exist.
    manual_assert_dir_exists "$DIR_WITH_REPOS$reponame"
-   
+
    # Build the pip package
    build_pip_package "$DIR_WITH_REPOS$reponame"
-   
+
    # Install package locally
    install_pip_package "$DIR_WITH_REPOS$reponame"
-   
+
    # TODO: if CLI arg is passed, upload the pip packages with upgraded version.
 done

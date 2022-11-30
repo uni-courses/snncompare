@@ -75,8 +75,8 @@ class Supported_experiment_settings:
 
         # Create dictionary with algorithm name as key, and algorithm settings
         # object as value.
-        mdsa_min=MDSA([]).min_m_vals
-        mdsa_max=MDSA([]).max_m_vals
+        mdsa_min = MDSA([]).min_m_vals
+        mdsa_max = MDSA([]).max_m_vals
         self.algorithms = get_algo_configs(
             MDSA(list(range(mdsa_min, mdsa_max, 1))).__dict__
         )

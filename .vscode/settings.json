@@ -1,13 +1,18 @@
 {
+  "editor.suggestSelection": "first",
+  "editor.tabCompletion": "on",
+  "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
   "files.exclude": {
     "**/.coverage.*": true,
     "**/__init__*": true,
     "**/__pycache__*": true
   },
+  "python.condaPath": "~/anaconda/bin/conda",
   "searchOpenAllResults.delay": 150,
   "searchOpenAllResults.fileResultsLimit": 300,
   "searchOpenAllResults.resultsLimit": 250,
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
   "window.zoomLevel": -1,
   "workbench.colorTheme": "Default High Contrast"
 }

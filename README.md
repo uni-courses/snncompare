@@ -1,9 +1,9 @@
 # Spiking Neural Network Performance Tool
 
-[![Python 3.10][python_badge]](https://www.python.org/downloads/release/python-3106/)
-[![License: AGPL v3][agpl3_badge]](https://www.gnu.org/licenses/agpl-3.0)
-[![Code Style: Black][black_badge]](https://github.com/ambv/black)
-[![Code Coverage][codecov_badge]](https://codecov.io/gh/a-t-0/snnalgos)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3106/)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Code Coverage](https://codecov.io/gh/a-t-0/snn/branch/main/graph/badge.svg)](https://codecov.io/gh/a-t-0/snnalgorithms)
 
 This module compares SNN \[algorithms\] to their default/Neumann implementations.
 The user can specify an SNN and "normal" algorithm which take as input a
@@ -132,7 +132,7 @@ mechanism.
 
 First satisfy the prerequisites:
 
-```
+```bash
 pip install snncompare
 pip install https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
 ulimit -n 800000
@@ -140,28 +140,27 @@ ulimit -n 800000
 
 You can run the experiment with command:
 
-```
+```bash
 python -m src.snncompare -e mdsa_creation_only_size_3_4 -v -x
 ```
 
 which is the same as:
 
-```
-python -m src.snncompare --experiment-settings-name mdsa_creation_only_size_3_4 -visualise-snn --export-images
+```bash
+python -m src.snncompare --experiment-settings-name \
+mdsa_creation_only_size_3_4 -visualise-snn --export-images
 ```
 
 For more info, run:
 
-```
+```bash
 python -m src.snncompare --help
 ```
 
 And run tests with:
 
-```
-
+```bash
 python -m pytest
-
 ```
 
 This generates the graphs from the default experiment configurations, and
@@ -172,41 +171,33 @@ the graph behaviour to: `latex/Images/graphs/`.
 
 Developers can use:
 
-```
-
+```bash
 conda env create --file environment.yml
 conda activate snncompare
 ulimit -n 800000
 python -m pytest
-
 ```
 
 Currently the test coverage is `65%`. For type checking:
 
-```
-
+```bash
 mypy --disallow-untyped-calls --disallow-untyped-defs tests/export_results/performed_stage/test_performed_stage_TTFF.py
-
 ```
 
 ### Releasing pip package update
 
 To udate the Python pip package, one can first satisfy the following requirements:
 
-```
-
+```bash
 pip install --upgrade pip setuptools wheel
 pip install twine
-
 ```
 
 Followed by updating the package with:
 
-```
-
+```bash
 python3 setup.py sdist bdist_wheel
 python -m twine upload dist/\*
-
 ```
 
 ### Developer pip install
@@ -218,21 +209,19 @@ chmod +x ~/bin/snnrb
 ```
 
 Then you can rebuild and locally re-install all 5 repositories with the command:
+
 ```bash
 snnrb
 ```
 
 If you want to quickly test if your changes work, you can go into the root dir
 of this project and run:
-```
+
+```bash
 pip install -e .
 ```
+
 that installs the latest changes into the pip package locally (into your conda
 environment).
 
 <!-- Un-wrapped URL's (Badges and Hyperlinks) -->
-
-[agpl3_badge]: https://img.shields.io/badge/License-AGPL_v3-blue.svg
-[black_badge]: https://img.shields.io/badge/code%20style-black-000000.svg
-[codecov_badge]: https://codecov.io/gh/a-t-0/snn/branch/main/graph/badge.svg
-[python_badge]: https://img.shields.io/badge/python-3.10-blue.svg
