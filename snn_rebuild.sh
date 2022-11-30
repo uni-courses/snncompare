@@ -11,11 +11,16 @@ while [[ "$#" -gt 0 ]]; do
     case $1 in
         -r|--rebuild) rebuild=1; ;;
         -p|--precommit) precommit=1 ;;
+		-c|--commitpush)
+			commitpush=1
+			COMMIT_MESSAGE="$2"
+      		shift # past argument
+      		shift # past value
+      		;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
 done
-
 
 #######################################
 # Verifies a directory exists, throws error otherwise.
@@ -98,6 +103,21 @@ run_precommit() {
 	fi
 }
 
+
+commit_and_push() {
+    local git_path="$1"
+	local message="$2"
+    if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
+		eval "$(conda shell.bash hook)"
+		cd "$git_path" && conda deactivate && conda activate snncompare && git add *
+		cd "$git_path" && conda deactivate && conda activate snncompare && git commit -m "$message"
+		cd "$git_path" && conda deactivate && conda activate snncompare && git push
+	else
+		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
+        exit 5
+	fi
+}
+
 build_pip_package() {
     local git_path="$1"
     if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
@@ -136,8 +156,13 @@ do
    		# Install package locally
    		install_pip_package "$DIR_WITH_REPOS$reponame"
 	fi
+
 	if [ "$precommit" == 1 ]; then
 		run_precommit "$DIR_WITH_REPOS$reponame"
+	fi
+
+	if [ "$commitpush" == 1 ]; then
+		commit_and_push "$DIR_WITH_REPOS$reponame" "$COMMIT_MESSAGE"
 	fi
 
    	# TODO: if CLI arg is passed, upload the pip packages with upgraded version.
