@@ -1,8 +1,20 @@
 #!/bin/bash
 
+## declare the list of github repositories in an array.
+declare -a arr=("snnadaptation" "snnalgorithms" "snnbackends" "snncompare" "snnradiation")
 # Specify global variables.
 DIR_WITH_REPOS="/home/$(echo $(whoami))/git/snn/"
 CONDA_ENVIRONMENT_NAME="snncompare"
+
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -r|--rebuild) rebuild=1; ;;
+        -p|--precommit) precommit=1 ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
 
 
 #######################################
@@ -72,6 +84,20 @@ conda_env_exists() {
 }
 
 
+run_precommit() {
+    local git_path="$1"
+    if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
+		eval "$(conda shell.bash hook)"
+		cd "$git_path" && conda deactivate && conda activate snncompare && git add *
+		cd "$git_path" && conda deactivate && conda activate snncompare && git add .* && pre-commit run --all-files
+		cd "$git_path" && conda deactivate && conda activate snncompare && pre-commit install
+		cd "$git_path" && conda deactivate && conda activate snncompare && pre-commit run --all-files
+	else
+		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
+        exit 5
+	fi
+}
+
 build_pip_package() {
     local git_path="$1"
     if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
@@ -95,23 +121,24 @@ install_pip_package() {
 	fi
 }
 
-
-## declare an array variable
-declare -a arr=("snnadaptation" "snnalgorithms" "snnbackends" "snncompare" "snnradiation")
-
 for reponame in "${arr[@]}"
 do
-   echo "$reponame"
-   echo ""
-   echo ""
-   # Assert the required folders exist.
-   manual_assert_dir_exists "$DIR_WITH_REPOS$reponame"
+	echo "$reponame"
+	echo ""
+	echo ""
+	# Assert the required folders exist.
+	manual_assert_dir_exists "$DIR_WITH_REPOS$reponame"
 
-   # Build the pip package
-   build_pip_package "$DIR_WITH_REPOS$reponame"
+	if [ "$rebuild" == 1 ]; then
+		# Build the pip package
+   		build_pip_package "$DIR_WITH_REPOS$reponame"
 
-   # Install package locally
-   install_pip_package "$DIR_WITH_REPOS$reponame"
+   		# Install package locally
+   		install_pip_package "$DIR_WITH_REPOS$reponame"
+	fi
+	if [ "$precommit" == 1 ]; then
+		run_precommit "$DIR_WITH_REPOS$reponame"
+	fi
 
-   # TODO: if CLI arg is passed, upload the pip packages with upgraded version.
+   	# TODO: if CLI arg is passed, upload the pip packages with upgraded version.
 done
