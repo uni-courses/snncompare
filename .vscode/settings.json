@@ -5,6 +5,8 @@
   "explorer.confirmDragAndDrop": false,
   "files.exclude": {
     "**/.coverage.*": true,
+    "**/.mypy_cache": true,
+    "**/.pytest_cache": true,
     "**/__init__*": true,
     "**/__pycache__*": true
   },
