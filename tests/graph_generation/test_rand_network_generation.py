@@ -24,7 +24,7 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
 
     # Initialize test object
     @typechecked
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 

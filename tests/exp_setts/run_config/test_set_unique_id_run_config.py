@@ -30,7 +30,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
 
     # Initialize test object
     @typechecked
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # Generate default experiment config.
         self.exp_setts: dict = get_config_one()

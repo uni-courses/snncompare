@@ -26,7 +26,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
 
     # Initialize test object
     @typechecked
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_exp_setts = Supported_experiment_settings()
         self.valid_max_graph_size = self.supp_exp_setts.max_graph_size

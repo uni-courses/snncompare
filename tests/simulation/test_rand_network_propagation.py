@@ -28,7 +28,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
 
     # Initialize test object
     @typechecked
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)

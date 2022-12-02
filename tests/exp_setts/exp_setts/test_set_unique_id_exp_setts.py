@@ -1,9 +1,11 @@
 """Tests whether the exp_setts gets the same unique_id at all times if its
 content is the same, and that it gets different unique ids for different
 exp_setts settings."""
-# pylint: disable=R0801
 import copy
 import unittest
+
+# pylint: disable=R0801
+from typing import List
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -27,10 +29,10 @@ class Test_setting_unique_id_exp_setts(unittest.TestCase):
 
     # Initialize test object
     @typechecked
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # Generate default experiment config.
-        self.exp_setts_list: dict = [
+        self.exp_setts_list: List = [
             get_config_one(),
             get_config_two(),
         ]

@@ -18,7 +18,7 @@ class Test_get_graph_on_lava(unittest.TestCase):
 
     # Initialize test object
     @typechecked
-    def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.starter_node_name = 0
 
