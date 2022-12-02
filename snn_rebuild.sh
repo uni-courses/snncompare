@@ -110,6 +110,7 @@ commit_and_push() {
     if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
 		eval "$(conda shell.bash hook)"
 		cd "$git_path" && conda deactivate && conda activate snncompare && git add *
+		cd "$git_path" && conda deactivate && conda activate snncompare && git add -A
 		cd "$git_path" && conda deactivate && conda activate snncompare && git commit -m "$message"
 		cd "$git_path" && conda deactivate && conda activate snncompare && git push
 	else
