@@ -7,7 +7,7 @@ setting types should be identical.)
 import copy
 import hashlib
 import json
-from typing import Any, List, Union
+from typing import Any, Dict, Union
 
 from typeguard import typechecked
 
@@ -77,9 +77,10 @@ class Supported_run_settings:
             allow_optional=allow_optional,
         )
 
-        minimal_run_config = self.remove_optional_args(
+        minimal_run_config: dict = self.remove_optional_args(
             copy.deepcopy(run_config)
         )
+
         unique_id = str(
             hashlib.sha256(
                 json.dumps(minimal_run_config).encode("utf-8")
@@ -94,7 +95,7 @@ class Supported_run_settings:
         )
         return run_config
 
-    def remove_optional_args(self, copied_run_config: dict) -> List[Any]:
+    def remove_optional_args(self, copied_run_config: Dict) -> Dict:
         """removes the optional arguments from a run config."""
         optional_keys = []
         for key in copied_run_config.keys():
@@ -108,7 +109,7 @@ class Supported_run_settings:
             has_unique_id=False,
             allow_optional=False,
         )
-        return sorted(copied_run_config)
+        return copied_run_config
 
     @typechecked
     def assert_has_key(

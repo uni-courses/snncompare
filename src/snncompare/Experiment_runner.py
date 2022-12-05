@@ -55,7 +55,6 @@ class Experiment_runner:
         experiment_config: dict,
         specific_run_config: Union[None, dict] = None,
         perform_run: bool = True,
-        perform_single: bool = False,
     ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
@@ -96,8 +95,6 @@ class Experiment_runner:
         # Perform runs accordingly.
         if perform_run:
             self.__perform_run(self.experiment_config, self.run_configs)
-        if perform_single:
-            self.__perform_run(self.experiment_config, [self.run_configs[0]])
 
     # pylint: disable=W0238
     @typechecked
@@ -109,11 +106,6 @@ class Experiment_runner:
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
-
-        print("\nexperiment_config=")
-        pprint(experiment_config)
-        print(f"Consists of: {len(run_configs)} runs.")
-
         for i, run_config in enumerate(run_configs):
 
             print(f"\n{i+1}/{len(run_configs)} [runs]")
@@ -123,17 +115,17 @@ class Experiment_runner:
             results_nx_graphs = self.__perform_run_stage_1(
                 experiment_config, run_config, self.to_run
             )
-            print("\nDone stage I, start stage II")
+            print("Done stage I, start stage II")
             self.__perform_run_stage_2(results_nx_graphs, self.to_run)
-            print("\nDone stage II, start stage III")
+            print("Done stage II, start stage III")
             self.__perform_run_stage_3(results_nx_graphs, self.to_run)
-            print("\nDone stage III, start stage IV")
+            print("Done stage III, start stage IV")
             self.__perform_run_stage_4(
                 self.experiment_config["export_images"],
                 results_nx_graphs,
                 self.to_run,
             )
-            print("\nDone stage IV")
+            print("Done stage IV\n")
 
             # Store run results in dict of Experiment_runner.
             self.results_nx_graphs: Dict = {
@@ -454,6 +446,8 @@ def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
         and run_config["overwrite_sim_results"]
         and not run_config["overwrite_visualisation"]
     ):
+        # TODO: check if visual results are deleted, if yes, don't throw
+        # warning.
         print(
             "Warning, if you have changed the graph behaviour without "
             + "overwrite_visualisation=True, your visualisation may/will "
