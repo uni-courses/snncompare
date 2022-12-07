@@ -257,7 +257,7 @@ def compare_static_snn_properties(
     """
     for node in G.nodes:
         lava_neuron = G.nodes[node]["lava_LIF"]
-        nx_neuron = G.nodes[node]["nx_LIF"][t]
+        nx_neuron = G.nodes[node]["nx_lif"][t]
 
         # Assert bias is equal.
         test_object.assertEqual(

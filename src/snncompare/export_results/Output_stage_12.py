@@ -19,6 +19,7 @@ def output_files_stage_1_and_2(
     as well as the unique_id of the run. Furthermore, all run parameter
     values are added as file tags, to make it easier to filter certain
     runs to manually inspect the results.
+    TODO: separate into separate method for stage 1 and for stage 2.
 
     :param results_nx_graphs:
     """

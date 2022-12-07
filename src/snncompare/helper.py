@@ -763,7 +763,7 @@ def old_graph_to_new_graph_properties(G: nx.DiGraph) -> None:
     :param G: The original graph on which the MDSA algorithm is ran.
     """
     for nodename in G.nodes:
-        G.nodes[nodename]["nx_LIF"] = [
+        G.nodes[nodename]["nx_lif"] = [
             LIF_neuron(
                 name=nodename,
                 bias=float(G.nodes[nodename]["bias"]),

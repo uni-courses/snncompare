@@ -6,9 +6,6 @@ from typing import TYPE_CHECKING
 from networkx.classes.digraph import DiGraph
 from snnalgorithms.get_graph import set_rand_neuron_properties
 from snnbackends.lava.run_on_lava import add_lava_neurons_to_networkx_graph
-from snnbackends.networkx.run_on_networkx import (
-    add_nx_neurons_to_networkx_graph,
-)
 from typeguard import typechecked
 
 from tests.tests_helper import get_cyclic_graph_without_directed_path
@@ -28,8 +25,8 @@ def get_graph_for_cyclic_propagation(
     G = get_cyclic_graph_without_directed_path()
     set_rand_neuron_properties(G, test_scope)
 
-    # Generate networkx network.
-    add_nx_neurons_to_networkx_graph(G, t=0)
+    # TODO: Generate networkx network.
+
     # Generate lava network.
     add_lava_neurons_to_networkx_graph(G, t=0)
     return G

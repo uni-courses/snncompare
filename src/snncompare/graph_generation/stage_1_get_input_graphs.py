@@ -10,6 +10,15 @@ import networkx as nx
 from snnadaptation.redundancy.redundancy import (
     other_implement_adaptation_mechanism,
 )
+from snnalgorithms.sparse.MDSA.create_MDSA_snn_neurons import (
+    get_new_mdsa_graph,
+)
+from snnalgorithms.sparse.MDSA.create_MDSA_snn_recurrent_synapses import (
+    create_MDSA_recurrent_synapses,
+)
+from snnalgorithms.sparse.MDSA.create_MDSA_snn_synapses import (
+    create_MDSA_synapses,
+)
 from snnalgorithms.sparse.MDSA.create_snns import (
     Alipour_properties,
     specify_mdsa_network_properties,
@@ -32,13 +41,27 @@ def get_used_graphs(run_config: dict) -> dict:
     generates a graph with radiation if it is required. Then returns
     this list of graphs.
     """
+    # TODO: move to central place in MDSA algo spec.
+    recurrent_weight = -10
     graphs = {}
     graphs["input_graph"] = get_input_graph(run_config)
 
-    # TODO: write test to verify the algorithm yields valid results on default
-    # MDSA SNN.
-    graphs["snn_algo_graph"] = get_snn_algo_graph(
-        graphs["input_graph"], run_config
+    # TODO: put into single function.
+    graphs["snn_algo_graph"] = get_new_mdsa_graph(
+        run_config, graphs["input_graph"]
+    )
+
+    create_MDSA_recurrent_synapses(
+        graphs["input_graph"],
+        graphs["snn_algo_graph"],
+        recurrent_weight,
+        run_config,
+    )
+
+    create_MDSA_synapses(
+        graphs["input_graph"],
+        graphs["snn_algo_graph"],
+        run_config,
     )
 
     # TODO: write test to verify the algorithm yields valid results on default

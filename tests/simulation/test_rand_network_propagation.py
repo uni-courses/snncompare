@@ -8,9 +8,6 @@ import numpy as np
 from snnalgorithms.get_graph import gnp_random_connected_graph
 from snnbackends.lava.run_on_lava import add_lava_neurons_to_networkx_graph
 from snnbackends.networkx.LIF_neuron import print_neuron_properties_per_graph
-from snnbackends.networkx.run_on_networkx import (
-    add_nx_neurons_to_networkx_graph,
-)
 from snnbackends.networkx.verify_graph_is_networkx_snn import (
     assert_no_duplicate_edges_exist,
     assert_synaptic_edgeweight_type_is_correct,
@@ -97,8 +94,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             # Assert all neuron properties are specified.
                             verify_networkx_snn_spec(G, t=0, backend="nx")
 
-                            # Generate networkx network.
-                            add_nx_neurons_to_networkx_graph(G, t=0)
+                            # TODO: Generate networkx network.
 
                             # Generate lava network.
                             add_lava_neurons_to_networkx_graph(G, t=0)
@@ -127,7 +123,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
         """
         for node in G.nodes:
             lava_neuron = G.nodes[node]["lava_LIF"]
-            nx_neuron = G.nodes[node]["nx_LIF"][t]
+            nx_neuron = G.nodes[node]["nx_lif"][t]
 
             # Assert u is equal.
             self.assertEqual(lava_neuron.u.get(), nx_neuron.u.get())

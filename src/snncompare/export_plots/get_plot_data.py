@@ -39,6 +39,8 @@ def plot_coordinated_graph(
 
     edge_color_map = set_edge_colours(G, spiking_edges)
 
+    set_node_positions(G, t)
+
     # Width=edge width.
     nx.draw(
         G,
@@ -53,8 +55,10 @@ def plot_coordinated_graph(
     )
     # TODO: change to name?
     node_labels_dict = nx.get_node_attributes(G, "")
+
     # pylint: disable=W0108
     node_labels_list = list(map(lambda x: str(x), G.nodes))
+
     pos = {
         node: (x, y)
         for (node, (x, y)) in nx.get_node_attributes(G, "pos").items()
@@ -91,6 +95,16 @@ def plot_coordinated_graph(
 
 
 @typechecked
+def set_node_positions(snn_graph: nx.DiGraph, t: int) -> None:
+    """Sets the positions of the nodes of the snn graph."""
+    # TODO: include backend check.
+    for nodename in snn_graph.nodes:
+        snn_graph.nodes[nodename]["pos"] = snn_graph.nodes[nodename]["nx_lif"][
+            t
+        ].pos
+
+
+@typechecked
 def get_annotation_text(
     desired_properties: List[str], G: nx.Graph, nodename: str, t: int
 ) -> str:
@@ -103,32 +117,32 @@ def get_annotation_text(
     annotation = ""
     if "bias" in desired_properties:
         annotation = (
-            annotation + f'bias={G.nodes[nodename]["nx_LIF"][t].bias.get()}\n'
+            annotation + f'bias={G.nodes[nodename]["nx_lif"][t].bias.get()}\n'
         )
     if "du" in desired_properties:
         annotation = (
-            annotation + f'du={G.nodes[nodename]["nx_LIF"][t].du.get()}\n'
+            annotation + f'du={G.nodes[nodename]["nx_lif"][t].du.get()}\n'
         )
     if "dv" in desired_properties:
         annotation = (
-            annotation + f'dv={G.nodes[nodename]["nx_LIF"][t].dv.get()}\n'
+            annotation + f'dv={G.nodes[nodename]["nx_lif"][t].dv.get()}\n'
         )
     if "u" in desired_properties:
         annotation = (
-            annotation + f'u={G.nodes[nodename]["nx_LIF"][t].u.get()}\n'
+            annotation + f'u={G.nodes[nodename]["nx_lif"][t].u.get()}\n'
         )
     if "v" in desired_properties:
         annotation = (
-            annotation + f'v={G.nodes[nodename]["nx_LIF"][t].v.get()}\n'
+            annotation + f'v={G.nodes[nodename]["nx_lif"][t].v.get()}\n'
         )
     if "vth" in desired_properties:
         annotation = (
-            annotation + f'vth={G.nodes[nodename]["nx_LIF"][t].vth.get()}\n'
+            annotation + f'vth={G.nodes[nodename]["nx_lif"][t].vth.get()}\n'
         )
     if "a_in_next" in desired_properties:
         annotation = (
             annotation
-            + f'a_in_next={G.nodes[nodename]["nx_LIF"][t].a_in_next}\n'
+            + f'a_in_next={G.nodes[nodename]["nx_lif"][t].a_in_next}\n'
         )
 
     return annotation
@@ -210,14 +224,14 @@ def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
 
     colour_dict = {}
     for node_name in G.nodes:
-        if "nx_LIF" in G.nodes[node_name].keys():
+        if "nx_lif" in G.nodes[node_name].keys():
             if "rad_death" in G.nodes[node_name].keys():
                 if G.nodes[node_name]["rad_death"]:
                     colour_dict[node_name] = "red"
-                    if G.nodes[node_name]["nx_LIF"][t].spikes:
+                    if G.nodes[node_name]["nx_lif"][t].spikes:
                         raise Exception("Dead neuron can't spike.")
             # TODO: determine whether to use s_out = 1 or, spikes=False.
-            if G.nodes[node_name]["nx_LIF"][t].spikes:
+            if G.nodes[node_name]["nx_lif"][t].spikes:
                 colour_dict[node_name] = "green"
                 for neighbour in nx.all_neighbors(G, node_name):
                     spiking_edges.append((node_name, neighbour))
