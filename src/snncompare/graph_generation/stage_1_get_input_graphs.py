@@ -13,15 +13,8 @@ from snnadaptation.redundancy.redundancy import (
 from snnalgorithms.sparse.MDSA.create_MDSA_snn_neurons import (
     get_new_mdsa_graph,
 )
-from snnalgorithms.sparse.MDSA.create_MDSA_snn_recurrent_synapses import (
-    create_MDSA_recurrent_synapses,
-)
-from snnalgorithms.sparse.MDSA.create_MDSA_snn_synapses import (
-    create_MDSA_synapses,
-)
-from snnalgorithms.sparse.MDSA.create_snns import (
-    Alipour_properties,
-    specify_mdsa_network_properties,
+from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
+    SNN_initialisation_properties,
 )
 from snnalgorithms.Used_graphs import Used_graphs
 from snnradiation.Radiation_damage import (
@@ -42,26 +35,11 @@ def get_used_graphs(run_config: dict) -> dict:
     this list of graphs.
     """
     # TODO: move to central place in MDSA algo spec.
-    recurrent_weight = -10
     graphs = {}
     graphs["input_graph"] = get_input_graph(run_config)
 
-    # TODO: put into single function.
     graphs["snn_algo_graph"] = get_new_mdsa_graph(
         run_config, graphs["input_graph"]
-    )
-
-    create_MDSA_recurrent_synapses(
-        graphs["input_graph"],
-        graphs["snn_algo_graph"],
-        recurrent_weight,
-        run_config,
-    )
-
-    create_MDSA_synapses(
-        graphs["input_graph"],
-        graphs["snn_algo_graph"],
-        run_config,
     )
 
     # TODO: write test to verify the algorithm yields valid results on default
@@ -118,7 +96,7 @@ def get_input_graphs(run_config: dict) -> List[nx.Graph]:
         for input_graph in input_graphs:
             # TODO: set alg_props:
             if "alg_props" not in input_graph.graph.keys():
-                input_graph.graph["alg_props"] = Alipour_properties(
+                input_graph.graph["alg_props"] = SNN_initialisation_properties(
                     input_graph, run_config["seed"]
                 ).__dict__
 
@@ -135,31 +113,6 @@ def get_input_graphs(run_config: dict) -> List[nx.Graph]:
         + f"{run_config['graph_nr']}. Please lower the max_graphs setting in:"
         + "size_and_max_graphs in the experiment configuration."
     )
-
-
-@typechecked
-def get_snn_algo_graph(input_graph: nx.Graph, run_config: dict) -> nx.DiGraph:
-    """Takes the input graph and converts it to an snn that solves some
-    algorithm when it is being ran.
-
-    This SNN is encoded as a networkx graph.
-    """
-
-    # TODO: include check to verify only one algorithm is selected.
-    # TODO: verify only one setting value is selected per algorithm setting.
-    for algo_name, algo_settings in run_config["algorithm"].items():
-        if algo_name == "MDSA":
-            if isinstance(algo_settings["m_val"], int):
-                snn_algo_graph = specify_mdsa_network_properties(
-                    input_graph, algo_settings["m_val"], run_config["seed"]
-                )
-            else:
-                raise Exception("Error, m_val setting is not of type int.")
-        else:
-            raise Exception(
-                "Error, algo_name:{algo_name} is not (yet) supported."
-            )
-    return snn_algo_graph
 
 
 @typechecked

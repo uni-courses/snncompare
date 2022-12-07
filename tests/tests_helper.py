@@ -9,7 +9,9 @@ from typing import TYPE_CHECKING, Any, List
 
 import jsons
 import networkx as nx
-from snnalgorithms.sparse.MDSA.create_snns import Alipour_properties
+from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
+    SNN_initialisation_properties,
+)
 from typeguard import typechecked
 
 from snncompare.export_results.export_json_results import write_dict_to_json
@@ -114,7 +116,9 @@ def create_results_dict_for_testing_stage_1(
         if graph_name == "input_graph":
             # Add MDSA algorithm properties to input graph.
             graphs_dict["input_graph"] = input_graph
-            graphs_dict["input_graph"].graph["alg_props"] = Alipour_properties(
+            graphs_dict["input_graph"].graph[
+                "alg_props"
+            ] = SNN_initialisation_properties(
                 graphs_dict["input_graph"], run_config["seed"]
             ).__dict__
         else:
@@ -153,7 +157,7 @@ def create_results_dict_for_testing_stage_2(
             graphs_dict["input_graph"] = [input_graph]
             graphs_dict["input_graph"][-1].graph[
                 "alg_props"
-            ] = Alipour_properties(
+            ] = SNN_initialisation_properties(
                 graphs_dict["input_graph"][-1], run_config["seed"]
             ).__dict__
         else:
