@@ -11,12 +11,7 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
-from snncompare.export_results.verify_stage_1_graphs import (
-    get_expected_stage_1_graph_names,
-)
-
 from ..helper import file_exists, get_expected_stages
-from .check_json_graphs import json_graphs_contain_expected_stages
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
     verify_results_safely_check_json_graphs_contain_expected_stages,
@@ -34,26 +29,6 @@ def json_to_digraph(json_data: dict) -> nx.DiGraph:
     if json_data is not None:
         return json_graph.node_link_graph(json_data)
     raise Exception("Error, did not find json_data.")
-
-
-@typechecked
-def json_dicts_of_graph_results_exist(
-    run_config: dict, expected_stages: List[int]
-) -> bool:
-    """Checks whether there is a json file with the graphs dict of stage 1 or 2
-    respectively,"""
-    # Check if the results json exists.
-    filename: str = run_config_to_filename(run_config)
-    json_filepath = f"results/{filename}.json"
-
-    if file_exists(json_filepath):
-        expected_graph_names = get_expected_stage_1_graph_names(run_config)
-        loaded_json_graphs = load_json_graphs_from_json(run_config)
-        # Check if the json graph dicts are of the right stage.
-        return json_graphs_contain_expected_stages(
-            loaded_json_graphs, expected_graph_names, expected_stages
-        )
-    return False
 
 
 @typechecked

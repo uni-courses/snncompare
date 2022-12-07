@@ -24,7 +24,6 @@ from snncompare.export_plots.get_plot_data import plot_coordinated_graph
 from ..helper import get_sim_duration
 from .export_json_results import write_dict_to_json
 from .export_nx_graph_to_json import convert_digraphs_to_json
-from .helper import run_config_to_filename
 from .verify_stage_1_graphs import verify_stage_1_graphs
 from .verify_stage_2_graphs import verify_stage_2_graphs
 from .verify_stage_3_graphs import verify_stage_3_graphs
@@ -71,39 +70,6 @@ with_adaptation_with_radiation = {
 # TODO: ensure the run parameters are in a legend
 # TODO: loop over the graphs (t), and output them.
 # TODO: append tags to output file(s).
-
-
-@typechecked
-def output_files_stage_4(
-    correct: bool,
-    experiment_config: dict,
-    nodes_alipour: List[int],
-    nodes_snn: List[int],
-    run_config: dict,
-) -> None:
-    """This only outputs the algorithm performance and adaptation performance
-    on the specific graph.
-
-    It does so by outputting the nodes selected by Alipour, the nodes
-    selected by the SNN graph, and a boolean indicating whether they are
-    the same or not.
-
-    :param correct: bool:
-    :param experiment_config: dict:
-    :param nodes_alipour: List[int]:
-    :param nodes_snn: List[int]:
-    :param run_config: dict:
-    :param correct: bool:
-    :param experiment_config: dict:
-    :param nodes_alipour: List[int]:
-    :param nodes_snn: List[int]:
-    :param run_config: dict:
-    """
-
-    run_config_to_filename(run_config)
-    # TODO: ensure the run parameters are in a legend
-    # TODO: loop over the graphs (t), and output them.
-    # TODO: append tags to output file(s).
 
 
 # pylint: disable=R0903

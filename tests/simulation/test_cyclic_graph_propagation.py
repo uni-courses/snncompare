@@ -20,13 +20,13 @@ from snnbackends.networkx.verify_graph_is_networkx_snn import (
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
-from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
 from tests.simulation.test_rand_network_propagation import (
     Test_propagation_with_recurrent_edges,
 )
 from tests.simulation.tests_simulation_helper import (
     get_graph_for_cyclic_propagation,
 )
+from tests.test_scope import Long_scope_of_tests
 from tests.tests_helper import (
     compare_static_snn_properties,
     get_cyclic_graph_without_directed_path,
@@ -45,8 +45,6 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
     @typechecked
     def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
-
-        # self.test_scope = Scope_of_tests()
         self.test_scope = Long_scope_of_tests(export=True, show=False)
 
     @typechecked

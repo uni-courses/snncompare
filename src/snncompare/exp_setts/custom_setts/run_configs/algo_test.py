@@ -23,7 +23,9 @@ from snncompare.export_results.export_json_results import (
 from snncompare.helper import file_exists
 
 
-def store_experiment_config_to_file(exp_config: dict, filename: str) -> None:
+def store_experiment_config_to_file(
+    custom_config_path: str, exp_config: dict, filename: str
+) -> None:
     """Verifies the experiment setting and then exports it to a dictionary."""
 
     # Verify the experiment experiment_config are complete and valid.
@@ -36,18 +38,16 @@ def store_experiment_config_to_file(exp_config: dict, filename: str) -> None:
     )
 
     # epxort to file.
-    filepath = (
-        f"src/snncompare/exp_setts/custom_setts/exp_setts/{filename}.json"
-    )
+    filepath = f"{custom_config_path}{filename}.json"
     new_dict = encode_tuples(exp_config)
     write_dict_to_json(filepath, jsons.dump(new_dict))
 
 
-def load_experiment_config_from_file(filename: str) -> dict:
+def load_experiment_config_from_file(
+    custom_config_path: str, filename: str
+) -> dict:
     """Loads an experiment config from file, then verifies and returns it."""
-    filepath = (
-        f"src/snncompare/exp_setts/custom_setts/exp_setts/{filename}.json"
-    )
+    filepath = f"{custom_config_path}{filename}.json"
     if file_exists(filepath):
         with open(filepath, encoding="utf-8") as json_file:
             encoded_exp_config = json.load(json_file)

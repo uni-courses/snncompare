@@ -1,4 +1,4 @@
-"""File represents LIF neuron object."""
+"""Stores the scope of the tests."""
 from typeguard import typechecked
 
 

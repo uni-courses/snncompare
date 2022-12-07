@@ -13,7 +13,7 @@ from snnbackends.networkx.verify_graph_is_networkx_snn import (
 from snnbackends.verify_graph_is_snn import verify_networkx_snn_spec
 from typeguard import typechecked
 
-from tests.exp_setts.unsorted.test_scope import Long_scope_of_tests
+from tests.test_scope import Long_scope_of_tests
 
 
 class Test_networkx_and_lava_snn_simulation_produce_identical_results(
@@ -26,7 +26,9 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
     @typechecked
     def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
-        self.test_scope = Long_scope_of_tests(export=True, show=False)
+        self.test_scope: Long_scope_of_tests = Long_scope_of_tests(
+            export=True, show=False
+        )
 
     @typechecked
     def test_generates_valid_snn_networks_without_recursive_edges(

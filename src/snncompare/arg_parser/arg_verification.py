@@ -10,10 +10,13 @@ from ..helper import file_exists
 
 
 @typechecked
-def verify_args(args: Any) -> None:
+def verify_args(args: Any, custom_config_path: str) -> None:
     """Performs the checks to verify the parser."""
-    verify_input_graph_path(args.graph_filepath)
-    verify_experiment_settings(args.experiment_settings_path)
+    if isinstance(args.graph_filepath, str):
+        verify_input_graph_path(args.graph_filepath)
+    verify_experiment_settings(
+        custom_config_path, args.experiment_settings_name
+    )
 
 
 @typechecked
@@ -22,7 +25,7 @@ def verify_input_graph_path(graph_path: str) -> None:
     networkx graph."""
     # Assert graph file exists.
     if not file_exists(graph_path):
-        raise FileNotFoundError("Input Graph path was invalid:{graph_path}")
+        raise FileNotFoundError(f"Input Graph path was invalid:{graph_path}")
 
     # Read output JSON file into dict.
     with open(graph_path, encoding="utf-8") as json_file:
@@ -41,10 +44,13 @@ def verify_input_graph_path(graph_path: str) -> None:
 
 
 @typechecked
-def verify_experiment_settings(exp_setts_path: str) -> None:
+def verify_experiment_settings(
+    custom_config_path: str, exp_setts_name: str
+) -> None:
     """Verifies the filepath for the input graph exists and contains a valid
     networkx graph."""
     # Assert graph file exists.
+    exp_setts_path = f"{custom_config_path}{exp_setts_name}.json"
     if not file_exists(exp_setts_path):
         raise FileNotFoundError(
             "Input experiment settings path was invalid: "

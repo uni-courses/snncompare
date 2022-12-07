@@ -141,14 +141,14 @@ ulimit -n 800000
 You can run the experiment with command:
 
 ```bash
-python -m src.snncompare -e mdsa_creation_only_size_3_4 -v -x
+python -m src.snncompare -e mdsa_size3_m1 -v -x
 ```
 
 which is the same as:
 
 ```bash
 python -m src.snncompare --experiment-settings-name \
-mdsa_creation_only_size_3_4 -visualise-snn --export-images
+mdsa_size3_m1 -visualise-snn --export-images
 ```
 
 For more info, run:

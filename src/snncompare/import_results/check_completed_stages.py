@@ -120,22 +120,6 @@ def nx_graphs_have_completed_stage(
     return True
 
 
-@typechecked
-def stage_4_results_exist(nx_graphs: dict) -> bool:
-    """Verifies the stage 4 results are stored in the expected graph
-    objects."""
-    for graph_name, graph in nx_graphs.items():
-        if graph_name != "input_graph":
-            if "results" not in graph.graph.keys():
-                return False
-            if not isinstance(graph.graph["results"], dict):
-                raise Exception(
-                    "Error, unexpected result type in graph. "
-                    + f'Expected dict, yet got:{type(graph.graph["results"])}'
-                )
-    return True
-
-
 # pylint: disable=R1702
 @typechecked
 def has_valid_json_results(

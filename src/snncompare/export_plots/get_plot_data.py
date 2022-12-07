@@ -167,10 +167,6 @@ def add_neuron_properties_to_plot(
     :param nodenames:
     :param pos:
     """
-    # First convert the node properties into a nx_LIF neuron.
-    # TODO: Include check to see if nx or lava neurons are used.
-    # old_graph_to_new_graph_properties(G,t)
-
     for nodename in nodenames:
 
         # Shift the x-coordinates of the redundant neurons to right for
@@ -191,26 +187,6 @@ def add_neuron_properties_to_plot(
             transform=axis.transData,
             fontsize=4,
         )
-
-
-@typechecked
-def plot_unstructured_graph(G: nx.DiGraph, show: bool = False) -> None:
-    """
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    param iteration: The initialisation iteration that is used.
-    :param size: Nr of nodes in the original graph on which test is ran.
-    :param show:  (Default value = False)
-
-    """
-    # TODO: Remove unused function
-    nx.draw(G, with_labels=True)
-    if show:
-        plt.show()
-    # plot_export = Plot_to_tex()
-    # plot_export.export_plot(plt, f"G_{size}_{iteration}")
-    plt.clf()
-    plt.close()
 
 
 @typechecked
@@ -324,22 +300,3 @@ def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
     if reset_labels:
         node_labels = nx.get_node_attributes(G, "")
     return node_labels
-
-
-@typechecked
-def add_recursive_edges_to_graph(G: nx.DiGraph) -> None:
-    """Adds recursive edges to graph for nodes that have the recur attribute.
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    """
-    for nodename in G.nodes:
-        if "recur" in G.nodes[nodename].keys():
-            G.add_edges_from(
-                [
-                    (
-                        nodename,
-                        nodename,
-                    )
-                ],
-                weight=G.nodes[nodename]["recur"],
-            )
