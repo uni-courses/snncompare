@@ -46,7 +46,7 @@ def plot_coordinated_graph(
         G,
         nx.get_node_attributes(G, "pos"),
         with_labels=True,
-        node_size=360,
+        node_size=160,
         font_size=6,
         width=0.2,
         node_color=color_map,
@@ -63,9 +63,8 @@ def plot_coordinated_graph(
         node: (x, y)
         for (node, (x, y)) in nx.get_node_attributes(G, "pos").items()
     }
-    nx.draw_networkx_labels(G, pos, labels=node_labels_dict)
-    edge_labels = nx.get_edge_attributes(G, "weight")
-    nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=5)
+
+    get_edge_labels(node_labels_dict, G, pos)
 
     plt.axis("off")
     axis = plt.gca()
@@ -92,6 +91,32 @@ def plot_coordinated_graph(
     # plt.savefig()
     plt.clf()
     plt.close()
+
+
+@typechecked
+def get_edge_labels(
+    node_labels_dict: Dict, snn_graph: nx.DiGraph, pos: Any
+) -> None:
+    """Sets the edge labels.
+
+    pos is node position.
+    """
+    edge_labels: Dict = {}
+
+    # Get the synaptic weights per node.
+    for edge in snn_graph.edges:
+        edgeweight = snn_graph.edges[edge]["synapse"].weight
+
+        # Create dictionary with synaptic weights.
+        edge_labels[edge] = edgeweight
+
+    nx.draw_networkx_labels(snn_graph, pos, labels=node_labels_dict)
+
+    # TODO: Set edge weight positions per edge to non-overlapping positions.
+    # TODO: Make edge weight "hitbox" transparent.
+    nx.draw_networkx_edge_labels(
+        snn_graph, pos, edge_labels, font_size=5, label_pos=0.2
+    )
 
 
 @typechecked
@@ -200,56 +225,24 @@ def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
 
     colour_dict = {}
     for node_name in G.nodes:
+        # print(f'G.nodes[node_name]={G.nodes[node_name]}')
         if "nx_lif" in G.nodes[node_name].keys():
             if "rad_death" in G.nodes[node_name].keys():
                 if G.nodes[node_name]["rad_death"]:
                     colour_dict[node_name] = "red"
                     if G.nodes[node_name]["nx_lif"][t].spikes:
                         raise Exception("Dead neuron can't spike.")
-            # TODO: determine whether to use s_out = 1 or, spikes=False.
             if G.nodes[node_name]["nx_lif"][t].spikes:
                 colour_dict[node_name] = "green"
                 for neighbour in nx.all_neighbors(G, node_name):
                     spiking_edges.append((node_name, neighbour))
             if node_name not in colour_dict:
-                colour_dict[node_name] = "white"
+                colour_dict[node_name] = "yellow"
         else:
-            colour_dict[node_name] = "yellow"
+            colour_dict[node_name] = "black"
     for node_name in G.nodes:
         color_map.append(colour_dict[node_name])
     return color_map, spiking_edges
-
-
-# @typechecked
-# def set_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List, List]:
-#    """
-#
-#    :param G: The original graph on which the MDSA algorithm is ran.
-#    :param t:
-#
-#    """
-#    color_map = []
-#    spiking_edges = []
-#    unseen_edges = []
-#    for node_name in G.nodes:
-#        if G.nodes[node_name]["spike"] != {}:
-#            # for node in G:
-#            if G.nodes[node_name]["spike"][t]:
-#                color_map.append("green")
-#                for neighbour in nx.all_neighbors(G, node_name):
-#                    spiking_edges.append((node_name, neighbour))
-#            else:
-#                color_map.append("white")
-#        else:
-#            if node_name[:11] != "connecting_":
-#                # raise Exception(
-#                # TODO: remove this from being needed.
-#                print(f"Did not find spike dictionary for node:{node_name}")
-#            else:
-#                color_map.append("yellow")
-#                for neighbour in nx.all_neighbors(G, node_name):
-#                    unseen_edges.append((node_name, neighbour))
-#    return color_map, spiking_edges, unseen_edges
 
 
 @typechecked
