@@ -21,7 +21,6 @@ from typeguard import typechecked
 
 from snncompare.export_plots.get_plot_data import plot_coordinated_graph
 
-from ..helper import get_sim_duration
 from .export_json_results import write_dict_to_json
 from .export_nx_graph_to_json import convert_digraphs_to_json
 from .verify_stage_1_graphs import verify_stage_1_graphs
@@ -191,11 +190,9 @@ def plot_graph_behaviours(
 
     # Loop over the graph types
     for graph_name, graph in stage_2_graphs.items():
-        sim_duration = get_sim_duration(
-            stage_2_graphs["input_graph"],
-            run_config,
-        )
         if graph_name != "input_graph":
+            print(graph.graph)
+            sim_duration = graph.graph["sim_duration"]
             for t in range(
                 0,
                 sim_duration,

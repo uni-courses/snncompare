@@ -441,6 +441,12 @@ def get_sim_duration(
 
 
 @typechecked
+def get_actual_duration(snn_graph: nx.DiGraph) -> int:
+    """Compute the simulation duration for a given algorithm and graph."""
+    return snn_graph.graph["sim_duration"]
+
+
+@typechecked
 def get_expected_stages(
     export_images: bool, stage_index: int, to_run: dict
 ) -> List[int]:

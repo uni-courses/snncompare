@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Union
 import networkx as nx
 from typeguard import typechecked
 
-from ..helper import get_sim_duration
+from ..helper import get_actual_duration
 
 
 @typechecked
@@ -62,7 +62,7 @@ def run_config_to_filename(run_config: dict) -> str:
 
 @typechecked
 def get_expected_image_paths_stage_3(
-    graph_names: List[str],
+    graphs_dict: Dict,
     input_graph: nx.Graph,
     run_config: dict,
     extensions: List[str],
@@ -77,20 +77,18 @@ def get_expected_image_paths_stage_3(
     if "alg_props" not in input_graph.graph.keys():
         raise Exception("Error, algo_props is not set.")
 
-    sim_duration = get_sim_duration(
-        input_graph,
-        run_config,
-    )
-
     # TODO: move this into hardcoded setting.
     image_dir = "latex/Images/graphs/"
     for extension in extensions:
-        for graph_name in graph_names:
+        for graph_name, snn_graph in graphs_dict.items():
             if graph_name == "input_graph":
                 image_filepaths.append(
                     f"results/{graph_name}_{filename}{extension}"
                 )
             else:
+                print(f"graph_name={graph_name}")
+                print(f"snn_graph={snn_graph}")
+                sim_duration = get_actual_duration(snn_graph)
                 for t in range(0, sim_duration):
                     image_filepaths.append(
                         image_dir + f"{graph_name}_{filename}_{t}{extension}"

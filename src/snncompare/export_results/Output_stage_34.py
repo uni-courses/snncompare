@@ -54,7 +54,7 @@ def output_stage_files_3_and_4(
                 results_nx_graphs["graphs_dict"],
                 results_nx_graphs["run_config"],
             )
-            create_gif_of_run_config(results_nx_graphs["run_config"])
+            create_gif_of_run_config(results_nx_graphs)
             for nx_graph in results_nx_graphs["graphs_dict"].values():
                 add_stage_completion_to_graph(nx_graph, 3)
 

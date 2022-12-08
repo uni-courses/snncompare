@@ -5,17 +5,15 @@ from snncompare.export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
 )
-from snncompare.export_results.verify_stage_1_graphs import (
-    get_expected_stage_1_graph_names,
-)
 from snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
 from snncompare.helper import get_extensions_list
 
 
-def create_gif_of_run_config(run_config: dict) -> None:
+def create_gif_of_run_config(results_nx_graphs: dict) -> None:
     """Creates a gif of an SNN propagation."""
+    run_config = results_nx_graphs["run_config"]
     expected_filepaths = []
     extensions = get_extensions_list(run_config, stage_index=3)
     output_filename = run_config_to_filename(run_config)
@@ -24,7 +22,7 @@ def create_gif_of_run_config(run_config: dict) -> None:
     if run_config["export_images"]:
         expected_filepaths.extend(
             get_expected_image_paths_stage_3(
-                get_expected_stage_1_graph_names(run_config),
+                results_nx_graphs["graphs_dict"],
                 get_input_graph(run_config),
                 run_config,
                 extensions,
