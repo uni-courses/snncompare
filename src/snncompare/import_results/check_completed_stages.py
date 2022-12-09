@@ -1,16 +1,37 @@
 """Method used to perform checks on whether the input is loaded correctly."""
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
-from ..export_results.helper import run_config_to_filename
-from ..export_results.load_json_to_nx_graph import load_pre_existing_graph_dict
+from snncompare.graph_generation.stage_1_get_input_graphs import (
+    get_input_graph,
+)
+
+from ..export_results.helper import (
+    get_expected_image_paths_stage_3,
+    run_config_to_filename,
+)
+from ..export_results.load_json_to_nx_graph import (
+    load_json_to_nx_graph_from_file,
+    load_pre_existing_graph_dict,
+)
 from ..export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
 from ..helper import get_expected_stages, get_extensions_list
+
+
+@typechecked
+def get_stage_2_nx_graphs(run_config: Dict, to_run: dict) -> Dict:
+    """Loads the json graphs for stage 2 from file.
+
+    Then converts them to nx graphs and returns them.
+    """
+    # Load results from file.
+    nx_graphs_dict = load_json_to_nx_graph_from_file(run_config, 2, to_run)
+    return nx_graphs_dict
 
 
 # pylint: disable=R0912
@@ -41,18 +62,17 @@ def has_outputted_stage(
 
         if stage_index == 3:
             if run_config["export_images"]:
-                # expected_filepaths.extend(
-                #    get_expected_image_paths_stage_3(
-                #        results_nx_graphs,
-                #        get_input_graph(run_config),
-                #        run_config,
-                #        extensions,
-                #    )
-                # )
-                # TODO: start at t_0 for the graph.
-                # Then load from json how many t there should be based on
-                # actual sim duration. Then assert they all exist.
-                print("TODO: FIX THIS.")
+                if has_outputted_stage(run_config, 2, to_run):
+                    results_nx_graphs = get_stage_2_nx_graphs(
+                        run_config, to_run
+                    )
+                    stage_3_img_filepaths = get_expected_image_paths_stage_3(
+                        results_nx_graphs,
+                        get_input_graph(run_config),
+                        run_config,
+                        extensions,
+                    )
+                    expected_filepaths.extend(stage_3_img_filepaths)
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
