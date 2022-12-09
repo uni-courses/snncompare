@@ -47,16 +47,16 @@ def generate_list_of_n_random_nrs(
     value = None)
     """
     if max_val is None:
-        return list(range(1, len(G) + 1))
-    if max_val == len(G):
-        return list(range(1, len(G) + 1))
-    if max_val > len(G):
-        large_list = list(range(1, max_val + 1))
+        return list(range(0, len(G)))
+    if max_val == len(G) - 1:
+        return list(range(0, len(G)))
+    if max_val >= len(G):
+        large_list = list(range(0, max_val))
         if seed is not None:
             random.seed(seed)
         return random.sample(large_list, len(G))
     raise Exception(
-        "The max_val={max_val} is smaller than the graph size:{len(G)}."
+        f"The max_val={max_val} is smaller than the graph size:{len(G)}."
     )
 
 
