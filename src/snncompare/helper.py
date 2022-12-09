@@ -118,9 +118,7 @@ def print_time(status: Any, previous_millis: int) -> Tuple[Any, int]:
 
 
 @typechecked
-def compute_mark(
-    delta: float, input_graph: nx.Graph, rand_ceil: float
-) -> None:
+def compute_mark(input_graph: nx.Graph, rand_ceil: float) -> None:
     """Computes the mark at the counter neurons after the simulation is
     completed.
 
@@ -139,10 +137,8 @@ def compute_mark(
                 input_graph.nodes[n]["weight"] == max_weight
             ):  # should all max weight neurons be marked or only one of them?
 
-                # Always raise mark always by (rand_ceil + 1) * delta
-                # (not by 1).
                 # Read of the score from countermarks, not marks.
-                input_graph.nodes[n]["marks"] += (rand_ceil + 1) * delta
+                input_graph.nodes[n]["marks"] += rand_ceil + 1
                 input_graph.nodes[n]["countermarks"] += 1
                 nr_of_max_weights = nr_of_max_weights + 1
 
@@ -217,10 +213,8 @@ def get_alipour_labels(G: nx.DiGraph, configuration: str) -> Dict[str, str]:
             labels[
                 node_name
             ] = f'{node_name}, W:{G.nodes[node_name]["weight"]}'
-        elif configuration == "2inhib_weight":
-            labels[
-                node_name
-            ] = f'{node_name}, W:{G.nodes[node_name]["inhibited_weight"]}'
+        else:
+            raise Exception("Unsupported configuration.")
 
     return labels
 
@@ -241,9 +235,7 @@ def file_exists(filepath: str) -> bool:
 
 @typechecked
 def compute_marks_for_m_larger_than_one(
-    delta: float,
     input_graph: nx.Graph,
-    inhibition: float,
     iteration: int,
     m: int,
     seed: int,
@@ -258,13 +250,13 @@ def compute_marks_for_m_larger_than_one(
     # Don't compute for m=0
     for loop in range(1, m + 1):
         for node in input_graph.nodes:
+
+            # Compute the weights for this round of m.
             input_graph.nodes[node]["weight"] = (
                 input_graph.nodes[node]["marks"]
                 + input_graph.nodes[node]["random_number"]
             )
-            input_graph.nodes[node]["inhibited_weight"] = (
-                input_graph.nodes[node]["weight"] - inhibition
-            )
+
             # Reset marks.
             input_graph.nodes[node]["marks"] = 0
             input_graph.nodes[node]["countermarks"] = 0
@@ -279,7 +271,7 @@ def compute_marks_for_m_larger_than_one(
 
                     # Always raise mark always by (rand_ceil + 1) * delta
                     # (not by 1).
-                    input_graph.nodes[n]["marks"] += (rand_ceil + 1) * delta
+                    input_graph.nodes[n]["marks"] += rand_ceil + 1
                     input_graph.nodes[n]["countermarks"] += 1
 
         if show or export:
@@ -308,9 +300,7 @@ def compute_marks_for_m_larger_than_one(
 
 @typechecked
 def set_node_default_values(
-    delta: float,
     input_graph: nx.Graph,
-    inhibition: int,
     node: int,
     rand_ceil: float,
     uninhibited_spread_rand_nrs: List[float],
@@ -320,19 +310,16 @@ def set_node_default_values(
     # TODO: reduce 6/5 arguments to at most 5/5.
     # Initialise values.
     # G.nodes[node]["marks"] = 0
-    input_graph.nodes[node]["marks"] = (
-        input_graph.degree(node) * (rand_ceil + 1) * delta
+    input_graph.nodes[node]["marks"] = input_graph.degree(node) * (
+        rand_ceil + 1
     )
     input_graph.nodes[node]["countermarks"] = 0
     input_graph.nodes[node]["random_number"] = (
         1 * uninhibited_spread_rand_nrs[node]
     )
     input_graph.nodes[node]["weight"] = (
-        input_graph.degree(node) * (rand_ceil + 1) * delta
+        input_graph.degree(node) * (rand_ceil + 1)
         + input_graph.nodes[node]["random_number"]
-    )
-    input_graph.nodes[node]["inhibited_weight"] = (
-        input_graph.nodes[node]["weight"] - inhibition
     )
 
 
