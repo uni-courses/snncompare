@@ -410,7 +410,7 @@ def add_stage_completion_to_graph(
 
 
 @typechecked
-def get_sim_duration(
+def get_max_sim_duration(
     input_graph: nx.Graph,
     run_config: dict,
 ) -> int:
@@ -418,23 +418,12 @@ def get_sim_duration(
     for algo_name, algo_settings in run_config["algorithm"].items():
         if algo_name == "MDSA":
 
-            # TODO: determine why +10 is required.
             # TODO: Move into stage_1 get input graphs.
-
-            sim_time: int = (
-                input_graph.graph["alg_props"]["inhibition"]
-                * (algo_settings["m_val"] + 2)
-                + 30
+            sim_time: int = int(
+                len(input_graph)
+                * (len(input_graph) + 1)
+                * ((algo_settings["m_val"] * 6) + 1)  # +_6 for delay
             )
-
-            if not isinstance(sim_time, int):
-                raise Exception(
-                    "Error, sim_time is not an int."
-                    + 'snn_graph.graph["alg_props"]["inhibition"]='
-                    + f'{input_graph.graph["alg_props"]["inhibition"]}'
-                    + '(algo_settings["m_val"] + 2)='
-                    + f'{(algo_settings["m_val"] + 2)}'
-                )
             return sim_time
         raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
     raise Exception("Error, the simulation time was not found.")

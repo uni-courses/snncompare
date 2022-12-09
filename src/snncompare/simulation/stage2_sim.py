@@ -5,7 +5,7 @@ import networkx as nx
 from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
 from typeguard import typechecked
 
-from ..helper import add_stage_completion_to_graph, get_sim_duration
+from ..helper import add_stage_completion_to_graph, get_max_sim_duration
 
 
 @typechecked
@@ -37,7 +37,7 @@ def sim_graphs(
 
             stage_1_graphs[graph_name].graph[
                 "sim_duration"
-            ] = get_sim_duration(stage_1_graphs["input_graph"], run_config)
+            ] = get_max_sim_duration(stage_1_graphs["input_graph"], run_config)
 
             # TODO: compute actual inhibition and mval
             run_snn_on_networkx(
