@@ -23,20 +23,19 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
 
     TODO: --graph-filepath
     TODO: --run-config
+    TODO: list existing exp_configs
+    TODO: list existing exp_configs
     """
-    # TODO: just try it instead of hardcoding list of options.
-    if args.experiment_settings_name == "mdsa_size3_5_m_0_5":
-        exp_setts = load_experiment_config_from_file(
-            custom_config_path, "mdsa_size3_5_m_0_5"
-        )
-    elif args.experiment_settings_name == "mdsa_size5_m4":
-        exp_setts = load_experiment_config_from_file(
-            custom_config_path, "mdsa_size5_m4"
-        )
-    elif args.experiment_settings_name == "mdsa_size3_m1":
-        exp_setts = load_experiment_config_from_file(
-            custom_config_path, "mdsa_size3_m1"
-        )
+
+    # mdsa_creation_only_size_3_4
+    # mdsa_size3_5_m_0_5
+    # mdsa_size3_m1
+    # mdsa_size3_m0
+    # mdsa_size5_m4
+    # mdsa_size4_m0
+    exp_setts = load_experiment_config_from_file(
+        custom_config_path, args.experiment_settings_name
+    )
 
     if args.visualise_snn:
         exp_setts["show_snns"] = True

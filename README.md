@@ -151,6 +151,12 @@ python -m src.snncompare --experiment-settings-name \
 mdsa_size3_m1 -visualise-snn --export-images
 ```
 
+or:
+
+```bash
+python -m src.snncompare --e mdsa_size3_m1 -v -x
+```
+
 For more info, run:
 
 ```bash
@@ -161,6 +167,12 @@ And run tests with:
 
 ```bash
 python -m pytest
+```
+
+or to see live output, on any tests filenames containing substring: `results`:
+
+```bash
+python -m pytest --capture=tee-sys -k results
 ```
 
 This generates the graphs from the default experiment configurations, and
