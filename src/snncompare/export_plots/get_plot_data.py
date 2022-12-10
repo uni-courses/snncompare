@@ -15,6 +15,7 @@ from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 # pylint: disable=R0913
+# pylint: disable=R0914
 @typechecked
 def plot_coordinated_graph(
     extensions: List[str],
@@ -62,27 +63,30 @@ def plot_coordinated_graph(
     # pylint: disable=W0108
     node_labels_list = list(map(lambda x: str(x), G.nodes))
 
-    pos = {
+    original_pos = {
         node: (x, y)
         for (node, (x, y)) in nx.get_node_attributes(G, "pos").items()
     }
-    print("")
-    print("")
-    pprint(pos)
-    print("")
-    get_edge_labels(node_labels_dict, G, pos)
+
+    norm_pos = normalise_node_positions(original_pos)
+    get_edge_labels(node_labels_dict, G, norm_pos)
 
     plt.axis("off")
     axis = plt.gca()
-    axis.set_xlim([1.2 * x for x in axis.get_xlim()])
-    axis.set_ylim([1.2 * y for y in axis.get_ylim()])
+    print(f"axis.get_xlim()={axis.get_xlim()}")
+    print(f"axis.get_ylim()={axis.get_ylim()}")
+    # exit()
+    # axis.set_xlim([1.0 * x for x in axis.get_xlim()])
+    # axis.set_ylim([1.0 * y for y in axis.get_ylim()])
+    axis.set_xlim([0, 1])
+    axis.set_ylim([0, 1])
 
     # Set a title in the image.
     if title is not None:
         plt.suptitle(title, fontsize=14)
 
     add_neuron_properties_to_plot(
-        axis, desired_properties, G, node_labels_list, pos, t
+        axis, desired_properties, G, node_labels_list, norm_pos, t
     )
 
     # f = plt.figure()
@@ -128,11 +132,14 @@ def get_edge_labels(
 @typechecked
 def set_node_positions(snn_graph: nx.DiGraph, t: int) -> None:
     """Sets the positions of the nodes of the snn graph."""
+    original_pos = {}
+    for nodename in snn_graph.nodes:
+        original_pos[nodename] = snn_graph.nodes[nodename]["nx_lif"][t].pos
+    norm_pos = normalise_node_positions(original_pos)
+
     # TODO: include backend check.
     for nodename in snn_graph.nodes:
-        snn_graph.nodes[nodename]["pos"] = snn_graph.nodes[nodename]["nx_lif"][
-            t
-        ].pos
+        snn_graph.nodes[nodename]["pos"] = norm_pos[nodename]
 
 
 @typechecked
@@ -210,6 +217,11 @@ def add_neuron_properties_to_plot(
         annotation_text = get_annotation_text(
             desired_properties, G, nodename, t
         )
+
+        print("Label")
+        pprint(pos)
+        print("")
+
         # Include text in plot.
         axis.text(
             pos[nodename][0] + shift_right,
@@ -299,3 +311,35 @@ def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
     if reset_labels:
         node_labels = nx.get_node_attributes(G, "")
     return node_labels
+
+
+@typechecked
+def normalise_node_positions(pos: Any) -> Dict:
+    """Maps the node positions back to domain 0 to 1."""
+
+    new_pos = {}
+    x_min = min(list(map(lambda xy: xy[0], pos.values())))
+    y_min = min(list(map(lambda xy: xy[1], pos.values())))
+    x_max = max(list(map(lambda xy: xy[0], pos.values())))
+    y_max = max(list(map(lambda xy: xy[1], pos.values())))
+
+    # Shift the coordinate minima to 0,0
+    for nodename, xy in pos.items():
+        new_pos[nodename] = [xy[0] - x_min, xy[1] - y_min]
+
+    x_min = min(list(map(lambda xy: xy[0], new_pos.values())))
+    y_min = min(list(map(lambda xy: xy[1], new_pos.values())))
+    x_max = max(list(map(lambda xy: xy[0], new_pos.values())))
+    y_max = max(list(map(lambda xy: xy[1], new_pos.values())))
+
+    # remap to range 0,1:
+    for nodename, xy in new_pos.items():
+        new_pos[nodename] = [xy[0] / x_max, xy[1] / y_max]
+
+    x_min = min(list(map(lambda xy: xy[0], new_pos.values())))
+    y_min = min(list(map(lambda xy: xy[1], new_pos.values())))
+    x_max = max(list(map(lambda xy: xy[0], new_pos.values())))
+    y_max = max(list(map(lambda xy: xy[1], new_pos.values())))
+    # TODO: assert values =1.
+
+    return new_pos
