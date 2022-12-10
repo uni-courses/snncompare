@@ -27,6 +27,8 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     TODO: list existing exp_configs
     """
 
+    supp_setts = Supported_experiment_settings()
+
     # mdsa_creation_only_size_3_4
     # mdsa_size3_5_m_0_5
     # mdsa_size3_m1
@@ -37,15 +39,32 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
         custom_config_path, args.experiment_settings_name
     )
 
+    # By default export pdf, if exporting is on.
+    if args.export_images == "export_images":
+        exp_setts["export_images"] = True
+        exp_setts["export_types"] = ["pdf"]
+    # Don't export if it is not wanted.
+    elif args.export_images is None:
+        exp_setts["export_images"] = False
+    # Allow user to specify image export types (and verify them).
+    else:
+        extensions = args.export_images.split(",")
+        for extension in extensions:
+            if extension in supp_setts.export_types:
+                print(f"extensions={extensions}")
+            else:
+                raise Exception(
+                    f"Error, image output extension:{extension} is"
+                    " not supported."
+                )
+        exp_setts["export_images"] = True
+        exp_setts["export_types"] = extensions
+
+    # Determine whether user wants to pause computation to show images.
     if args.visualise_snn:
         exp_setts["show_snns"] = True
     else:
         exp_setts["show_snns"] = False
-
-    if args.export_images:
-        exp_setts["export_images"] = True
-    else:
-        exp_setts["export_images"] = False
 
     # if not args.overwrite_visualisation:
     #    exp_setts["export_images"] = True

@@ -189,10 +189,10 @@ def plot_graph_behaviours(
     desired_props = get_desired_properties_for_graph_printing()
 
     # Loop over the graph types
-    for graph_name, graph in stage_2_graphs.items():
+    for graph_name, snn_graph in stage_2_graphs.items():
         if graph_name != "input_graph":
-            print(graph.graph)
-            sim_duration = graph.graph["sim_duration"]
+            print(snn_graph.graph)
+            sim_duration = snn_graph.graph["sim_duration"]
             for t in range(
                 0,
                 sim_duration,
@@ -202,18 +202,20 @@ def plot_graph_behaviours(
                 # pylint: disable=R0913
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
                 plot_coordinated_graph(
-                    graph,
-                    desired_props,
-                    t,
-                    False,
-                    f"{graph_name}_{filepath}_{t}",
+                    extensions=run_config["export_types"],
+                    desired_properties=desired_props,
+                    G=snn_graph,
+                    t=t,
+                    filename=f"{graph_name}_{filepath}_{t}",
+                    show=False,
+                    title=None,
                     # title=create_custom_plot_titles(
                     #    graph_name, t, run_config["seed"]
                     # ),
                 )
         else:
             plot_uncoordinated_graph(
-                graph, f"results/{graph_name}_{filepath}.png", show=False
+                snn_graph, f"results/{graph_name}_{filepath}.png", show=False
             )
 
 

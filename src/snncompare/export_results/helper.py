@@ -44,6 +44,7 @@ def run_config_to_filename(run_config: dict) -> str:
     stripped_run_config.pop("overwrite_visualisation")  # Irrellevant
     stripped_run_config.pop("show_snns")  # Irrellevant
     stripped_run_config.pop("export_images")  # Irrellevant
+    stripped_run_config.pop("export_types")  # Irrellevant
     # instead (To reduce filename length).
     filename = str(flatten(stripped_run_config))
 
@@ -81,16 +82,16 @@ def get_expected_image_paths_stage_3(
     image_dir = "latex/Images/graphs/"
     for extension in extensions:
         for graph_name, snn_graph in graphs_dict.items():
-            if graph_name == "input_graph":
-                image_filepaths.append(
-                    f"results/{graph_name}_{filename}{extension}"
-                )
-            else:
+            if graph_name != "input_graph":
+                # image_filepaths.append(
+                #    f"results/{graph_name}_{filename}.{extension}"
+                # )
+                #            else:
                 print(f"graph_name={graph_name}")
                 print(f"snn_graph={snn_graph}")
                 sim_duration = get_actual_duration(snn_graph)
                 for t in range(0, sim_duration):
                     image_filepaths.append(
-                        image_dir + f"{graph_name}_{filename}_{t}{extension}"
+                        image_dir + f"{graph_name}_{filename}_{t}.{extension}"
                     )
     return image_filepaths

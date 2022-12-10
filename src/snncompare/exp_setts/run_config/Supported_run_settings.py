@@ -3,11 +3,14 @@
 (The values of the settings may vary, yet the values of an experiment
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
+
+TODO: determine whether to separate typing object or not, like in
+Supported_experiment_settings.py.
 """
 import copy
 import hashlib
 import json
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 
 from typeguard import typechecked
 
@@ -44,6 +47,7 @@ class Supported_run_settings:
         }
         self.optional_parameters = {
             "export_images": bool,
+            "export_types": List[str],
             "max_duration": int,
             "overwrite_snn_creation": bool,
             "overwrite_snn_propagation": bool,

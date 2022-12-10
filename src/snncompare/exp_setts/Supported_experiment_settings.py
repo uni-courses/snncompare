@@ -7,6 +7,7 @@ setting types should be identical.)
 import copy
 import hashlib
 import json
+from typing import List
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -56,6 +57,7 @@ class Exp_setts_typing:
         self.optional_parameters = {
             "show_snns": bool,
             "export_images": bool,
+            "export_types": List[str],
             "unique_id": str,
         }
 
@@ -116,6 +118,9 @@ class Supported_experiment_settings:
 
         # Generate the supported radiations settings.
         self.specify_supported_radiations_settings()
+
+        # Specify the supported image export file extensions.
+        self.export_types = ["pdf", "png"]
 
     @typechecked
     def specify_supported_radiations_settings(self) -> None:

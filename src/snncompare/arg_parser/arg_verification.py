@@ -14,6 +14,9 @@ def verify_args(args: Any, custom_config_path: str) -> None:
     """Performs the checks to verify the parser."""
     if isinstance(args.graph_filepath, str):
         verify_input_graph_path(args.graph_filepath)
+
+    # Verify output extension is passed correctly.
+
     verify_experiment_settings(
         custom_config_path, args.experiment_settings_name
     )

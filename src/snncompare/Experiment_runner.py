@@ -342,6 +342,8 @@ def experiment_config_to_run_configs(
                                 )
 
     for run_config in run_configs:
+        if experiment_config["export_images"]:
+            run_config["export_types"] = experiment_config["export_types"]
         verify_run_config(
             supp_run_setts,
             run_config,

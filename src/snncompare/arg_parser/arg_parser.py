@@ -4,10 +4,15 @@ import argparse
 
 from typeguard import typechecked
 
+from snncompare.exp_setts.Supported_experiment_settings import (
+    Supported_experiment_settings,
+)
+
 
 @typechecked
 def parse_cli_args() -> argparse.Namespace:
     """Reads command line arguments and converts them into python arguments."""
+    supp_setts = Supported_experiment_settings()
 
     # Instantiate the parser
     parser = argparse.ArgumentParser(
@@ -54,10 +59,17 @@ def parse_cli_args() -> argparse.Namespace:
     parser.add_argument(
         "-x",
         "--export-images",
-        action="store_true",
-        default=False,
+        nargs="?",
+        type=str,
+        dest="export_images",
+        const="export_images",
         help=(
-            "Ensures the SNN behaviour visualisation is exported as images."
+            "Ensures the SNN behaviour visualisation is exported, as pdf by "
+            + "default. Supported are:"
+            + f"{supp_setts.export_types}. Usage:"
+            + f'-x {",".join(supp_setts.export_types)} '
+            + "or:\n"
+            + f"--export_images {supp_setts.export_types[0]}"
         ),
     )
 
@@ -67,7 +79,7 @@ def parse_cli_args() -> argparse.Namespace:
         "--visualise-snn",
         action="store_true",
         default=False,
-        help=("Ensures the SNN behaviour is visualised."),
+        help=("Pause computation, show you each plot of the SNN behaviour."),
     )
 
     # Create argument parsers to allow user to overwrite pre-existing output.

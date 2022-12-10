@@ -235,7 +235,9 @@ class Plot_to_tex:
         return os.path.dirname(__file__)
 
     @typechecked
-    def export_plot(self, some_plt: Any, filename: str) -> None:
+    def export_plot(
+        self, some_plt: Any, filename: str, extensions: List[str]
+    ) -> None:
         """
 
         :param plt:
@@ -243,9 +245,11 @@ class Plot_to_tex:
 
         """
         self.create_target_dir_if_not_exists("latex/Images/", "graphs")
-        some_plt.savefig(
-            "latex/Images/" + "graphs/" + filename + ".png", dpi=200
-        )
+        for extension in extensions:
+            some_plt.savefig(
+                "latex/Images/" + "graphs/" + filename + f".{extension}",
+                dpi=200,
+            )
 
     @typechecked
     def create_target_dir_if_not_exists(

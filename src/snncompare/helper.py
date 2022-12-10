@@ -188,6 +188,7 @@ def plot_alipour(
             plt,
             f"alipour_{seed}_size{size}_m{m}_iter{iteration}_combined_"
             + f"{configuration}",
+            extensions=["png"],  # TODO: include run_config extensions.
         )
 
     plt.clf()
@@ -332,6 +333,8 @@ def get_extensions_list(run_config: dict, stage_index: int) -> List:
 
     extensions = list(get_extensions_dict(run_config, stage_index).values())
     """
+    if stage_index == 3:
+        return run_config["export_types"]
     return list(get_extensions_dict(run_config, stage_index).values())
 
 
@@ -352,10 +355,6 @@ def get_extensions_dict(run_config: dict, stage_index: int) -> dict:
             return {"config": ".json"}
         # The networkx simulator is used:
         return {"config_and_graphs": ".json"}
-    if stage_index == 3:
-        # TODO: support .eps and/or .pdf.
-        # TODO: verify graphs, or graphs_dict
-        return {"graphs": ".png"}
     if stage_index == 4:
         return {"config_graphs_and_results": ".json"}
     raise Exception("Unsupported experiment stage.")

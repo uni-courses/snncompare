@@ -3,6 +3,8 @@
 TODO: rename and restructure this function along with:
 helper_network_structure.
 """
+
+from pprint import pprint
 from typing import Any, Dict, List, Tuple, Union
 
 import networkx as nx
@@ -15,11 +17,12 @@ from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 # pylint: disable=R0913
 @typechecked
 def plot_coordinated_graph(
-    G: Union[nx.Graph, nx.DiGraph],
+    extensions: List[str],
     desired_properties: Union[List, None],
+    G: Union[nx.Graph, nx.DiGraph],
     t: int,
-    show: bool = False,
     filename: str = "no_filename",
+    show: bool = False,
     title: str = None,
 ) -> None:
     """
@@ -63,7 +66,10 @@ def plot_coordinated_graph(
         node: (x, y)
         for (node, (x, y)) in nx.get_node_attributes(G, "pos").items()
     }
-
+    print("")
+    print("")
+    pprint(pos)
+    print("")
     get_edge_labels(node_labels_dict, G, pos)
 
     plt.axis("off")
@@ -87,7 +93,7 @@ def plot_coordinated_graph(
         plt.show()
 
     plot_export = Plot_to_tex()
-    plot_export.export_plot(plt, filename)
+    plot_export.export_plot(plt, filename, extensions=extensions)
     # plt.savefig()
     plt.clf()
     plt.close()
