@@ -61,25 +61,6 @@ def generate_list_of_n_random_nrs(
 
 
 @typechecked
-def get_y_position(G: nx.Graph, node: int, neighbour: int, d: float) -> float:
-    """Ensures the degree receiver nodes per node are aligned with continuous
-    interval.
-
-    for example for node 1, the positions 0,2,3 are mapped to positions:
-    0,1,2 by subtracting 1.
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param node:
-    :param neighbour:
-    :param d: Unit length of the spacing used in the positions of the nodes for
-    plotting.
-    """
-    if neighbour > node:
-        return float((node + (neighbour - 1) / len(G)) * 4 * d)
-    return float((node + neighbour / len(G)) * 4 * d)
-
-
-@typechecked
 def get_neuron_from_dict(
     neuron_dict: dict, neurons: List, neuron_name: str
 ) -> Any:

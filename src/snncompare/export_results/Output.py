@@ -201,14 +201,17 @@ def plot_graph_behaviours(
                 # TODO: Include verify that graph len remains unmodified.
                 # pylint: disable=R0913
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
+                # TODO: make plot dimensions etc. function of algorithm.
                 plot_coordinated_graph(
                     extensions=run_config["export_types"],
                     desired_properties=desired_props,
                     G=snn_graph,
+                    height=(len(stage_2_graphs["input_graph"]) - 1) ** 2,
                     t=t,
                     filename=f"{graph_name}_{filepath}_{t}",
                     show=False,
                     title=None,
+                    width=(run_config["algorithm"]["MDSA"]["m_val"] + 1) * 2.5,
                     # title=create_custom_plot_titles(
                     #    graph_name, t, run_config["seed"]
                     # ),
