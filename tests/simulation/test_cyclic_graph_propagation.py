@@ -150,7 +150,7 @@ def run_simulation_for_t_steps(
         print(f"t={t}")
         print("")
         # Run the simulation on networkx.
-        run_snn_on_networkx(G, t)
+        run_snn_on_networkx({}, G, t)
 
         # Run the simulation on lava.
         simulate_snn_on_lava(G, starter_neuron, t)

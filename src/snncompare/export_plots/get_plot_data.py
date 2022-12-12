@@ -27,10 +27,10 @@ def plot_coordinated_graph(
     show: bool = False,
     title: str = None,
 ) -> None:
-    """
+    """Some documentation.
 
     :param G: The original graph on which the MDSA algorithm is ran.
-    param iteration: The initialisation iteration that is used.
+    :param iteration: The initialisation iteration that is used.
     :param size: Nr of nodes in the original graph on which test is ran.
     :param desired_properties:  (Default value = [])
     :param show:  (Default value = False)
@@ -152,6 +152,8 @@ def get_annotation_text(
     :param G: The original graph on which the MDSA algorithm is ran.
     :param nodename: Node of the name of a networkx graph.
     """
+    if nodename[:4] == "red_":
+        return ""
     annotation = ""
     if "bias" in desired_properties:
         annotation = (
@@ -230,10 +232,7 @@ def add_neuron_properties_to_plot(
 
 @typechecked
 def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
-    """Returns a list of node colours in order of G.nodes.
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    """
+    """Returns a list of node colours in order of G.nodes."""
     color_map = []
     spiking_edges = []
 
@@ -243,25 +242,41 @@ def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
         if "nx_lif" in G.nodes[node_name].keys():
             if "rad_death" in G.nodes[node_name].keys():
                 if G.nodes[node_name]["rad_death"]:
-                    colour_dict[node_name] = "red"
+                    # colour_dict[node_name] = ["red",0.5]
+                    colour_dict[node_name] = (1, 0, 0, 0.3)
                     if G.nodes[node_name]["nx_lif"][t].spikes:
                         raise Exception("Dead neuron can't spike.")
             if G.nodes[node_name]["nx_lif"][t].spikes:
-                colour_dict[node_name] = "green"
+                # colour_dict[node_name] = ["green",0.5]
+                colour_dict[node_name] = (0, 1, 0, 0.5)
                 for neighbour in nx.all_neighbors(G, node_name):
                     spiking_edges.append((node_name, neighbour))
             if node_name not in colour_dict:
-                colour_dict[node_name] = "yellow"
+                set_node_colours_with_redundancy(colour_dict, node_name)
         else:
-            colour_dict[node_name] = "black"
+            colour_dict[node_name] = (0, 0, 0, 1)
     for node_name in G.nodes:
         color_map.append(colour_dict[node_name])
     return color_map, spiking_edges
 
 
 @typechecked
+def set_node_colours_with_redundancy(
+    colour_dict: dict, node_name: str
+) -> None:
+    """"Sets the colour of the redundant node different than the original
+    node."""
+    if node_name[:4] == "red_":
+        # colour_dict[node_name] = ["olive",0.5]
+        colour_dict[node_name] = (1, 0.98, 0, 0.5)
+    else:
+        # colour_dict[node_name] = ["yellow",1]
+        colour_dict[node_name] = (1, 1, 0, 0.5)
+
+
+@typechecked
 def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
-    """
+    """Some documentation.
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param spiking_edges:
@@ -279,7 +294,7 @@ def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
 
 @typechecked
 def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
-    """
+    """Some documentation.
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param current:  (Default value = True)
