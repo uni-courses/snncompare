@@ -242,8 +242,8 @@ def verify_size_and_max_graphs_settings(
 @typechecked
 def verify_integer_settings(
     integer_setting: int,
-    min_val: int = None,
-    max_val: int = None,
+    min_val: int | None = None,
+    max_val: int | None = None,
 ) -> None:
     """Verifies an integer setting is of type integer and that it is within the
     supported minimum and maximum value range..
@@ -306,7 +306,7 @@ def verify_bool_setting(bool_setting: bool) -> None:
 def verify_object_type(
     obj: float | list | tuple,
     expected_type: type,
-    element_type: type = None,
+    element_type: type | None = None,
 ) -> None:
     """Verifies an incoming object has the expected type, and if the object is
     a tuple or list, it also verifies the types of the elements in the tuple or
@@ -390,7 +390,7 @@ def verify_algorithm_settings(
     supp_exp_setts: Supported_experiment_settings,
     some_dict: dict,
     check_type: str,
-) -> dict:
+) -> None:
     """TODO: Verifies the settings of the algorithm are valid."""
 
 

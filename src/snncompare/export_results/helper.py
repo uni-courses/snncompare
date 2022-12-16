@@ -83,12 +83,6 @@ def get_expected_image_paths_stage_3(
     for extension in extensions:
         for graph_name, snn_graph in graphs_dict.items():
             if graph_name != "input_graph":
-                # image_filepaths.append(
-                #    f"results/{graph_name}_{filename}.{extension}"
-                # )
-                #            else:
-                print(f"graph_name={graph_name}")
-                print(f"snn_graph={snn_graph}")
                 sim_duration = get_actual_duration(snn_graph)
                 for t in range(0, sim_duration):
                     image_filepaths.append(

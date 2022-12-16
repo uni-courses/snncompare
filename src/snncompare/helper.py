@@ -3,7 +3,7 @@ import random
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import networkx as nx
 import pylab as plt
@@ -34,7 +34,7 @@ def sort_neurons(neurons: List, neuron_dict: dict) -> List:
 
 @typechecked
 def generate_list_of_n_random_nrs(
-    G: Graph, max_val: int = None, seed: int = None
+    G: Graph, max_val: Optional[int] = None, seed: Optional[int] = None
 ) -> List[int]:
     """Generates list of numbers in range of 1 to (and including) len(G), or:
 

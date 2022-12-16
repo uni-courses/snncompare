@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 @typechecked
 def get_n_random_run_configs(
-    run_configs: list[dict], n: int, seed: int = None
+    run_configs: list[dict], n: int, seed: int | None = None
 ) -> Any:
     """Returns n random experiment configurations.
 

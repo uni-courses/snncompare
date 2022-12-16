@@ -12,7 +12,7 @@ default_language_version:
 repos:
 # Test if the python code is formatted according to the Black standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-black
-   rev: 22.3.0
+   rev: 22.10.0
    hooks:
      - id: black-conda
        args:
@@ -21,13 +21,13 @@ repos:
 
 # Test if the python code is formatted according to the flake8 standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-flake8
-   rev: 4.0.1
+   rev: 6.0.0
    hooks:
     - id: flake8-conda
 
 # Test if the import statements are sorted correctly.
  - repo: https://github.com/PyCQA/isort
-   rev: 5.10.1
+   rev: 5.11.2
    hooks:
     - id: isort
       args: ["--profile", "black", --line-length=79]
@@ -38,7 +38,7 @@ repos:
 # - repo: https://github.com/python/mypy
  - repo: https://github.com/pre-commit/mirrors-mypy
 ### - repo: https://github.com/a-t-0/mypy
-   rev: v0.950
+   rev: v0.991
    hooks:
     - id: mypy
       args: ["--disallow-untyped-calls", "--disallow-untyped-defs"]
@@ -55,7 +55,7 @@ repos:
 
 # Tests if there are spelling errors in the code.
  - repo: https://github.com/codespell-project/codespell
-   rev: v2.1.0
+   rev: v2.2.2
    hooks:
     - id: codespell
 
@@ -75,7 +75,7 @@ repos:
 
 # Runs additional tests that are created by the pre-commit software itself.
  - repo: https://github.com/pre-commit/pre-commit-hooks
-   rev: v4.2.0
+   rev: v4.4.0
    hooks:
     # Check user did not add large files.
     - id: check-added-large-files
@@ -135,7 +135,7 @@ repos:
 
 
  - repo: https://github.com/PyCQA/autoflake
-   rev: v1.4
+   rev: v2.0.0
    hooks:
     - id: autoflake
       args: ["--in-place", "--remove-unused-variables", "--remove-all-unused-imports", "--recursive"]
@@ -152,7 +152,7 @@ repos:
 
 # Enforces formatting style in Markdown (.md) files.
  - repo: https://github.com/executablebooks/mdformat
-   rev: 0.7.14
+   rev: 0.7.16
    hooks:
    - id: mdformat
      #args: ["-r ~MD013"]
@@ -169,7 +169,7 @@ repos:
 #     args: ['--never', '--application-directories', 'src']
 
  - repo: https://github.com/myint/docformatter
-   rev: v1.4
+   rev: v1.5.0
    hooks:
    - id: docformatter
 
@@ -183,7 +183,7 @@ repos:
 # Updates the syntax of `.py` files to the specified python version.
 # It is not compatible with: pre-commit hook: fix-encoding-pragma
  - repo: https://github.com/asottile/pyupgrade
-   rev: v2.32.1
+   rev: v3.3.1
    hooks:
      - id: pyupgrade
        args: [--py38-plus]

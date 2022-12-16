@@ -4,7 +4,7 @@ TODO: rename and restructure this function along with:
 helper_network_structure.
 """
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
 from matplotlib import pyplot as plt
@@ -24,8 +24,8 @@ def plot_coordinated_graph(
     t: int,
     width: float,
     filename: str = "no_filename",
-    show: bool = False,
-    title: str = None,
+    show: Optional[bool] = False,
+    title: Optional[str] = None,
 ) -> None:
     """Some documentation.
 
@@ -35,26 +35,30 @@ def plot_coordinated_graph(
     :param desired_properties:  (Default value = [])
     :param show:  (Default value = False)
     :param filename:  (Default value = "no_filename")
-
     """
+    node_size = 2500
+    label_fontsize = 4
+    node_fontsize = 4
+    node_props_fontsize = 3
+
     if desired_properties is None:
         desired_properties = []
 
     color_map, spiking_edges = set_nx_node_colours(G, t)
-
     edge_color_map = set_edge_colours(G, spiking_edges)
-
     set_node_positions(G, t)
 
     # Width=edge width.
-
-    plt.figure(3, figsize=(width, height))
+    width, height = get_width_and_height(G, t)
+    print(f"width,height={int(width)},{int(height)}")
+    # TODO: limit to max filesize
+    plt.figure(3, figsize=(width / 20, height / 20), dpi=100)
     nx.draw(
         G,
         nx.get_node_attributes(G, "pos"),
         with_labels=True,
-        node_size=160,
-        font_size=6,
+        node_size=node_size,
+        font_size=node_fontsize,
         width=0.2,
         node_color=color_map,
         edge_color=edge_color_map,
@@ -71,9 +75,10 @@ def plot_coordinated_graph(
         for (node, (x, y)) in nx.get_node_attributes(G, "pos").items()
     }
 
-    get_edge_labels(node_labels_dict, G, node_pos)
+    get_edge_labels(label_fontsize, node_labels_dict, G, node_pos)
 
-    plt.axis("off")
+    # plt.axis("off")
+    plt.axis("on")
     axis = plt.gca()
 
     # Specify some padding size.
@@ -89,7 +94,13 @@ def plot_coordinated_graph(
         plt.suptitle(title, fontsize=14)
 
     add_neuron_properties_to_plot(
-        axis, desired_properties, G, node_labels_list, node_pos, t
+        axis,
+        desired_properties,
+        G,
+        node_props_fontsize,
+        node_labels_list,
+        node_pos,
+        t,
     )
 
     # f = plt.figure()
@@ -108,7 +119,10 @@ def plot_coordinated_graph(
 
 @typechecked
 def get_edge_labels(
-    node_labels_dict: Dict, snn_graph: nx.DiGraph, pos: Any
+    label_fontsize: int,
+    node_labels_dict: Dict,
+    snn_graph: nx.DiGraph,
+    pos: Any,
 ) -> None:
     """Sets the edge labels.
 
@@ -128,7 +142,7 @@ def get_edge_labels(
     # TODO: Set edge weight positions per edge to non-overlapping positions.
     # TODO: Make edge weight "hitbox" transparent.
     nx.draw_networkx_edge_labels(
-        snn_graph, pos, edge_labels, font_size=5, label_pos=0.2
+        snn_graph, pos, edge_labels, font_size=label_fontsize, label_pos=0.2
     )
 
 
@@ -194,6 +208,7 @@ def add_neuron_properties_to_plot(
     axis: Any,
     desired_properties: List,
     G: nx.DiGraph,
+    node_props_fontsize: int,
     nodenames: List[str],
     pos: Any,
     t: int,
@@ -226,7 +241,7 @@ def add_neuron_properties_to_plot(
             pos[nodename][1],
             annotation_text,
             transform=axis.transData,
-            fontsize=4,
+            fontsize=node_props_fontsize,
         )
 
 
@@ -280,7 +295,6 @@ def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param spiking_edges:
-
     """
     edge_color_map = []
     for edge in G.edges:
@@ -298,7 +312,6 @@ def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
 
     :param G: The original graph on which the MDSA algorithm is ran.
     :param current:  (Default value = True)
-
     """
     node_labels = {}
     reset_labels = False
@@ -322,3 +335,22 @@ def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
     if reset_labels:
         node_labels = nx.get_node_attributes(G, "")
     return node_labels
+
+
+@typechecked
+def get_width_and_height(snn_graph: nx.DiGraph, t: int) -> List[float]:
+    """Finds the most left and most right positions of the nodes and computes
+    the width.
+
+    Finds the lowest and highest position of the nodes and computes the
+    height. Then returns width, height.
+    """
+    xys = []
+    for nodename in snn_graph.nodes:
+        xys.append(snn_graph.nodes[nodename]["nx_lif"][t].pos)
+
+    xmin = min(list(map(lambda xy: xy[0], xys)))
+    xmax = max(list(map(lambda xy: xy[0], xys)))
+    ymin = min(list(map(lambda xy: xy[1], xys)))
+    ymax = max(list(map(lambda xy: xy[1], xys)))
+    return [xmax - xmin, ymax - ymin]

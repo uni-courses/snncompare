@@ -191,7 +191,6 @@ def plot_graph_behaviours(
     # Loop over the graph types
     for graph_name, snn_graph in stage_2_graphs.items():
         if graph_name != "input_graph":
-            print(snn_graph.graph)
             sim_duration = snn_graph.graph["sim_duration"]
             for t in range(
                 0,

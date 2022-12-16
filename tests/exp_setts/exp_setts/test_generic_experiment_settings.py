@@ -145,8 +145,8 @@ def verify_error_is_thrown_on_invalid_configuration_setting_value(
     experiment_config: Dict[str, Any],
     expected_type: type,
     test_object: Any,
-    non_typechecked_error: bool = False,
-    alternative_var_name: str = None,
+    non_typechecked_error: Optional[bool] = False,
+    alternative_var_name: Optional[str] = None,
 ) -> None:
     """Verifies an error is thrown on an invalid configuration setting value.
 
