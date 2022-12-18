@@ -13,7 +13,7 @@ from snncompare.exp_setts.custom_setts.create_custom_setts import (
 )
 
 from .arg_parser.arg_parser import parse_cli_args
-from .arg_parser.perform_args import process_args
+from .arg_parser.process_args import process_args
 from .exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,
 )

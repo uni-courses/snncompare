@@ -307,7 +307,7 @@ def set_node_default_values(
 
 @typechecked
 def get_extensions_list(run_config: dict, stage_index: int) -> List:
-    """
+    """TODO: make this into 1 symmetric method/improve structure.
 
     :param run_config: param stage_index:
     :param stage_index:
@@ -315,7 +315,9 @@ def get_extensions_list(run_config: dict, stage_index: int) -> List:
     extensions = list(get_extensions_dict(run_config, stage_index).values())
     """
     if stage_index == 3:
-        return run_config["export_types"]
+        if run_config["export_images"]:
+            return run_config["export_types"]
+        return []
     return list(get_extensions_dict(run_config, stage_index).values())
 
 

@@ -166,7 +166,7 @@ def get_annotation_text(
     :param G: The original graph on which the MDSA algorithm is ran.
     :param nodename: Node of the name of a networkx graph.
     """
-    if nodename[:4] == "red_":
+    if nodename[:4] == "r_{red_level}_":
         return ""
     annotation = ""
     if "bias" in desired_properties:
@@ -281,7 +281,7 @@ def set_node_colours_with_redundancy(
 ) -> None:
     """Sets the colour of the redundant node different than the original
     node."""
-    if node_name[:4] == "red_":
+    if node_name[:4] == "r_{red_level}_":
         # colour_dict[node_name] = ["olive",0.5]
         colour_dict[node_name] = (1, 0.98, 0, 0.5)
     else:

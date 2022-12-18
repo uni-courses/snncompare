@@ -7,9 +7,7 @@ import copy
 from typing import Any, Dict, List
 
 import networkx as nx
-from snnadaptation.redundancy.redundancy import (
-    other_implement_adaptation_mechanism,
-)
+from snnadaptation.redundancy.redundancy import apply_redundancy
 from snnalgorithms.sparse.MDSA.create_MDSA_snn_neurons import (
     get_new_mdsa_graph,
 )
@@ -132,13 +130,14 @@ def get_adapted_graph(
                 + " be reached."
             )
         if adaptation_name == "redundancy":
-            if not isinstance(adaptation_setting, float):
+            if not isinstance(adaptation_setting, int):
                 raise Exception(
                     f"Error, adaptation_setting={adaptation_setting},"
                     + "which is not an int."
                 )
+            print(f"adaptation_setting={adaptation_setting}")
             adaptation_graph: nx.DiGraph = get_redundant_graph(
-                snn_algo_graph, adaptation_setting
+                snn_algo_graph, int(adaptation_setting)
             )
             return adaptation_graph
         raise Exception(
@@ -187,12 +186,9 @@ def get_redundant_graph(
         raise Exception(
             "Redundancy level 0 not supported if adaptation is" + " required."
         )
-    if red_lev == 1:
+    if red_lev >= 1:
         adaptation_graph = copy.deepcopy(snn_algo_graph)
-        # TODO: apply redundancy
-        other_implement_adaptation_mechanism(
-            adaptation_graph,
-        )
+        apply_redundancy(adaptation_graph, red_lev)
         return adaptation_graph
 
     raise Exception(

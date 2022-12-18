@@ -37,6 +37,7 @@ def parse_cli_args() -> argparse.Namespace:
         "-e",
         "--experiment-settings-name",
         action="store",
+        default="mdsa_size3_m0",  # Load default/minimal experiment settings.
         type=str,
         help=(
             "Give filename to experiment settings json on which to run "
@@ -132,6 +133,42 @@ def parse_cli_args() -> argparse.Namespace:
             "Ensures new SNN algorithm results are computed, even if they "
             "already existed."
         ),
+    )
+
+    # Allow user to set graph size.
+    parser.add_argument(
+        "-s",
+        "--graph-size",
+        nargs="?",
+        type=int,
+        dest="graph_size",
+        const="graph_size",
+        help=(
+            "Specify the graph size on which to run algorithm. Performs a "
+            "single run by default. Assume you want to run a single iteration."
+        ),
+    )
+
+    # Allow user to set graph size.
+    parser.add_argument(
+        "-m",
+        "--m_val",
+        nargs="?",
+        type=int,
+        dest="m_val",
+        const="m_val",
+        help=("Specify the m_val on which to run the MDSA algorithm."),
+    )
+
+    # Allow user to set a neuron redundancy value.
+    parser.add_argument(
+        "-rd",
+        "--redundancy",
+        nargs="?",
+        type=int,
+        dest="redundancy",
+        const="redundancy",
+        help=("Specify the redundancy used as adaptation mechanism."),
     )
 
     # Create argument parsers to allow user to overwrite pre-existing output.

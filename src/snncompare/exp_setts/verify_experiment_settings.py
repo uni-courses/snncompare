@@ -4,6 +4,7 @@
 """
 from __future__ import annotations
 
+from pprint import pprint
 from typing import TYPE_CHECKING, Any
 
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -129,9 +130,10 @@ def verify_experiment_config_dict_contains_only_valid_entries(
                         + f"configuration settings:{supp_exp_setts.parameters}"
                     )
             if actual_key not in supp_exp_setts.optional_parameters:
+                pprint(supp_exp_setts.parameters)
                 raise Exception(
                     f"Error:{actual_key} is not supported by the configuration"
-                    + f" settings:{supp_exp_setts.parameters}, nor by the"
+                    + " settings:, nor by the"
                     + " optional settings:"
                     + f"{supp_exp_setts.optional_parameters}"
                 )
