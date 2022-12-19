@@ -7,7 +7,7 @@ setting types should be identical.)
 import copy
 import hashlib
 import json
-from typing import List
+from typing import Dict, List
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
@@ -216,7 +216,7 @@ class Supported_experiment_settings:
     @typechecked
     def append_unique_experiment_config_id(
         self,
-        experiment_config: dict,
+        experiment_config: Dict,
         allow_optional: bool = True,
     ) -> dict:
         """Checks if an experiment configuration dictionary already has a

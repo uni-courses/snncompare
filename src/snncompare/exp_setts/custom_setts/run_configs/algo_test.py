@@ -1,12 +1,12 @@
 """Contains a default run configuration used to test the MDSA algorithm."""
 
 import json
-from pprint import pprint
 
 import jsons
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
 from snncompare.exp_setts.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
@@ -134,26 +134,25 @@ def short_mdsa_test_exp_setts() -> dict:
     return short_mdsa_testing
 
 
-def run_config_with_error() -> dict:
+def run_config_with_error() -> Run_config:
     """Returns run_config for which error is found."""
-    some_run_config: dict = {
-        "adaptation": None,
-        "algorithm": {"MDSA": {"m_val": 0}},
-        "export_images": False,
-        "graph_nr": 2,
-        "graph_size": 5,
-        "iteration": 0,
-        "overwrite_sim_results": True,
-        "overwrite_visualisation": True,
-        "radiation": None,
-        "seed": 7,
-        "show_snns": False,
-        "simulator": "nx",
-    }
+    some_run_config: Run_config = Run_config(
+        adaptation=None,
+        algorithm={"MDSA": {"m_val": 0}},
+        export_images=False,
+        graph_nr=2,
+        graph_size=5,
+        iteration=0,
+        overwrite_sim_results=True,
+        overwrite_visualisation=True,
+        radiation=None,
+        seed=7,
+        show_snns=False,
+        simulator="nx",
+    )
     Supported_run_settings().append_unique_run_config_id(
         some_run_config, allow_optional=True
     )
-    pprint(some_run_config)
     return some_run_config
 
 

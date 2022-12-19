@@ -4,6 +4,8 @@ from pprint import pprint
 
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
+
 from ..export_results.helper import run_config_to_filename
 from ..export_results.load_json_to_nx_graph import (
     dicts_are_equal,
@@ -15,7 +17,9 @@ from .read_json import load_results_from_json
 
 
 @typechecked
-def load_results_stage_1(run_config: dict) -> dict:
+def load_results_stage_1(
+    run_config: Run_config,
+) -> dict:
     """Loads the experiment config, run config and graphs from the json file.
 
     # TODO: ensure it only loads the graphs of stage 1. OR: make all

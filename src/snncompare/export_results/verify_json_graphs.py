@@ -1,12 +1,17 @@
 """Methods used to verify the json graphs."""
-from typing import List
+from typing import Dict, List
 
 from typeguard import typechecked
+
+from snncompare.exp_setts.run_config.Run_config import (
+    Run_config,
+    dict_to_run_config,
+)
 
 
 @typechecked
 def verify_results_safely_check_json_graphs_contain_expected_stages(
-    results_json_graphs: dict, expected_stages: List[int]
+    results_json_graphs: Dict, expected_stages: List[int]
 ) -> None:
     """Checks whether the loaded graphs from json contain at least the expected
     stages for this stage of the experiment."""
@@ -18,6 +23,13 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
     if "graphs_dict" not in results_json_graphs:
         raise KeyError("Error, key: graphs_dict not in output_dict.")
 
+    if not isinstance(results_json_graphs["run_config"], Dict):
+        raise TypeError("run_config was not of type Dict.")
+
+    results_json_graphs["run_config"] = dict_to_run_config(
+        results_json_graphs["run_config"]
+    )
+
     verify_json_graphs_dict_contain_correct_stages(
         results_json_graphs["graphs_dict"],
         expected_stages,
@@ -27,7 +39,9 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
 
 @typechecked
 def verify_json_graphs_dict_contain_correct_stages(
-    json_graphs: dict, expected_stages: List[int], run_config: dict
+    json_graphs: dict,
+    expected_stages: List[int],
+    run_config: Run_config,
 ) -> None:
     """Verifies the json graphs dict contains the expected stages in each
     graph."""

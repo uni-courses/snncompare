@@ -3,8 +3,9 @@
 Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
+
 import copy
-from typing import Any, Dict, List
+from typing import List
 
 import networkx as nx
 from snnadaptation.redundancy.redundancy import apply_redundancy
@@ -21,11 +22,15 @@ from snnradiation.Radiation_damage import (
 )
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
+
 from ..helper import add_stage_completion_to_graph
 
 
 @typechecked
-def get_used_graphs(run_config: dict) -> dict:
+def get_used_graphs(
+    run_config: Run_config,
+) -> dict:
     """First gets the input graph.
 
     Then generates a graph with adaptation if it is required. Then
@@ -49,10 +54,10 @@ def get_used_graphs(run_config: dict) -> dict:
 
     if has_radiation(run_config):
         graphs["rad_snn_algo_graph"] = get_radiation_graph(
-            graphs["snn_algo_graph"], run_config, run_config["seed"]
+            graphs["snn_algo_graph"], run_config, run_config.seed
         )
         graphs["rad_adapted_snn_graph"] = get_radiation_graph(
-            graphs["adapted_snn_graph"], run_config, run_config["seed"]
+            graphs["adapted_snn_graph"], run_config, run_config.seed
         )
 
     # TODO: move this into a separate location/function.
@@ -63,7 +68,9 @@ def get_used_graphs(run_config: dict) -> dict:
 
 
 @typechecked
-def get_input_graph(run_config: dict) -> nx.Graph:
+def get_input_graph(
+    run_config: Run_config,
+) -> nx.Graph:
     """TODO: support retrieving graph sizes larger than size 5.
     TODO: ensure those graphs have valid properties, e.g. triangle-free and
     non-planar."""
@@ -77,25 +84,29 @@ def get_input_graph(run_config: dict) -> nx.Graph:
 
 
 @typechecked
-def get_the_input_graph(run_config: dict) -> nx.Graph:
+def get_the_input_graph(
+    run_config: Run_config,
+) -> nx.Graph:
     """Returns a specific input graph from the list of input graphs."""
-    return get_input_graphs(run_config)[run_config["graph_nr"]]
+    return get_input_graphs(run_config)[run_config.graph_nr]
 
 
 @typechecked
-def get_input_graphs(run_config: dict) -> List[nx.Graph]:
+def get_input_graphs(
+    run_config: Run_config,
+) -> List[nx.Graph]:
     """Removes graphs that are not used, because of a maximum nr of graphs that
     is to be evaluated."""
     used_graphs = Used_graphs()
     input_graphs: List[nx.DiGraph] = used_graphs.get_graphs(
-        run_config["graph_size"]
+        run_config.graph_size
     )
-    if len(input_graphs) > run_config["graph_nr"]:
+    if len(input_graphs) > run_config.graph_nr:
         for input_graph in input_graphs:
             # TODO: set alg_props:
             if "alg_props" not in input_graph.graph.keys():
                 input_graph.graph["alg_props"] = SNN_initialisation_properties(
-                    input_graph, run_config["seed"]
+                    input_graph, run_config.seed
                 ).__dict__
 
             if not isinstance(input_graph, nx.Graph):
@@ -106,23 +117,22 @@ def get_input_graphs(run_config: dict) -> List[nx.Graph]:
 
         return input_graphs
     raise Exception(
-        f"For input_graph of size:{run_config['graph_size']}, I found:"
+        f"For input_graph of size:{run_config.graph_size}, I found:"
         + f"{len(input_graphs)} graphs, yet expected graph_nr:"
-        + f"{run_config['graph_nr']}. Please lower the max_graphs setting in:"
+        + f"{run_config.graph_nr}. Please lower the max_graphs setting in:"
         + "size_and_max_graphs in the experiment configuration."
     )
 
 
 @typechecked
 def get_adapted_graph(
-    snn_algo_graph: nx.DiGraph, run_config: dict
+    snn_algo_graph: nx.DiGraph,
+    run_config: Run_config,
 ) -> nx.DiGraph:
     """Converts an input graph of stage 1 and applies a form of brain-inspired
     adaptation to it."""
 
-    for adaptation_name, adaptation_setting in run_config[
-        "adaptation"
-    ].items():
+    for adaptation_name, adaptation_setting in run_config.adaptation.items():
 
         if adaptation_name is None:
             raise Exception(
@@ -146,32 +156,36 @@ def get_adapted_graph(
 
 
 @typechecked
-def has_adaptation(run_config: Dict[str, Any]) -> bool:
+def has_adaptation(
+    run_config: Run_config,
+) -> bool:
     """Checks if the adaptation contains a None setting.
 
     TODO: ensure the adaptation only consists of 1 setting per run.
     TODO: throw an error if the adaptation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
     """
-    if run_config["adaptation"] is None:
+    if run_config.adaptation is None:
         return False
-    for adaptation_name in run_config["adaptation"].keys():
+    for adaptation_name in run_config.adaptation.keys():
         if adaptation_name is not None:
             return True
     return False
 
 
 @typechecked
-def has_radiation(run_config: Dict[str, Any]) -> bool:
+def has_radiation(
+    run_config: Run_config,
+) -> bool:
     """Checks if the radiation contains a None setting.
 
     TODO: ensure the radiation only consists of 1 setting per run.
     TODO: throw an error if the radiation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
     """
-    if run_config["radiation"] is None:
+    if run_config.radiation is None:
         return False
-    for radiation_name in run_config["radiation"].keys():
+    for radiation_name in run_config.radiation.keys():
         if radiation_name is not None:
             return True
     return False
@@ -198,7 +212,9 @@ def get_redundant_graph(
 
 @typechecked
 def get_radiation_graph(
-    snn_graph: nx.DiGraph, run_config: dict, seed: int
+    snn_graph: nx.DiGraph,
+    run_config: Run_config,
+    seed: int,
 ) -> nx.Graph:
     """Makes a deep copy of the incoming graph and applies radiation to it.
 
@@ -214,7 +230,7 @@ def get_radiation_graph(
 
     # Apply radiation simulation.
 
-    for radiation_name, radiation_setting in run_config["radiation"].items():
+    for radiation_name, radiation_setting in run_config.radiation.items():
 
         if radiation_name is None:
             raise Exception(

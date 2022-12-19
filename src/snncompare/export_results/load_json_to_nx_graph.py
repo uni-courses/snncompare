@@ -11,6 +11,8 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
+
 from ..helper import file_exists, get_expected_stages
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
@@ -33,7 +35,9 @@ def json_to_digraph(json_data: dict) -> nx.DiGraph:
 
 @typechecked
 def load_json_to_nx_graph_from_file(
-    run_config: dict, stage_index: int, to_run: dict
+    run_config: Run_config,
+    stage_index: int,
+    to_run: dict,
 ) -> dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
     exists, and then loads them back as json dicts.
@@ -68,7 +72,9 @@ def load_json_to_nx_graph_from_file(
 
 @typechecked
 def load_pre_existing_graph_dict(
-    run_config: dict, stage_index: int, to_run: dict
+    run_config: Run_config,
+    stage_index: int,
+    to_run: dict,
 ) -> dict:
     """Returns the pre-existing graphs that were generated during earlier
     stages of the experiment.
@@ -80,7 +86,7 @@ def load_pre_existing_graph_dict(
         # TODO: fix.
         return {}
     if stage_index == 2:
-        if not run_config["overwrite_sim_results"]:
+        if not run_config.overwrite_sim_results:
             # Load graphs stages 1, 2, 3, 4
             return load_verified_json_graphs_from_json(run_config, [1, 2])
         return load_verified_json_graphs_from_json(run_config, [1])
@@ -89,16 +95,15 @@ def load_pre_existing_graph_dict(
     if stage_index == 4:
         return load_verified_json_graphs_from_json(
             run_config,
-            get_expected_stages(
-                run_config["export_images"], stage_index, to_run
-            ),
+            get_expected_stages(run_config.export_images, stage_index, to_run),
         )
     raise Exception(f"Error, unexpected stage_index:{stage_index}")
 
 
 @typechecked
 def load_verified_json_graphs_from_json(
-    run_config: dict, expected_stages: List[int]
+    run_config: Run_config,
+    expected_stages: List[int],
 ) -> dict:
     """Loads the json dict and returns the graphs of the relevant stages."""
     results_json_graphs = {}
@@ -119,7 +124,9 @@ def load_verified_json_graphs_from_json(
     )
 
     if not dicts_are_equal(
-        results_json_graphs["run_config"], run_config, without_unique_id=True
+        results_json_graphs["run_config"].__dict__,
+        run_config.__dict__,
+        without_unique_id=True,
     ):
         print("Current run_config:")
         pprint(run_config)
@@ -145,7 +152,9 @@ def dicts_are_equal(left: dict, right: dict, without_unique_id: bool) -> bool:
 
 
 @typechecked
-def load_json_graphs_from_json(run_config: dict) -> dict:
+def load_json_graphs_from_json(
+    run_config: Run_config,
+) -> dict:
     """TODO: make private.
     Loads the json dict and returns the graphs of the relevant stages."""
     results_json_graphs = {}

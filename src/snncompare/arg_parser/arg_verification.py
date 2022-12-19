@@ -1,7 +1,7 @@
 """Verifies the given CLI arguments are valid in combination with each
 other."""
+import argparse
 import json
-from typing import Any
 
 import networkx as nx
 from typeguard import typechecked
@@ -10,7 +10,7 @@ from ..helper import file_exists
 
 
 @typechecked
-def verify_args(args: Any, custom_config_path: str) -> None:
+def verify_args(args: argparse.Namespace, custom_config_path: str) -> None:
     """Performs the checks to verify the parser."""
     if isinstance(args.graph_filepath, str):
         verify_input_graph_path(args.graph_filepath)

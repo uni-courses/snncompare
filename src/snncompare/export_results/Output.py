@@ -9,7 +9,7 @@ SubInput: Run configuration within an experiment.
     mechanism.
 """
 import pathlib
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import jsons
 from snnbackends.plot_graphs import plot_uncoordinated_graph
@@ -19,6 +19,7 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
 from snncompare.export_plots.get_plot_data import plot_coordinated_graph
 
 from .export_json_results import write_dict_to_json
@@ -77,7 +78,10 @@ class Stage_1_graphs:
 
     @typechecked
     def __init__(
-        self, experiment_config: dict, stage_1_graphs: dict, run_config: dict
+        self,
+        experiment_config: Dict,
+        stage_1_graphs: dict,
+        run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
@@ -98,7 +102,10 @@ class Stage_2_graphs:
 
     @typechecked
     def __init__(
-        self, experiment_config: dict, graphs_stage_2: dict, run_config: dict
+        self,
+        experiment_config: Dict,
+        graphs_stage_2: dict,
+        run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
@@ -114,7 +121,10 @@ class Stage_3_graphs:
 
     @typechecked
     def __init__(
-        self, experiment_config: dict, graphs_stage_3: dict, run_config: dict
+        self,
+        experiment_config: Dict,
+        graphs_stage_3: dict,
+        run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
@@ -131,7 +141,10 @@ class Stage_4_graphs:
 
     @typechecked
     def __init__(
-        self, experiment_config: dict, graphs_stage_4: dict, run_config: dict
+        self,
+        experiment_config: Dict,
+        graphs_stage_4: dict,
+        run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
@@ -180,7 +193,9 @@ def output_stage_json(
 
 @typechecked
 def plot_graph_behaviours(
-    filepath: str, stage_2_graphs: dict, run_config: dict
+    filepath: str,
+    stage_2_graphs: dict,
+    run_config: Run_config,
 ) -> None:
     """Exports the plots of the graphs per time step of the run
     configuration."""
@@ -202,7 +217,7 @@ def plot_graph_behaviours(
                 # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
                 # TODO: make plot dimensions etc. function of algorithm.
                 plot_coordinated_graph(
-                    extensions=run_config["export_types"],
+                    extensions=run_config.export_types,
                     desired_properties=desired_props,
                     G=snn_graph,
                     height=(len(stage_2_graphs["input_graph"]) - 1) ** 2,
@@ -210,9 +225,9 @@ def plot_graph_behaviours(
                     filename=f"{graph_name}_{filepath}_{t}",
                     show=False,
                     title=None,
-                    width=(run_config["algorithm"]["MDSA"]["m_val"] + 1) * 2.5,
+                    width=(run_config.algorithm["MDSA"]["m_val"] + 1) * 2.5,
                     # title=create_custom_plot_titles(
-                    #    graph_name, t, run_config["seed"]
+                    #    graph_name, t, run_config.seed
                     # ),
                 )
         else:

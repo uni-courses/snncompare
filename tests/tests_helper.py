@@ -1,11 +1,12 @@
 """Contains functions used to help the tests."""
+
 from __future__ import annotations
 
 import copy
 import pathlib
 import random
 from pathlib import PosixPath
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, List
 
 import jsons
 import networkx as nx
@@ -14,6 +15,7 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
 )
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
 from snncompare.export_results.export_json_results import write_dict_to_json
 from snncompare.export_results.helper import get_expected_image_paths_stage_3
 
@@ -28,8 +30,8 @@ if TYPE_CHECKING:
 
 @typechecked
 def get_n_random_run_configs(
-    run_configs: list[dict], n: int, seed: int | None = None
-) -> Any:
+    run_configs: list[Run_config], n: int, seed: int | None = None
+) -> list[Run_config]:
     """Returns n random experiment configurations.
 
     TODO: specify what to do if seed is None.
@@ -70,7 +72,7 @@ def create_result_file_for_testing(
     graph_names: list[str],
     completed_stages: list[int],
     input_graph: nx.Graph,
-    run_config: dict,
+    run_config: Run_config,
 ) -> None:
     """Creates a dummy .json result file that can be used to test functions
     that recognise which stages have been computed already or not.
@@ -106,7 +108,7 @@ def create_results_dict_for_testing_stage_1(
     graph_names: list[str],
     completed_stages: list[int],
     input_graph: nx.Graph,
-    run_config: dict,
+    run_config: Run_config,
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
     graphs."""
@@ -119,7 +121,7 @@ def create_results_dict_for_testing_stage_1(
             graphs_dict["input_graph"].graph[
                 "alg_props"
             ] = SNN_initialisation_properties(
-                graphs_dict["input_graph"], run_config["seed"]
+                graphs_dict["input_graph"], run_config.seed
             ).__dict__
         else:
             # Get random nx.DiGraph graph.
@@ -145,7 +147,7 @@ def create_results_dict_for_testing_stage_2(
     graph_names: list[str],
     completed_stages: list[int],
     input_graph: nx.Graph,
-    run_config: dict,
+    run_config: Run_config,
 ) -> dict:
     """Generates a dictionary with the the experiment_config, run_config and
     graphs."""
@@ -158,7 +160,7 @@ def create_results_dict_for_testing_stage_2(
             graphs_dict["input_graph"][-1].graph[
                 "alg_props"
             ] = SNN_initialisation_properties(
-                graphs_dict["input_graph"][-1], run_config["seed"]
+                graphs_dict["input_graph"][-1], run_config.seed
             ).__dict__
         else:
             # Get random nx.DiGraph graph.
@@ -201,7 +203,7 @@ def add_results_to_stage_4(dummy_nx_results: dict) -> None:
 def create_dummy_output_images_stage_3(
     graph_names: list[str],
     input_graph: nx.Graph,
-    run_config: dict,
+    run_config: Run_config,
     extensions: list[str],
 ) -> None:
     """Creates the dummy output images that would be created as output for

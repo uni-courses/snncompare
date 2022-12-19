@@ -3,12 +3,16 @@ from typing import List
 
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
+
 from .verify_json_graphs import verify_json_graphs_dict_contain_correct_stages
 
 
 @typechecked
 def safely_check_json_graphs_contain_expected_stages(
-    json_graphs: dict, expected_stages: List[int], run_config: dict
+    json_graphs: dict,
+    expected_stages: List[int],
+    run_config: Run_config,
 ) -> bool:
     """Returns True if the json graphs are valid, False otherwise."""
     try:

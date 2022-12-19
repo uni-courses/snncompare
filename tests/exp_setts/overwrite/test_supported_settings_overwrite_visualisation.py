@@ -87,7 +87,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
 
         # TODO: generalise to also check if an error is thrown if it contains a
         # string or integer, using the generic test file.
-        # verify_error_is_thrown_on_invalid_configuration_setting_value
+        # verify_invalid_config_sett_val_throws_error
         experiment_config["overwrite_visualisation"] = None
 
         with self.assertRaises(Exception) as context:

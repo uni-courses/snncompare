@@ -4,13 +4,12 @@ TODO: rename and restructure this function along with:
 helper_network_structure.
 """
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
+import matplotlib
 import networkx as nx
 from matplotlib import pyplot as plt
 from typeguard import typechecked
-
-from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 # pylint: disable=R0913
@@ -110,8 +109,12 @@ def plot_coordinated_graph(
     if show:
         plt.show()
 
-    plot_export = Plot_to_tex()
-    plot_export.export_plot(plt, filename, extensions=extensions)
+    # TODO: restore
+    # from snncompare.export_plots.Plot_to_tex import Plot_to_tex
+    print(f"extensions={extensions}")
+    print(f"filename={filename}")
+    # plot_export = Plot_to_tex()
+    # plot_export.export_plot(plt, filename, extensions=extensions)
     # plt.savefig()
     plt.clf()
     plt.close()
@@ -122,7 +125,7 @@ def get_edge_labels(
     label_fontsize: int,
     node_labels_dict: Dict,
     snn_graph: nx.DiGraph,
-    pos: Any,
+    pos: Dict[str, Tuple[float, float]],
 ) -> None:
     """Sets the edge labels.
 
@@ -205,12 +208,12 @@ def get_annotation_text(
 # pylint: disable=R0913
 @typechecked
 def add_neuron_properties_to_plot(
-    axis: Any,
+    axis: matplotlib.axes._axes.Axes,
     desired_properties: List,
     G: nx.DiGraph,
     node_props_fontsize: int,
     nodenames: List[str],
-    pos: Any,
+    pos: Dict[str, Tuple[float, float]],
     t: int,
 ) -> None:
     """Adds a text (annotation) to each neuron with the desired neuron
@@ -307,7 +310,7 @@ def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
 
 
 @typechecked
-def get_labels(G: nx.DiGraph, current: bool = True) -> Dict[str, Any]:
+def get_labels(G: nx.DiGraph, current: bool = True) -> Dict:
     """Some documentation.
 
     :param G: The original graph on which the MDSA algorithm is ran.

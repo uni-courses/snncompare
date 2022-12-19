@@ -3,13 +3,14 @@ setting of the experiment configuration settings.
 
 (The values of the settings may vary, yet the types should be the same.)
 """
-
 from pprint import pprint
-from typing import Any, Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
+
+from snncompare.exp_setts.run_config.Run_config import Run_config
 
 from .exp_setts.run_config.Supported_run_settings import Supported_run_settings
 from .exp_setts.run_config.verify_run_completion import (
@@ -52,8 +53,8 @@ class Experiment_runner:
     @typechecked
     def __init__(
         self,
-        experiment_config: dict,
-        specific_run_config: Union[None, dict] = None,
+        experiment_config: Dict,
+        specific_run_config: Optional[Run_config] = None,
         perform_run: bool = True,
     ) -> None:
 
@@ -99,7 +100,7 @@ class Experiment_runner:
     # pylint: disable=W0238
     @typechecked
     def __perform_run(
-        self, experiment_config: dict, run_configs: List[Union[None, dict]]
+        self, experiment_config: Dict, run_configs: List[Run_config]
     ) -> None:
         """Private method that performs a run of the experiment.
 
@@ -129,14 +130,15 @@ class Experiment_runner:
 
             # Store run results in dict of Experiment_runner.
             self.results_nx_graphs: Dict = {
-                run_config[
-                    "unique_id"
-                ]: results_nx_graphs  # type:ignore[index]
+                run_config.unique_id: results_nx_graphs  # type:ignore[index]
             }
 
+    @typechecked
     def generate_run_configs(
-        self, experiment_config: dict, run_config: Union[None, dict]
-    ) -> List[dict]:
+        self,
+        experiment_config: Dict,
+        run_config: Optional[Run_config] = None,
+    ) -> List[Run_config]:
         """Generates the run configs belonging to an experiment config, and
         then removes all run configs except for the desired run config.
 
@@ -145,11 +147,12 @@ class Experiment_runner:
         """
         found_run_config = False
         # Generate run configurations.
-        run_configs: List[dict] = experiment_config_to_run_configs(
+        run_configs: List[Run_config] = experiment_config_to_run_configs(
             experiment_config
         )
         if run_config is not None:
             if "unique_id" not in run_config:
+                print(f"run_config={run_config}")
                 # Append unique_id to run_config
                 Supported_run_settings().append_unique_run_config_id(
                     run_config, allow_optional=True
@@ -159,7 +162,7 @@ class Experiment_runner:
                     gen_run_config, run_config, without_unique_id=True
                 ):
                     found_run_config = True
-                    if gen_run_config["unique_id"] != run_config["unique_id"]:
+                    if gen_run_config.unique_id != run_config.unique_id:
                         raise Exception(
                             "Error, equal dict but unequal unique_ids."
                         )
@@ -176,7 +179,10 @@ class Experiment_runner:
 
     @typechecked
     def __perform_run_stage_1(
-        self, experiment_config: dict, run_config: dict, to_run: dict
+        self,
+        experiment_config: Dict,
+        run_config: Run_config,
+        to_run: dict,
     ) -> dict:
         """Performs the run for stage 1 or loads the data from file depending
         on the run configuration.
@@ -221,7 +227,7 @@ class Experiment_runner:
         )
 
         if to_run["stage_2"]:
-            if not results_nx_graphs["run_config"]["overwrite_sim_results"]:
+            if not results_nx_graphs["run_config"].overwrite_sim_results:
                 # TODO: check if the stage 2 graphs already are loaded from
                 # file correctly. If loaded incorrectly, raise exception, if
                 # not loaded, perform simulation.
@@ -301,8 +307,8 @@ class Experiment_runner:
 
 @typechecked
 def experiment_config_to_run_configs(
-    experiment_config: Dict[str, Any]
-) -> List[Dict[str, Any]]:
+    experiment_config: Dict,
+) -> List[Run_config]:
     """Generates all the run_config dictionaries of a single experiment
     configuration. Then verifies whether each run_config is valid.
 
@@ -310,7 +316,7 @@ def experiment_config_to_run_configs(
     """
     # pylint: disable=R0914
     supp_run_setts = Supported_run_settings()
-    run_configs = []
+    run_configs: List[Run_config] = []
 
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
@@ -328,7 +334,7 @@ def experiment_config_to_run_configs(
                     ]:
                         for simulator in experiment_config["simulators"]:
                             for graph_nr in range(0, size_and_max_graph[1]):
-                                run_configs.append(
+                                run_config: Run_config = (
                                     run_parameters_to_dict(
                                         adaptation,
                                         algorithm,
@@ -340,13 +346,14 @@ def experiment_config_to_run_configs(
                                         simulator,
                                     )
                                 )
+                                run_configs.append(run_config)
 
     for run_config in run_configs:
         if experiment_config["export_images"]:
-            run_config["export_types"] = experiment_config["export_types"]
+            run_config.export_types = experiment_config["export_types"]
         verify_run_config(
-            supp_run_setts,
-            run_config,
+            supp_run_setts=supp_run_setts,
+            run_config=run_config,
             has_unique_id=False,
             allow_optional=True,
         )
@@ -359,46 +366,49 @@ def experiment_config_to_run_configs(
         # Append show_snns and export_images to run config.
         supp_run_setts.assert_has_key(experiment_config, "show_snns", bool)
         supp_run_setts.assert_has_key(experiment_config, "export_images", bool)
-        run_config["show_snns"] = experiment_config["show_snns"]
-        run_config["export_images"] = experiment_config["export_images"]
+        run_config.show_snns = experiment_config["show_snns"]
+        run_config.export_images = experiment_config["export_images"]
     return run_configs
 
 
 # pylint: disable=R0913
 @typechecked
 def run_parameters_to_dict(
-    adaptation: Union[None, Dict[str, Any]],
-    algorithm: Dict[str, Any],
+    adaptation: Union[None, Dict],
+    algorithm: Dict[str, Dict[str, int]],
     iteration: int,
     size_and_max_graph: Tuple[int, int],
     graph_nr: int,
-    radiation: Union[None, Dict[str, Any]],
-    experiment_config: Dict[str, Any],
+    radiation: Union[None, Dict],
+    experiment_config: Dict,
     simulator: str,
-) -> dict:
+) -> Run_config:
     """Stores selected parameters into a dictionary.
 
     Written as separate argument to keep code width under 80 lines. #
     TODO: verify typing.
     """
-    return {
-        "adaptation": adaptation,
-        "algorithm": algorithm,
-        "iteration": iteration,
-        "graph_size": size_and_max_graph[0],
-        "graph_nr": graph_nr,
-        "radiation": radiation,
-        "overwrite_sim_results": experiment_config["overwrite_sim_results"],
-        "overwrite_visualisation": experiment_config[
-            "overwrite_visualisation"
-        ],
-        "seed": experiment_config["seed"],
-        "simulator": simulator,
-    }
+    print(f"algorithm={algorithm}")
+    run_config: Run_config = Run_config(
+        adaptation=adaptation,
+        algorithm=algorithm,
+        iteration=iteration,
+        graph_size=size_and_max_graph[0],
+        graph_nr=graph_nr,
+        radiation=radiation,
+        overwrite_sim_results=experiment_config["overwrite_sim_results"],
+        overwrite_visualisation=experiment_config["overwrite_visualisation"],
+        seed=experiment_config["seed"],
+        simulator=simulator,
+    )
+
+    return run_config
 
 
 @typechecked
-def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
+def determine_what_to_run(
+    run_config: Run_config,
+) -> Dict[str, bool]:
     """Scans for existing output and then combines the run configuration
     settings to determine what still should be computed."""
     # Initialise default: run everything.
@@ -412,7 +422,7 @@ def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
     # Check if the input graphs exist, (the graphs that can still be adapted.)
     if (
         not has_outputted_stage(run_config, 1, to_run)
-        or run_config["overwrite_sim_results"]
+        or run_config.overwrite_sim_results
     ):
         # If original graphs do not yet exist, or a manual overwrite is
         # requested, create them (Note it only asks for an overwrite of
@@ -424,14 +434,14 @@ def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
     # and/or radiation.
     if (
         not has_outputted_stage(run_config, 2, to_run)
-        or run_config["overwrite_sim_results"]
+        or run_config.overwrite_sim_results
     ):
         to_run["stage_2"] = True
     # Check if the visualisation of the graph behaviour needs to be created.
     if (
         not has_outputted_stage(run_config, 3, to_run)
-        and (run_config["export_images"] or run_config["show_snns"])
-    ) or run_config["overwrite_visualisation"]:
+        and (run_config.export_images or run_config.show_snns)
+    ) or run_config.overwrite_visualisation:
         # Note this allows the user to create inconsistent simulation
         # results and visualisation. E.g. the simulated behaviour may
         # have changed due to code changes, yet the visualisation would
@@ -445,8 +455,8 @@ def determine_what_to_run(run_config: Dict[str, Any]) -> Dict[str, bool]:
     # behaviour and old visualisation.
     if (
         has_outputted_stage(run_config, 3, to_run)
-        and run_config["overwrite_sim_results"]
-        and not run_config["overwrite_visualisation"]
+        and run_config.overwrite_sim_results
+        and not run_config.overwrite_visualisation
     ):
         # TODO: check if visual results are deleted, if yes, don't throw
         # warning.
@@ -482,7 +492,7 @@ def get_adaptation_and_radiations(experiment_config: dict) -> List[tuple]:
 
 
 def get_radiations(
-    experiment_config: dict, adaptation: Union[None, dict]
+    experiment_config: Dict, adaptation: Union[None, dict]
 ) -> List[Tuple[Union[None, dict], Union[None, dict]]]:
     """Returns the radiations."""
     adaptation_and_radiations: List[

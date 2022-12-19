@@ -52,8 +52,10 @@ class MultiDimensionalArrayEncoder(json.JSONEncoder):
     """Encodes tuples into a string such that they can be exported to a json
     file."""
 
-    def encode(self, o: Any) -> Any:
-        def hint_tuples(item: Union[tuple, List, dict, Any]) -> Any:
+    def encode(self, o: Any) -> Any:  # type:ignore[misc]
+        def hint_tuples(  # type:ignore[misc]
+            item: Union[tuple, List, dict, Any]
+        ) -> Any:
             if isinstance(item, tuple):
                 return {"__tuple__": True, "items": item}
             if isinstance(item, list):

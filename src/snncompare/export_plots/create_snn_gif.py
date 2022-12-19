@@ -22,7 +22,7 @@ def create_gif_of_run_config(results_nx_graphs: dict) -> None:
 
     # Get expected png filenames.
     if "png" in extensions:  # No png, no gif
-        if run_config["export_images"]:
+        if run_config.export_images:
             expected_filepaths.extend(
                 get_expected_image_paths_stage_3(
                     results_nx_graphs["graphs_dict"],

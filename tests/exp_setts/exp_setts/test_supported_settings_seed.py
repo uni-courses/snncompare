@@ -16,7 +16,7 @@ from tests.exp_setts.exp_setts.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
     supp_exp_setts,
-    verify_error_is_thrown_on_invalid_configuration_setting_value,
+    verify_invalid_config_sett_val_throws_error,
     with_adaptation_with_radiation,
 )
 
@@ -84,7 +84,7 @@ class Test_seed_settings(unittest.TestCase):
         # TODO: change str into somestring and make the test work.
         for invalid_config_setting_value in [None, "stro"]:
             experiment_config["seed"] = invalid_config_setting_value
-            verify_error_is_thrown_on_invalid_configuration_setting_value(
+            verify_invalid_config_sett_val_throws_error(
                 invalid_config_setting_value,
                 experiment_config,
                 expected_type,

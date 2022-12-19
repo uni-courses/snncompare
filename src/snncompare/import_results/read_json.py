@@ -7,15 +7,20 @@ graphs.
 import copy
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 import networkx as nx
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
+
 
 @typechecked
-def load_results_from_json(json_filepath: str, run_config: dict) -> dict:
+def load_results_from_json(
+    json_filepath: str,
+    run_config: Run_config,
+) -> dict:
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.DiGraph object."""
     # Load the json dictionary of results.
@@ -96,7 +101,7 @@ def get_graph_attributes_from_dict_and_return_nx_graph(
 @typechecked
 def load_json_file_into_dict(
     json_filepath: str,
-) -> Dict[str, Optional[Dict[str, Any]]]:
+) -> Dict[str, Optional[Dict]]:
     """TODO: make this into a private function that cannot be called by
     any other object than some results loader.
     Loads a json file into dict from a filepath."""

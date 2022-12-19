@@ -39,15 +39,12 @@ def output_stage_files_3_and_4(
     """
     # TODO: merge experiment config, results_nx_graphs['run_config'] into
     # single dict.
-    if results_nx_graphs["run_config"]["simulator"] == "nx":
+    if results_nx_graphs["run_config"].simulator == "nx":
         filename = run_config_to_filename(results_nx_graphs["run_config"])
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
         # TODO: Distinguish between showing snns and outputting snns.
-        if (
-            results_nx_graphs["run_config"]["export_images"]
-            and stage_index == 3
-        ):
+        if results_nx_graphs["run_config"].export_images and stage_index == 3:
             # Output graph behaviour for stage stage_index.
             plot_graph_behaviours(
                 filename,
@@ -59,7 +56,7 @@ def output_stage_files_3_and_4(
                 add_stage_completion_to_graph(nx_graph, 3)
 
         if (
-            # results_nx_graphs["run_config"]["export_images"] or
+            # results_nx_graphs["run_config"].export_images or
             stage_index
             == 4
         ):
@@ -71,7 +68,7 @@ def output_stage_files_3_and_4(
                 to_run,
             )
 
-    elif results_nx_graphs["run_config"]["simulator"] == "lava":
+    elif results_nx_graphs["run_config"].simulator == "lava":
         # TODO: terminate simulation.
         # TODO: write simulated lava graphs to pickle.
         raise Exception("Error, lava export method not yet implemented.")

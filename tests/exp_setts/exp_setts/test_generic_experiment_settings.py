@@ -140,9 +140,9 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
 # pylint: disable=R0913
 @typechecked
-def verify_error_is_thrown_on_invalid_configuration_setting_value(
+def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     invalid_config_setting_value: Optional[str],
-    experiment_config: Dict[str, Any],
+    experiment_config: Dict,
     expected_type: type,
     test_object: Any,
     non_typechecked_error: Optional[bool] = False,

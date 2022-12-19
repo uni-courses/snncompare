@@ -102,7 +102,7 @@ def verify_experiment_config(
 
 def verify_experiment_config_dict_is_complete(
     supp_exp_setts: Supported_experiment_settings,
-    experiment_config: dict[str, Any],
+    experiment_config: dict,
 ) -> None:
     """Verifies the configuration settings dictionary is complete."""
     for expected_key in supp_exp_setts.parameters:
@@ -140,7 +140,7 @@ def verify_experiment_config_dict_contains_only_valid_entries(
 
 
 @typechecked
-def verify_list_element_types_and_list_len(
+def verify_list_element_types_and_list_len(  # type:ignore[misc]
     list_setting: Any, element_type: type
 ) -> None:
     """Verifies the types and minimum length of configuration settings that are
@@ -157,7 +157,7 @@ def verify_list_element_types_and_list_len(
         )
 
 
-def verify_list_setting(
+def verify_list_setting(  # type:ignore[misc]
     supp_exp_setts: Supported_experiment_settings,
     setting: Any,
     element_type: type,
@@ -358,7 +358,9 @@ def verify_adap_and_rad_settings(
 
     # Load the example settings from the Supported_experiment_settings object.
     if check_type == "adaptations":
-        reference_object: dict[str, Any] = supp_exp_setts.adaptations
+        reference_object: dict[  # type:ignore[misc]
+            str, Any
+        ] = supp_exp_setts.adaptations
     elif check_type == "radiations":
         reference_object = supp_exp_setts.radiations
     else:

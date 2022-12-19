@@ -3,7 +3,7 @@ specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
-from typing import Any
+from typing import Any, Dict
 
 from typeguard import typechecked
 
@@ -100,9 +100,9 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
 
 @typechecked
-def verify_error_is_thrown_on_invalid_configuration_setting_value(
+def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     invalid_config_setting_value: Any,
-    experiment_config: dict,
+    experiment_config: Dict,
     expected_type: type,
     test_object: Any,
 ) -> None:

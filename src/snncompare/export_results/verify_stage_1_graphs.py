@@ -10,9 +10,11 @@ Input: Experiment configuration.
         mechanism.
 """
 # pylint: disable=W0613
-from typing import List
+from typing import Dict, List
 
 from typeguard import typechecked
+
+from snncompare.exp_setts.run_config.Run_config import Run_config
 
 from ..graph_generation.stage_1_get_input_graphs import (
     has_adaptation,
@@ -22,7 +24,9 @@ from ..graph_generation.stage_1_get_input_graphs import (
 
 @typechecked
 def verify_stage_1_graphs(
-    experiment_config: dict, run_config: dict, graphs: dict
+    experiment_config: Dict,
+    run_config: Run_config,
+    graphs: dict,
 ) -> None:
     """Verifies the generated graphs are compliant and complete for the
     specified run configuration.
@@ -38,7 +42,9 @@ def verify_stage_1_graphs(
 
 
 @typechecked
-def get_expected_stage_1_graph_names(run_config: dict) -> List[str]:
+def get_expected_stage_1_graph_names(
+    run_config: Run_config,
+) -> List[str]:
     """Parses the run config and returns a list with the graph names that are
     expected at the end of stage 1."""
 
@@ -55,7 +61,9 @@ def get_expected_stage_1_graph_names(run_config: dict) -> List[str]:
 
 @typechecked
 def expected_graphs_are_in_dict(
-    run_config: dict, graphs: dict, stage: int
+    run_config: Run_config,
+    graphs: dict,
+    stage: int,
 ) -> bool:
     """Gets the graphs that are expected in the dict, and returns True if they
     are found in the list of graphs."""
@@ -75,7 +83,9 @@ def expected_graphs_are_in_dict(
 
 @typechecked
 def assert_graphs_are_in_dict(
-    run_config: dict, graphs: dict, stage: int
+    run_config: Run_config,
+    graphs: dict,
+    stage: int,
 ) -> None:
     """Throws error if the not all the expected graphs are in the list of
     graphs."""

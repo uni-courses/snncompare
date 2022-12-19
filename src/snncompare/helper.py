@@ -3,14 +3,14 @@ import random
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import networkx as nx
 import pylab as plt
 from networkx.classes.graph import Graph
 from typeguard import typechecked
 
-from snncompare.export_plots.Plot_to_tex import Plot_to_tex
+from snncompare.exp_setts.run_config.Run_config import Run_config
 
 
 @typechecked
@@ -63,7 +63,7 @@ def generate_list_of_n_random_nrs(
 @typechecked
 def get_neuron_from_dict(
     neuron_dict: dict, neurons: List, neuron_name: str
-) -> Any:
+) -> str:
     """
 
     :param neuron_dict:
@@ -78,7 +78,7 @@ def get_neuron_from_dict(
 
 
 @typechecked
-def print_time(status: Any, previous_millis: int) -> Tuple[Any, int]:
+def print_time(status: str, previous_millis: int) -> Tuple[datetime, int]:
     """
 
     :param status:
@@ -164,13 +164,14 @@ def plot_alipour(
     if show:
         plt.show()
     if export:
-        plot_export = Plot_to_tex()
-        plot_export.export_plot(
-            plt,
-            f"alipour_{seed}_size{size}_m{m}_iter{iteration}_combined_"
-            + f"{configuration}",
-            extensions=["png"],  # TODO: include run_config extensions.
-        )
+        print(f"TODO: restore alipour plot.{iteration}{seed}{size}{m}")
+        # TODO: restore
+        # plot_export.export_plot(
+        #     plt,
+        #     f"alipour_{seed}_size{size}_m{m}_iter{iteration}_combined_"
+        #     + f"{configuration}",
+        #     extensions=["png"],  # TODO: include run_config extensions.
+        # )
 
     plt.clf()
     plt.close()
@@ -306,7 +307,10 @@ def set_node_default_values(
 
 
 @typechecked
-def get_extensions_list(run_config: dict, stage_index: int) -> List:
+def get_extensions_list(
+    run_config: Run_config,
+    stage_index: int,
+) -> List:
     """TODO: make this into 1 symmetric method/improve structure.
 
     :param run_config: param stage_index:
@@ -315,14 +319,17 @@ def get_extensions_list(run_config: dict, stage_index: int) -> List:
     extensions = list(get_extensions_dict(run_config, stage_index).values())
     """
     if stage_index == 3:
-        if run_config["export_images"]:
-            return run_config["export_types"]
+        if run_config.export_images:
+            return run_config.export_types
         return []
     return list(get_extensions_dict(run_config, stage_index).values())
 
 
 @typechecked
-def get_extensions_dict(run_config: dict, stage_index: int) -> dict:
+def get_extensions_dict(
+    run_config: Run_config,
+    stage_index: int,
+) -> dict:
     """Returns the file extensions of the output types. The dictionary key
     describes the content of the file, and the extension is given as the value.
     Config_and_graphs means that the experiment or run config is included in
@@ -334,7 +341,7 @@ def get_extensions_dict(run_config: dict, stage_index: int) -> dict:
     if stage_index == 1:
         return {"config_and_graphs": ".json"}
     if stage_index == 2:
-        if run_config["simulator"] == "lava":
+        if run_config.simulator == "lava":
             return {"config": ".json"}
         # The networkx simulator is used:
         return {"config_and_graphs": ".json"}
@@ -381,10 +388,10 @@ def add_stage_completion_to_graph(
 @typechecked
 def get_max_sim_duration(
     input_graph: nx.Graph,
-    run_config: dict,
+    run_config: Run_config,
 ) -> int:
     """Compute the simulation duration for a given algorithm and graph."""
-    for algo_name, algo_settings in run_config["algorithm"].items():
+    for algo_name, algo_settings in run_config.algorithm.items():
         if algo_name == "MDSA":
 
             # TODO: Move into stage_1 get input graphs.

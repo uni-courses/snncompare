@@ -1,17 +1,19 @@
 """Contains helper functions for exporting simulation results."""
 import collections
 import copy
-from typing import Any, Dict, List, Union
+from typing import Dict, List, Union
 
 import networkx as nx
 from typeguard import typechecked
+
+from snncompare.exp_setts.run_config.Run_config import Run_config
 
 from ..helper import get_actual_duration
 
 
 @typechecked
 def flatten(
-    d: Dict[str, Any], parent_key: str = "", sep: str = "_"
+    d: Dict, parent_key: str = "", sep: str = "_"
 ) -> Union[dict, Dict[str, float], Dict[str, int]]:
     """Flattens a dictionary (makes multiple lines into a oneliner)."""
     items: List = []
@@ -29,7 +31,9 @@ def flatten(
 
 
 @typechecked
-def run_config_to_filename(run_config: dict) -> str:
+def run_config_to_filename(
+    run_config: Run_config,
+) -> str:
     """Converts a run_config dictionary into a filename.
 
     Does that by flattining the dictionary (and all its child-
@@ -38,10 +42,12 @@ def run_config_to_filename(run_config: dict) -> str:
     # TODO: order dictionaries by alphabetical order by default.
     # TODO: allow user to specify a custom order of parameters.
 
-    stripped_run_config = copy.deepcopy(run_config)
+    stripped_run_config = copy.deepcopy(run_config).__dict__
     stripped_run_config.pop("unique_id")  # Unique Id will be added as tag
     stripped_run_config.pop("overwrite_sim_results")  # Irrellevant
     stripped_run_config.pop("overwrite_visualisation")  # Irrellevant
+    stripped_run_config.pop("overwrite_snn_creation")  # Irrellevant
+    stripped_run_config.pop("overwrite_snn_propagation")  # Irrellevant
     stripped_run_config.pop("show_snns")  # Irrellevant
     stripped_run_config.pop("export_images")  # Irrellevant
     if "export_types" in stripped_run_config.keys():
@@ -66,9 +72,9 @@ def run_config_to_filename(run_config: dict) -> str:
 def get_expected_image_paths_stage_3(
     graphs_dict: Dict,
     input_graph: nx.Graph,
-    run_config: dict,
+    run_config: Run_config,
     extensions: List[str],
-) -> List:
+) -> List[str]:
     """Returns the expected image filepaths for stage 3.
 
     (If export is on).

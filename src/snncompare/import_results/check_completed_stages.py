@@ -5,6 +5,7 @@ from typing import Dict, List
 from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
 from snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
@@ -24,7 +25,10 @@ from ..helper import get_expected_stages, get_extensions_list
 
 
 @typechecked
-def get_stage_2_nx_graphs(run_config: Dict, to_run: dict) -> Dict:
+def get_stage_2_nx_graphs(
+    run_config: Run_config,
+    to_run: dict,
+) -> Dict:
     """Loads the json graphs for stage 2 from file.
 
     Then converts them to nx graphs and returns them.
@@ -37,7 +41,10 @@ def get_stage_2_nx_graphs(run_config: Dict, to_run: dict) -> Dict:
 # pylint: disable=R0912
 @typechecked
 def has_outputted_stage(
-    run_config: dict, stage_index: int, to_run: dict, verbose: bool = False
+    run_config: Run_config,
+    stage_index: int,
+    to_run: dict,
+    verbose: bool = False,
 ) -> bool:
     """Checks whether the the required output files exist, for a given
     simulation and whether their content is valid. Returns True if the file
@@ -61,7 +68,7 @@ def has_outputted_stage(
             # TODO: append expected_filepath to run_config per stage.
 
         if stage_index == 3:
-            if run_config["export_images"]:
+            if run_config.export_images:
                 if has_outputted_stage(run_config, 2, to_run):
                     results_nx_graphs = get_stage_2_nx_graphs(
                         run_config, to_run
@@ -110,7 +117,9 @@ def has_outputted_stage(
 
 @typechecked
 def nx_graphs_have_completed_stage(
-    run_config: dict, results_nx_graphs: dict, stage_index: int
+    run_config: Run_config,
+    results_nx_graphs: dict,
+    stage_index: int,
 ) -> bool:
     """Checks whether all expected graphs have been completed for the stages:
 
@@ -143,13 +152,15 @@ def nx_graphs_have_completed_stage(
 # pylint: disable=R1702
 @typechecked
 def has_valid_json_results(
-    json_graphs: dict, run_config: dict, to_run: dict
+    json_graphs: dict,
+    run_config: Run_config,
+    to_run: dict,
 ) -> bool:
     """Checks if the json_graphs contain the expected results.
 
     TODO: support different algorithms.
     """
-    for algo_name, algo_settings in run_config["algorithm"].items():
+    for algo_name, algo_settings in run_config.algorithm.items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
                 graphnames_with_results = get_expected_stage_1_graph_names(
@@ -162,7 +173,7 @@ def has_valid_json_results(
                     return False
 
                 expected_stages = get_expected_stages(
-                    run_config["export_images"], 4, to_run
+                    run_config.export_images, 4, to_run
                 )
 
                 for graph_name, json_graph in json_graphs.items():

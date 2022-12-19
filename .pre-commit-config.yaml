@@ -41,7 +41,7 @@ repos:
    rev: v0.991
    hooks:
     - id: mypy
-      args: ["--disallow-untyped-calls", "--disallow-untyped-defs", "--disallow-incomplete-defs"]
+      args: ["--disallow-untyped-calls", "--disallow-untyped-defs", "--disallow-incomplete-defs", "--disallow-any-explicit"]
 
   # TODO:
   #--strict

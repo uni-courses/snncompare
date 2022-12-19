@@ -17,6 +17,8 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
+from snncompare.exp_setts.run_config.Run_config import Run_config
+
 from ..export_results.Output_stage_34 import output_stage_files_3_and_4
 from ..helper import add_stage_completion_to_graph, get_expected_stages
 from ..import_results.check_completed_stages import (
@@ -25,9 +27,12 @@ from ..import_results.check_completed_stages import (
 
 
 @typechecked
-def set_results(run_config: dict, stage_2_graphs: dict) -> None:
+def set_results(
+    run_config: Run_config,
+    stage_2_graphs: dict,
+) -> None:
     """Gets the results for the algorithms that have been ran."""
-    for algo_name, algo_settings in run_config["algorithm"].items():
+    for algo_name, algo_settings in run_config.algorithm.items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
                 set_mdsa_snn_results(

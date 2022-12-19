@@ -11,6 +11,7 @@ from typeguard import typechecked
 from snncompare.exp_setts.custom_setts.run_configs.algo_test import (
     long_exp_setts_for_mdsa_testing,
 )
+from snncompare.exp_setts.run_config import Run_config
 from snncompare.exp_setts.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -52,7 +53,9 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         exp_setts = copy.deepcopy(self.exp_setts)
 
         # Generate run configurations.
-        run_configs: List[dict] = experiment_config_to_run_configs(exp_setts)
+        run_configs: List[Run_config] = experiment_config_to_run_configs(
+            exp_setts
+        )
         self.assertGreaterEqual(len(run_configs), 2)
 
         no_ids = copy.deepcopy(run_configs)
@@ -73,13 +76,13 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         for index, run_config in enumerate(run_configs):
             if index == 0:
                 self.assertEqual(
-                    run_config["unique_id"],
+                    run_config.unique_id,
                     "8583218e3da8df30a7a9a72a0d4712e2d774b95ba042be"
                     + "75ebde042792397bde",
                 )
             if index == 1:
                 self.assertEqual(
-                    run_config["unique_id"],
+                    run_config.unique_id,
                     "f155c0e35222e9f405c2a436d88970d899faa116e4557ae2f"
                     + "daf3e901c3a6842",
                 )
@@ -96,7 +99,9 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         exp_setts = copy.deepcopy(long_mdsa_testing)
 
         # Generate run configurations.
-        run_configs: List[dict] = experiment_config_to_run_configs(exp_setts)
+        run_configs: List[Run_config] = experiment_config_to_run_configs(
+            exp_setts
+        )
         self.assertGreaterEqual(len(run_configs), 2)
 
         no_ids = copy.deepcopy(run_configs)
