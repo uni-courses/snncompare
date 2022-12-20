@@ -86,7 +86,11 @@ def verify_run_config_dict_is_complete(
 ) -> None:
     """Verifies the configuration settings dictionary is complete."""
     for expected_key in supp_run_setts.parameters.keys():
-        if getattr(run_config, expected_key) is None:
+        attr_val = getattr(run_config, expected_key)
+        if attr_val is None and expected_key not in [
+            "adaptation",
+            "radiation",
+        ]:
             raise Exception(
                 f"Error:{expected_key} is not in the configuration"
                 + f" settings:{run_config.__dict__.keys()}"

@@ -1,2 +1,0 @@
-0 & grid sizes & 2 & 3  \\ \hline
-example & 2 & 3 & 4  \\ \hline

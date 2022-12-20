@@ -25,10 +25,10 @@ mainly relevant for the additions of brain adaptation and simulated radiation.
 ## Example
 
 Below is an example of the SNN behaviour of the MDSA algorithm without
-adaptation, without radiation, on a (non-triangular) input graph of 3 nodes.
+adaptation, without radiation, on a (non-triangular) input graph of 5 nodes.
 <img src="example.gif" width="1280" height="960" />
 
-The green dots are when the neurons spike, non-spiking neurons are not visible.
+The green dots are when the neurons spike, non-spiking neurons are yellow.
 
 ## Brain adaptation
 

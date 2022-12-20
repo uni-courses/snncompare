@@ -110,7 +110,7 @@ class Experiment_runner:
         for i, run_config in enumerate(run_configs):
 
             print(f"\n{i+1}/{len(run_configs)} [runs]")
-            pprint(run_config)
+            pprint(run_config.__dict__)
             self.to_run = determine_what_to_run(run_config)
             print("\nstart stage I")
             results_nx_graphs = self.__perform_run_stage_1(
@@ -137,7 +137,7 @@ class Experiment_runner:
     def generate_run_configs(
         self,
         experiment_config: Dict,
-        run_config: Optional[Run_config] = None,
+        specific_run_config: Optional[Run_config] = None,
     ) -> List[Run_config]:
         """Generates the run configs belonging to an experiment config, and
         then removes all run configs except for the desired run config.
@@ -150,19 +150,24 @@ class Experiment_runner:
         run_configs: List[Run_config] = experiment_config_to_run_configs(
             experiment_config
         )
-        if run_config is not None:
-            if "unique_id" not in run_config:
-                print(f"run_config={run_config}")
+        if specific_run_config is not None:
+            if specific_run_config.unique_id is None:
+                pprint(specific_run_config.__dict__)
                 # Append unique_id to run_config
                 Supported_run_settings().append_unique_run_config_id(
-                    run_config, allow_optional=True
+                    specific_run_config, allow_optional=True
                 )
             for gen_run_config in run_configs:
                 if dicts_are_equal(
-                    gen_run_config, run_config, without_unique_id=True
+                    gen_run_config.__dict__,
+                    specific_run_config.__dict__,
+                    without_unique_id=True,
                 ):
                     found_run_config = True
-                    if gen_run_config.unique_id != run_config.unique_id:
+                    if (
+                        gen_run_config.unique_id
+                        != specific_run_config.unique_id
+                    ):
                         raise Exception(
                             "Error, equal dict but unequal unique_ids."
                         )
@@ -171,9 +176,10 @@ class Experiment_runner:
             if not found_run_config:
                 pprint(run_configs)
                 raise Exception(
-                    f"The expected run config:{run_config} was not" "found."
+                    f"The expected run config:{specific_run_config} was not"
+                    "found."
                 )
-            run_configs = [run_config]
+            run_configs = [specific_run_config]
 
         return run_configs
 
@@ -388,7 +394,6 @@ def run_parameters_to_dict(
     Written as separate argument to keep code width under 80 lines. #
     TODO: verify typing.
     """
-    print(f"algorithm={algorithm}")
     run_config: Run_config = Run_config(
         adaptation=adaptation,
         algorithm=algorithm,
