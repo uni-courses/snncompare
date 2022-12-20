@@ -3,13 +3,14 @@
 TODO: rename and restructure this function along with:
 helper_network_structure.
 """
-
 from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib
 import networkx as nx
 from matplotlib import pyplot as plt
 from typeguard import typechecked
+
+from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 # pylint: disable=R0913
@@ -109,12 +110,8 @@ def plot_coordinated_graph(
     if show:
         plt.show()
 
-    # TODO: restore
-    # from snncompare.export_plots.Plot_to_tex import Plot_to_tex
-    print(f"extensions={extensions}")
-    print(f"filename={filename}")
-    # plot_export = Plot_to_tex()
-    # plot_export.export_plot(plt, filename, extensions=extensions)
+    plot_export = Plot_to_tex()
+    plot_export.export_plot(plt, filename, extensions=extensions)
     # plt.savefig()
     plt.clf()
     plt.close()

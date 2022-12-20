@@ -11,6 +11,7 @@ from networkx.classes.graph import Graph
 from typeguard import typechecked
 
 from snncompare.exp_setts.run_config.Run_config import Run_config
+from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 @typechecked
@@ -164,14 +165,13 @@ def plot_alipour(
     if show:
         plt.show()
     if export:
-        print(f"TODO: restore alipour plot.{iteration}{seed}{size}{m}")
-        # TODO: restore
-        # plot_export.export_plot(
-        #     plt,
-        #     f"alipour_{seed}_size{size}_m{m}_iter{iteration}_combined_"
-        #     + f"{configuration}",
-        #     extensions=["png"],  # TODO: include run_config extensions.
-        # )
+        plot_export = Plot_to_tex()
+        plot_export.export_plot(
+            plt,
+            f"alipour_{seed}_size{size}_m{m}_iter{iteration}_combined_"
+            + f"{configuration}",
+            extensions=["png"],  # TODO: include run_config extensions.
+        )
 
     plt.clf()
     plt.close()
