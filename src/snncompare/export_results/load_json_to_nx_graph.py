@@ -149,21 +149,3 @@ def dicts_are_equal(left: dict, right: dict, without_unique_id: bool) -> bool:
             right_copy.pop("unique_id")
         return left_copy == right_copy
     return left == right
-
-
-@typechecked
-def load_json_graphs_from_json(
-    run_config: Run_config,
-) -> dict:
-    """TODO: make private.
-    Loads the json dict and returns the graphs of the relevant stages."""
-    results_json_graphs = {}
-
-    filename: str = run_config_to_filename(run_config)
-    json_filepath = f"results/{filename}.json"
-
-    # Read output JSON file into dict.
-    with open(json_filepath, encoding="utf-8") as json_file:
-        results_json_graphs = json.load(json_file)
-        json_file.close()
-    return results_json_graphs["graphs_dict"]

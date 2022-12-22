@@ -1,5 +1,4 @@
 """Parses the graph json files to recreate the graphs."""
-import json
 from pprint import pprint
 
 from typeguard import typechecked
@@ -61,21 +60,3 @@ def load_results_stage_1(
         # TODO: update typing and name of "stage1 graphs"
         stage_1_graphs[graph_name] = json_to_digraph(some_graph)
     return stage_1_graphs
-
-
-@typechecked
-def load_stage_2_output_dict(relative_output_dir: str, filename: str) -> dict:
-    """Loads the stage_2 output dictionary from a file.
-
-    :param relative_output_dir: param filename:
-    :param filename:
-    """
-    stage_2_output_dict_filepath = relative_output_dir + filename
-    with open(stage_2_output_dict_filepath, encoding="utf-8") as json_file:
-        stage_2_output_dict = json.load(json_file)
-        json_file.close()
-
-    # TODO: Verify stage 2 is completed.
-
-    # TODO: Verify results are valid.
-    return stage_2_output_dict

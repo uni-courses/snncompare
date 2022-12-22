@@ -56,17 +56,6 @@ def assertIsFile(path: PosixPath) -> None:
 
 
 @typechecked
-def assertIsNotFile(path: str) -> None:
-    """Asserts a file does not exists.
-
-    Throws error if the file does exist.
-    """
-    if pathlib.Path(path).resolve().is_file():
-        # pylint: disable=C0209
-        raise AssertionError("File exist: %s" % str(path))
-
-
-@typechecked
 def create_result_file_for_testing(
     json_filepath: str,
     graph_names: list[str],

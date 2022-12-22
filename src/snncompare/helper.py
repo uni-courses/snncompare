@@ -15,25 +15,6 @@ from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 
 @typechecked
-def sort_neurons(neurons: List, neuron_dict: dict) -> List:
-    """
-
-    :param neurons:
-    :param neuron_dict:
-
-    """
-    sorted_neurons: List = []
-    # Sort by value.
-    sorted_dict: dict = dict(
-        sorted(neuron_dict.items(), key=lambda item: item[1])
-    )
-    for neuron, _ in sorted_dict.items():
-        if neuron in neurons:
-            sorted_neurons.append(neuron)
-    return sorted_neurons
-
-
-@typechecked
 def generate_list_of_n_random_nrs(
     G: Graph, max_val: Optional[int] = None, seed: Optional[int] = None
 ) -> List[int]:
@@ -59,23 +40,6 @@ def generate_list_of_n_random_nrs(
     raise Exception(
         f"The max_val={max_val} is smaller than the graph size:{len(G)}."
     )
-
-
-@typechecked
-def get_neuron_from_dict(
-    neuron_dict: dict, neurons: List, neuron_name: str
-) -> str:
-    """
-
-    :param neuron_dict:
-    :param neurons:
-    :param neuron_name:
-
-    """
-    for neuron in neurons:
-        if neuron_dict[neuron] == neuron_name:
-            return neuron
-    raise Exception(f"Did not find neuron:{neuron_name} in dict:{neuron_dict}")
 
 
 @typechecked
