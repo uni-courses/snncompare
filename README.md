@@ -172,7 +172,8 @@ python -m pytest
 or to see live output, on any tests filenames containing substring: `results`:
 
 ```bash
-python -m pytest --capture=tee-sys -k results
+python -m pytest tests/sparse/MDSA/test_snn_results_with_adaptation.py --capture=tee-sys
+
 ```
 
 This generates the graphs from the default experiment configurations, and

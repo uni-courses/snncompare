@@ -44,6 +44,7 @@ def run_config_to_filename(
 
     stripped_run_config = copy.deepcopy(run_config).__dict__
     stripped_run_config.pop("unique_id")  # Unique Id will be added as tag
+    stripped_run_config.pop("max_duration")  # Empty
     stripped_run_config.pop("overwrite_sim_results")  # Irrellevant
     stripped_run_config.pop("overwrite_visualisation")  # Irrellevant
     stripped_run_config.pop("overwrite_snn_creation")  # Irrellevant

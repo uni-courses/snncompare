@@ -8,6 +8,8 @@ from typing import Dict, List, Optional, Tuple, Union
 import matplotlib
 import networkx as nx
 from matplotlib import pyplot as plt
+from snnalgorithms.zoom_in_images import copy_region_of_img
+from snnbackends.plot_graphs import create_target_dir_if_not_exists
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_to_tex import Plot_to_tex
@@ -26,6 +28,7 @@ def plot_coordinated_graph(
     filename: str = "no_filename",
     show: Optional[bool] = False,
     title: Optional[str] = None,
+    zoomed: Optional[bool] = True,
 ) -> None:
     """Some documentation.
 
@@ -50,7 +53,6 @@ def plot_coordinated_graph(
 
     # Width=edge width.
     width, height = get_width_and_height(G, t)
-    print(f"width,height={int(width)},{int(height)}")
     # TODO: limit to max filesize
     plt.figure(3, figsize=(width / 20, height / 20), dpi=100)
     nx.draw(
@@ -103,15 +105,22 @@ def plot_coordinated_graph(
         t,
     )
 
-    # f = plt.figure()
-    # f.set_figwidth(10)
-    # f.set_figheight(10)
-    # plt.subplots_adjust(left=0.0, right=4.0, bottom=0.0, top=4.0)
     if show:
         plt.show()
 
     plot_export = Plot_to_tex()
     plot_export.export_plot(plt, filename, extensions=extensions)
+
+    if zoomed:
+        create_target_dir_if_not_exists("latex/Images/", "graphs/zoomed")
+        if "png" in extensions:
+            copy_region_of_img(
+                src_path="latex/Images/" + "graphs/" + filename + ".png",
+                dst_dir="latex/Images/graphs/zoomed",
+                x_coords=[0.0, 1.0],
+                y_coords=[0.3, 0.6],
+            )
+
     # plt.savefig()
     plt.clf()
     plt.close()
