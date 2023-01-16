@@ -86,7 +86,6 @@ class Plot_to_tex:
         ax = fig.add_subplot(111)
 
         # generate colours
-        print(f"typeself={self.__dict__}")
         cmap = get_cmap(plt, len(y_series[:, 0]))
 
         # generate line types

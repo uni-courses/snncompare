@@ -117,8 +117,8 @@ def plot_coordinated_graph(
             copy_region_of_img(
                 src_path="latex/Images/" + "graphs/" + filename + ".png",
                 dst_dir="latex/Images/graphs/zoomed",
-                x_coords=[0.0, 1.0],
-                y_coords=[0.3, 0.6],
+                x_coords=(0.0, 1.0),
+                y_coords=(0.3, 0.6),
             )
 
     # plt.savefig()

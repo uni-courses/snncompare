@@ -143,7 +143,6 @@ def get_adapted_graph(
                 + " be reached."
             )
         if adaptation_name == "redundancy":
-            print(f"type(run_config.adaptation)={type(run_config.adaptation)}")
             verify_redundancy_settings_for_run_config(run_config.adaptation)
             adaptation_graph: nx.DiGraph = get_redundant_graph(
                 snn_algo_graph, adaptation_setting
