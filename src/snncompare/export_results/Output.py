@@ -80,12 +80,12 @@ class Stage_1_graphs:
     def __init__(
         self,
         experiment_config: Dict,
-        stage_1_graphs: dict,
+        stage_1_graphs: Dict,
         run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
         self.run_config = run_config
-        self.stage_1_graphs: dict = stage_1_graphs
+        self.stage_1_graphs: Dict = stage_1_graphs
         verify_stage_1_graphs(
             experiment_config, run_config, self.stage_1_graphs
         )
@@ -104,7 +104,7 @@ class Stage_2_graphs:
     def __init__(
         self,
         experiment_config: Dict,
-        graphs_stage_2: dict,
+        graphs_stage_2: Dict,
         run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
@@ -123,7 +123,7 @@ class Stage_3_graphs:
     def __init__(
         self,
         experiment_config: Dict,
-        graphs_stage_3: dict,
+        graphs_stage_3: Dict,
         run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
@@ -143,7 +143,7 @@ class Stage_4_graphs:
     def __init__(
         self,
         experiment_config: Dict,
-        graphs_stage_4: dict,
+        graphs_stage_4: Dict,
         run_config: Run_config,
     ) -> None:
         self.experiment_config = experiment_config
@@ -156,7 +156,7 @@ class Stage_4_graphs:
 
 @typechecked
 def output_stage_json(
-    results_nx_graphs: dict, filename: str, stage_index: int, to_run: dict
+    results_nx_graphs: Dict, filename: str, stage_index: int, to_run: Dict
 ) -> None:
     """Exports results dict to a json file."""
 
@@ -194,7 +194,7 @@ def output_stage_json(
 @typechecked
 def plot_graph_behaviours(
     filepath: str,
-    stage_2_graphs: dict,
+    stage_2_graphs: Dict,
     run_config: Run_config,
 ) -> None:
     """Exports the plots of the graphs per time step of the run

@@ -24,7 +24,7 @@ def load_results_from_json(
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.DiGraph object."""
     # Load the json dictionary of results.
-    results_json_graphs: dict = load_json_file_into_dict(json_filepath)
+    results_json_graphs: Dict = load_json_file_into_dict(json_filepath)
 
     # Verify the dict contains a key for the graph dict.
     if "graphs_dict" not in results_json_graphs:
@@ -46,7 +46,7 @@ def load_results_from_json(
 
 
 @typechecked
-def set_graph_attributes(graphs_dict: dict) -> dict:
+def set_graph_attributes(graphs_dict: Dict) -> dict:
     """First loads the graph attributes from a graph dict and stores them as a
     dict.
 
@@ -79,7 +79,7 @@ def set_graph_attributes(graphs_dict: dict) -> dict:
 
 @typechecked
 def get_graph_attributes_from_dict_and_return_nx_graph(
-    json_graph: dict,
+    json_graph: Dict,
 ) -> nx.DiGraph:
     """Takes a json input graph, which is a dictionary.
 

@@ -27,7 +27,7 @@ from ..helper import get_expected_stages, get_extensions_list
 @typechecked
 def get_stage_2_nx_graphs(
     run_config: Run_config,
-    to_run: dict,
+    to_run: Dict,
 ) -> Dict:
     """Loads the json graphs for stage 2 from file.
 
@@ -43,7 +43,7 @@ def get_stage_2_nx_graphs(
 def has_outputted_stage(
     run_config: Run_config,
     stage_index: int,
-    to_run: dict,
+    to_run: Dict,
     verbose: bool = False,
 ) -> bool:
     """Checks whether the the required output files exist, for a given
@@ -118,7 +118,7 @@ def has_outputted_stage(
 @typechecked
 def nx_graphs_have_completed_stage(
     run_config: Run_config,
-    results_nx_graphs: dict,
+    results_nx_graphs: Dict,
     stage_index: int,
 ) -> bool:
     """Checks whether all expected graphs have been completed for the stages:
@@ -152,9 +152,9 @@ def nx_graphs_have_completed_stage(
 # pylint: disable=R1702
 @typechecked
 def has_valid_json_results(
-    json_graphs: dict,
+    json_graphs: Dict,
     run_config: Run_config,
-    to_run: dict,
+    to_run: Dict,
 ) -> bool:
     """Checks if the json_graphs contain the expected results.
 

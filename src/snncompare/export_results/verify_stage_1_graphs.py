@@ -26,7 +26,7 @@ from ..graph_generation.stage_1_get_input_graphs import (
 def verify_stage_1_graphs(
     experiment_config: Dict,
     run_config: Run_config,
-    graphs: dict,
+    graphs: Dict,
 ) -> None:
     """Verifies the generated graphs are compliant and complete for the
     specified run configuration.
@@ -62,7 +62,7 @@ def get_expected_stage_1_graph_names(
 @typechecked
 def expected_graphs_are_in_dict(
     run_config: Run_config,
-    graphs: dict,
+    graphs: Dict,
     stage: int,
 ) -> bool:
     """Gets the graphs that are expected in the dict, and returns True if they
@@ -84,7 +84,7 @@ def expected_graphs_are_in_dict(
 @typechecked
 def assert_graphs_are_in_dict(
     run_config: Run_config,
-    graphs: dict,
+    graphs: Dict,
     stage: int,
 ) -> None:
     """Throws error if the not all the expected graphs are in the list of

@@ -1,4 +1,6 @@
 """"Outputs the results for stage 1 and/or 2."""
+from typing import Dict
+
 from typeguard import typechecked
 
 from .helper import run_config_to_filename
@@ -7,7 +9,7 @@ from .Output import output_stage_json
 
 @typechecked
 def output_files_stage_1_and_2(
-    results_nx_graphs: dict, stage_index: int, to_run: dict
+    results_nx_graphs: Dict, stage_index: int, to_run: Dict
 ) -> None:
 
     """Converts the graphs of the incoming results dict into json dict graphs,

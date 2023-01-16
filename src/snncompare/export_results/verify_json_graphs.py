@@ -39,7 +39,7 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
 
 @typechecked
 def verify_json_graphs_dict_contain_correct_stages(
-    json_graphs: dict,
+    json_graphs: Dict,
     expected_stages: List[int],
     run_config: Run_config,
 ) -> None:

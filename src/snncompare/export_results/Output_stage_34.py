@@ -1,4 +1,6 @@
 """"Outputs the results for stage 3 and/or 4."""
+from typing import Dict
+
 from typeguard import typechecked
 
 from snncompare.export_plots.create_snn_gif import create_gif_of_run_config
@@ -10,7 +12,7 @@ from .Output import output_stage_json, plot_graph_behaviours
 
 @typechecked
 def output_stage_files_3_and_4(
-    results_nx_graphs: dict, stage_index: int, to_run: dict
+    results_nx_graphs: Dict, stage_index: int, to_run: Dict
 ) -> None:
     """Merges the experiment configuration dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported

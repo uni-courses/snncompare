@@ -22,7 +22,7 @@ from snncompare.exp_setts.run_config.Run_config import Run_config
 def verify_stage_3_graphs(
     experiment_config: Dict,
     run_config: Run_config,
-    graphs_stage_3: dict,
+    graphs_stage_3: Dict,
 ) -> None:
     """Verifies the generated graphs are compliant and complete for the
     specified run configuration.

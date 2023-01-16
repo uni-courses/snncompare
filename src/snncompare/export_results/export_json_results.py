@@ -1,13 +1,13 @@
 """Exports the test results to a json file."""
 import json
 from pathlib import Path
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
 from typeguard import typechecked
 
 
 @typechecked
-def write_dict_to_json(output_filepath: str, some_dict: dict) -> None:
+def write_dict_to_json(output_filepath: str, some_dict: Dict) -> None:
     """Writes a dict file to a .json file."""
 
     # jsonstring =  enc.encode(some_dict)
@@ -25,7 +25,7 @@ def write_dict_to_json(output_filepath: str, some_dict: dict) -> None:
     # TODO: verify the file content is valid.
 
 
-def encode_tuples(some_dict: dict, decode: bool = False) -> dict:
+def encode_tuples(some_dict: Dict, decode: bool = False) -> dict:
     """Loops through the values of the dict and if it detects a list with
     tuples, it encodes the tuples for json exporting.
 
@@ -67,7 +67,7 @@ class MultiDimensionalArrayEncoder(json.JSONEncoder):
         return super().encode(hint_tuples(o))
 
 
-def hinted_tuple_hook(obj: dict) -> Union[dict, tuple]:
+def hinted_tuple_hook(obj: Dict) -> Union[dict, tuple]:
     """Checks if a dictionary contains the keyword __tuple__ and if yes,
     decodes it by returning the accompanying tuple stored in the value
     belonging to the "items" key."""

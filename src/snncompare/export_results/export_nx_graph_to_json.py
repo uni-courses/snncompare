@@ -16,7 +16,7 @@ def digraph_to_json(G: nx.Graph) -> dict:
 
     """
     if G is not None:
-        some_json_graph: dict = json_graph.node_link_data(G)
+        some_json_graph: Dict = json_graph.node_link_data(G)
         if not isinstance(some_json_graph, dict):
             raise TypeError(
                 "Error, json graph type is not dict, it is:"
@@ -29,7 +29,7 @@ def digraph_to_json(G: nx.Graph) -> dict:
 
 @typechecked
 def convert_digraphs_to_json(
-    results_nx_graphs: dict, stage_index: int
+    results_nx_graphs: Dict, stage_index: int
 ) -> dict:
     """Converts the digraph networkx objects to json dicts."""
     results_json_graphs = copy.deepcopy(results_nx_graphs)
@@ -52,7 +52,7 @@ def convert_digraphs_to_json(
 
 
 @typechecked
-def convert_stage_1_digraphs_to_json(graphs: dict) -> Dict:
+def convert_stage_1_digraphs_to_json(graphs: Dict) -> Dict:
     """Puts all the graphs of stage 1 into a single graph."""
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():

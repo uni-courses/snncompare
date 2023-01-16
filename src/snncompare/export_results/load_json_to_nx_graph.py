@@ -2,7 +2,7 @@
 import copy
 import json
 from pprint import pprint
-from typing import List
+from typing import Dict, List
 
 import networkx as nx
 from networkx.readwrite import json_graph
@@ -21,7 +21,7 @@ from .verify_json_graphs import (
 
 
 @typechecked
-def json_to_digraph(json_data: dict) -> nx.DiGraph:
+def json_to_digraph(json_data: Dict) -> nx.DiGraph:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -37,7 +37,7 @@ def json_to_digraph(json_data: dict) -> nx.DiGraph:
 def load_json_to_nx_graph_from_file(
     run_config: Run_config,
     stage_index: int,
-    to_run: dict,
+    to_run: Dict,
 ) -> dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
     exists, and then loads them back as json dicts.
@@ -48,7 +48,7 @@ def load_json_to_nx_graph_from_file(
     """
     nx_graphs_dict = {}
     # Load existing graph dict if it already exists, and if overwrite is off.
-    json_graphs_dict: dict = load_pre_existing_graph_dict(
+    json_graphs_dict: Dict = load_pre_existing_graph_dict(
         run_config, stage_index, to_run
     )
     for graph_name, graph in json_graphs_dict.items():
@@ -74,7 +74,7 @@ def load_json_to_nx_graph_from_file(
 def load_pre_existing_graph_dict(
     run_config: Run_config,
     stage_index: int,
-    to_run: dict,
+    to_run: Dict,
 ) -> dict:
     """Returns the pre-existing graphs that were generated during earlier
     stages of the experiment.
@@ -138,7 +138,7 @@ def load_verified_json_graphs_from_json(
 
 
 @typechecked
-def dicts_are_equal(left: dict, right: dict, without_unique_id: bool) -> bool:
+def dicts_are_equal(left: Dict, right: Dict, without_unique_id: bool) -> bool:
     """Determines whether two run configurations are equal or not."""
     if without_unique_id:
         left_copy = copy.deepcopy(left)

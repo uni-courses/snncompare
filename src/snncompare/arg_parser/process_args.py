@@ -1,5 +1,4 @@
 """Completes the tasks specified in the arg_parser."""
-
 import argparse
 from pprint import pprint
 from typing import Dict

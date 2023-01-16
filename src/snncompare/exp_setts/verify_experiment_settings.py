@@ -1,12 +1,16 @@
 """Contains the supported experiment settings.
 
 (The values of the settings may vary, yet the types should be the same.)
+TODO: remove type checking verifications, they are performed automatically.
 """
 from __future__ import annotations
 
 from pprint import pprint
 from typing import TYPE_CHECKING, Any
 
+from snnadaptation.redundancy.verify_redundancy_settings import (
+    verify_redundancy_settings,
+)
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_experiment_config
 from typeguard import typechecked
@@ -380,7 +384,8 @@ def verify_adap_and_rad_settings(
                 )
             # Check if values belonging to key are within supported range.
             if check_type == "adaptations":
-                verify_adaptation_values(supp_exp_setts, some_dict, key)
+                verify_redundancy_settings(some_dict[key])
+                # verify_adaptation_values(supp_exp_setts, some_dict, key)
             elif check_type == "radiations":
                 verify_radiations_values(supp_exp_setts, some_dict, key)
         return some_dict
@@ -414,7 +419,7 @@ def verify_adaptation_values(
     supported range. It also checks if the values of the adaptations dictionary
     keys are a list, and whether all elements in those lists are of type float.
 
-    :param adaptations: dict:
+    :param adaptations: Dict:
     :param key: str:
     :param supp_exp_setts:
     """
@@ -457,7 +462,7 @@ def verify_radiations_values(
     or tuple. If the types are tuple, it also checks whether the values within
     those tuples are of type float.
 
-    :param radiations: dict:
+    :param radiations: Dict:
     :param key: str:
     :param supp_exp_setts:
     """

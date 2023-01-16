@@ -120,7 +120,7 @@ class Supported_run_settings:
 
     @typechecked
     def assert_has_key(
-        self, some_dict: dict, key: str, some_type: type
+        self, some_dict: Dict, key: str, some_type: type
     ) -> None:
         """Asserts a dictionary has some key with a value of a certain type.
 

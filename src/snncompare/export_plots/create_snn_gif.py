@@ -1,5 +1,7 @@
 """Creates a gif of an SNN propagation."""
 
+from typing import Dict
+
 import imageio
 
 from snncompare.export_results.helper import (
@@ -12,7 +14,7 @@ from snncompare.graph_generation.stage_1_get_input_graphs import (
 from snncompare.helper import get_extensions_list
 
 
-def create_gif_of_run_config(results_nx_graphs: dict) -> None:
+def create_gif_of_run_config(results_nx_graphs: Dict) -> None:
     """Creates a gif of an SNN propagation."""
     run_config = results_nx_graphs["run_config"]
     expected_filepaths = []

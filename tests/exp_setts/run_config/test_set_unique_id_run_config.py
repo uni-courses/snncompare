@@ -4,7 +4,7 @@ run_config settings."""
 # pylint: disable=R0801
 import copy
 import unittest
-from typing import List
+from typing import Dict, List
 
 from typeguard import typechecked
 
@@ -34,7 +34,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
     def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # Generate default experiment config.
-        self.exp_setts: dict = get_config_one()
+        self.exp_setts: Dict = get_config_one()
 
         self.exp_setts["show_snns"] = False
         self.exp_setts["export_images"] = False
@@ -91,7 +91,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
     def test_same_run_config_same_unique_id(self) -> None:
         """Verifies the same run config gets the same unique_id."""
 
-        long_mdsa_testing: dict = long_exp_setts_for_mdsa_testing()
+        long_mdsa_testing: Dict = long_exp_setts_for_mdsa_testing()
         long_mdsa_testing["show_snns"] = False
         long_mdsa_testing["export_images"] = False
 

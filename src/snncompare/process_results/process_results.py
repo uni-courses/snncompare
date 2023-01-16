@@ -7,6 +7,7 @@ graph that have been selected according to Alipour, and according to the
 respective SNN graph.
 """
 import copy
+from typing import Dict
 
 import networkx as nx
 from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
@@ -29,7 +30,7 @@ from ..import_results.check_completed_stages import (
 @typechecked
 def set_results(
     run_config: Run_config,
-    stage_2_graphs: dict,
+    stage_2_graphs: Dict,
 ) -> None:
     """Gets the results for the algorithms that have been ran."""
     for algo_name, algo_settings in run_config.algorithm.items():
@@ -57,9 +58,9 @@ def set_results(
 @typechecked
 def export_results_to_json(
     export_images: bool,
-    results_nx_graphs: dict,
+    results_nx_graphs: Dict,
     stage_index: int,
-    to_run: dict,
+    to_run: Dict,
 ) -> None:
     """Integrates the results per graph type into the graph, then export the
     results dictionary (again) into the stage 4 folder."""
@@ -112,7 +113,7 @@ def export_results_to_json(
 
 @typechecked
 def add_result_to_last_graph(
-    snn_graphs: nx.DiGraph, result_per_type: dict
+    snn_graphs: nx.DiGraph, result_per_type: Dict
 ) -> None:
     """Checks whether the incoming snn_graph is a list of graphs or single
     graph.

@@ -188,7 +188,7 @@ class Experiment_runner:
         self,
         experiment_config: Dict,
         run_config: Run_config,
-        to_run: dict,
+        to_run: Dict,
     ) -> dict:
         """Performs the run for stage 1 or loads the data from file depending
         on the run configuration.
@@ -200,7 +200,7 @@ class Experiment_runner:
         if to_run["stage_1"]:
 
             # Run first stage of experiment, get input graph.
-            stage_1_graphs: dict = get_used_graphs(run_config)
+            stage_1_graphs: Dict = get_used_graphs(run_config)
             results_nx_graphs = {
                 "experiment_config": experiment_config,
                 "run_config": run_config,
@@ -218,8 +218,8 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_2(
         self,
-        results_nx_graphs: dict,
-        to_run: dict,
+        results_nx_graphs: Dict,
+        to_run: Dict,
     ) -> None:
         """Performs the run for stage 2 or loads the data from file depending
         on the run configuration.
@@ -264,8 +264,8 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_3(
         self,
-        results_nx_graphs: dict,
-        to_run: dict,
+        results_nx_graphs: Dict,
+        to_run: Dict,
     ) -> None:
         """Performs the run for stage 3, which visualises the behaviour of the
         SNN graphs over time. This behaviour is shown as a sequence of images.
@@ -293,7 +293,7 @@ class Experiment_runner:
 
     @typechecked
     def __perform_run_stage_4(
-        self, export_images: bool, results_nx_graphs: dict, to_run: dict
+        self, export_images: bool, results_nx_graphs: Dict, to_run: Dict
     ) -> None:
         """Performs the run for stage 4.
 
@@ -380,7 +380,7 @@ def experiment_config_to_run_configs(
 # pylint: disable=R0913
 @typechecked
 def run_parameters_to_dict(
-    adaptation: Union[None, Dict],
+    adaptation: Union[None, Dict[str, int]],
     algorithm: Dict[str, Dict[str, int]],
     iteration: int,
     size_and_max_graph: Tuple[int, int],
@@ -474,7 +474,7 @@ def determine_what_to_run(
     return to_run
 
 
-def get_adaptation_and_radiations(experiment_config: dict) -> List[tuple]:
+def get_adaptation_and_radiations(experiment_config: Dict) -> List[tuple]:
     """Returns a list of adaptations and radiations that will be used for the
     experiment."""
 
@@ -497,7 +497,7 @@ def get_adaptation_and_radiations(experiment_config: dict) -> List[tuple]:
 
 
 def get_radiations(
-    experiment_config: Dict, adaptation: Union[None, dict]
+    experiment_config: Dict, adaptation: Union[None, Dict[str, int]]
 ) -> List[Tuple[Union[None, dict], Union[None, dict]]]:
     """Returns the radiations."""
     adaptation_and_radiations: List[

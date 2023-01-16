@@ -1,4 +1,5 @@
 """Used to verify stages are completed."""
+from typing import Dict
 
 from typeguard import typechecked
 
@@ -11,7 +12,7 @@ from ...import_results.check_completed_stages import has_outputted_stage
 def assert_stage_is_completed(
     run_config: Run_config,
     stage_index: int,
-    to_run: dict,
+    to_run: Dict,
     verbose: bool = False,
 ) -> None:
     """Checks  if stage is completed, throws error if not."""

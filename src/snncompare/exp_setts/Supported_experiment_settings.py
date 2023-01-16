@@ -36,8 +36,8 @@ class Exp_setts_typing:
 
         # experiment_config dictionary keys:
         self.parameters = {
-            "adaptations": dict,
-            "algorithms": dict,
+            "adaptations": Dict,
+            "algorithms": Dict,
             "iterations": list,
             "max_graph_size": int,
             "max_max_graphs": int,
@@ -48,7 +48,7 @@ class Exp_setts_typing:
             "overwrite_snn_propagation": bool,
             "overwrite_visualisation": bool,
             "overwrite_sim_results": bool,
-            "radiations": dict,
+            "radiations": Dict,
             "seed": int,
             "simulators": list,
             "size_and_max_graphs": list,
@@ -203,7 +203,7 @@ class Supported_experiment_settings:
         }
 
     @typechecked
-    def has_unique_config_id(self, experiment_config: dict) -> bool:
+    def has_unique_config_id(self, experiment_config: Dict) -> bool:
         """
 
         :param experiment_config:
@@ -224,7 +224,7 @@ class Supported_experiment_settings:
 
         If it does, throws an error.
 
-        :param experiment_config: dict:
+        :param experiment_config: Dict:
         """
         if "unique_id" in experiment_config.keys():
             raise Exception(
@@ -262,7 +262,7 @@ class Supported_experiment_settings:
 
 
 @typechecked
-def remove_optional_exp_setts(exp_setts: dict) -> dict:
+def remove_optional_exp_setts(exp_setts: Dict) -> dict:
     """Eliminates all optional settings from an incoming experiment config."""
     supp_setts = Supported_experiment_settings()
     to_pop = []

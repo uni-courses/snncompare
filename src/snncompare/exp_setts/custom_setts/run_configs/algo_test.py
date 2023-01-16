@@ -1,6 +1,7 @@
 """Contains a default run configuration used to test the MDSA algorithm."""
 
 import json
+from typing import Dict
 
 import jsons
 from snnalgorithms.get_alg_configs import get_algo_configs
@@ -24,7 +25,7 @@ from snncompare.helper import file_exists
 
 
 def store_experiment_config_to_file(
-    custom_config_path: str, exp_config: dict, filename: str
+    custom_config_path: str, exp_config: Dict, filename: str
 ) -> None:
     """Verifies the experiment setting and then exports it to a dictionary."""
 
@@ -74,7 +75,7 @@ def long_exp_setts_for_mdsa_testing() -> dict:
 
     # Create the experiment configuration settings for a run with adaptation
     # and with radiation.
-    long_mdsa_testing: dict = {
+    long_mdsa_testing: Dict = {
         "adaptations": None,
         # TODO: set using a verification setting.
         "algorithms": {
@@ -158,7 +159,7 @@ def run_config_with_error() -> Run_config:
 
 def get_exp_setts_mdsa_size5_m4() -> dict:
     """Returns a default experiment setting with  graph size 7, m=4."""
-    mdsa_creation_only_size_7_m_4: dict = long_exp_setts_for_mdsa_testing()
+    mdsa_creation_only_size_7_m_4: Dict = long_exp_setts_for_mdsa_testing()
     mdsa_creation_only_size_7_m_4["algorithms"] = {
         "MDSA": get_algo_configs(MDSA(list(range(4, 5, 1))).__dict__)
     }

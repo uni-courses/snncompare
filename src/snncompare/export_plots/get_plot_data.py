@@ -286,7 +286,7 @@ def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
 
 @typechecked
 def set_node_colours_with_redundancy(
-    colour_dict: dict, node_name: str
+    colour_dict: Dict, node_name: str
 ) -> None:
     """Sets the colour of the redundant node different than the original
     node."""

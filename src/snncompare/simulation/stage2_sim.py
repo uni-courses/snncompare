@@ -1,5 +1,6 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
+from typing import Dict
 
 import networkx as nx
 from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
@@ -13,11 +14,11 @@ from ..helper import add_stage_completion_to_graph, get_max_sim_duration
 @typechecked
 def sim_graphs(
     run_config: Run_config,
-    stage_1_graphs: dict,
+    stage_1_graphs: Dict,
 ) -> None:
     """Simulates the snn graphs and makes a deep copy for each timestep.
 
-    :param stage_1_graphs: dict:
+    :param stage_1_graphs: Dict:
     """
     for graph_name, snn_graph in stage_1_graphs.items():
         if graph_name != "input_graph":

@@ -377,7 +377,7 @@ def get_actual_duration(snn_graph: nx.DiGraph) -> int:
 
 @typechecked
 def get_expected_stages(
-    export_images: bool, stage_index: int, to_run: dict
+    export_images: bool, stage_index: int, to_run: Dict
 ) -> List[int]:
     """Computes which stages should be expected at this stage of the
     experiment."""
