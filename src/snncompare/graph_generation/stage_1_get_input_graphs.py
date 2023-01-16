@@ -59,9 +59,10 @@ def get_used_graphs(
         graphs["rad_snn_algo_graph"] = get_radiation_graph(
             graphs["snn_algo_graph"], run_config, run_config.seed
         )
-        graphs["rad_adapted_snn_graph"] = get_radiation_graph(
-            graphs["adapted_snn_graph"], run_config, run_config.seed
-        )
+        if has_adaptation(run_config):
+            graphs["rad_adapted_snn_graph"] = get_radiation_graph(
+                graphs["adapted_snn_graph"], run_config, run_config.seed
+            )
 
     # TODO: move this into a separate location/function.
     # Indicate the graphs have completed stage 1.

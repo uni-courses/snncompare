@@ -55,7 +55,8 @@ def get_expected_stage_1_graph_names(
 
     if has_radiation(run_config):
         expected_graph_names.append("rad_snn_algo_graph")
-        expected_graph_names.append("rad_adapted_snn_graph")
+        if has_adaptation(run_config):
+            expected_graph_names.append("rad_adapted_snn_graph")
     return expected_graph_names
 
 
