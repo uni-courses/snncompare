@@ -5,7 +5,7 @@
 # controllers.py
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
 from typeguard import typechecked
 
@@ -130,7 +130,7 @@ def verify_has_unique_id(
     run_config: Run_config,
 ) -> None:
     """Verifies the config setting has a unique id."""
-    if not isinstance(run_config, dict):
+    if not isinstance(run_config, Dict):
         raise Exception(
             "The configuration settings is not a dictionary,"
             + f"instead it is: of type:{type(run_config)}."

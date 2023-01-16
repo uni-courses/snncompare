@@ -1,5 +1,7 @@
 """Used to generate the default experiment configuration json, run
 configuration settings, default input graph and default input graphs."""
+from typing import Dict
+
 import jsons
 import networkx as nx
 from snnadaptation.redundancy.Adaptation_Rad_settings import (
@@ -44,7 +46,7 @@ def create_default_exp_setts() -> None:
 
 
 @typechecked
-def default_experiment_config() -> dict:
+def default_experiment_config() -> Dict:
     """Creates example experiment configuration setting."""
     # Create prerequisites
     supp_exp_setts = Supported_experiment_settings()

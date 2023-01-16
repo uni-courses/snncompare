@@ -293,7 +293,7 @@ def get_extensions_list(
 def get_extensions_dict(
     run_config: Run_config,
     stage_index: int,
-) -> dict:
+) -> Dict:
     """Returns the file extensions of the output types. The dictionary key
     describes the content of the file, and the extension is given as the value.
     Config_and_graphs means that the experiment or run config is included in

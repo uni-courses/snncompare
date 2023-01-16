@@ -81,7 +81,7 @@ class Test_adaptation_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, property is expected to be a dict, yet"
+            "Error, property is expected to be a Dict, yet"
             + f" it was of type: {type(None)}.",
             str(context.exception),
         )
@@ -105,7 +105,7 @@ class Test_adaptation_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, property is expected to be a dict, yet"
+            "Error, property is expected to be a Dict, yet"
             + f" it was of type: {str}.",
             str(context.exception),
         )
@@ -123,7 +123,7 @@ class Test_adaptation_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, property dict: adaptations was empty.",
+            "Error, property Dict: adaptations was empty.",
             # "Error:adaptation is not in the configuration"
             # + f" settings:{experiment_config.keys()}",
             str(context.exception),

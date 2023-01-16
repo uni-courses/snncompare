@@ -86,7 +86,7 @@ class Test_setting_unique_id_exp_setts(unittest.TestCase):
                 )
 
 
-def get_config_one() -> dict:
+def get_config_one() -> Dict:
     """Contains a default experiment configuration used to test the MDSA
     algorithm."""
     # Create prerequisites
@@ -134,7 +134,7 @@ def get_config_one() -> dict:
     return mdsa_creation_only_size_3_4
 
 
-def get_config_two() -> dict:
+def get_config_two() -> Dict:
     """Returns a default experiment setting with  graph size 7, m=4."""
     mdsa_creation_only_size_7_m_4: Dict = long_exp_setts_for_mdsa_testing()
     mdsa_creation_only_size_7_m_4["algorithms"] = {

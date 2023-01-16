@@ -63,7 +63,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             has_unique_id=False,
             allow_optional=False,
         )
-        self.assertIsInstance(with_adaptation_with_radiation, dict)
+        self.assertIsInstance(with_adaptation_with_radiation, Dict)
 
         self.assertEqual(
             with_adaptation_with_radiation, with_adaptation_with_radiation

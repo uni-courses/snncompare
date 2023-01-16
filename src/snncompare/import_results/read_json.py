@@ -20,7 +20,7 @@ from snncompare.exp_setts.run_config.Run_config import Run_config
 def load_results_from_json(
     json_filepath: str,
     run_config: Run_config,
-) -> dict:
+) -> Dict:
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.DiGraph object."""
     # Load the json dictionary of results.
@@ -29,7 +29,7 @@ def load_results_from_json(
     # Verify the dict contains a key for the graph dict.
     if "graphs_dict" not in results_json_graphs:
         raise Exception(
-            "Error, the graphs dict key was not in the stage_1_dict:"
+            "Error, the graphs dict key was not in the stage_1_Dict:"
             + f"{results_json_graphs}"
         )
 
@@ -46,14 +46,14 @@ def load_results_from_json(
 
 
 @typechecked
-def set_graph_attributes(graphs_dict: Dict) -> dict:
+def set_graph_attributes(graphs_dict: Dict) -> Dict:
     """First loads the graph attributes from a graph dict and stores them as a
     dict.
 
-    Then converts the nx.DiGraph that is encoded as a dict, back into a
+    Then converts the nx.DiGraph that is encoded as a Dict, back into a
     nx.DiGraph object.
     """
-    # For each graph in the graphs dict, restore the graph attributes.
+    # For each graph in the graphs Dict, restore the graph attributes.
     for graph_name in graphs_dict.keys():
         # First load the graph attributes from the dict.
         if isinstance(graphs_dict[graph_name], List):
@@ -63,7 +63,7 @@ def set_graph_attributes(graphs_dict: Dict) -> dict:
                 ] = get_graph_attributes_from_dict_and_return_nx_graph(
                     json_graph
                 )
-        elif isinstance(graphs_dict[graph_name], dict):
+        elif isinstance(graphs_dict[graph_name], Dict):
             graphs_dict[
                 graph_name
             ] = get_graph_attributes_from_dict_and_return_nx_graph(
@@ -83,7 +83,7 @@ def get_graph_attributes_from_dict_and_return_nx_graph(
 ) -> nx.DiGraph:
     """Takes a json input graph, which is a dictionary.
 
-    Then gets the graph attributes from that dict, converts the json
+    Then gets the graph attributes from that Dict, converts the json
     input graph dict into a networkx graph, and then adds the attributes
     to the networkx graph.
     """

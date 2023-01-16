@@ -83,7 +83,7 @@ class Test_radiations_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, property is expected to be a dict, yet"
+            "Error, property is expected to be a Dict, yet"
             + f" it was of type: {type(None)}.",
             str(context.exception),
         )
@@ -106,7 +106,7 @@ class Test_radiations_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, property is expected to be a dict, yet"
+            "Error, property is expected to be a Dict, yet"
             + f" it was of type: {str}.",
             str(context.exception),
         )
@@ -122,7 +122,7 @@ class Test_radiations_settings(unittest.TestCase):
             verify_adap_and_rad_settings(self.supp_exp_setts, {}, "radiations")
 
         self.assertEqual(
-            "Error, property dict: radiations was empty.",
+            "Error, property Dict: radiations was empty.",
             # "Error:radiations is not in the configuration"
             # + f" settings:{experiment_config.keys()}",
             str(context.exception),

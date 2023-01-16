@@ -25,7 +25,7 @@ def write_dict_to_json(output_filepath: str, some_dict: Dict) -> None:
     # TODO: verify the file content is valid.
 
 
-def encode_tuples(some_dict: Dict, decode: bool = False) -> dict:
+def encode_tuples(some_dict: Dict, decode: bool = False) -> Dict:
     """Loops through the values of the dict and if it detects a list with
     tuples, it encodes the tuples for json exporting.
 
@@ -54,20 +54,20 @@ class MultiDimensionalArrayEncoder(json.JSONEncoder):
 
     def encode(self, o: Any) -> Any:  # type:ignore[misc]
         def hint_tuples(  # type:ignore[misc]
-            item: Union[tuple, List, dict, Any]
+            item: Union[tuple, List, Dict, Any]
         ) -> Any:
             if isinstance(item, tuple):
                 return {"__tuple__": True, "items": item}
             if isinstance(item, list):
                 return [hint_tuples(e) for e in item]
-            if isinstance(item, dict):
+            if isinstance(item, Dict):
                 return {key: hint_tuples(value) for key, value in item.items()}
             return item
 
         return super().encode(hint_tuples(o))
 
 
-def hinted_tuple_hook(obj: Dict) -> Union[dict, tuple]:
+def hinted_tuple_hook(obj: Dict) -> Union[Dict, tuple]:
     """Checks if a dictionary contains the keyword __tuple__ and if yes,
     decodes it by returning the accompanying tuple stored in the value
     belonging to the "items" key."""

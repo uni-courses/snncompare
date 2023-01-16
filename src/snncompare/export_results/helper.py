@@ -14,7 +14,7 @@ from ..helper import get_actual_duration
 @typechecked
 def flatten(
     d: Dict, parent_key: str = "", sep: str = "_"
-) -> Union[dict, Dict[str, float], Dict[str, int]]:
+) -> Union[Dict, Dict[str, float], Dict[str, int]]:
     """Flattens a dictionary (makes multiple lines into a oneliner)."""
     items: List = []
     for k, v in d.items():

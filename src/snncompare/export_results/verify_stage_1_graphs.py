@@ -65,7 +65,7 @@ def expected_graphs_are_in_dict(
     graphs: Dict,
     stage: int,
 ) -> bool:
-    """Gets the graphs that are expected in the dict, and returns True if they
+    """Gets the graphs that are expected in the Dict, and returns True if they
     are found in the list of graphs."""
 
     if stage == 1:

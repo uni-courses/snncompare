@@ -124,7 +124,7 @@ def nx_graphs_have_completed_stage(
     """Checks whether all expected graphs have been completed for the stages:
 
     <stage_index>. This check is performed by loading the graph dict
-    from the graph dict, and checking whether the graph dict contains a
+    from the graph Dict, and checking whether the graph dict contains a
     list with the completed stages, and checking this list whether it
     contains the required stage number.
     """

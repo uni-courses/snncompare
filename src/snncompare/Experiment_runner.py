@@ -189,7 +189,7 @@ class Experiment_runner:
         experiment_config: Dict,
         run_config: Run_config,
         to_run: Dict,
-    ) -> dict:
+    ) -> Dict:
         """Performs the run for stage 1 or loads the data from file depending
         on the run configuration.
 
@@ -498,10 +498,10 @@ def get_adaptation_and_radiations(experiment_config: Dict) -> List[tuple]:
 
 def get_radiations(
     experiment_config: Dict, adaptation: Union[None, Dict[str, int]]
-) -> List[Tuple[Union[None, dict], Union[None, dict]]]:
+) -> List[Tuple[Union[None, Dict], Union[None, Dict]]]:
     """Returns the radiations."""
     adaptation_and_radiations: List[
-        Tuple[Union[None, dict], Union[None, dict]]
+        Tuple[Union[None, Dict], Union[None, Dict]]
     ] = []
     if experiment_config["radiations"] is None:
         adaptation_and_radiations.append((adaptation, None))

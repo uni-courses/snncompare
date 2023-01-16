@@ -1,5 +1,6 @@
 """Parses the graph json files to recreate the graphs."""
 from pprint import pprint
+from typing import Dict
 
 from typeguard import typechecked
 
@@ -18,7 +19,7 @@ from .read_json import load_results_from_json
 @typechecked
 def load_results_stage_1(
     run_config: Run_config,
-) -> dict:
+) -> Dict:
     """Loads the experiment config, run config and graphs from the json file.
 
     # TODO: ensure it only loads the graphs of stage 1. OR: make all

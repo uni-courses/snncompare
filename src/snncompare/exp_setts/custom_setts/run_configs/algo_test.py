@@ -46,7 +46,7 @@ def store_experiment_config_to_file(
 
 def load_experiment_config_from_file(
     custom_config_path: str, filename: str
-) -> dict:
+) -> Dict:
     """Loads an experiment config from file, then verifies and returns it."""
     filepath = f"{custom_config_path}{filename}.json"
     if file_exists(filepath):
@@ -67,7 +67,7 @@ def load_experiment_config_from_file(
     raise FileNotFoundError(f"Error, {filepath} was not found.")
 
 
-def long_exp_setts_for_mdsa_testing() -> dict:
+def long_exp_setts_for_mdsa_testing() -> Dict:
     """Contains a default experiment configuration used to test the MDSA
     algorithm."""
     # Create prerequisites
@@ -115,7 +115,7 @@ def long_exp_setts_for_mdsa_testing() -> dict:
     return long_mdsa_testing
 
 
-def minimal_mdsa_test_exp_setts() -> dict:
+def minimal_mdsa_test_exp_setts() -> Dict:
     """Returns a experiment config for minimal MDSA testing."""
     minimal_mdsa_testing = long_exp_setts_for_mdsa_testing()
     minimal_mdsa_testing["size_and_max_graphs"] = [(3, 1)]
@@ -125,7 +125,7 @@ def minimal_mdsa_test_exp_setts() -> dict:
     return minimal_mdsa_testing
 
 
-def short_mdsa_test_exp_setts() -> dict:
+def short_mdsa_test_exp_setts() -> Dict:
     """Returns a experiment config for short MDSA testing."""
     short_mdsa_testing = long_exp_setts_for_mdsa_testing()
     short_mdsa_testing["size_and_max_graphs"] = [(3, 1), (5, 1)]
@@ -157,7 +157,7 @@ def run_config_with_error() -> Run_config:
     return some_run_config
 
 
-def get_exp_setts_mdsa_size5_m4() -> dict:
+def get_exp_setts_mdsa_size5_m4() -> Dict:
     """Returns a default experiment setting with  graph size 7, m=4."""
     mdsa_creation_only_size_7_m_4: Dict = long_exp_setts_for_mdsa_testing()
     mdsa_creation_only_size_7_m_4["algorithms"] = {

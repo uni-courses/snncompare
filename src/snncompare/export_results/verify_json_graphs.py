@@ -47,7 +47,7 @@ def verify_json_graphs_dict_contain_correct_stages(
     graph."""
     for expected_stage in expected_stages:
         for graph_name, json_graph in json_graphs.items():
-            if not isinstance(json_graph, dict):
+            if not isinstance(json_graph, Dict):
                 raise TypeError(
                     "Error, the json_graph is of type:"
                     f"{type(json_graph)}, with content:{json_graph}"

@@ -67,7 +67,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
             has_unique_id=False,
             allow_optional=False,
         )
-        self.assertIsInstance(returned_dict, dict)
+        self.assertIsInstance(returned_dict, Dict)
 
         self.assertEqual(self.valid_run_setting, returned_dict)
 

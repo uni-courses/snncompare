@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 
 @typechecked
-def digraph_to_json(G: nx.Graph) -> dict:
+def digraph_to_json(G: nx.Graph) -> Dict:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -17,9 +17,9 @@ def digraph_to_json(G: nx.Graph) -> dict:
     """
     if G is not None:
         some_json_graph: Dict = json_graph.node_link_data(G)
-        if not isinstance(some_json_graph, dict):
+        if not isinstance(some_json_graph, Dict):
             raise TypeError(
-                "Error, json graph type is not dict, it is:"
+                "Error, json graph type is not Dict, it is:"
                 + f"{type(some_json_graph)}"
             )
         return some_json_graph
@@ -30,7 +30,7 @@ def digraph_to_json(G: nx.Graph) -> dict:
 @typechecked
 def convert_digraphs_to_json(
     results_nx_graphs: Dict, stage_index: int
-) -> dict:
+) -> Dict:
     """Converts the digraph networkx objects to json dicts."""
     results_json_graphs = copy.deepcopy(results_nx_graphs)
     # Convert incoming graphs to dictionary.
@@ -74,7 +74,7 @@ def convert_stage_1_digraphs_to_json(graphs: Dict) -> Dict:
 @typechecked
 def convert_stage_2_digraphs_to_json(
     graphs: Dict[str, Union[nx.Graph, nx.DiGraph]]
-) -> Dict[str, dict]:
+) -> Dict[str, Dict]:
     """Puts all the graphs of stage 2 into a single graph dict."""
     graphs_dict_stage_2 = {}
     for graph_name, graph_container in graphs.items():

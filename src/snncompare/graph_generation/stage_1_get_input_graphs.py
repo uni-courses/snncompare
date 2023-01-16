@@ -5,12 +5,12 @@ networkx Graph.
 """
 
 import copy
-from typing import List
+from typing import Dict, List
 
 import networkx as nx
 from snnadaptation.redundancy.redundancy import apply_redundancy
 from snnadaptation.redundancy.verify_redundancy_settings import (
-    verify_redundancy_settings,
+    verify_redundancy_settings_for_run_config,
 )
 from snnalgorithms.sparse.MDSA.create_MDSA_snn_neurons import (
     get_new_mdsa_graph,
@@ -33,7 +33,7 @@ from ..helper import add_stage_completion_to_graph
 @typechecked
 def get_used_graphs(
     run_config: Run_config,
-) -> dict:
+) -> Dict:
     """First gets the input graph.
 
     Then generates a graph with adaptation if it is required. Then
@@ -143,7 +143,8 @@ def get_adapted_graph(
                 + " be reached."
             )
         if adaptation_name == "redundancy":
-            verify_redundancy_settings(run_config.adaptation)
+            print(f"type(run_config.adaptation)={type(run_config.adaptation)}")
+            verify_redundancy_settings_for_run_config(run_config.adaptation)
             adaptation_graph: nx.DiGraph = get_redundant_graph(
                 snn_algo_graph, adaptation_setting
             )

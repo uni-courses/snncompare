@@ -6,10 +6,10 @@ TODO: remove type checking verifications, they are performed automatically.
 from __future__ import annotations
 
 from pprint import pprint
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Dict
 
 from snnadaptation.redundancy.verify_redundancy_settings import (
-    verify_redundancy_settings,
+    verify_redundancy_settings_for_exp_setts,
 )
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_experiment_config
@@ -34,7 +34,7 @@ def verify_experiment_config(
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
-    if not isinstance(experiment_config, dict):
+    if not isinstance(experiment_config, Dict):
         raise Exception(
             "Error, the experiment_config is of type:"
             + f"{type(experiment_config)}, yet it was expected to be of"
@@ -371,9 +371,9 @@ def verify_adap_and_rad_settings(
         raise Exception(f"Check type:{check_type} not supported.")
 
     # Verify object is a dictionary.
-    if isinstance(some_dict, dict):
+    if isinstance(some_dict, Dict):
         if some_dict == {}:
-            raise Exception(f"Error, property dict: {check_type} was empty.")
+            raise Exception(f"Error, property Dict: {check_type} was empty.")
         for key in some_dict:
 
             # Verify the keys are within the supported dictionary keys.
@@ -384,13 +384,13 @@ def verify_adap_and_rad_settings(
                 )
             # Check if values belonging to key are within supported range.
             if check_type == "adaptations":
-                verify_redundancy_settings(some_dict[key])
+                verify_redundancy_settings_for_exp_setts(some_dict[key])
                 # verify_adaptation_values(supp_exp_setts, some_dict, key)
             elif check_type == "radiations":
                 verify_radiations_values(supp_exp_setts, some_dict, key)
         return some_dict
     raise Exception(
-        "Error, property is expected to be a dict, yet"
+        "Error, property is expected to be a Dict, yet"
         + f" it was of type: {type(some_dict)}."
     )
 
@@ -503,7 +503,7 @@ def verify_radiations_values(
 @typechecked
 def verify_has_unique_id(experiment_config: dict) -> None:
     """Verifies the config setting has a unique id."""
-    if not isinstance(experiment_config, dict):
+    if not isinstance(experiment_config, Dict):
         raise Exception(
             "The configuration settings is not a dictionary,"
             + f"instead it is: of type:{type(experiment_config)}."

@@ -38,7 +38,7 @@ def load_json_to_nx_graph_from_file(
     run_config: Run_config,
     stage_index: int,
     to_run: Dict,
-) -> dict:
+) -> Dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
     exists, and then loads them back as json dicts.
 
@@ -75,7 +75,7 @@ def load_pre_existing_graph_dict(
     run_config: Run_config,
     stage_index: int,
     to_run: Dict,
-) -> dict:
+) -> Dict:
     """Returns the pre-existing graphs that were generated during earlier
     stages of the experiment.
 
@@ -104,7 +104,7 @@ def load_pre_existing_graph_dict(
 def load_verified_json_graphs_from_json(
     run_config: Run_config,
     expected_stages: List[int],
-) -> dict:
+) -> Dict:
     """Loads the json dict and returns the graphs of the relevant stages."""
     results_json_graphs = {}
 

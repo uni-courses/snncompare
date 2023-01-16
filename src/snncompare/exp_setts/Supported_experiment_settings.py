@@ -218,7 +218,7 @@ class Supported_experiment_settings:
         self,
         experiment_config: Dict,
         allow_optional: bool = True,
-    ) -> dict:
+    ) -> Dict:
         """Checks if an experiment configuration dictionary already has a
         unique identifier, and if not it computes and appends it.
 
@@ -262,7 +262,7 @@ class Supported_experiment_settings:
 
 
 @typechecked
-def remove_optional_exp_setts(exp_setts: Dict) -> dict:
+def remove_optional_exp_setts(exp_setts: Dict) -> Dict:
     """Eliminates all optional settings from an incoming experiment config."""
     supp_setts = Supported_experiment_settings()
     to_pop = []

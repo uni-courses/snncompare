@@ -14,7 +14,7 @@ from .Output import output_stage_json, plot_graph_behaviours
 def output_stage_files_3_and_4(
     results_nx_graphs: Dict, stage_index: int, to_run: Dict
 ) -> None:
-    """Merges the experiment configuration dict, run configuration dict into a
+    """Merges the experiment configuration Dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
     are passed into this method.
 
