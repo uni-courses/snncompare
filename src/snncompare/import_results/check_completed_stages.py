@@ -75,6 +75,7 @@ def has_outputted_stage(
                         results_nx_graphs = get_stage_2_nx_graphs(
                             run_config, to_run
                         )
+
                     stage_3_img_filepaths = get_expected_image_paths_stage_3(
                         results_nx_graphs,
                         get_input_graph(run_config),

@@ -5,6 +5,7 @@ setting of the experiment configuration settings.
 """
 import functools
 import timeit
+from decimal import Decimal
 from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -137,21 +138,21 @@ class Experiment_runner:
                     self.to_run,
                 )
             ).timeit(1)
-            print(f"{duration} [s]")
+            print(f"{round(duration,5)} [s]")
             print("Start stage II  ", end=" ")
             duration, _ = timeit.Timer(  # type:ignore[misc]
                 functools.partial(
                     self.__perform_run_stage_2, results_nx_graphs, self.to_run
                 )
             ).timeit(1)
-            print(f"{duration} [s]")
+            print(f"{round(duration,5)} [s]")
             print("Start stage III ", end=" ")
             duration, _ = timeit.Timer(  # type:ignore[misc]
                 functools.partial(
                     self.__perform_run_stage_3, results_nx_graphs, self.to_run
                 )
             ).timeit(1)
-            print(f"{duration} [s]")
+            print(f"{round( Decimal(round(float(duration), 5)),5)} [s]")
             print("Start stage IV  ", end=" ")
             duration, _ = timeit.Timer(  # type:ignore[misc]
                 functools.partial(
@@ -161,7 +162,7 @@ class Experiment_runner:
                     self.to_run,
                 )
             ).timeit(1)
-            print(f"{duration} [s]")
+            print(f"{round(duration,5)} [s]")
             # Store run results in dict of Experiment_runner.
             self.results_nx_graphs: Dict = {
                 run_config.unique_id: results_nx_graphs  # type:ignore[index]
@@ -319,10 +320,17 @@ class Experiment_runner:
             # Generate output json dicts (and plots) of propagated graphs.
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
-            if results_nx_graphs["run_config"].overwrite_visualisation:
+            if (
+                results_nx_graphs["run_config"].overwrite_visualisation
+                or results_nx_graphs["run_config"].export_images
+            ):
                 output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
             assert_stage_is_completed(
-                results_nx_graphs["run_config"], 3, to_run, verbose=True
+                results_nx_graphs["run_config"],
+                3,
+                to_run,
+                verbose=True,
+                results_nx_graphs=results_nx_graphs,
             )
             # TODO: assert gif file exists
 
