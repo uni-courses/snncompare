@@ -38,6 +38,7 @@ def get_stage_2_nx_graphs(
     return nx_graphs_dict
 
 
+# pylint: disable=R0911
 # pylint: disable=R0912
 @typechecked
 def has_outputted_stage(
@@ -69,7 +70,7 @@ def has_outputted_stage(
             # TODO: append expected_filepath to run_config per stage.
 
         if stage_index == 3:
-            if run_config.export_images:
+            if run_config.export_images or run_config.show_snns:
                 if has_outputted_stage(run_config, 2, to_run):
                     if results_nx_graphs is None:
                         results_nx_graphs = get_stage_2_nx_graphs(
@@ -83,6 +84,8 @@ def has_outputted_stage(
                         extensions,
                     )
                     expected_filepaths.extend(stage_3_img_filepaths)
+                else:
+                    return False  # If stage 2 is not completed, neither is 3.
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:

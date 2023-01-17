@@ -322,7 +322,6 @@ class Experiment_runner:
             # Generate output json dicts (and plots) of propagated graphs.
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
-
             if (
                 results_nx_graphs["run_config"].overwrite_visualisation
                 or results_nx_graphs["run_config"].export_images
