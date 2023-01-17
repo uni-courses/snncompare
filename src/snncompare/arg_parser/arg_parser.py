@@ -19,16 +19,25 @@ def parse_cli_args() -> argparse.Namespace:
         description="Optional description for arg" + " parser"
     )
 
-    # Create argument parsers to allow user to specify what to run.
-    # Allow user run the experiment on a graph from file.
     parser.add_argument(
-        "-g",
-        "--graph-filepath",
-        action="store",
-        type=str,
+        "-di",
+        "--delete-images",
+        action="store_true",
+        default=False,
         help=(
-            "Run default experiment on networkx graph in json filepath. Give "
-            + "the filepath."
+            "Delete the images in the /latex/graphs/ directory at the start "
+            + "of the experiment."
+        ),
+    )
+
+    parser.add_argument(
+        "-dr",
+        "--delete-results",
+        action="store_true",
+        default=False,
+        help=(
+            "Delete the snn graphs, propagation, and results in the results/"
+            + " dir."
         ),
     )
 
@@ -45,42 +54,28 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
-    # Run run on a particular run_settings json file.
+    # Create argument parsers to allow user to specify what to run.
+    # Allow user run the experiment on a graph from file.
     parser.add_argument(
-        "-r",
-        "--run-config-path",
+        "-g",
+        "--graph-filepath",
         action="store",
         type=str,
         help=(
-            "Give filepath to run settings json on which to run " + "the run."
+            "Run default experiment on networkx graph in json filepath. Give "
+            + "the filepath."
         ),
     )
 
-    # Ensure SNN behaviour visualisation in stage 3 is exported to images.
+    # Allow user to set graph size.
     parser.add_argument(
-        "-x",
-        "--export-images",
+        "-m",
+        "--m_val",
         nargs="?",
-        type=str,
-        dest="export_images",
-        const="export_images",
-        help=(
-            "Ensures the SNN behaviour visualisation is exported, as pdf by "
-            + "default. Supported are:"
-            + f"{supp_setts.export_types}. Usage:"
-            + f'-x {",".join(supp_setts.export_types)} '
-            + "or:\n"
-            + f"--export_images {supp_setts.export_types[0]}"
-        ),
-    )
-
-    # Ensure SNN behaviour is visualised in stage 3.
-    parser.add_argument(
-        "-v",
-        "--visualise-snn",
-        action="store_true",
-        default=False,
-        help=("Pause computation, show you each plot of the SNN behaviour."),
+        type=int,
+        dest="m_val",
+        const="m_val",
+        help=("Specify the m_val on which to run the MDSA algorithm."),
     )
 
     # Create argument parsers to allow user to overwrite pre-existing output.
@@ -111,6 +106,18 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
+    # Ensure new SNN graph propagation is performed.
+    parser.add_argument(
+        "-or",
+        "--overwrite-results",
+        action="store_true",
+        default=False,
+        help=(
+            "Ensures new SNN algorithm results are computed, even if they "
+            "already existed."
+        ),
+    )
+
     # Ensure new SNN graph behaviour visualistation is created.
     parser.add_argument(
         "-ov",
@@ -123,16 +130,26 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
-    # Ensure new SNN graph propagation is performed.
+    # Run run on a particular run_settings json file.
     parser.add_argument(
-        "-or",
-        "--overwrite-results",
-        action="store_true",
-        default=False,
+        "-r",
+        "--run-config-path",
+        action="store",
+        type=str,
         help=(
-            "Ensures new SNN algorithm results are computed, even if they "
-            "already existed."
+            "Give filepath to run settings json on which to run " + "the run."
         ),
+    )
+
+    # Allow user to set a neuron redundancy value.
+    parser.add_argument(
+        "-rd",
+        "--redundancy",
+        nargs="?",
+        type=int,
+        dest="redundancy",
+        const="redundancy",
+        help=("Specify the redundancy used as adaptation mechanism."),
     )
 
     # Allow user to set graph size.
@@ -149,26 +166,31 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
-    # Allow user to set graph size.
+    # Ensure SNN behaviour is visualised in stage 3.
     parser.add_argument(
-        "-m",
-        "--m_val",
-        nargs="?",
-        type=int,
-        dest="m_val",
-        const="m_val",
-        help=("Specify the m_val on which to run the MDSA algorithm."),
+        "-v",
+        "--visualise-snn",
+        action="store_true",
+        default=False,
+        help=("Pause computation, show you each plot of the SNN behaviour."),
     )
 
-    # Allow user to set a neuron redundancy value.
+    # Ensure SNN behaviour visualisation in stage 3 is exported to images.
     parser.add_argument(
-        "-rd",
-        "--redundancy",
+        "-x",
+        "--export-images",
         nargs="?",
-        type=int,
-        dest="redundancy",
-        const="redundancy",
-        help=("Specify the redundancy used as adaptation mechanism."),
+        type=str,
+        dest="export_images",
+        const="export_images",
+        help=(
+            "Ensures the SNN behaviour visualisation is exported, as pdf by "
+            + "default. Supported are:"
+            + f"{supp_setts.export_types}. Usage:"
+            + f'-x {",".join(supp_setts.export_types)} '
+            + "or:\n"
+            + f"--export_images {supp_setts.export_types[0]}"
+        ),
     )
 
     # Create argument parsers to allow user to overwrite pre-existing output.

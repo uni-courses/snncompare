@@ -1,8 +1,11 @@
 """Completes the tasks specified in the arg_parser."""
 import argparse
+import os
+import shutil
 from pprint import pprint
 from typing import Dict
 
+from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
 from snncompare.exp_setts.Supported_experiment_settings import (
@@ -60,8 +63,14 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
 
 def manage_export_parsing(args: argparse.Namespace, exp_setts: Dict) -> None:
     """Performs the argument parsing related to data export settings."""
-
+    create_root_dir_if_not_exists("latex/Images/graphs")
     supp_setts = Supported_experiment_settings()
+
+    if args.delete_images and os.path.exists("latex"):
+        shutil.rmtree("latex")
+
+    if args.delete_results and os.path.exists("results"):
+        shutil.rmtree("results")
 
     # By default export pdf, if exporting is on.
     if args.export_images == "export_images":

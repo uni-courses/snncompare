@@ -25,6 +25,7 @@ def output_files_stage_1_and_2(
 
     :param results_nx_graphs:
     """
+
     # Get the json output filename.
     json_filename = run_config_to_filename(results_nx_graphs["run_config"])
     output_stage_json(

@@ -25,7 +25,10 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
         raise KeyError("Error, key: graphs_dict not in output_dict.")
 
     if not isinstance(results_json_graphs["run_config"], Dict):
-        raise TypeError("run_config was not of type Dict.")
+        raise TypeError(
+            "run_config was not of type Dict:"
+            + f'{results_json_graphs["run_config"]}'
+        )
 
     results_json_graphs["run_config"] = dict_to_run_config(
         results_json_graphs["run_config"]

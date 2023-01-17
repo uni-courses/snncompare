@@ -153,6 +153,7 @@ class Experiment_runner:
                 )
             ).timeit(1)
             print(f"{round( Decimal(round(float(duration), 5)),5)} [s]")
+
             print("Start stage IV  ", end=" ")
             duration, _ = timeit.Timer(  # type:ignore[misc]
                 functools.partial(
@@ -292,6 +293,7 @@ class Experiment_runner:
                 results_nx_graphs["graphs_dict"],
             )
             output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
+
         assert_stage_is_completed(
             results_nx_graphs["run_config"], 2, to_run, verbose=True
         )
@@ -320,6 +322,7 @@ class Experiment_runner:
             # Generate output json dicts (and plots) of propagated graphs.
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
+
             if (
                 results_nx_graphs["run_config"].overwrite_visualisation
                 or results_nx_graphs["run_config"].export_images

@@ -3,7 +3,6 @@ that invokes this script."""
 
 # Import code belonging to this project.
 
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
 from snncompare.arg_parser.arg_verification import verify_args
 from snncompare.exp_setts.custom_setts.create_custom_setts import (
@@ -15,13 +14,6 @@ from .arg_parser.process_args import process_args
 from .exp_setts.default_setts.create_default_settings import (
     create_default_graph_json,
 )
-
-# Remove results directory if it exists.
-# if os.path.exists("results"):
-#    shutil.rmtree("results")
-# if os.path.exists("latex"):
-#    shutil.rmtree("latex")
-create_root_dir_if_not_exists("latex/Images/graphs")
 
 custom_config_path = "src/snncompare/exp_setts/custom_setts/exp_setts/"
 

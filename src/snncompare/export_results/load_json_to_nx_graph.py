@@ -12,6 +12,9 @@ from snnbackends.verify_nx_graphs import (
 from typeguard import typechecked
 
 from snncompare.exp_setts.run_config.Run_config import Run_config
+from snncompare.exp_setts.run_config.Supported_run_settings import (
+    Supported_run_settings,
+)
 
 from ..helper import file_exists, get_expected_stages
 from .helper import run_config_to_filename
@@ -86,6 +89,7 @@ def load_pre_existing_graph_dict(
         # TODO: fix.
         return {}
     if stage_index == 2:
+
         if not run_config.overwrite_sim_results:
             # Load graphs stages 1, 2, 3, 4
             return load_verified_json_graphs_from_json(run_config, [1, 2])
@@ -123,12 +127,15 @@ def load_verified_json_graphs_from_json(
         results_json_graphs, expected_stages
     )
 
-    if run_config.unique_id != results_json_graphs["run_config"].unique_id:
-        # if not dicts_are_equal(
-        # results_json_graphs["run_config"].__dict__,
-        # run_config.__dict__,
-        # without_unique_id=True,
-        # ):
+    copy_export_settings(run_config, results_json_graphs["run_config"])
+
+    if run_config.unique_id != results_json_graphs[
+        "run_config"
+    ].unique_id or not dicts_are_equal(
+        results_json_graphs["run_config"].__dict__,
+        run_config.__dict__,
+        without_unique_id=True,
+    ):
         print("Current run_config:")
         pprint(run_config.__dict__)
         print("Loaded run_config:")
@@ -136,6 +143,24 @@ def load_verified_json_graphs_from_json(
         raise Exception("Error, difference in run configs, see above.")
 
     return results_json_graphs["graphs_dict"]
+
+
+@typechecked
+def copy_export_settings(original: Run_config, loaded: Run_config) -> None:
+    """Copies the non essential parameters from the original into the loaded
+    run_config."""
+
+    supp_run_setts = Supported_run_settings()
+
+    minimal_run_config: Run_config = supp_run_setts.remove_optional_args(
+        copy.deepcopy(original)
+    )
+
+    for key, value in original.__dict__.items():
+
+        if key not in minimal_run_config.__dict__.keys():
+
+            setattr(loaded, key, value)
 
 
 @typechecked
