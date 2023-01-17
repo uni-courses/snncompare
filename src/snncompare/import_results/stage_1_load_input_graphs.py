@@ -7,7 +7,6 @@ from typeguard import typechecked
 from snncompare.exp_setts.run_config.Run_config import Run_config
 
 from ..export_results.helper import run_config_to_filename
-from ..export_results.load_json_to_nx_graph import dicts_are_equal
 from ..export_results.verify_stage_1_graphs import assert_graphs_are_in_dict
 from ..helper import get_extensions_list
 from .read_json import load_results_from_json
@@ -39,13 +38,9 @@ def load_results_stage_1(
     stage_1_dict["run_config"] = Run_config(**stage_1_dict["run_config"])
 
     # Verify the run_dict is valid.
-    if not dicts_are_equal(
-        run_config.__dict__,
-        stage_1_dict["run_config"].__dict__,
-        without_unique_id=True,
-    ):
+    if run_config.unique_id != stage_1_dict["run_config"].unique_id:
         print("Current run_config:")
-        pprint(run_config)
+        pprint(run_config.__dict__)
         print("Loaded run_config:")
         pprint(stage_1_dict["run_config"].__dict__)
         raise Exception("Error, difference in run configs, see above.")

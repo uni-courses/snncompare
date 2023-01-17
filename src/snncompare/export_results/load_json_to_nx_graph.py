@@ -123,15 +123,16 @@ def load_verified_json_graphs_from_json(
         results_json_graphs, expected_stages
     )
 
-    if not dicts_are_equal(
-        results_json_graphs["run_config"].__dict__,
-        run_config.__dict__,
-        without_unique_id=True,
-    ):
+    if run_config.unique_id != results_json_graphs["run_config"].unique_id:
+        # if not dicts_are_equal(
+        # results_json_graphs["run_config"].__dict__,
+        # run_config.__dict__,
+        # without_unique_id=True,
+        # ):
         print("Current run_config:")
-        pprint(run_config)
+        pprint(run_config.__dict__)
         print("Loaded run_config:")
-        pprint(results_json_graphs["run_config"])
+        pprint(results_json_graphs["run_config"].__dict__)
         raise Exception("Error, difference in run configs, see above.")
 
     return results_json_graphs["graphs_dict"]
