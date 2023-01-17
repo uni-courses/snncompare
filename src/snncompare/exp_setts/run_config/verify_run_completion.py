@@ -1,5 +1,5 @@
 """Used to verify stages are completed."""
-from typing import Dict
+from typing import Dict, Optional
 
 from typeguard import typechecked
 
@@ -14,9 +14,14 @@ def assert_stage_is_completed(
     stage_index: int,
     to_run: Dict,
     verbose: bool = False,
+    results_nx_graphs: Optional[Dict] = None,
 ) -> None:
     """Checks  if stage is completed, throws error if not."""
     if not has_outputted_stage(
-        run_config, stage_index, to_run, verbose=verbose
+        run_config=run_config,
+        stage_index=stage_index,
+        to_run=to_run,
+        verbose=verbose,
+        results_nx_graphs=results_nx_graphs,
     ):
         raise Exception(f"Error, stage {stage_index} was not completed.")

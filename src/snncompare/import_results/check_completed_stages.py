@@ -1,6 +1,6 @@
 """Method used to perform checks on whether the input is loaded correctly."""
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
@@ -45,6 +45,7 @@ def has_outputted_stage(
     stage_index: int,
     to_run: Dict,
     verbose: bool = False,
+    results_nx_graphs: Optional[Dict] = None,
 ) -> bool:
     """Checks whether the the required output files exist, for a given
     simulation and whether their content is valid. Returns True if the file
@@ -60,7 +61,7 @@ def has_outputted_stage(
     relative_output_dir = "results/"
     extensions = get_extensions_list(run_config, stage_index)
     for extension in extensions:
-        if stage_index in [1, 2, 4]:  # json is checked in: stage_index == 3.
+        if stage_index in [1, 2, 4]:
 
             expected_filepaths.append(
                 relative_output_dir + filename + extension
@@ -70,9 +71,10 @@ def has_outputted_stage(
         if stage_index == 3:
             if run_config.export_images:
                 if has_outputted_stage(run_config, 2, to_run):
-                    results_nx_graphs = get_stage_2_nx_graphs(
-                        run_config, to_run
-                    )
+                    if results_nx_graphs is None:
+                        results_nx_graphs = get_stage_2_nx_graphs(
+                            run_config, to_run
+                        )
                     stage_3_img_filepaths = get_expected_image_paths_stage_3(
                         results_nx_graphs,
                         get_input_graph(run_config),

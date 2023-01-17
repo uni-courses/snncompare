@@ -41,8 +41,7 @@ from .process_results.process_results import (
 )
 from .simulation.stage2_sim import sim_graphs
 
-# type: ignore[attr-defined]
-timeit.template = """ # type: ignore[attr-defined]
+template = """
 def inner(_it, _timer{init}):
     {setup}
     _t0 = _timer()
@@ -50,8 +49,8 @@ def inner(_it, _timer{init}):
         retval = {stmt}
     _t1 = _timer()
     return _t1 - _t0, retval
-"""# type: ignore[attr-defined]
-# type: ignore[attr-defined]
+"""
+timeit.template = template  # type: ignore[attr-defined]
 
 
 class Experiment_runner:
@@ -320,7 +319,8 @@ class Experiment_runner:
             # Generate output json dicts (and plots) of propagated graphs.
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
-            output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
+            if results_nx_graphs["run_config"].overwrite_visualisation:
+                output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
             assert_stage_is_completed(
                 results_nx_graphs["run_config"], 3, to_run, verbose=True
             )
@@ -336,11 +336,11 @@ class Experiment_runner:
         default/Neumann implementation. Then stores this result in the
         last entry of each graph.
         """
-        set_results(
+        if set_results(
             results_nx_graphs["run_config"],
             results_nx_graphs["graphs_dict"],
-        )
-        export_results_to_json(export_images, results_nx_graphs, 4, to_run)
+        ):
+            export_results_to_json(export_images, results_nx_graphs, 4, to_run)
         assert_stage_is_completed(
             results_nx_graphs["run_config"], 4, to_run, verbose=True
         )
