@@ -1,4 +1,5 @@
 """Methods used to verify the json graphs."""
+from pprint import pprint
 from typing import Dict, List
 
 from typeguard import typechecked
@@ -54,9 +55,9 @@ def verify_json_graphs_dict_contain_correct_stages(
                 )
             completed_stages = json_graph["graph"]["completed_stages"]
             if expected_stage not in completed_stages:
+                pprint(run_config.__dict__)
                 raise ValueError(
-                    "Error, for run_config: "
-                    + f"{run_config}, the expected "
+                    "Error, for the above run_config, the expected "
                     + f"stage:{expected_stage}, was not found in "
                     + "the completed stages:"
                     + f"{completed_stages} "

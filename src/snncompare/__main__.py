@@ -2,8 +2,6 @@
 that invokes this script."""
 
 # Import code belonging to this project.
-import os
-import shutil
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 
@@ -19,11 +17,11 @@ from .exp_setts.default_setts.create_default_settings import (
 )
 
 # Remove results directory if it exists.
-if os.path.exists("results"):
-    shutil.rmtree("results")
-if os.path.exists("latex"):
-    shutil.rmtree("latex")
-    create_root_dir_if_not_exists("latex/Images/graphs")
+# if os.path.exists("results"):
+#    shutil.rmtree("results")
+# if os.path.exists("latex"):
+#    shutil.rmtree("latex")
+create_root_dir_if_not_exists("latex/Images/graphs")
 
 custom_config_path = "src/snncompare/exp_setts/custom_setts/exp_setts/"
 

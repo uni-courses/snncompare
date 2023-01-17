@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
+import networkx as nx
+from networkx.readwrite import json_graph
 from typeguard import typechecked
 
 
@@ -10,19 +12,26 @@ from typeguard import typechecked
 def write_dict_to_json(output_filepath: str, some_dict: Dict) -> None:
     """Writes a dict file to a .json file."""
 
-    # jsonstring =  enc.encode(some_dict)
-    # print(f'jsonstring={jsonstring}')
     with open(output_filepath, "w", encoding="utf-8") as fp:
         json.dump(some_dict, fp, indent=4, sort_keys=True)
-        # print(f'some_dict={some_dict')
-        # print(f'wrote: {some_str} to file.')
-        # fp.write(some_str)
         fp.close()
 
     # Verify the file exists.
     if not Path(output_filepath).is_file():
         raise Exception(f"Error, filepath:{output_filepath} was not created.")
+
     # TODO: verify the file content is valid.
+    if "graph" in some_dict.keys():
+        with open(output_filepath, encoding="utf-8") as json_file:
+            graph_dict = json.load(json_file)
+            json_file.close()
+        some_graph = json_graph.node_link_graph(graph_dict)
+        if not isinstance(some_graph, (nx.Graph, nx.DiGraph)):
+            raise ImportError(
+                f"Error, the json with a graph:{some_dict}, was not exported"
+                + "to file successfully, because it was not loaded back into a"
+                f"graph:{type(some_graph)}."
+            )
 
 
 def encode_tuples(some_dict: Dict, decode: bool = False) -> Dict:

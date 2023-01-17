@@ -90,9 +90,9 @@ def has_outputted_stage(
         if filepath[-5:] == ".json":
             # Load the json graphs from json file to see if they exist.
             # TODO: separate loading and checking if it can be loaded.
-            json_graphs = load_pre_existing_graph_dict(
-                run_config, stage_index, to_run
-            )
+            # json_graphs = load_pre_existing_graph_dict(
+            #    run_config, stage_index, to_run
+            # )
             try:
                 json_graphs = load_pre_existing_graph_dict(
                     run_config, stage_index, to_run

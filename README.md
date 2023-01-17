@@ -141,20 +141,20 @@ ulimit -n 800000
 You can run the experiment with command:
 
 ```bash
-python -m src.snncompare -e mdsa_size3_m1 -v -x
+python -m src.snncompare -e mdsa_size3_m1 -v -x png
 ```
 
 which is the same as:
 
 ```bash
 python -m src.snncompare --experiment-settings-name \
-mdsa_size3_m1 -visualise-snn --export-images
+mdsa_size3_m1 -visualise-snn --export-images png
 ```
 
 or:
 
 ```bash
-python -m src.snncompare --e mdsa_size3_m1 -v -x
+python -m src.snncompare -e mdsa_long_no_overwrite
 ```
 
 For more info, run:

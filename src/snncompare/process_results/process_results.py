@@ -36,13 +36,11 @@ def set_results(
     for algo_name, algo_settings in run_config.algorithm.items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
-                set_mdsa_snn_results(
-                    algo_settings["m_val"], run_config, stage_2_graphs
+                perform_mdsa_results_computation_if_needed(
+                    m_val=algo_settings["m_val"],
+                    run_config=run_config,
+                    stage_2_graphs=stage_2_graphs,
                 )
-
-                # Indicate the graphs have completed stage 1.
-                for nx_graph in stage_2_graphs.values():
-                    add_stage_completion_to_graph(nx_graph, 4)
             else:
                 raise Exception(
                     "Error, m_val setting is not of type int:"
@@ -53,6 +51,25 @@ def set_results(
             raise Exception(
                 f"Error, algo_name:{algo_name} is not (yet) supported."
             )
+
+
+@typechecked
+def perform_mdsa_results_computation_if_needed(
+    m_val: int,
+    run_config: Run_config,
+    stage_2_graphs: Dict,
+) -> None:
+    """Performs result computation if the results are not in the graph yet."""
+    for nx_graph in stage_2_graphs.values():
+        if (
+            4 not in nx_graph.graph["completed_stages"]
+            or run_config.overwrite_sim_results
+        ):
+            set_mdsa_snn_results(m_val, run_config, stage_2_graphs)
+
+            # Indicate the graphs have completed stage 1.
+            for nx_graph in stage_2_graphs.values():
+                add_stage_completion_to_graph(nx_graph, 4)
 
 
 @typechecked

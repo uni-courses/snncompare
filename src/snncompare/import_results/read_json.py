@@ -4,12 +4,13 @@ experiment config, run config and json graphs, from a json dict.
 Appears to also be used to partially convert json graphs back into nx
 graphs.
 """
-import copy
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional, Union
 
 import networkx as nx
+from networkx.readwrite import json_graph
+from snnbackends.networkx.LIF_neuron import Synapse, manually_create_lif_neuron
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
@@ -24,77 +25,65 @@ def load_results_from_json(
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.DiGraph object."""
     # Load the json dictionary of results.
-    results_json_graphs: Dict = load_json_file_into_dict(json_filepath)
+    results_loaded_graphs: Dict = load_json_file_into_dict(json_filepath)
 
     # Verify the dict contains a key for the graph dict.
-    if "graphs_dict" not in results_json_graphs:
+    if "graphs_dict" not in results_loaded_graphs:
         raise Exception(
             "Error, the graphs dict key was not in the stage_1_Dict:"
-            + f"{results_json_graphs}"
+            + f"{results_loaded_graphs}"
         )
 
     # Verify the graphs dict is of type dict.
-    if results_json_graphs["graphs_dict"] == {}:
+    if results_loaded_graphs["graphs_dict"] == {}:
         raise Exception("Error, the graphs dict was an empty dict.")
 
-    results_nx_graphs = copy.deepcopy(results_json_graphs)
-    results_nx_graphs["graphs_dict"] = set_graph_attributes(
-        results_json_graphs["graphs_dict"]
-    )
-    verify_results_nx_graphs(results_nx_graphs, run_config)
-    return results_json_graphs
+    for graph_name in results_loaded_graphs["graphs_dict"].keys():
+        results_loaded_graphs["graphs_dict"][
+            graph_name
+        ] = json_graph.node_link_graph(
+            results_loaded_graphs["graphs_dict"][graph_name]
+        )
+        set_graph_attributes(results_loaded_graphs["graphs_dict"][graph_name])
+
+    # TODO: Verify node and edge attributes are of valid object type.
+    verify_results_nx_graphs(results_loaded_graphs, run_config)
+    return results_loaded_graphs
 
 
 @typechecked
-def set_graph_attributes(graphs_dict: Dict) -> Dict:
-    """First loads the graph attributes from a graph dict and stores them as a
-    dict.
-
-    Then converts the nx.DiGraph that is encoded as a Dict, back into a
-    nx.DiGraph object.
-    """
-    # For each graph in the graphs Dict, restore the graph attributes.
-    for graph_name in graphs_dict.keys():
-        # First load the graph attributes from the dict.
-        if isinstance(graphs_dict[graph_name], List):
-            for i, json_graph in enumerate(graphs_dict[graph_name]):
-                graphs_dict[graph_name][
-                    i
-                ] = get_graph_attributes_from_dict_and_return_nx_graph(
-                    json_graph
-                )
-        elif isinstance(graphs_dict[graph_name], Dict):
-            graphs_dict[
-                graph_name
-            ] = get_graph_attributes_from_dict_and_return_nx_graph(
-                graphs_dict[graph_name]
+def set_graph_attributes(graph: Union[nx.Graph, nx.DiGraph]) -> None:
+    """Converts the edge and node attributes Synapse and nx_Lif back into their
+    respective objects."""
+    for edge in graph.edges:
+        if "synapse" in graph.edges[edge].keys():
+            graph.edges[edge]["synapse"] = Synapse(
+                **graph.edges[edge]["synapse"]
             )
-        else:
-            raise Exception("Error, unexpected graph type.")
-    # TODO: assert all graphs are of type: nx.Graph,nx.DiGraph, or [nx.Graph]
-    # or [nx.DiGraph]
-
-    return graphs_dict
+    for node in graph.nodes:
+        if "nx_lif" in graph.nodes[node].keys():
+            # print(graph.nodes[node]["nx_lif"])
+            graph.nodes[node]["nx_lif"] = list(
+                map(
+                    manually_create_lif_neuron,
+                    graph.nodes[node]["nx_lif"],
+                )
+            )
 
 
 @typechecked
 def get_graph_attributes_from_dict_and_return_nx_graph(
-    json_graph: Dict,
-) -> nx.DiGraph:
+    loaded_graph: Dict,
+) -> Union[nx.Graph, nx.DiGraph]:
     """Takes a json input graph, which is a dictionary.
 
     Then gets the graph attributes from that Dict, converts the json
     input graph dict into a networkx graph, and then adds the attributes
     to the networkx graph.
     """
-    graph_attributes = json_graph["graph"]
+    #    graph_attributes = loaded_graph["graph"]
 
-    # Convert the graph dict back into an nx.DiGraph object.
-    nx_graph = nx.DiGraph(json_graph)
-
-    # Add the graph attributes back to the nx.DiGraph object.
-    for graph_attribute_name, value in graph_attributes.items():
-        nx_graph.graph[graph_attribute_name] = value
+    nx_graph = json_graph.node_link_graph(loaded_graph)
     return nx_graph
 
 

@@ -3,6 +3,8 @@ setting of the experiment configuration settings.
 
 (The values of the settings may vary, yet the types should be the same.)
 """
+import functools
+import timeit
 from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -38,6 +40,18 @@ from .process_results.process_results import (
     set_results,
 )
 from .simulation.stage2_sim import sim_graphs
+
+# type: ignore[attr-defined]
+timeit.template = """ # type: ignore[attr-defined]
+def inner(_it, _timer{init}):
+    {setup}
+    _t0 = _timer()
+    for _i in _it:
+        retval = {stmt}
+    _t1 = _timer()
+    return _t1 - _t0, retval
+"""# type: ignore[attr-defined]
+# type: ignore[attr-defined]
 
 
 class Experiment_runner:
@@ -107,27 +121,48 @@ class Experiment_runner:
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
+        duration: float
+        results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
 
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
             self.to_run = determine_what_to_run(run_config)
-            print("\nstart stage I")
-            results_nx_graphs = self.__perform_run_stage_1(
-                experiment_config, run_config, self.to_run
-            )
-            print("Done stage I, start stage II")
-            self.__perform_run_stage_2(results_nx_graphs, self.to_run)
-            print("Done stage II, start stage III")
-            self.__perform_run_stage_3(results_nx_graphs, self.to_run)
-            print("Done stage III, start stage IV")
-            self.__perform_run_stage_4(
-                self.experiment_config["export_images"],
-                results_nx_graphs,
-                self.to_run,
-            )
-            print("Done stage IV\n")
+            print("\nstart stage I:  ", end=" ")
 
+            duration, results_nx_graphs = timeit.Timer(  # type:ignore[misc]
+                functools.partial(
+                    self.__perform_run_stage_1,
+                    experiment_config,
+                    run_config,
+                    self.to_run,
+                )
+            ).timeit(1)
+            print(f"{duration} [s]")
+            print("Start stage II  ", end=" ")
+            duration, _ = timeit.Timer(  # type:ignore[misc]
+                functools.partial(
+                    self.__perform_run_stage_2, results_nx_graphs, self.to_run
+                )
+            ).timeit(1)
+            print(f"{duration} [s]")
+            print("Start stage III ", end=" ")
+            duration, _ = timeit.Timer(  # type:ignore[misc]
+                functools.partial(
+                    self.__perform_run_stage_3, results_nx_graphs, self.to_run
+                )
+            ).timeit(1)
+            print(f"{duration} [s]")
+            print("Start stage IV  ", end=" ")
+            duration, _ = timeit.Timer(  # type:ignore[misc]
+                functools.partial(
+                    self.__perform_run_stage_4,
+                    self.experiment_config["export_images"],
+                    results_nx_graphs,
+                    self.to_run,
+                )
+            ).timeit(1)
+            print(f"{duration} [s]")
             # Store run results in dict of Experiment_runner.
             self.results_nx_graphs: Dict = {
                 run_config.unique_id: results_nx_graphs  # type:ignore[index]
