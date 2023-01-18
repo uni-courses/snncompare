@@ -71,7 +71,7 @@ def run_config_to_filename(
 
 @typechecked
 def get_expected_image_paths_stage_3(
-    graphs_dict: Dict,
+    nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph]],
     input_graph: nx.Graph,
     run_config: Run_config,
     extensions: List[str],
@@ -89,8 +89,10 @@ def get_expected_image_paths_stage_3(
     # TODO: move this into hardcoded setting.
     image_dir = "latex/Images/graphs/"
     for extension in extensions:
-        for graph_name, snn_graph in graphs_dict.items():
+        for graph_name, snn_graph in nx_graphs_dict.items():
             if graph_name != "input_graph":
+                print(f"graph_name={graph_name}")
+                print(f"graph={snn_graph}")
                 sim_duration = get_actual_duration(snn_graph)
                 for t in range(0, sim_duration):
                     image_filepaths.append(

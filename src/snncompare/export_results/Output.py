@@ -168,6 +168,7 @@ def output_stage_json(
     verify_results_nx_graphs(
         results_nx_graphs, results_nx_graphs["run_config"]
     )
+    print(f"stage_index={stage_index}")
     verify_results_nx_graphs_contain_expected_stages(
         results_nx_graphs, stage_index, to_run
     )

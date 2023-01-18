@@ -125,7 +125,13 @@ def export_results_to_json(
         verify_nx_graph_contains_correct_stages(
             graph_name,
             nx_graph,
-            get_expected_stages(export_images, stage_index, to_run),
+            get_expected_stages(
+                export_images=export_images,
+                overwrite_visualisation=False,  # TODO: get actual value.
+                show_snns=False,  # TODO: get actual value.
+                stage_index=stage_index,
+                to_run=to_run,
+            ),
         )
 
     output_stage_files_3_and_4(results_nx_graphs, 4, to_run)

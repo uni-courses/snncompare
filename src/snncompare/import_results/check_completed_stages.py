@@ -73,15 +73,15 @@ def has_outputted_stage(
             if run_config.export_images or run_config.show_snns:
                 if has_outputted_stage(run_config, 2, to_run):
                     if results_nx_graphs is None:
-                        results_nx_graphs = get_stage_2_nx_graphs(
+                        nx_graphs_dict = get_stage_2_nx_graphs(
                             run_config, to_run
                         )
 
                     stage_3_img_filepaths = get_expected_image_paths_stage_3(
-                        results_nx_graphs,
-                        get_input_graph(run_config),
-                        run_config,
-                        extensions,
+                        nx_graphs_dict=nx_graphs_dict,
+                        input_graph=get_input_graph(run_config),
+                        run_config=run_config,
+                        extensions=extensions,
                     )
                     expected_filepaths.extend(stage_3_img_filepaths)
                 else:
@@ -176,7 +176,11 @@ def has_valid_json_results(
                     return False
 
                 expected_stages = get_expected_stages(
-                    run_config.export_images, 4, to_run
+                    export_images=run_config.export_images,
+                    overwrite_visualisation=run_config.overwrite_visualisation,
+                    show_snns=run_config.show_snns,
+                    stage_index=4,
+                    to_run=to_run,
                 )
 
                 for graph_name, json_graph in json_graphs.items():

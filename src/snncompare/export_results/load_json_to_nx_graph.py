@@ -99,7 +99,13 @@ def load_pre_existing_graph_dict(
     if stage_index == 4:
         return load_verified_json_graphs_from_json(
             run_config,
-            get_expected_stages(run_config.export_images, stage_index, to_run),
+            get_expected_stages(
+                export_images=run_config.export_images,
+                overwrite_visualisation=run_config.overwrite_visualisation,
+                show_snns=run_config.show_snns,
+                stage_index=stage_index,
+                to_run=to_run,
+            ),
         )
     raise Exception(f"Error, unexpected stage_index:{stage_index}")
 
@@ -152,14 +158,15 @@ def copy_export_settings(original: Run_config, loaded: Run_config) -> None:
 
     supp_run_setts = Supported_run_settings()
 
-    minimal_run_config: Run_config = supp_run_setts.remove_optional_args(
-        copy.deepcopy(original)
-    )
+    # minimal_run_config: Run_config = supp_run_setts.remove_optional_args(
+    # copy.deepcopy(original)
+    # )
 
     for key, value in original.__dict__.items():
+        if key in supp_run_setts.optional_parameters:
 
-        if key not in minimal_run_config.__dict__.keys():
-
+            # if key not in minimal_run_config.__dict__.keys():
+            print(f"overwrite key={key}")
             setattr(loaded, key, value)
 
 

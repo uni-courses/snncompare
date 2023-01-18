@@ -141,7 +141,7 @@ ulimit -n 800000
 You can run the experiment with command:
 
 ```bash
-python -m src.snncompare -e mdsa_size3_m1 -v -x png
+python -m src.snncompare -e mdsa_long_no_overwrite -v -x png
 ```
 
 which is the same as:
