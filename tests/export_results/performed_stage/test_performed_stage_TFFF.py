@@ -13,7 +13,7 @@ import unittest
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
-from snncompare.exp_setts.default_setts.create_default_settings import (
+from snncompare.exp_config.default_setts.create_default_settings import (
     default_experiment_config,
 )
 from snncompare.Experiment_runner import (

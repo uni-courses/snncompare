@@ -12,7 +12,6 @@ class Scope_of_tests:
 
     @typechecked
     def __init__(self, export: bool = True, show: bool = False) -> None:
-
         self.export = export  # Export the graph that is generated to .png
 
         # Specify graph size (nr. of nodes in graph).
@@ -56,7 +55,6 @@ class Long_scope_of_tests:
 
     @typechecked
     def __init__(self, export: bool = True, show: bool = False) -> None:
-
         self.export = export  # Export the graph that is generated to .png
 
         # Specify graph size (nr. of nodes in graph).

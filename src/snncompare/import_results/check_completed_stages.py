@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
-from snncompare.exp_setts.run_config.Run_config import Run_config
+from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )

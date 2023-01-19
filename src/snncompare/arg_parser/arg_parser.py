@@ -4,7 +4,7 @@ import argparse
 
 from typeguard import typechecked
 
-from snncompare.exp_setts.Supported_experiment_settings import (
+from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
 

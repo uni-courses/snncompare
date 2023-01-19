@@ -11,8 +11,8 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_setts.run_config.Run_config import Run_config
-from snncompare.exp_setts.run_config.Supported_run_settings import (
+from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.exp_config.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
 

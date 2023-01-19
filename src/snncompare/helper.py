@@ -10,7 +10,7 @@ import pylab as plt
 from networkx.classes.graph import Graph
 from typeguard import typechecked
 
-from snncompare.exp_setts.run_config.Run_config import Run_config
+from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 

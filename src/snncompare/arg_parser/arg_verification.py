@@ -48,19 +48,19 @@ def verify_input_graph_path(graph_path: str) -> None:
 
 @typechecked
 def verify_experiment_settings(
-    custom_config_path: str, exp_setts_name: str
+    custom_config_path: str, exp_config_name: str
 ) -> None:
     """Verifies the filepath for the input graph exists and contains a valid
     networkx graph."""
     # Assert graph file exists.
-    exp_setts_path = f"{custom_config_path}{exp_setts_name}.json"
-    if not file_exists(exp_setts_path):
+    exp_config_path = f"{custom_config_path}{exp_config_name}.json"
+    if not file_exists(exp_config_path):
         raise FileNotFoundError(
             "Input experiment settings path was invalid: "
-            + f"{exp_setts_path}"
+            + f"{exp_config_path}"
         )
 
     # Read output JSON file into dict.
-    with open(exp_setts_path, encoding="utf-8") as json_file:
+    with open(exp_config_path, encoding="utf-8") as json_file:
         json.load(json_file)
         json_file.close()

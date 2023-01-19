@@ -13,17 +13,19 @@ from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
-from snncompare.exp_setts.run_config.Run_config import Run_config
+from snncompare.exp_config.run_config.Run_config import Run_config
 
-from .exp_setts.run_config.Supported_run_settings import Supported_run_settings
-from .exp_setts.run_config.verify_run_completion import (
+from .exp_config.run_config.Supported_run_settings import (
+    Supported_run_settings,
+)
+from .exp_config.run_config.verify_run_completion import (
     assert_stage_is_completed,
 )
-from .exp_setts.run_config.verify_run_settings import verify_run_config
-from .exp_setts.Supported_experiment_settings import (
+from .exp_config.run_config.verify_run_settings import verify_run_config
+from .exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from .exp_setts.verify_experiment_settings import (
+from .exp_config.verify_experiment_settings import (
     verify_experiment_config,
     verify_has_unique_id,
 )
@@ -79,12 +81,12 @@ class Experiment_runner:
         self.experiment_config = experiment_config
 
         # Load the ranges of supported settings.
-        self.supp_exp_setts = Supported_experiment_settings()
+        self.supp_exp_config = Supported_experiment_settings()
 
         # Verify the experiment experiment_config are complete and valid.
         # pylint: disable=R0801
         verify_experiment_config(
-            self.supp_exp_setts,
+            self.supp_exp_config,
             experiment_config,
             has_unique_id=False,
             allow_optional=True,
@@ -92,10 +94,10 @@ class Experiment_runner:
 
         # If the experiment experiment_config does not contain a hash-code,
         # create the unique hash code for this configuration.
-        if not self.supp_exp_setts.has_unique_config_id(
+        if not self.supp_exp_config.has_unique_config_id(
             self.experiment_config
         ):
-            self.supp_exp_setts.append_unique_experiment_config_id(
+            self.supp_exp_config.append_unique_experiment_config_id(
                 self.experiment_config,
                 allow_optional=True,
             )

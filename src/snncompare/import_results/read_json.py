@@ -14,7 +14,7 @@ from snnbackends.networkx.LIF_neuron import Synapse, manually_create_lif_neuron
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
-from snncompare.exp_setts.run_config.Run_config import Run_config
+from snncompare.exp_config.run_config.Run_config import Run_config
 
 
 @typechecked

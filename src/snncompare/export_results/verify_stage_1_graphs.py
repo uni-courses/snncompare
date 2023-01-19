@@ -14,7 +14,7 @@ from typing import Dict, List
 
 from typeguard import typechecked
 
-from snncompare.exp_setts.run_config.Run_config import Run_config
+from snncompare.exp_config.run_config.Run_config import Run_config
 
 from ..graph_generation.stage_1_get_input_graphs import (
     has_adaptation,
