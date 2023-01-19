@@ -264,7 +264,7 @@ class Supported_experiment_settings:
 
 
 @typechecked
-def remove_optional_exp_config(exp_config: Dict) -> Dict:
+def remove_optional_exp_config(exp_config: Exp_config) -> Dict:
     """Eliminates all optional settings from an incoming experiment config."""
     supp_setts = Supported_experiment_settings()
     to_pop = []

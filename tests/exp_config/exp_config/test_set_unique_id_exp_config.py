@@ -38,8 +38,8 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         ]
 
         for exp_config in self.exp_config_list:
-            exp_config["show_snns"] = False
-            exp_config["export_images"] = False
+            exp_config.show_snns = False
+            exp_config.export_images = False
             verify_experiment_config(
                 Supported_experiment_settings(),
                 exp_config,
@@ -74,13 +74,13 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
             )
             if index == 0:
                 self.assertEqual(
-                    exp_config["unique_id"],
+                    exp_config.unique_id,
                     "77352e201ee23bab9958b0a6b9e2bae409e9f9234cb79e33"
                     + "c181855cfeeb7a98",
                 )
             if index == 1:
                 self.assertEqual(
-                    exp_config["unique_id"],
+                    exp_config.unique_id,
                     "471ce9c875abffe41f6b23bea5bc5ed67d869c1962acf0"
                     + "5cf7937cf2348826b9",
                 )

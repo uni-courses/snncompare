@@ -19,6 +19,7 @@ from snncompare.exp_config.verify_experiment_settings import (
     verify_experiment_config,
 )
 from snncompare.Experiment_runner import experiment_config_to_run_configs
+from snncompare.src.snncompare.exp_config import Exp_config
 from tests.exp_config.exp_config.test_set_unique_id_exp_config import (
     get_config_one,
 )
@@ -34,10 +35,10 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
     def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         # Generate default experiment config.
-        self.exp_config: Dict = get_config_one()
+        self.exp_config: Exp_config = get_config_one()
 
-        self.exp_config["show_snns"] = False
-        self.exp_config["export_images"] = False
+        self.exp_config.show_snns = False
+        self.exp_config.export_images = False
         verify_experiment_config(
             Supported_experiment_settings(),
             self.exp_config,

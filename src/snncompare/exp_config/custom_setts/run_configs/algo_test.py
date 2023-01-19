@@ -22,10 +22,11 @@ from snncompare.export_results.export_json_results import (
     write_dict_to_json,
 )
 from snncompare.helper import file_exists
+from snncompare.src.snncompare.exp_config import Exp_config
 
 
 def store_experiment_config_to_file(
-    custom_config_path: str, exp_config: Dict, filename: str
+    custom_config_path: str, exp_config: Exp_config, filename: str
 ) -> None:
     """Verifies the experiment setting and then exports it to a dictionary."""
 
