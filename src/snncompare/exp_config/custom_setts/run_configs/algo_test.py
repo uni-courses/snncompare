@@ -7,7 +7,7 @@ import jsons
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 
-from snncompare.exp_config import Exp_config
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.exp_config.run_config.Supported_run_settings import (
     Supported_run_settings,

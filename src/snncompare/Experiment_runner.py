@@ -13,7 +13,7 @@ from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
-from snncompare.exp_config import Exp_config
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
 
 from .exp_config.run_config.Supported_run_settings import (
@@ -159,7 +159,7 @@ class Experiment_runner:
             duration, _ = timeit.Timer(  # type:ignore[misc]
                 functools.partial(
                     self.__perform_run_stage_4,
-                    self.exp_config["export_images"],
+                    self.exp_config.export_images,
                     results_nx_graphs,
                     self.to_run,
                 )
@@ -370,19 +370,19 @@ def exp_config_to_run_configs(
 
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
-    # for algorithm in exp_config["algorithms"]:
-    for algorithm_name, algo_specs in exp_config["algorithms"].items():
+    # for algorithm in exp_config.algorithms:
+    for algorithm_name, algo_specs in exp_config.algorithms.items():
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
 
             for adaptation, radiation in get_adaptation_and_radiations(
                 exp_config
             ):
-                for iteration in exp_config["iterations"]:
+                for iteration in exp_config.iterations:
                     for size_and_max_graph in exp_config[
                         "size_and_max_graphs"
                     ]:
-                        for simulator in exp_config["simulators"]:
+                        for simulator in exp_config.simulators:
                             for graph_nr in range(0, size_and_max_graph[1]):
                                 run_config: Run_config = (
                                     run_parameters_to_dict(
@@ -399,8 +399,8 @@ def exp_config_to_run_configs(
                                 run_configs.append(run_config)
 
     for run_config in run_configs:
-        if exp_config["export_images"]:
-            run_config.export_types = exp_config["export_types"]
+        if exp_config.export_images:
+            run_config.export_types = exp_config.export_types
         verify_run_config(
             supp_run_setts=supp_run_setts,
             run_config=run_config,
@@ -415,7 +415,7 @@ def exp_config_to_run_configs(
 
         # Append show_snns and export_images to run config.
         supp_run_setts.assert_has_key(exp_config, "export_images", bool)
-        run_config.export_images = exp_config["export_images"]
+        run_config.export_images = exp_config.export_images
     return run_configs
 
 
@@ -443,9 +443,9 @@ def run_parameters_to_dict(
         graph_size=size_and_max_graph[0],
         graph_nr=graph_nr,
         radiation=radiation,
-        recreate_s4=exp_config["recreate_s4"],
-        overwrite_images_only=exp_config["overwrite_images_only"],
-        seed=exp_config["seed"],
+        recreate_s4=exp_config.recreate_s4,
+        overwrite_images_only=exp_config.overwrite_images_only,
+        seed=exp_config.seed,
         simulator=simulator,
     )
 
@@ -520,7 +520,7 @@ def get_adaptation_and_radiations(
     experiment."""
 
     adaptations_radiations: List[tuple] = []
-    if exp_config["adaptations"] is None:
+    if exp_config.adaptations is None:
         adaptation = None
         adaptations_radiations.extend(get_radiations(exp_config, adaptation))
     else:
@@ -542,13 +542,13 @@ def get_radiations(
     adaptation_and_radiations: List[
         Tuple[Union[None, Dict], Union[None, Dict]]
     ] = []
-    if exp_config["radiations"] is None:
+    if exp_config.radiations is None:
         adaptation_and_radiations.append((adaptation, None))
     else:
         for (
             radiation_name,
             radiation_setts_list,
-        ) in exp_config["radiations"].items():
+        ) in exp_config.radiations.items():
             # TODO: verify it is of type list.
             for rad_config in radiation_setts_list:
                 radiation = {radiation_name: rad_config}

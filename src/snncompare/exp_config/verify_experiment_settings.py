@@ -15,16 +15,17 @@ from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_exp_config
 from typeguard import typechecked
 
-from snncompare.exp_config import Exp_config
+from snncompare.exp_config.Exp_config import Exp_config
 
 if TYPE_CHECKING:
     from .Supported_experiment_settings import Supported_experiment_settings
 
 
 # pylint: disable=W0613
+@typechecked
 def verify_exp_config(
     supp_exp_config: Supported_experiment_settings,
-    exp_config: None | str | dict,
+    exp_config: Exp_config,
     has_unique_id: bool,
     allow_optional: bool,
 ) -> None:
@@ -36,12 +37,6 @@ def verify_exp_config(
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
-    if not isinstance(exp_config, Dict):
-        raise Exception(
-            "Error, the exp_config is of type:"
-            + f"{type(exp_config)}, yet it was expected to be of"
-            + " type dict."
-        )
 
     verify_exp_config_dict_is_complete(supp_exp_config, exp_config.__dict__)
 
@@ -61,54 +56,52 @@ def verify_exp_config(
     verify_algos_in_exp_config(exp_config)
 
     # Verify settings of type: list and tuple.
-    verify_list_setting(
-        supp_exp_config, exp_config["iterations"], int, "iterations"
-    )
+    verify_list_setting(supp_exp_config, exp_config.seeds, int, "seeds")
 
     verify_list_setting(
-        supp_exp_config, exp_config["simulators"], str, "simulators"
+        supp_exp_config, exp_config.simulators, str, "simulators"
     )
     verify_size_and_max_graphs_settings(
-        supp_exp_config, exp_config["size_and_max_graphs"]
+        supp_exp_config, exp_config.size_and_max_graphs
     )
 
     # Verify settings of type integer.
-    verify_integer_settings(exp_config["seed"])
+    verify_integer_settings(exp_config.seed)
 
     verify_integer_settings(
-        exp_config["min_max_graphs"],
+        exp_config.min_max_graphs,
         supp_exp_config.min_max_graphs,
         supp_exp_config.max_max_graphs,
     )
     verify_integer_settings(
-        exp_config["max_max_graphs"],
+        exp_config.max_max_graphs,
         supp_exp_config.min_max_graphs,
         supp_exp_config.max_max_graphs,
     )
     verify_integer_settings(
-        exp_config["min_graph_size"],
+        exp_config.min_graph_size,
         supp_exp_config.min_graph_size,
         supp_exp_config.max_graph_size,
     )
     verify_integer_settings(
-        exp_config["max_graph_size"],
+        exp_config.max_graph_size,
         supp_exp_config.min_graph_size,
         supp_exp_config.max_graph_size,
     )
 
     # Verify a lower bound/min is not larger than a upper bound/max value.
     verify_min_max(
-        exp_config["min_graph_size"],
-        exp_config["max_graph_size"],
+        exp_config.min_graph_size,
+        exp_config.max_graph_size,
     )
     verify_min_max(
-        exp_config["min_max_graphs"],
-        exp_config["max_max_graphs"],
+        exp_config.min_max_graphs,
+        exp_config.max_max_graphs,
     )
 
     # Verify settings of type bool.
-    verify_bool_setting(exp_config["recreate_s4"])
-    verify_bool_setting(exp_config["overwrite_images_only"])
+    verify_bool_setting(exp_config.recreate_s4)
+    verify_bool_setting(exp_config.overwrite_images_only)
 
 
 def verify_exp_config_dict_is_complete(

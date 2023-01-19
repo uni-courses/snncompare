@@ -13,10 +13,10 @@ import networkx as nx
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
-from snncompare.exp_config import Exp_config
 from snncompare.exp_config.default_setts.create_default_settings import (
     default_exp_config,
 )
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
@@ -66,7 +66,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.expected_completed_stages = [1, 2, 3]
         self.export_images = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
-        self.exp_config["export_images"] = self.export_images
+        self.exp_config.export_images = self.export_images
         self.experiment_runner = Experiment_runner(
             exp_config=self.exp_config,
         )

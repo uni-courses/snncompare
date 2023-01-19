@@ -86,7 +86,7 @@ class Test_overwrite_images_only_settings(unittest.TestCase):
         # TODO: generalise to also check if an error is thrown if it contains a
         # string or integer, using the generic test file.
         # verify_invalid_config_sett_val_throws_error
-        exp_config["overwrite_images_only"] = None
+        exp_config.overwrite_images_only = None
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(

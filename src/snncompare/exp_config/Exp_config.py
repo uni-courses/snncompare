@@ -26,16 +26,16 @@ class Exp_config:
         max_max_graphs: int,
         min_graph_size: int,
         min_max_graphs: int,
-        neuron_models: list,
+        neuron_models: List,
         recreate_s1: bool,
         recreate_s2: bool,
         overwrite_images_only: bool,
         recreate_s4: bool,
         radiations: Dict,
         seeds: List[int],
-        simulators: list,
-        size_and_max_graphs: list,
-        synaptic_models: list,
+        simulators: List,
+        size_and_max_graphs: List,
+        synaptic_models: List,
         export_images: Optional[bool] = False,
         export_types: Optional[List[str]] = None,
         unique_id: Optional[str] = None,
@@ -49,16 +49,16 @@ class Exp_config:
         self.max_max_graphs: int = max_max_graphs
         self.min_graph_size: int = min_graph_size
         self.min_max_graphs: int = min_max_graphs
-        self.neuron_models: list = neuron_models
+        self.neuron_models: List = neuron_models
         self.recreate_s1: bool = recreate_s1
         self.recreate_s2: bool = recreate_s2
         self.overwrite_images_only: bool = overwrite_images_only
         self.recreate_s4: bool = recreate_s4
         self.radiations: Dict = radiations
         self.seeds: List[int] = seeds
-        self.simulators: list = simulators
-        self.size_and_max_graphs: list = size_and_max_graphs
-        self.synaptic_models: list = synaptic_models
+        self.simulators: List = simulators
+        self.size_and_max_graphs: List = size_and_max_graphs
+        self.synaptic_models: List = synaptic_models
 
         # Optional properties
         self.export_images: bool = bool(export_images)

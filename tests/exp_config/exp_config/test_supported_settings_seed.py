@@ -81,7 +81,7 @@ class Test_seed_settings(unittest.TestCase):
         # Verify it throws an error on None and string.
         # TODO: change str into somestring and make the test work.
         for invalid_config_setting_value in [None, "stro"]:
-            exp_config["seed"] = invalid_config_setting_value
+            exp_config.seed = invalid_config_setting_value
             verify_invalid_config_sett_val_throws_error(
                 invalid_config_setting_value,
                 exp_config,

@@ -8,10 +8,10 @@ from typing import Dict, List
 
 from typeguard import typechecked
 
-from snncompare.exp_config import Exp_config
 from snncompare.exp_config.custom_setts.run_configs.algo_test import (
     long_exp_config_for_mdsa_testing,
 )
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config import Run_config
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,

@@ -19,7 +19,7 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_config import Exp_config
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.export_plots.get_plot_data import plot_coordinated_graph
 

@@ -7,7 +7,7 @@ from pprint import pprint
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
-from snncompare.exp_config import Exp_config
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )

@@ -7,7 +7,6 @@ Stage4=Done.
 ."""
 import os
 import shutil
-import typing
 import unittest
 
 import networkx as nx
@@ -17,6 +16,7 @@ from typeguard import typechecked
 from snncompare.exp_config.default_setts.create_default_settings import (
     default_exp_config,
 )
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import (
     Experiment_runner,
     determine_what_to_run,
@@ -59,15 +59,13 @@ class Test_stage_1_output_json(unittest.TestCase):
         create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
-        self.exp_config: typing.Dict[
-            str, typing.Union[str, int]
-        ] = default_exp_config()
+        self.exp_config: Exp_config = default_exp_config()
         # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2, 3, 4]
 
         # Expect the test to export snn pictures.
-        self.exp_config["export_images"] = False
+        self.exp_config.export_images = False
         # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
             exp_config=self.exp_config,

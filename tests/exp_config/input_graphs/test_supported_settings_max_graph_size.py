@@ -78,7 +78,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        exp_config["max_graph_size"] = None
+        exp_config.max_graph_size = None
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
@@ -104,7 +104,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        exp_config["max_graph_size"] = -2
+        exp_config.max_graph_size = -2
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
@@ -128,8 +128,8 @@ class Test_max_graph_size_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        exp_config["min_graph_size"] = exp_config["min_graph_size"] + 1
-        exp_config["max_graph_size"] = exp_config["min_graph_size"] - 1
+        exp_config.min_graph_size = exp_config.min_graph_size + 1
+        exp_config.max_graph_size = exp_config.min_graph_size - 1
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
@@ -140,8 +140,8 @@ class Test_max_graph_size_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            f'Lower bound:{exp_config["min_graph_size"]} is larger than'
-            f' upper bound:{exp_config["max_graph_size"]}.',
+            f"Lower bound:{exp_config.min_graph_size} is larger than"
+            f" upper bound:{exp_config.max_graph_size}.",
             str(context.exception),
         )
 
@@ -153,7 +153,7 @@ class Test_max_graph_size_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_graph_size in copy.
-        exp_config["max_graph_size"] = 50
+        exp_config.max_graph_size = 50
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(

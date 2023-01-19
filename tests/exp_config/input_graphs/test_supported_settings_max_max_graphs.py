@@ -83,7 +83,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            exp_config["max_max_graphs"] = invalid_config_setting_value
+            exp_config.max_max_graphs = invalid_config_setting_value
             verify_invalid_config_sett_val_throws_error(
                 invalid_config_setting_value,
                 exp_config,
@@ -99,7 +99,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
-        exp_config["max_max_graphs"] = -2
+        exp_config.max_max_graphs = -2
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
@@ -123,8 +123,8 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
-        exp_config["min_max_graphs"] = exp_config["min_max_graphs"] + 1
-        exp_config["max_max_graphs"] = exp_config["min_max_graphs"] - 1
+        exp_config.min_max_graphs = exp_config.min_max_graphs + 1
+        exp_config.max_max_graphs = exp_config.min_max_graphs - 1
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
@@ -135,8 +135,8 @@ class Test_max_max_graphs_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            f'Lower bound:{exp_config["min_max_graphs"]} is larger than'
-            f' upper bound:{exp_config["max_max_graphs"]}.',
+            f"Lower bound:{exp_config.min_max_graphs} is larger than"
+            f" upper bound:{exp_config.max_max_graphs}.",
             str(context.exception),
         )
 
@@ -148,7 +148,7 @@ class Test_max_max_graphs_settings(unittest.TestCase):
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of max_max_graphs in copy.
-        exp_config["max_max_graphs"] = 50
+        exp_config.max_max_graphs = 50
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(

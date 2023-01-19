@@ -13,7 +13,7 @@ from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from typeguard import typechecked
 
-from snncompare.exp_config import Exp_config
+from snncompare.exp_config.Exp_config import Exp_config
 
 from .verify_experiment_settings import verify_exp_config, verify_min_max
 
@@ -250,7 +250,7 @@ class Supported_experiment_settings:
                 json.dumps(exp_config_without_unique_id).encode("utf-8")
             ).hexdigest()
         )
-        exp_config["unique_id"] = unique_id
+        exp_config.unique_id = unique_id
         verify_exp_config(
             self,
             exp_config,

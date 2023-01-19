@@ -85,7 +85,7 @@ class Test_recreate_s4_settings(unittest.TestCase):
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            exp_config["recreate_s4"] = invalid_config_setting_value
+            exp_config.recreate_s4 = invalid_config_setting_value
             verify_invalid_config_sett_val_throws_error(
                 invalid_config_setting_value,
                 exp_config,
