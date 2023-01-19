@@ -13,8 +13,8 @@ from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
+from snncompare.exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.src.snncompare.exp_config import Exp_config
 
 from .exp_config.run_config.Supported_run_settings import (
     Supported_run_settings,

@@ -13,7 +13,7 @@ from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from typeguard import typechecked
 
-from snncompare.src.snncompare.exp_config import Exp_config
+from snncompare.exp_config import Exp_config
 
 from .verify_experiment_settings import (
     verify_experiment_config,

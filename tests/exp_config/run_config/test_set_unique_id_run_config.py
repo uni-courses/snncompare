@@ -8,6 +8,7 @@ from typing import Dict, List
 
 from typeguard import typechecked
 
+from snncompare.exp_config import Exp_config
 from snncompare.exp_config.custom_setts.run_configs.algo_test import (
     long_exp_config_for_mdsa_testing,
 )
@@ -19,7 +20,6 @@ from snncompare.exp_config.verify_experiment_settings import (
     verify_experiment_config,
 )
 from snncompare.Experiment_runner import experiment_config_to_run_configs
-from snncompare.src.snncompare.exp_config import Exp_config
 from tests.exp_config.exp_config.test_set_unique_id_exp_config import (
     get_config_one,
 )

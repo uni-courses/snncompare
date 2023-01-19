@@ -7,6 +7,7 @@ from pprint import pprint
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
+from snncompare.exp_config import Exp_config
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -14,7 +15,6 @@ from snncompare.exp_config.verify_experiment_settings import (
     verify_experiment_config,
 )
 from snncompare.Experiment_runner import Experiment_runner
-from snncompare.src.snncompare.exp_config import Exp_config
 
 from ..exp_config.custom_setts.run_configs.algo_test import (
     load_experiment_config_from_file,

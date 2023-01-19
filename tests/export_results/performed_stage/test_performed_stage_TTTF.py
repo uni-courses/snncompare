@@ -13,6 +13,7 @@ import networkx as nx
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
+from snncompare.exp_config import Exp_config
 from snncompare.exp_config.default_setts.create_default_settings import (
     default_experiment_config,
 )
@@ -32,7 +33,6 @@ from snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
 from snncompare.import_results.read_json import load_results_from_json
-from snncompare.src.snncompare.exp_config import Exp_config
 from tests.tests_helper import (
     create_dummy_output_images_stage_3,
     create_result_file_for_testing,

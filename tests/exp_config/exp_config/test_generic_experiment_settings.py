@@ -10,6 +10,7 @@ from snnadaptation.redundancy.Adaptation_Rad_settings import (
 )
 from typeguard import typechecked
 
+from snncompare.exp_config import Exp_config
 from snncompare.exp_config.default_setts.create_default_settings import (
     default_experiment_config,
 )
@@ -19,7 +20,6 @@ from snncompare.exp_config.Supported_experiment_settings import (
 from snncompare.exp_config.verify_experiment_settings import (
     verify_experiment_config,
 )
-from snncompare.src.snncompare.exp_config import Exp_config
 
 supp_exp_config = Supported_experiment_settings()
 adap_sets = Adaptations_settings()
