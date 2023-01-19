@@ -16,10 +16,8 @@ from snncompare.exp_config.run_config import Run_config
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
-from snncompare.Experiment_runner import experiment_config_to_run_configs
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
+from snncompare.Experiment_runner import exp_config_to_run_configs
 from tests.exp_config.exp_config.test_set_unique_id_exp_config import (
     get_config_one,
 )
@@ -39,7 +37,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
 
         self.exp_config.show_snns = False
         self.exp_config.export_images = False
-        verify_experiment_config(
+        verify_exp_config(
             Supported_experiment_settings(),
             self.exp_config,
             has_unique_id=False,
@@ -54,9 +52,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         exp_config = copy.deepcopy(self.exp_config)
 
         # Generate run configurations.
-        run_configs: List[Run_config] = experiment_config_to_run_configs(
-            exp_config
-        )
+        run_configs: List[Run_config] = exp_config_to_run_configs(exp_config)
         self.assertGreaterEqual(len(run_configs), 2)
 
         no_ids = copy.deepcopy(run_configs)
@@ -100,9 +96,7 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         exp_config = copy.deepcopy(long_mdsa_testing)
 
         # Generate run configurations.
-        run_configs: List[Run_config] = experiment_config_to_run_configs(
-            exp_config
-        )
+        run_configs: List[Run_config] = exp_config_to_run_configs(exp_config)
         self.assertGreaterEqual(len(run_configs), 2)
 
         no_ids = copy.deepcopy(run_configs)

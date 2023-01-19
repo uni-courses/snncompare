@@ -46,7 +46,7 @@ def create_default_exp_config() -> None:
 
 
 @typechecked
-def default_experiment_config() -> Dict:
+def default_exp_config() -> Dict:
     """Creates example experiment configuration setting."""
     # Create prerequisites
     supp_exp_config = Supported_experiment_settings()

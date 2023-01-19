@@ -35,7 +35,7 @@ class Supported_run_settings:
     def __init__(
         self,
     ) -> None:
-        # experiment_config dictionary keys:
+        # exp_config dictionary keys:
         self.parameters: Dict = {
             "adaptation": Union[None, Dict],
             "algorithm": Dict,

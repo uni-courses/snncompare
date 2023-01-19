@@ -9,9 +9,7 @@ from typeguard import typechecked
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from tests.exp_config.exp_config.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
@@ -22,8 +20,8 @@ from tests.exp_config.exp_config.test_generic_experiment_settings import (
 
 
 class Test_seed_settings(unittest.TestCase):
-    """Tests whether the verify_experiment_config_types function catches
-    invalid seed settings.."""
+    """Tests whether the verify_exp_config_types function catches invalid seed
+    settings.."""
 
     # Initialize test object
     @typechecked
@@ -47,15 +45,15 @@ class Test_seed_settings(unittest.TestCase):
         configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experiment_config.pop("seed")
+        exp_config.pop("seed")
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -63,7 +61,7 @@ class Test_seed_settings(unittest.TestCase):
         self.assertEqual(
             # "'seed'",
             "Error:seed is not in the configuration"
-            + f" settings:{experiment_config.keys()}",
+            + f" settings:{exp_config.keys()}",
             str(context.exception),
         )
 
@@ -77,16 +75,16 @@ class Test_seed_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_exp_config.seed)
 
         # Verify it throws an error on None and string.
         # TODO: change str into somestring and make the test work.
         for invalid_config_setting_value in [None, "stro"]:
-            experiment_config["seed"] = invalid_config_setting_value
+            exp_config["seed"] = invalid_config_setting_value
             verify_invalid_config_sett_val_throws_error(
                 invalid_config_setting_value,
-                experiment_config,
+                exp_config,
                 expected_type,
                 self,
             )

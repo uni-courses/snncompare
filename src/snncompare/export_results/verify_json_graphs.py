@@ -17,8 +17,8 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
     """Checks whether the loaded graphs from json contain at least the expected
     stages for this stage of the experiment."""
 
-    if "experiment_config" not in results_json_graphs:
-        raise KeyError("Error, key: experiment_config not in output_dict.")
+    if "exp_config" not in results_json_graphs:
+        raise KeyError("Error, key: exp_config not in output_dict.")
     if "run_config" not in results_json_graphs:
         raise KeyError("Error, key: run_config not in output_dict.")
     if "graphs_dict" not in results_json_graphs:

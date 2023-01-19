@@ -15,9 +15,7 @@ from snncompare.exp_config.run_config.Supported_run_settings import (
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from snncompare.export_results.export_json_results import (
     encode_tuples,
     write_dict_to_json,
@@ -25,14 +23,14 @@ from snncompare.export_results.export_json_results import (
 from snncompare.helper import file_exists
 
 
-def store_experiment_config_to_file(
+def store_exp_config_to_file(
     custom_config_path: str, exp_config: Exp_config, filename: str
 ) -> None:
     """Verifies the experiment setting and then exports it to a dictionary."""
 
-    # Verify the experiment experiment_config are complete and valid.
+    # Verify the experiment exp_config are complete and valid.
     # pylint: disable=R0801
-    verify_experiment_config(
+    verify_exp_config(
         Supported_experiment_settings(),
         exp_config,
         has_unique_id=False,
@@ -45,9 +43,7 @@ def store_experiment_config_to_file(
     write_dict_to_json(filepath, jsons.dump(new_dict))
 
 
-def load_experiment_config_from_file(
-    custom_config_path: str, filename: str
-) -> Dict:
+def load_exp_config_from_file(custom_config_path: str, filename: str) -> Dict:
     """Loads an experiment config from file, then verifies and returns it."""
     filepath = f"{custom_config_path}{filename}.json"
     if file_exists(filepath):
@@ -56,9 +52,9 @@ def load_experiment_config_from_file(
             exp_config = encode_tuples(encoded_exp_config, decode=True)
             json_file.close()
 
-        # Verify the experiment experiment_config are complete and valid.
+        # Verify the experiment exp_config are complete and valid.
         # pylint: disable=R0801
-        verify_experiment_config(
+        verify_exp_config(
             Supported_experiment_settings(),
             exp_config,
             has_unique_id=False,
@@ -107,7 +103,7 @@ def long_exp_config_for_mdsa_testing() -> Dict:
         "synaptic_models": ["LIF"],
     }
 
-    verify_experiment_config(
+    verify_exp_config(
         Supported_experiment_settings(),
         long_mdsa_testing,
         has_unique_id=False,

@@ -12,19 +12,17 @@ from typeguard import typechecked
 
 from snncompare.exp_config import Exp_config
 from snncompare.exp_config.default_setts.create_default_settings import (
-    default_experiment_config,
+    default_exp_config,
 )
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 
 supp_exp_config = Supported_experiment_settings()
 adap_sets = Adaptations_settings()
 rad_sets = Radiation_settings()
-with_adaptation_with_radiation = default_experiment_config()
+with_adaptation_with_radiation = default_exp_config()
 
 
 class Test_generic_configuration_settings(unittest.TestCase):
@@ -58,7 +56,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
     def test_returns_valid_configuration_settings(self) -> None:
         """Verifies a valid configuration settings object and object type is
         returned."""
-        verify_experiment_config(
+        verify_exp_config(
             supp_exp_config,
             with_adaptation_with_radiation,
             has_unique_id=False,
@@ -71,13 +69,13 @@ class Test_generic_configuration_settings(unittest.TestCase):
         )
 
     @typechecked
-    def test_experiment_config_is_none(self) -> None:
+    def test_exp_config_is_none(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         type None."""
 
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
-            verify_experiment_config(
+            verify_exp_config(
                 supp_exp_config,
                 None,
                 has_unique_id=False,
@@ -85,14 +83,14 @@ class Test_generic_configuration_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            "Error, the experiment_config is of type:"
+            "Error, the exp_config is of type:"
             + f"{type(None)}, yet it was expected to be of"
             + " type dict.",
             str(context.exception),
         )
 
     @typechecked
-    def test_catch_invalid_experiment_config_type(self) -> None:
+    def test_catch_invalid_exp_config_type(self) -> None:
         """Verifies an error is thrown if configuration settings object is of
         invalid type.
 
@@ -101,14 +99,14 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
-            verify_experiment_config(
+            verify_exp_config(
                 supp_exp_config,
                 "string_instead_of_dict",
                 has_unique_id=False,
                 allow_optional=False,
             )
         self.assertEqual(
-            "Error, the experiment_config is of type:"
+            "Error, the exp_config is of type:"
             + f'{type("")}, yet it was expected to be of'
             + " type dict.",
             str(context.exception),
@@ -121,16 +119,16 @@ class Test_generic_configuration_settings(unittest.TestCase):
         """Verifies an error is thrown on an invalid configuration setting
         key."""
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(with_adaptation_with_radiation)
 
         # Add invalid key to configuration dictionary.
-        experiment_config[self.invalid_adaptation_key] = "Filler"
+        exp_config[self.invalid_adaptation_key] = "Filler"
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
-            verify_experiment_config(
+            verify_exp_config(
                 supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -146,7 +144,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 @typechecked
 def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     invalid_config_setting_value: Optional[str],
-    experiment_config: Exp_config,
+    exp_config: Exp_config,
     expected_type: type,
     test_object: Any,
     non_typechecked_error: Optional[bool] = False,
@@ -170,9 +168,9 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
             + f"{actual_type},{expected_type}"
         )
     with test_object.assertRaises(Exception) as context:
-        verify_experiment_config(
+        verify_exp_config(
             test_object.supp_exp_config,
-            experiment_config,
+            exp_config,
             has_unique_id=False,
             allow_optional=False,
         )

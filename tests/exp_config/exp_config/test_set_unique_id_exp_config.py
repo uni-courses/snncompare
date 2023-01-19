@@ -17,9 +17,7 @@ from snncompare.exp_config.custom_setts.run_configs.algo_test import (
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 
 
 class Test_setting_unique_id_exp_config(unittest.TestCase):
@@ -40,7 +38,7 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         for exp_config in self.exp_config_list:
             exp_config.show_snns = False
             exp_config.export_images = False
-            verify_experiment_config(
+            verify_exp_config(
                 Supported_experiment_settings(),
                 exp_config,
                 has_unique_id=False,
@@ -69,7 +67,7 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         # the comparison.)
         for index, exp_config in enumerate(self.exp_config_list):
             supp_setts = Supported_experiment_settings()
-            supp_setts.append_unique_experiment_config_id(
+            supp_setts.append_unique_exp_config_id(
                 exp_config, allow_optional=True
             )
             if index == 0:
@@ -125,7 +123,7 @@ def get_config_one() -> Dict:
         "synaptic_models": ["LIF"],
     }
 
-    verify_experiment_config(
+    verify_exp_config(
         Supported_experiment_settings(),
         mdsa_creation_only_size_3_4,
         has_unique_id=False,

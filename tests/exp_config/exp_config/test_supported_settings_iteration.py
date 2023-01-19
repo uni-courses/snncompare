@@ -6,9 +6,7 @@ import unittest
 
 from typeguard import typechecked
 
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from tests.exp_config.exp_config.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
@@ -19,8 +17,8 @@ from tests.exp_config.exp_config.test_generic_experiment_settings import (
 
 
 class Test_iterations_settings(unittest.TestCase):
-    """Tests whether the verify_experiment_config function catches invalid
-    iterations settings."""
+    """Tests whether the verify_exp_config function catches invalid iterations
+    settings."""
 
     # Initialize test object
     @typechecked
@@ -49,15 +47,15 @@ class Test_iterations_settings(unittest.TestCase):
         the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experiment_config.pop("iterations")
+        exp_config.pop("iterations")
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -65,7 +63,7 @@ class Test_iterations_settings(unittest.TestCase):
         self.assertEqual(
             # "'iterations'",
             "Error:iterations is not in the configuration"
-            + f" settings:{experiment_config.keys()}",
+            + f" settings:{exp_config.keys()}",
             str(context.exception),
         )
 
@@ -79,15 +77,15 @@ class Test_iterations_settings(unittest.TestCase):
         """
 
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         expected_type = type(self.supp_exp_config.iterations)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            experiment_config["iterations"] = invalid_config_setting_value
+            exp_config["iterations"] = invalid_config_setting_value
             verify_invalid_config_sett_val_throws_error(
                 invalid_config_setting_value,
-                experiment_config,
+                exp_config,
                 expected_type,
                 self,
                 True,
@@ -98,14 +96,14 @@ class Test_iterations_settings(unittest.TestCase):
         """Verifies an exception is thrown if the iteration dictionary value is
         a list without elements."""
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of iterations in copy.
-        experiment_config["iterations"] = []
+        exp_config["iterations"] = []
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -121,14 +119,14 @@ class Test_iterations_settings(unittest.TestCase):
         """Verifies an exception is thrown if the iteration dictionary value is
         lower than the supported range of iteration values permits."""
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of iterations in copy.
-        experiment_config["iterations"] = [-2]
+        exp_config["iterations"] = [-2]
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -145,14 +143,14 @@ class Test_iterations_settings(unittest.TestCase):
         """Verifies an exception is thrown if the iteration dictionary value is
         higher than the supported range of iteration values permits."""
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of iterations in copy.
-        experiment_config["iterations"] = [50]
+        exp_config["iterations"] = [50]
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )

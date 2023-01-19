@@ -47,7 +47,7 @@ def load_json_to_nx_graph_from_file(
 
     Then converts those json dicts back into networkx graphs if that is
     the backend type. Then merges those nx_graphs into the results dict
-    with the experiment_config and run_config.
+    with the exp_config and run_config.
     """
     nx_graphs_dict = {}
     # Load existing graph dict if it already exists, and if overwrite is off.

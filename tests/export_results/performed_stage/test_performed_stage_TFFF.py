@@ -14,7 +14,7 @@ from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
 from snncompare.exp_config.default_setts.create_default_settings import (
-    default_experiment_config,
+    default_exp_config,
 )
 from snncompare.Experiment_runner import (
     Experiment_runner,
@@ -56,18 +56,18 @@ class Test_stage_1_output_json(unittest.TestCase):
         create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
-        self.experiment_config: typing.Dict[
+        self.exp_config: typing.Dict[
             str, typing.Union[str, int]
-        ] = default_experiment_config()
+        ] = default_exp_config()
         # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1]
         self.export_images = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
-        self.experiment_config["show_snns"] = False
-        self.experiment_config["export_images"] = self.export_images
+        self.exp_config["show_snns"] = False
+        self.exp_config["export_images"] = self.export_images
         self.experiment_runner = Experiment_runner(
-            self.experiment_config,
+            self.exp_config,
         )
         # TODO: verify the to_run is computed correctly.
 
@@ -112,7 +112,7 @@ class Test_stage_1_output_json(unittest.TestCase):
             )
 
             # Verify the 3 dicts are in the result dict.
-            self.assertIn("experiment_config", stage_1_output_dict)
+            self.assertIn("exp_config", stage_1_output_dict)
             self.assertIn("run_config", stage_1_output_dict)
             self.assertIn("graphs_dict", stage_1_output_dict)
             self.assertIn(

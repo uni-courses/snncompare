@@ -15,10 +15,7 @@ from typeguard import typechecked
 
 from snncompare.exp_config import Exp_config
 
-from .verify_experiment_settings import (
-    verify_experiment_config,
-    verify_min_max,
-)
+from .verify_experiment_settings import verify_exp_config, verify_min_max
 
 
 # pylint: disable=R0903
@@ -36,7 +33,7 @@ class Exp_setts_typing:
         self,
     ) -> None:
 
-        # experiment_config dictionary keys:
+        # exp_config dictionary keys:
         self.parameters = {
             "adaptations": Dict,
             "algorithms": Dict,
@@ -66,7 +63,7 @@ class Exp_setts_typing:
 
 # pylint: disable=R0902
 class Supported_experiment_settings:
-    """Contains the settings that are supported for the experiment_config."""
+    """Contains the settings that are supported for the exp_config."""
 
     @typechecked
     def __init__(
@@ -205,20 +202,20 @@ class Supported_experiment_settings:
         }
 
     @typechecked
-    def has_unique_config_id(self, experiment_config: Exp_config) -> bool:
+    def has_unique_config_id(self, exp_config: Exp_config) -> bool:
         """
 
-        :param experiment_config:
+        :param exp_config:
 
         """
-        if "unique_id" in experiment_config.keys():
+        if "unique_id" in exp_config.keys():
             return True
         return False
 
     @typechecked
-    def append_unique_experiment_config_id(
+    def append_unique_exp_config_id(
         self,
-        experiment_config: Exp_config,
+        exp_config: Exp_config,
         allow_optional: bool = True,
     ) -> Dict:
         """Checks if an experiment configuration dictionary already has a
@@ -226,17 +223,17 @@ class Supported_experiment_settings:
 
         If it does, throws an error.
 
-        :param experiment_config: Exp_config:
+        :param exp_config: Exp_config:
         """
-        if "unique_id" in experiment_config.keys():
+        if "unique_id" in exp_config.keys():
             raise Exception(
-                f"Error, the experiment_config:{experiment_config}\n"
+                f"Error, the exp_config:{exp_config}\n"
                 + "already contains a unique identifier."
             )
 
-        verify_experiment_config(
+        verify_exp_config(
             self,
-            experiment_config,
+            exp_config,
             has_unique_id=False,
             allow_optional=allow_optional,
         )
@@ -245,7 +242,7 @@ class Supported_experiment_settings:
         # configuration.
         # TODO: remove optional arguments from config.
         exp_config_without_unique_id = remove_optional_exp_config(
-            copy.deepcopy(experiment_config)
+            copy.deepcopy(exp_config)
         )
 
         unique_id = str(
@@ -253,14 +250,14 @@ class Supported_experiment_settings:
                 json.dumps(exp_config_without_unique_id).encode("utf-8")
             ).hexdigest()
         )
-        experiment_config["unique_id"] = unique_id
-        verify_experiment_config(
+        exp_config["unique_id"] = unique_id
+        verify_exp_config(
             self,
-            experiment_config,
+            exp_config,
             has_unique_id=True,
             allow_optional=allow_optional,
         )
-        return experiment_config
+        return exp_config
 
 
 @typechecked
@@ -279,7 +276,7 @@ def remove_optional_exp_config(exp_config: Exp_config) -> Dict:
                 f"Error, key:{key} not in mandatory parameters:"
                 + f"{supp_setts.parameters}"
             )
-    verify_experiment_config(
+    verify_exp_config(
         supp_setts, exp_config, has_unique_id=False, allow_optional=False
     )
     return exp_config

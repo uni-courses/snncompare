@@ -79,16 +79,16 @@ class Test_generic_configuration_settings(unittest.TestCase):
         """Verifies an error is thrown on an invalid configuration setting
         key."""
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.valid_run_setting)
+        exp_config = copy.deepcopy(self.valid_run_setting)
 
         # Add invalid key to configuration dictionary.
-        experiment_config[self.invalid_adaptation_key] = "Filler"
+        exp_config[self.invalid_adaptation_key] = "Filler"
 
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_run_config(
                 self.supp_run_settings,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -103,7 +103,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 @typechecked
 def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     invalid_config_setting_value: Any,
-    experiment_config: Exp_config,
+    exp_config: Exp_config,
     expected_type: type,
     test_object: Any,
 ) -> None:
@@ -123,7 +123,7 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     with test_object.assertRaises(Exception) as context:
         verify_run_config(
             test_object.supp_exp_config,
-            experiment_config,
+            exp_config,
             has_unique_id=False,
             allow_optional=False,
         )

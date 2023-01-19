@@ -34,7 +34,7 @@ def output_stage_files_3_and_4(
 
     Also exports the images of the graph behaviour.
 
-    :param experiment_config: param run_config:
+    :param exp_config: param run_config:
     :param graphs_stage_2:
     :param run_config:
     """

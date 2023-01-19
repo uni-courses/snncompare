@@ -11,13 +11,11 @@ from snncompare.exp_config import Exp_config
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from snncompare.Experiment_runner import Experiment_runner
 
 from ..exp_config.custom_setts.run_configs.algo_test import (
-    load_experiment_config_from_file,
+    load_exp_config_from_file,
 )
 
 
@@ -37,7 +35,7 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     # mdsa_size3_m0
     # mdsa_size5_m4
     # mdsa_size4_m0
-    exp_config: Exp_config = load_experiment_config_from_file(
+    exp_config: Exp_config = load_exp_config_from_file(
         custom_config_path, args.experiment_settings_name
     )
 
@@ -48,7 +46,7 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     #    exp_config.export_images = True
     #    exp_config.overwrite_images = True
 
-    verify_experiment_config(
+    verify_exp_config(
         Supported_experiment_settings(),
         exp_config,
         has_unique_id=False,

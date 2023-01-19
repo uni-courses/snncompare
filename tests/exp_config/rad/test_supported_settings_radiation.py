@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 from snncompare.exp_config.verify_experiment_settings import (
     verify_adap_and_rad_settings,
-    verify_experiment_config,
+    verify_exp_config,
 )
 from tests.exp_config.exp_config.test_generic_experiment_settings import (
     adap_sets,
@@ -46,15 +46,15 @@ class Test_radiations_settings(unittest.TestCase):
         dictionary of the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Remove key and value of m.
-        experiment_config.pop("radiations")
+        exp_config.pop("radiations")
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -62,7 +62,7 @@ class Test_radiations_settings(unittest.TestCase):
         self.assertEqual(
             # "'radiations'",
             "Error:radiations is not in the configuration"
-            + f" settings:{experiment_config.keys()}",
+            + f" settings:{exp_config.keys()}",
             str(context.exception),
         )
 
@@ -126,7 +126,7 @@ class Test_radiations_settings(unittest.TestCase):
         self.assertEqual(
             "Error, property Dict: radiations was empty.",
             # "Error:radiations is not in the configuration"
-            # + f" settings:{experiment_config.keys()}",
+            # + f" settings:{exp_config.keys()}",
             str(context.exception),
         )
 

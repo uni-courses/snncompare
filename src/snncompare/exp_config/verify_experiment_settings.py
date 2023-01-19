@@ -12,7 +12,7 @@ from snnadaptation.redundancy.verify_redundancy_settings import (
     verify_redundancy_settings_for_exp_config,
 )
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
-from snnalgorithms.verify_algos import verify_algos_in_experiment_config
+from snnalgorithms.verify_algos import verify_algos_in_exp_config
 from typeguard import typechecked
 
 if TYPE_CHECKING:
@@ -20,112 +20,110 @@ if TYPE_CHECKING:
 
 
 # pylint: disable=W0613
-def verify_experiment_config(
+def verify_exp_config(
     supp_exp_config: Supported_experiment_settings,
-    experiment_config: None | str | dict,
+    exp_config: None | str | dict,
     has_unique_id: bool,
     allow_optional: bool,
 ) -> None:
     """Verifies the selected experiment configuration settings are valid.
 
-    :param experiment_config: param has_unique_id:
+    :param exp_config: param has_unique_id:
     :param has_unique_id: param supp_exp_config:
     :param supp_exp_config:
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
-    if not isinstance(experiment_config, Dict):
+    if not isinstance(exp_config, Dict):
         raise Exception(
-            "Error, the experiment_config is of type:"
-            + f"{type(experiment_config)}, yet it was expected to be of"
+            "Error, the exp_config is of type:"
+            + f"{type(exp_config)}, yet it was expected to be of"
             + " type dict."
         )
 
-    verify_experiment_config_dict_is_complete(
-        supp_exp_config, experiment_config
-    )
+    verify_exp_config_dict_is_complete(supp_exp_config, exp_config)
 
     # Verify no unknown configuration settings are presented.
-    verify_experiment_config_dict_contains_only_valid_entries(
-        supp_exp_config, experiment_config, allow_optional, has_unique_id
+    verify_exp_config_dict_contains_only_valid_entries(
+        supp_exp_config, exp_config, allow_optional, has_unique_id
     )
 
     # Verify the algorithms
-    verify_algos_in_experiment_config(experiment_config)
+    verify_algos_in_exp_config(exp_config)
 
     # Verify settings of type: list and tuple.
     verify_list_setting(
-        supp_exp_config, experiment_config["iterations"], int, "iterations"
+        supp_exp_config, exp_config["iterations"], int, "iterations"
     )
 
     verify_list_setting(
-        supp_exp_config, experiment_config["simulators"], str, "simulators"
+        supp_exp_config, exp_config["simulators"], str, "simulators"
     )
     verify_size_and_max_graphs_settings(
-        supp_exp_config, experiment_config["size_and_max_graphs"]
+        supp_exp_config, exp_config["size_and_max_graphs"]
     )
 
     # Verify settings of type integer.
-    verify_integer_settings(experiment_config["seed"])
+    verify_integer_settings(exp_config["seed"])
 
     verify_integer_settings(
-        experiment_config["min_max_graphs"],
+        exp_config["min_max_graphs"],
         supp_exp_config.min_max_graphs,
         supp_exp_config.max_max_graphs,
     )
     verify_integer_settings(
-        experiment_config["max_max_graphs"],
+        exp_config["max_max_graphs"],
         supp_exp_config.min_max_graphs,
         supp_exp_config.max_max_graphs,
     )
     verify_integer_settings(
-        experiment_config["min_graph_size"],
+        exp_config["min_graph_size"],
         supp_exp_config.min_graph_size,
         supp_exp_config.max_graph_size,
     )
     verify_integer_settings(
-        experiment_config["max_graph_size"],
+        exp_config["max_graph_size"],
         supp_exp_config.min_graph_size,
         supp_exp_config.max_graph_size,
     )
 
     # Verify a lower bound/min is not larger than a upper bound/max value.
     verify_min_max(
-        experiment_config["min_graph_size"],
-        experiment_config["max_graph_size"],
+        exp_config["min_graph_size"],
+        exp_config["max_graph_size"],
     )
     verify_min_max(
-        experiment_config["min_max_graphs"],
-        experiment_config["max_max_graphs"],
+        exp_config["min_max_graphs"],
+        exp_config["max_max_graphs"],
     )
 
     # Verify settings of type bool.
-    verify_bool_setting(experiment_config["overwrite_sim_results"])
-    verify_bool_setting(experiment_config["overwrite_visualisation"])
+    verify_bool_setting(exp_config["overwrite_sim_results"])
+    verify_bool_setting(exp_config["overwrite_visualisation"])
 
 
-def verify_experiment_config_dict_is_complete(
+def verify_exp_config_dict_is_complete(
     supp_exp_config: Supported_experiment_settings,
-    experiment_config: dict,
+    exp_config: dict,
 ) -> None:
     """Verifies the configuration settings dictionary is complete."""
     for expected_key in supp_exp_config.parameters:
-        if expected_key not in experiment_config.keys():
+        if expected_key not in exp_config.keys():
             raise Exception(
                 f"Error:{expected_key} is not in the configuration"
-                + f" settings:{experiment_config.keys()}"
+                + f" settings:{exp_config.keys()}"
             )
 
 
-def verify_experiment_config_dict_contains_only_valid_entries(
+def verify_exp_config_dict_contains_only_valid_entries(
     supp_exp_config: Supported_experiment_settings,
-    experiment_config: dict,
+    exp_config: dict,
     allow_optional: bool,
     has_unique_id: bool,
 ) -> None:
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
-    for actual_key in experiment_config.keys():
+    for actual_key in exp_config.keys():
         if actual_key not in supp_exp_config.parameters:
             if not allow_optional:
                 if not (has_unique_id and actual_key == "unique_id"):
@@ -502,15 +500,15 @@ def verify_radiations_values(
 
 
 @typechecked
-def verify_has_unique_id(experiment_config: dict) -> None:
+def verify_has_unique_id(exp_config: dict) -> None:
     """Verifies the config setting has a unique id."""
-    if not isinstance(experiment_config, Dict):
+    if not isinstance(exp_config, Dict):
         raise Exception(
             "The configuration settings is not a dictionary,"
-            + f"instead it is: of type:{type(experiment_config)}."
+            + f"instead it is: of type:{type(exp_config)}."
         )
-    if "unique_id" not in experiment_config.keys():
+    if "unique_id" not in exp_config.keys():
         raise Exception(
             "The configuration settings do not contain a unique id even though"
-            + f" that was expected. experiment_config is:{experiment_config}."
+            + f" that was expected. exp_config is:{exp_config}."
         )

@@ -53,14 +53,14 @@ with_adaptation_with_radiation = {
 }
 
 
-# def output_files_stage_3(experiment_config, run_config, graphs_stage_3):
+# def output_files_stage_3(exp_config, run_config, graphs_stage_3):
 # This only outputs the visualisation of the desired graphs.
 
 # If the graphs are simulated for 50 timesteps, 50 pictures per graph
 # will be outputted. For naming scheme and taging, see documentation
 # of function output_files_stage_1_and_2 or output_files_stage_2.
 
-# :param experiment_config: param run_config:
+# :param exp_config: param run_config:
 # :param graphs_stage_3:
 # :param run_config:
 # """
@@ -80,16 +80,14 @@ class Stage_1_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Exp_config,
+        exp_config: Exp_config,
         stage_1_graphs: Dict,
         run_config: Run_config,
     ) -> None:
-        self.experiment_config = experiment_config
+        self.exp_config = exp_config
         self.run_config = run_config
         self.stage_1_graphs: Dict = stage_1_graphs
-        verify_stage_1_graphs(
-            experiment_config, run_config, self.stage_1_graphs
-        )
+        verify_stage_1_graphs(exp_config, run_config, self.stage_1_graphs)
         # G_original
         # G_SNN_input
         # G_SNN_adapted
@@ -104,16 +102,14 @@ class Stage_2_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Exp_config,
+        exp_config: Exp_config,
         graphs_stage_2: Dict,
         run_config: Run_config,
     ) -> None:
-        self.experiment_config = experiment_config
+        self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_2 = graphs_stage_2
-        verify_stage_2_graphs(
-            experiment_config, run_config, self.graphs_stage_2
-        )
+        verify_stage_2_graphs(exp_config, run_config, self.graphs_stage_2)
 
 
 # pylint: disable=R0903
@@ -123,16 +119,14 @@ class Stage_3_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Exp_config,
+        exp_config: Exp_config,
         graphs_stage_3: Dict,
         run_config: Run_config,
     ) -> None:
-        self.experiment_config = experiment_config
+        self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_3 = graphs_stage_3
-        verify_stage_3_graphs(
-            experiment_config, run_config, self.graphs_stage_3
-        )
+        verify_stage_3_graphs(exp_config, run_config, self.graphs_stage_3)
 
 
 # pylint: disable=R0903
@@ -143,16 +137,14 @@ class Stage_4_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Exp_config,
+        exp_config: Exp_config,
         graphs_stage_4: Dict,
         run_config: Run_config,
     ) -> None:
-        self.experiment_config = experiment_config
+        self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_4 = graphs_stage_4
-        verify_stage_4_graphs(
-            experiment_config, run_config, self.graphs_stage_4
-        )
+        verify_stage_4_graphs(exp_config, run_config, self.graphs_stage_4)
 
 
 @typechecked
@@ -187,7 +179,7 @@ def output_stage_json(
         raise Exception(f"Error:{output_filepath} does not exist.")
     # TODO: Verify the correct graphs is passed by checking the graph tag.
     # TODO: merge experiment config, run_config and graphs into single dict.
-    # TODO: Write experiment_config to file (pprint(dict), or json)
+    # TODO: Write exp_config to file (pprint(dict), or json)
     # TODO: Write run_config to file (pprint(dict), or json)
     # TODO: Write graphs to file (pprint(dict), or json)
     # TODO: append tags to output file.

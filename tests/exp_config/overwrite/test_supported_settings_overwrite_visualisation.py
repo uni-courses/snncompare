@@ -9,9 +9,7 @@ from typeguard import typechecked
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_experiment_config,
-)
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from tests.exp_config.exp_config.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,
@@ -21,8 +19,8 @@ from tests.exp_config.exp_config.test_generic_experiment_settings import (
 
 
 class Test_overwrite_visualisation_settings(unittest.TestCase):
-    """Tests whether the verify_experiment_config_types function catches
-    invalid overwrite_visualisation settings.."""
+    """Tests whether the verify_exp_config_types function catches invalid
+    overwrite_visualisation settings.."""
 
     # Initialize test object
     @typechecked
@@ -51,15 +49,15 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         is missing from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Remove key and value of m.
 
-        experiment_config.pop("overwrite_visualisation")
+        exp_config.pop("overwrite_visualisation")
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -67,7 +65,7 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         self.assertEqual(
             # "'overwrite_visualisation'",
             "Error:overwrite_visualisation is not in the configuration"
-            + f" settings:{experiment_config.keys()}",
+            + f" settings:{exp_config.keys()}",
             str(context.exception),
         )
 
@@ -82,18 +80,18 @@ class Test_overwrite_visualisation_settings(unittest.TestCase):
         is expected).
         """
         # Create deepcopy of configuration settings.
-        experiment_config = copy.deepcopy(self.with_adaptation_with_radiation)
+        exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of overwrite_visualisation in copy.
 
         # TODO: generalise to also check if an error is thrown if it contains a
         # string or integer, using the generic test file.
         # verify_invalid_config_sett_val_throws_error
-        experiment_config["overwrite_visualisation"] = None
+        exp_config["overwrite_visualisation"] = None
 
         with self.assertRaises(Exception) as context:
-            verify_experiment_config(
+            verify_exp_config(
                 self.supp_exp_config,
-                experiment_config,
+                exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )

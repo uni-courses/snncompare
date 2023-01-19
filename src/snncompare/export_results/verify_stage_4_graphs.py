@@ -20,7 +20,7 @@ from snncompare.exp_config.run_config.Run_config import Run_config
 # pylint: disable=W0613
 @typechecked
 def verify_stage_4_graphs(
-    experiment_config: Exp_config,
+    exp_config: Exp_config,
     run_config: Run_config,
     graphs_stage_4: Dict,
 ) -> None:

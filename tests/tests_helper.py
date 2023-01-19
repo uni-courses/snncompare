@@ -99,7 +99,7 @@ def create_results_dict_for_testing_stage_1(
     input_graph: nx.Graph,
     run_config: Run_config,
 ) -> dict:
-    """Generates a dictionary with the the experiment_config, run_config and
+    """Generates a dictionary with the the exp_config, run_config and
     graphs."""
     graphs_dict = {}
 
@@ -124,7 +124,7 @@ def create_results_dict_for_testing_stage_1(
 
     # Merge graph and experiment and run config into a single result dict.
     dummy_result = {
-        "experiment_config": None,
+        "exp_config": None,
         "run_config": run_config,
         "graphs_dict": graphs_dict,
     }
@@ -138,7 +138,7 @@ def create_results_dict_for_testing_stage_2(
     input_graph: nx.Graph,
     run_config: Run_config,
 ) -> dict:
-    """Generates a dictionary with the the experiment_config, run_config and
+    """Generates a dictionary with the the exp_config, run_config and
     graphs."""
     graphs_dict = {}
 
@@ -171,7 +171,7 @@ def create_results_dict_for_testing_stage_2(
 
     # Merge graph and experiment and run config into a single result dict.
     dummy_result = {
-        "experiment_config": None,
+        "exp_config": None,
         "run_config": run_config,
         "graphs_dict": graphs_dict,
     }

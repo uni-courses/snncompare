@@ -25,7 +25,7 @@ from ..graph_generation.stage_1_get_input_graphs import (
 
 @typechecked
 def verify_stage_1_graphs(
-    experiment_config: Exp_config,
+    exp_config: Exp_config,
     run_config: Run_config,
     graphs: Dict,
 ) -> None:
