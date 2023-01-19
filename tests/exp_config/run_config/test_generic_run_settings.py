@@ -25,8 +25,8 @@ with_adaptation_with_radiation = {
     "graph_size": 4,
     "graph_nr": 5,
     "iteration": 4,
-    "overwrite_sim_results": True,
-    "overwrite_visualisation": True,
+    "recreate_s4": True,
+    "overwrite_images_only": True,
     "radiation": {
         "delta_synaptic_w": (0.05, 0.4),
     },

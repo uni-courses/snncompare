@@ -90,7 +90,7 @@ def load_pre_existing_graph_dict(
         return {}
     if stage_index == 2:
 
-        if not run_config.overwrite_sim_results:
+        if not run_config.recreate_s4:
             # Load graphs stages 1, 2, 3, 4
             return load_verified_json_graphs_from_json(run_config, [1, 2])
         return load_verified_json_graphs_from_json(run_config, [1])
@@ -101,7 +101,7 @@ def load_pre_existing_graph_dict(
             run_config,
             get_expected_stages(
                 export_images=run_config.export_images,
-                overwrite_visualisation=run_config.overwrite_visualisation,
+                overwrite_images_only=run_config.overwrite_images_only,
                 show_snns=run_config.show_snns,
                 stage_index=stage_index,
                 to_run=to_run,

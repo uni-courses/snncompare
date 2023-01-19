@@ -1,5 +1,5 @@
 """Verifies the Supported_experiment_settings object catches invalid
-overwrite_sim_results specifications."""
+recreate_s4 specifications."""
 # pylint: disable=R0801
 import copy
 import unittest
@@ -19,21 +19,19 @@ from tests.exp_config.exp_config.test_generic_experiment_settings import (
 )
 
 
-class Test_overwrite_sim_results_settings(unittest.TestCase):
+class Test_recreate_s4_settings(unittest.TestCase):
     """Tests whether the verify_exp_config_types function catches invalid
-    overwrite_sim_results settings.."""
+    recreate_s4 settings.."""
 
     # Initialize test object
     @typechecked
     def __init__(self, *args, **kwargs) -> None:  # type:ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.supp_exp_config = Supported_experiment_settings()
-        self.valid_overwrite_sim_results = (
-            self.supp_exp_config.overwrite_sim_results
-        )
+        self.valid_recreate_s4 = self.supp_exp_config.recreate_s4
 
-        self.invalid_overwrite_sim_results_value = {
-            "overwrite_sim_results": "invalid value of type string iso list of"
+        self.invalid_recreate_s4_value = {
+            "recreate_s4": "invalid value of type string iso list of"
             + " floats",
         }
 
@@ -43,17 +41,17 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
 
     @typechecked
-    def test_error_is_thrown_if_overwrite_sim_results_key_is_missing(
+    def test_error_is_thrown_if_recreate_s4_key_is_missing(
         self,
     ) -> None:
-        """Verifies an exception is thrown if the overwrite_sim_results key is
-        missing from the configuration settings dictionary."""
+        """Verifies an exception is thrown if the recreate_s4 key is missing
+        from the configuration settings dictionary."""
 
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
 
         # Remove key and value of m.
-        exp_config.pop("overwrite_sim_results")
+        exp_config.pop("recreate_s4")
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
@@ -64,16 +62,18 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
             )
 
         self.assertEqual(
-            # "'overwrite_sim_results'",
-            "Error:overwrite_sim_results is not in the configuration"
+            # "'recreate_s4'",
+            "Error:recreate_s4 is not in the configuration"
             + f" settings:{exp_config.keys()}",
             str(context.exception),
         )
 
     @typechecked
-    def test_overwrite_sim_results_value_is_invalid_type(self) -> None:
-        """Verifies an exception is thrown if the overwrite_sim_results
-        dictionary value, is of invalid type.
+    def test_recreate_s4_value_is_invalid_type(
+        self,
+    ) -> None:
+        """Verifies an exception is thrown if the recreate_s4 dictionary value,
+        is of invalid type.
 
         (Invalid types None, and string are tested, a list with floats
         is expected).
@@ -81,11 +81,11 @@ class Test_overwrite_sim_results_settings(unittest.TestCase):
 
         # Create deepcopy of configuration settings.
         exp_config = copy.deepcopy(self.with_adaptation_with_radiation)
-        expected_type = type(self.supp_exp_config.overwrite_sim_results)
+        expected_type = type(self.supp_exp_config.recreate_s4)
 
         # Verify it throws an error on None and string.
         for invalid_config_setting_value in [None, ""]:
-            exp_config["overwrite_sim_results"] = invalid_config_setting_value
+            exp_config["recreate_s4"] = invalid_config_setting_value
             verify_invalid_config_sett_val_throws_error(
                 invalid_config_setting_value,
                 exp_config,

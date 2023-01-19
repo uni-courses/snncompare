@@ -43,10 +43,10 @@ class Exp_setts_typing:
             "min_graph_size": int,
             "min_max_graphs": int,
             "neuron_models": list,
-            "overwrite_snn_creation": bool,
-            "overwrite_snn_propagation": bool,
-            "overwrite_visualisation": bool,
-            "overwrite_sim_results": bool,
+            "recreate_s1": bool,
+            "recreate_s2": bool,
+            "overwrite_images_only": bool,
+            "recreate_s4": bool,
             "radiations": Dict,
             "seed": int,
             "simulators": list,
@@ -105,9 +105,9 @@ class Supported_experiment_settings:
         ]
 
         # Overwrite the simulation results or not.
-        self.overwrite_sim_results = True
+        self.recreate_s4 = True
         # Overwrite the visualisation of the SNN behaviour or not.
-        self.overwrite_visualisation = True
+        self.overwrite_images_only = True
 
         # The backend/type of simulator that is used.
         self.simulators = ["nx", "lava"]

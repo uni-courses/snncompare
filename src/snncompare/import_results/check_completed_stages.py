@@ -177,7 +177,7 @@ def has_valid_json_results(
 
                 expected_stages = get_expected_stages(
                     export_images=run_config.export_images,
-                    overwrite_visualisation=run_config.overwrite_visualisation,
+                    overwrite_images_only=run_config.overwrite_images_only,
                     show_snns=run_config.show_snns,
                     stage_index=4,
                     to_run=to_run,

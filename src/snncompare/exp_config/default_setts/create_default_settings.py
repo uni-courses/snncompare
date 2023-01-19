@@ -82,10 +82,10 @@ def default_exp_config() -> Exp_config:
         # "size_and_max_graphs": [(3, 1), (4, 3)],
         "size_and_max_graphs": [(3, 1)],
         # Move into "overwrite options"
-        "overwrite_snn_creation": False,
-        "overwrite_snn_propagation": False,
-        "overwrite_visualisation": False,
-        "overwrite_sim_results": False,
+        "recreate_s1": False,
+        "recreate_s2": False,
+        "overwrite_images_only": False,
+        "recreate_s4": False,
         # TODO: pass algo to see if it is compatible with the algorithm.
         # TODO: move into "Backend options"
         "simulators": ["nx"],

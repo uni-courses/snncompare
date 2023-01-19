@@ -42,7 +42,7 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     manage_export_parsing(args, exp_config)
     manage_exp_config_parsing(args, exp_config)
 
-    # if not args.overwrite_visualisation:
+    # if not args.overwrite_images_only:
     #    exp_config.export_images = True
     #    exp_config.overwrite_images = True
 

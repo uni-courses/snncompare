@@ -27,10 +27,10 @@ class Exp_config:
         min_graph_size: int,
         min_max_graphs: int,
         neuron_models: list,
-        overwrite_s1_snn_creation: bool,
-        overwrite_s2_snn_propagation: bool,
-        overwrite_s3_export_images: bool,
-        overwrite_s4_sim_results: bool,
+        recreate_s1: bool,
+        recreate_s2: bool,
+        overwrite_images_only: bool,
+        recreate_s4: bool,
         radiations: Dict,
         seeds: List[int],
         simulators: list,
@@ -50,10 +50,10 @@ class Exp_config:
         self.min_graph_size: int = min_graph_size
         self.min_max_graphs: int = min_max_graphs
         self.neuron_models: list = neuron_models
-        self.overwrite_s1_snn_creation: bool = overwrite_s1_snn_creation
-        self.overwrite_s2_snn_propagation: bool = overwrite_s2_snn_propagation
-        self.overwrite_s3_export_images: bool = overwrite_s3_export_images
-        self.overwrite_s4_sim_results: bool = overwrite_s4_sim_results
+        self.recreate_s1: bool = recreate_s1
+        self.recreate_s2: bool = recreate_s2
+        self.overwrite_images_only: bool = overwrite_images_only
+        self.recreate_s4: bool = recreate_s4
         self.radiations: Dict = radiations
         self.seeds: List[int] = seeds
         self.simulators: list = simulators

@@ -91,10 +91,10 @@ def long_exp_config_for_mdsa_testing() -> Dict:
         # "size_and_max_graphs": [(3, 1),(4, 1)],
         "size_and_max_graphs": [(3, 1), (4, 3), (5, 6)],
         # Move into "overwrite options"
-        "overwrite_snn_creation": True,
-        "overwrite_snn_propagation": True,
-        "overwrite_visualisation": True,
-        "overwrite_sim_results": True,
+        "recreate_s1": True,
+        "recreate_s2": True,
+        "overwrite_images_only": True,
+        "recreate_s4": True,
         "radiations": None,
         # TODO: pass algo to see if it is compatible with the algorithm.
         # TODO: move into "Backend options"
@@ -141,8 +141,8 @@ def run_config_with_error() -> Run_config:
         graph_nr=2,
         graph_size=5,
         iteration=0,
-        overwrite_sim_results=True,
-        overwrite_visualisation=True,
+        recreate_s4=True,
+        overwrite_images_only=True,
         radiation=None,
         seed=7,
         show_snns=False,

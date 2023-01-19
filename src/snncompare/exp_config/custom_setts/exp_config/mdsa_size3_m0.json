@@ -17,11 +17,11 @@
   "neuron_models": [
     "LIF"
   ],
-  "overwrite_sim_results": true,
-  "overwrite_snn_creation": true,
-  "overwrite_snn_propagation": true,
-  "overwrite_visualisation": true,
+  "overwrite_images_only": true,
   "radiations": null,
+  "recreate_s1": true,
+  "recreate_s2": true,
+  "recreate_s4": true,
   "seed": 7,
   "simulators": [
     "nx"

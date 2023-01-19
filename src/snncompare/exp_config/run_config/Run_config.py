@@ -76,10 +76,10 @@ class Run_config:
         export_images: Optional[bool] = None,
         export_types: Optional[List[str]] = None,
         max_duration: Optional[int] = None,
-        overwrite_snn_creation: Optional[bool] = None,
-        overwrite_snn_propagation: Optional[bool] = None,
-        overwrite_visualisation: Optional[bool] = None,
-        overwrite_sim_results: Optional[bool] = None,
+        recreate_s1: Optional[bool] = None,
+        recreate_s2: Optional[bool] = None,
+        overwrite_images_only: Optional[bool] = None,
+        recreate_s4: Optional[bool] = None,
         show_snns: Optional[bool] = None,
         unique_id: Optional[str] = None,
     ):
@@ -101,12 +101,10 @@ class Run_config:
         self.export_images: Optional[bool] = export_images
         self.export_types: Optional[List[str]] = export_types
         self.max_duration: Optional[int] = max_duration
-        self.overwrite_snn_creation: Optional[bool] = overwrite_snn_creation
-        self.overwrite_snn_propagation: Optional[
-            bool
-        ] = overwrite_snn_propagation
-        self.overwrite_visualisation: Optional[bool] = overwrite_visualisation
-        self.overwrite_sim_results: Optional[bool] = overwrite_sim_results
+        self.recreate_s1: Optional[bool] = recreate_s1
+        self.recreate_s2: Optional[bool] = recreate_s2
+        self.overwrite_images_only: Optional[bool] = overwrite_images_only
+        self.recreate_s4: Optional[bool] = recreate_s4
         self.show_snns: Optional[bool] = show_snns
         self.unique_id: Optional[str] = unique_id
 

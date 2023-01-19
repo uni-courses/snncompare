@@ -35,10 +35,7 @@
   "neuron_models": [
     "LIF"
   ],
-  "overwrite_sim_results": false,
-  "overwrite_snn_creation": false,
-  "overwrite_snn_propagation": false,
-  "overwrite_visualisation": false,
+  "overwrite_images_only": false,
   "radiations": {
     "neuron_death": [
       0.0,
@@ -47,6 +44,9 @@
       0.25
     ]
   },
+  "recreate_s1": false,
+  "recreate_s2": false,
+  "recreate_s4": false,
   "seed": 7,
   "simulators": [
     "nx"

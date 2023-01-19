@@ -378,7 +378,7 @@ def get_actual_duration(snn_graph: nx.DiGraph) -> int:
 @typechecked
 def get_expected_stages(
     export_images: bool,
-    overwrite_visualisation: bool,
+    overwrite_images_only: bool,
     show_snns: bool,
     stage_index: int,
     to_run: Dict,
@@ -389,7 +389,7 @@ def get_expected_stages(
 
     if (
         to_run["stage_3"]
-        or overwrite_visualisation
+        or overwrite_images_only
         or show_snns
         or export_images
     ):
@@ -398,7 +398,7 @@ def get_expected_stages(
         expected_stages.remove(3)
 
     print(f"expected_stages-{expected_stages}")
-    print(f"or overwrite_visualisation={overwrite_visualisation}")
+    print(f"or overwrite_images_only={overwrite_images_only}")
     print(f"or show_snns={show_snns}")
     print(f'to_run["stage_3"]={to_run["stage_3"]}')
     # Sort and remove dupes.

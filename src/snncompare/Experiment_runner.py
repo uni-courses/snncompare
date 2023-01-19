@@ -268,7 +268,7 @@ class Experiment_runner:
         )
 
         if to_run["stage_2"]:
-            if not results_nx_graphs["run_config"].overwrite_sim_results:
+            if not results_nx_graphs["run_config"].recreate_s4:
                 # TODO: check if the stage 2 graphs already are loaded from
                 # file correctly. If loaded incorrectly, raise exception, if
                 # not loaded, perform simulation.
@@ -322,7 +322,7 @@ class Experiment_runner:
             # TODO: pass the stage index and re-use it to export the
             # stage 4 graphs
             if (
-                results_nx_graphs["run_config"].overwrite_visualisation
+                results_nx_graphs["run_config"].overwrite_images_only
                 or results_nx_graphs["run_config"].export_images
             ):
                 output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
@@ -414,9 +414,7 @@ def exp_config_to_run_configs(
         )
 
         # Append show_snns and export_images to run config.
-        supp_run_setts.assert_has_key(exp_config, "show_snns", bool)
         supp_run_setts.assert_has_key(exp_config, "export_images", bool)
-        run_config.show_snns = exp_config["show_snns"]
         run_config.export_images = exp_config["export_images"]
     return run_configs
 
@@ -445,8 +443,8 @@ def run_parameters_to_dict(
         graph_size=size_and_max_graph[0],
         graph_nr=graph_nr,
         radiation=radiation,
-        overwrite_sim_results=exp_config["overwrite_sim_results"],
-        overwrite_visualisation=exp_config["overwrite_visualisation"],
+        recreate_s4=exp_config["recreate_s4"],
+        overwrite_images_only=exp_config["overwrite_images_only"],
         seed=exp_config["seed"],
         simulator=simulator,
     )
@@ -471,7 +469,9 @@ def determine_what_to_run(
     # Check if the input graphs exist, (the graphs that can still be adapted.)
     if (
         not has_outputted_stage(run_config, 1, to_run)
-        or run_config.overwrite_sim_results
+        or run_config.recreate_s1
+        or run_config.recreate_s2
+        or run_config.recreate_s4
     ):
         # If original graphs do not yet exist, or a manual overwrite is
         # requested, create them (Note it only asks for an overwrite of
@@ -483,38 +483,33 @@ def determine_what_to_run(
     # and/or radiation.
     if (
         not has_outputted_stage(run_config, 2, to_run)
-        or run_config.overwrite_sim_results
+        or run_config.recreate_s1
+        or run_config.recreate_s2
+        or run_config.recreate_s4
     ):
         to_run["stage_2"] = True
     # Check if the visualisation of the graph behaviour needs to be created.
-    if (
+    if run_config.export_images and (
         not has_outputted_stage(run_config, 3, to_run)
-        and (run_config.export_images or run_config.show_snns)
-    ) or run_config.overwrite_visualisation:
+        or run_config.overwrite_images_only
+    ):
         # Note this allows the user to create inconsistent simulation
         # results and visualisation. E.g. the simulated behaviour may
         # have changed due to code changes, yet the visualisation would
         # not be updated stage 3 has already been performed, with
-        # overwrite_sim_results=True, and overwrite_visualisation=False.
+        # recreate_s4=True, and overwrite_images_only=False.
         to_run["stage_3"] = True
-    else:
-        to_run["stage_3"] = False
 
     # Throw warning to user about potential discrepancy between graph
     # behaviour and old visualisation.
+
     if (
-        has_outputted_stage(run_config, 3, to_run)
-        and run_config.overwrite_sim_results
-        and not run_config.overwrite_visualisation
+        not has_outputted_stage(run_config, 4, to_run)
+        or run_config.recreate_s1
+        or run_config.recreate_s2
+        or run_config.recreate_s4
     ):
-        # TODO: check if visual results are deleted, if yes, don't throw
-        # warning.
-        print(
-            "Warning, if you have changed the graph behaviour without "
-            + "overwrite_visualisation=True, your visualisation may/will "
-            + "not match with what the graphs actually do. We suggest you "
-            + "try this again with:overwrite_visualisation=True"
-        )
+        to_run["stage_4"] = True
     return to_run
 
 

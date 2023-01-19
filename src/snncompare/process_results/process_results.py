@@ -64,7 +64,7 @@ def perform_mdsa_results_computation_if_needed(
     for nx_graph in stage_2_graphs.values():
         if (
             4 not in nx_graph.graph["completed_stages"]
-            or run_config.overwrite_sim_results
+            or run_config.recreate_s4
         ):
             set_new_results = True
             set_mdsa_snn_results(m_val, run_config, stage_2_graphs)
@@ -127,7 +127,7 @@ def export_results_to_json(
             nx_graph,
             get_expected_stages(
                 export_images=export_images,
-                overwrite_visualisation=False,  # TODO: get actual value.
+                overwrite_images_only=False,  # TODO: get actual value.
                 show_snns=False,  # TODO: get actual value.
                 stage_index=stage_index,
                 to_run=to_run,

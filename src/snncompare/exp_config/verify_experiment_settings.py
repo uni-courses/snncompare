@@ -107,8 +107,8 @@ def verify_exp_config(
     )
 
     # Verify settings of type bool.
-    verify_bool_setting(exp_config["overwrite_sim_results"])
-    verify_bool_setting(exp_config["overwrite_visualisation"])
+    verify_bool_setting(exp_config["recreate_s4"])
+    verify_bool_setting(exp_config["overwrite_images_only"])
 
 
 def verify_exp_config_dict_is_complete(
@@ -157,9 +157,9 @@ def verify_exp_config_is_sensible(
 ) -> None:
     """Verifies the experiment configuration does not contain unsensible
     options."""
-    # Check that if overwrite_s3_export_images is True, that the experiment
+    # Check that if overwrite_images_only is True, that the experiment
     # configuration actually exports images.
-    if exp_config.overwrite_s3_export_images:
+    if exp_config.overwrite_images_only:
         if not exp_config.export_images:
             raise AttributeError(
                 "Error, the user asked to overwrite the images without"
