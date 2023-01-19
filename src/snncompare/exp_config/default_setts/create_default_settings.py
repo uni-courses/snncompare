@@ -13,6 +13,8 @@ from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.Used_graphs import Used_graphs
 from typeguard import typechecked
 
+from snncompare.exp_config.Exp_config import Exp_config
+
 from ...arg_parser.arg_verification import verify_input_graph_path
 from ...export_results.export_json_results import write_dict_to_json
 from ...export_results.export_nx_graph_to_json import digraph_to_json
@@ -46,7 +48,7 @@ def create_default_exp_config() -> None:
 
 
 @typechecked
-def default_exp_config() -> Dict:
+def default_exp_config() -> Exp_config:
     """Creates example experiment configuration setting."""
     # Create prerequisites
     supp_exp_config = Supported_experiment_settings()
@@ -55,7 +57,7 @@ def default_exp_config() -> Dict:
 
     # Create the experiment configuration settings for a run with adaptation
     # and with radiation.
-    with_adaptation_with_radiation = {
+    with_adaptation_with_radiation: Dict = {
         # TODO: set using a verification setting.
         "algorithms": {
             "MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)
@@ -90,4 +92,7 @@ def default_exp_config() -> Dict:
         "neuron_models": ["LIF"],
         "synaptic_models": ["LIF"],
     }
-    return with_adaptation_with_radiation
+    # The ** loads the dict into the object.
+    exp_config = Exp_config(**with_adaptation_with_radiation)
+
+    return exp_config

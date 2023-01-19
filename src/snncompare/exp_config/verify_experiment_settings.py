@@ -15,6 +15,8 @@ from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_exp_config
 from typeguard import typechecked
 
+from snncompare.exp_config import Exp_config
+
 if TYPE_CHECKING:
     from .Supported_experiment_settings import Supported_experiment_settings
 
@@ -41,12 +43,19 @@ def verify_exp_config(
             + " type dict."
         )
 
-    verify_exp_config_dict_is_complete(supp_exp_config, exp_config)
+    verify_exp_config_dict_is_complete(supp_exp_config, exp_config.__dict__)
 
     # Verify no unknown configuration settings are presented.
     verify_exp_config_dict_contains_only_valid_entries(
-        supp_exp_config, exp_config, allow_optional, has_unique_id
+        supp_exp_config, exp_config.__dict__, allow_optional, has_unique_id
     )
+
+    verify_exp_config_is_sensible(
+        exp_config,
+        supp_exp_config,
+    )
+
+    # Verify settings are sensible.
 
     # Verify the algorithms
     verify_algos_in_exp_config(exp_config)
@@ -104,26 +113,26 @@ def verify_exp_config(
 
 def verify_exp_config_dict_is_complete(
     supp_exp_config: Supported_experiment_settings,
-    exp_config: dict,
+    exp_config_dict: dict,
 ) -> None:
     """Verifies the configuration settings dictionary is complete."""
     for expected_key in supp_exp_config.parameters:
-        if expected_key not in exp_config.keys():
+        if expected_key not in exp_config_dict.keys():
             raise Exception(
                 f"Error:{expected_key} is not in the configuration"
-                + f" settings:{exp_config.keys()}"
+                + f" settings:{exp_config_dict.keys()}"
             )
 
 
 def verify_exp_config_dict_contains_only_valid_entries(
     supp_exp_config: Supported_experiment_settings,
-    exp_config: dict,
+    exp_config_dict: dict,
     allow_optional: bool,
     has_unique_id: bool,
 ) -> None:
     """Verifies the configuration settings dictionary does not contain any
     invalid keys."""
-    for actual_key in exp_config.keys():
+    for actual_key in exp_config_dict.keys():
         if actual_key not in supp_exp_config.parameters:
             if not allow_optional:
                 if not (has_unique_id and actual_key == "unique_id"):
@@ -139,6 +148,37 @@ def verify_exp_config_dict_contains_only_valid_entries(
                     + " settings:, nor by the"
                     + " optional settings:"
                     + f"{supp_exp_config.optional_parameters}"
+                )
+
+
+def verify_exp_config_is_sensible(
+    exp_config: Exp_config,
+    supp_exp_config: Supported_experiment_settings,
+) -> None:
+    """Verifies the experiment configuration does not contain unsensible
+    options."""
+    # Check that if overwrite_s3_export_images is True, that the experiment
+    # configuration actually exports images.
+    if exp_config.overwrite_s3_export_images:
+        if not exp_config.export_images:
+            raise AttributeError(
+                "Error, the user asked to overwrite the images without"
+                "Telling that the images should be exported."
+            )
+
+    if exp_config.export_images:
+        if len(exp_config.export_types) < 1:
+            raise TypeError(
+                "Error, export types not defined whilst wanting to export"
+                + " images."
+            )
+        for export_type in exp_config.export_types:
+            if export_type not in supp_exp_config.export_types:
+                raise AttributeError(
+                    "Error, the user asked to overwrite the images whilst"
+                    + "specifying invalid image export extensions: "
+                    + f"{export_type}. Expected: "
+                    + f"{supp_exp_config.export_types}"
                 )
 
 

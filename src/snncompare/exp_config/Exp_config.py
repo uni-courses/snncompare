@@ -32,7 +32,7 @@ class Exp_config:
         overwrite_s3_export_images: bool,
         overwrite_s4_sim_results: bool,
         radiations: Dict,
-        seed: int,
+        seeds: List[int],
         simulators: list,
         size_and_max_graphs: list,
         synaptic_models: list,
@@ -55,7 +55,7 @@ class Exp_config:
         self.overwrite_s3_export_images: bool = overwrite_s3_export_images
         self.overwrite_s4_sim_results: bool = overwrite_s4_sim_results
         self.radiations: Dict = radiations
-        self.seed: int = seed
+        self.seeds: List[int] = seeds
         self.simulators: list = simulators
         self.size_and_max_graphs: list = size_and_max_graphs
         self.synaptic_models: list = synaptic_models
