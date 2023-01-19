@@ -13,6 +13,7 @@ from snncompare.exp_config.run_config.Supported_run_settings import (
 from snncompare.exp_config.run_config.verify_run_settings import (
     verify_run_config,
 )
+from snncompare.src.snncompare.exp_config import Exp_config
 
 with_adaptation_with_radiation = {
     "adaptation": {"redundancy": 1.0},
@@ -102,7 +103,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 @typechecked
 def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     invalid_config_setting_value: Any,
-    experiment_config: Dict,
+    experiment_config: Exp_config,
     expected_type: type,
     test_object: Any,
 ) -> None:

@@ -19,6 +19,7 @@ from snncompare.exp_config.Supported_experiment_settings import (
 from snncompare.exp_config.verify_experiment_settings import (
     verify_experiment_config,
 )
+from snncompare.src.snncompare.exp_config import Exp_config
 
 supp_exp_config = Supported_experiment_settings()
 adap_sets = Adaptations_settings()
@@ -145,7 +146,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 @typechecked
 def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     invalid_config_setting_value: Optional[str],
-    experiment_config: Dict,
+    experiment_config: Exp_config,
     expected_type: type,
     test_object: Any,
     non_typechecked_error: Optional[bool] = False,

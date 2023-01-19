@@ -14,6 +14,7 @@ from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.src.snncompare.exp_config import Exp_config
 
 from .exp_config.run_config.Supported_run_settings import (
     Supported_run_settings,
@@ -69,7 +70,7 @@ class Experiment_runner:
     @typechecked
     def __init__(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         specific_run_config: Optional[Run_config] = None,
         perform_run: bool = True,
     ) -> None:
@@ -116,7 +117,7 @@ class Experiment_runner:
     # pylint: disable=W0238
     @typechecked
     def __perform_run(
-        self, experiment_config: Dict, run_configs: List[Run_config]
+        self, experiment_config: Exp_config, run_configs: List[Run_config]
     ) -> None:
         """Private method that performs a run of the experiment.
 
@@ -174,7 +175,7 @@ class Experiment_runner:
     @typechecked
     def generate_run_configs(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         specific_run_config: Optional[Run_config] = None,
     ) -> List[Run_config]:
         """Generates the run configs belonging to an experiment config, and
@@ -224,7 +225,7 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_1(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         run_config: Run_config,
         to_run: Dict,
     ) -> Dict:
@@ -360,7 +361,7 @@ class Experiment_runner:
 
 @typechecked
 def experiment_config_to_run_configs(
-    experiment_config: Dict,
+    experiment_config: Exp_config,
 ) -> List[Run_config]:
     """Generates all the run_config dictionaries of a single experiment
     configuration. Then verifies whether each run_config is valid.
@@ -433,7 +434,7 @@ def run_parameters_to_dict(
     size_and_max_graph: Tuple[int, int],
     graph_nr: int,
     radiation: Union[None, Dict],
-    experiment_config: Dict,
+    experiment_config: Exp_config,
     simulator: str,
 ) -> Run_config:
     """Stores selected parameters into a dictionary.
@@ -521,7 +522,9 @@ def determine_what_to_run(
     return to_run
 
 
-def get_adaptation_and_radiations(experiment_config: Dict) -> List[tuple]:
+def get_adaptation_and_radiations(
+    experiment_config: Exp_config,
+) -> List[tuple]:
     """Returns a list of adaptations and radiations that will be used for the
     experiment."""
 
@@ -544,7 +547,7 @@ def get_adaptation_and_radiations(experiment_config: Dict) -> List[tuple]:
 
 
 def get_radiations(
-    experiment_config: Dict, adaptation: Union[None, Dict[str, int]]
+    experiment_config: Exp_config, adaptation: Union[None, Dict[str, int]]
 ) -> List[Tuple[Union[None, Dict], Union[None, Dict]]]:
     """Returns the radiations."""
     adaptation_and_radiations: List[

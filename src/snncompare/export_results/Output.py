@@ -21,6 +21,7 @@ from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.export_plots.get_plot_data import plot_coordinated_graph
+from snncompare.src.snncompare.exp_config import Exp_config
 
 from .export_json_results import write_dict_to_json
 from .export_nx_graph_to_json import convert_digraphs_to_json
@@ -79,7 +80,7 @@ class Stage_1_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         stage_1_graphs: Dict,
         run_config: Run_config,
     ) -> None:
@@ -103,7 +104,7 @@ class Stage_2_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         graphs_stage_2: Dict,
         run_config: Run_config,
     ) -> None:
@@ -122,7 +123,7 @@ class Stage_3_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         graphs_stage_3: Dict,
         run_config: Run_config,
     ) -> None:
@@ -142,7 +143,7 @@ class Stage_4_graphs:
     @typechecked
     def __init__(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         graphs_stage_4: Dict,
         run_config: Run_config,
     ) -> None:

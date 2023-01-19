@@ -13,6 +13,8 @@ from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from typeguard import typechecked
 
+from snncompare.src.snncompare.exp_config import Exp_config
+
 from .verify_experiment_settings import (
     verify_experiment_config,
     verify_min_max,
@@ -203,7 +205,7 @@ class Supported_experiment_settings:
         }
 
     @typechecked
-    def has_unique_config_id(self, experiment_config: Dict) -> bool:
+    def has_unique_config_id(self, experiment_config: Exp_config) -> bool:
         """
 
         :param experiment_config:
@@ -216,7 +218,7 @@ class Supported_experiment_settings:
     @typechecked
     def append_unique_experiment_config_id(
         self,
-        experiment_config: Dict,
+        experiment_config: Exp_config,
         allow_optional: bool = True,
     ) -> Dict:
         """Checks if an experiment configuration dictionary already has a
@@ -224,7 +226,7 @@ class Supported_experiment_settings:
 
         If it does, throws an error.
 
-        :param experiment_config: Dict:
+        :param experiment_config: Exp_config:
         """
         if "unique_id" in experiment_config.keys():
             raise Exception(

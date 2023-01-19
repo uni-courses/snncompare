@@ -9,18 +9,18 @@ Input: Experiment configuration.
         Stage 4: Post-processed performance data of algorithm and adaptation
         mechanism.
 """
-
 from typing import Dict
 
 from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.src.snncompare.exp_config import Exp_config
 
 
 # pylint: disable=W0613
 @typechecked
 def verify_stage_3_graphs(
-    experiment_config: Dict,
+    experiment_config: Exp_config,
     run_config: Run_config,
     graphs_stage_3: Dict,
 ) -> None:

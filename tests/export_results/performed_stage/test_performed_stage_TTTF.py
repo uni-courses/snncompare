@@ -8,7 +8,6 @@ Stage4=Not yet done.
 import os
 import shutil
 import unittest
-from typing import Dict
 
 import networkx as nx
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
@@ -33,6 +32,7 @@ from snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
 from snncompare.import_results.read_json import load_results_from_json
+from snncompare.src.snncompare.exp_config import Exp_config
 from tests.tests_helper import (
     create_dummy_output_images_stage_3,
     create_result_file_for_testing,
@@ -60,7 +60,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         create_root_dir_if_not_exists("latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
-        self.experiment_config: Dict = default_experiment_config()
+        self.experiment_config: Exp_config = default_experiment_config()
         # self.input_graph = get_networkx_graph_of_2_neurons()
 
         self.expected_completed_stages = [1, 2, 3]
