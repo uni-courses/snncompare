@@ -14,9 +14,9 @@ from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_exp_config
 from typeguard import typechecked
 
-from snncompare.exp_config.Exp_config import Exp_config
-
 if TYPE_CHECKING:
+    from snncompare.exp_config.Exp_config import Exp_config
+
     from .Supported_experiment_settings import Supported_experiment_settings
 
 

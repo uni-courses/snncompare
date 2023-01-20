@@ -14,7 +14,10 @@ from typeguard import typechecked
 from snncompare.exp_config.custom_setts.run_configs.algo_test import (
     long_exp_config_for_mdsa_testing,
 )
-from snncompare.exp_config.Exp_config import Exp_config
+from snncompare.exp_config.Exp_config import (
+    Exp_config,
+    append_unique_exp_config_id,
+)
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -66,10 +69,7 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         # Verify the run configs are all different, (exclude the unique_id from
         # the comparison.)
         for index, exp_config in enumerate(self.exp_config_list):
-            supp_setts = Supported_experiment_settings()
-            supp_setts.append_unique_exp_config_id(
-                exp_config, allow_optional=True
-            )
+            append_unique_exp_config_id(exp_config)
             if index == 0:
                 self.assertEqual(
                     exp_config.unique_id,

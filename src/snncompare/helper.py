@@ -9,12 +9,10 @@ from networkx.classes.graph import Graph
 from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 
 if TYPE_CHECKING:
-    from snncompare.exp_config import Supported_experiment_settings
-    from snncompare.exp_config.Exp_config import Exp_config
+    pass
 
 
 @typechecked
@@ -372,30 +370,3 @@ def get_expected_stages(
     print(f'to_run["stage_3"]={to_run["stage_3"]}')
     # Sort and remove dupes.
     return list(set(sorted(expected_stages)))
-
-
-@typechecked
-def remove_optional_args_exp_config(
-    supported_experiment_settings: "Supported_experiment_settings",
-    copied_exp_config: "Exp_config",
-) -> "Exp_config":
-    """removes the optional arguments from a run config."""
-    non_unique_attributes = [
-        "recreate_s1",
-        "recreate_s2",
-        "overwrite_images_only",
-        "recreate_s4",
-        "export_images",
-        "export_types",
-        "unique_id",
-    ]
-    for attribute_name in non_unique_attributes:
-        # TODO: set to default value instead
-        setattr(copied_exp_config, attribute_name, None)
-    verify_exp_config(
-        supp_exp_config=supported_experiment_settings,
-        exp_config=copied_exp_config,
-        has_unique_id=False,
-        allow_optional=False,
-    )
-    return copied_exp_config

@@ -4,20 +4,11 @@
 setting should be within the ranges specified in this file, and the
 setting types should be identical.)
 """
-import copy
-import hashlib
-import json
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from typeguard import typechecked
-
-from snncompare.exp_config.verify_experiment_settings import (
-    verify_exp_config,
-    verify_min_max,
-)
-from snncompare.helper import remove_optional_args_exp_config
 
 if TYPE_CHECKING:
     from snncompare.exp_config.Exp_config import Exp_config
@@ -46,12 +37,12 @@ class Supported_experiment_settings:
         # size).
         self.min_max_graphs = 1
         self.max_max_graphs = 15
-        verify_min_max(self.min_max_graphs, self.max_max_graphs)
+        # verify_min_max(self.min_max_graphs, self.max_max_graphs)
 
         # Specify the maximum graph size.
         self.min_graph_size = 3
         self.max_graph_size = 20
-        verify_min_max(self.min_graph_size, self.max_graph_size)
+        # verify_min_max(self.min_graph_size, self.max_graph_size)
 
         # The size of the graph and the maximum number of used graphs of that
         # size.
@@ -168,54 +159,3 @@ class Supported_experiment_settings:
         if "unique_id" in some_config.keys():
             return True
         return False
-
-    @typechecked
-    def append_unique_exp_config_id(
-        self,
-        exp_config: "Exp_config",
-        allow_optional: bool = True,
-    ) -> Dict:
-        """Checks if an experiment configuration dictionary already has a
-        unique identifier, and if not it computes and appends it.
-
-        If it does, throws an error.
-
-        :param exp_config: Exp_config:
-        """
-        if "unique_id" in exp_config.keys():
-            raise Exception(
-                f"Error, the exp_config:{exp_config}\n"
-                + "already contains a unique identifier."
-            )
-
-        verify_exp_config(
-            self,
-            exp_config,
-            has_unique_id=False,
-            allow_optional=allow_optional,
-        )
-
-        # Compute a unique code belonging to this particular experiment
-        # configuration.
-        # TODO: remove optional arguments from config.
-        supported_experiment_settings = Supported_experiment_settings()
-        exp_config_without_unique_id: "Exp_config" = (
-            remove_optional_args_exp_config(
-                supported_experiment_settings=supported_experiment_settings,
-                copied_exp_config=copy.deepcopy(exp_config),
-            )
-        )
-
-        unique_id = str(
-            hashlib.sha256(
-                json.dumps(exp_config_without_unique_id).encode("utf-8")
-            ).hexdigest()
-        )
-        exp_config["unique_id"] = unique_id
-        verify_exp_config(
-            self,
-            exp_config,
-            has_unique_id=True,
-            allow_optional=allow_optional,
-        )
-        return exp_config

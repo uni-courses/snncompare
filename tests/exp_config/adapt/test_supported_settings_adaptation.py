@@ -29,7 +29,6 @@ class Test_adaptation_settings(unittest.TestCase):
         self.adap_sets = adap_sets
         self.rad_sets = rad_sets
         self.with_adaptation_with_radiation = with_adaptation_with_radiation
-        self.valid_iterations = self.supp_exp_config.iterations
 
         self.invalid_adaptation_value = {
             "redundancy": "invalid value of type string iso list",
