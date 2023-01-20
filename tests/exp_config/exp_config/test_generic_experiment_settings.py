@@ -12,11 +12,11 @@ from typeguard import typechecked
 from snncompare.exp_config.default_setts.create_default_settings import (
     default_exp_config,
 )
-from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.exp_config.Supported_experiment_settings import (
+from snncompare.exp_config.Exp_config import (
+    Exp_config,
     Supported_experiment_settings,
+    verify_exp_config,
 )
-from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 
 supp_exp_config = Supported_experiment_settings()
 adap_sets = Adaptations_settings()

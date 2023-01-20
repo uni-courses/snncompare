@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING, Dict
 
 from typeguard import typechecked
 
+from snncompare.exp_config.Exp_config import verify_integer_settings
 from snncompare.exp_config.run_config.Run_config import Run_config
-
-from ..verify_experiment_settings import verify_integer_settings
 
 # pylint: disable=R0801
 
@@ -51,33 +50,12 @@ def verify_run_config(
         supp_run_setts, run_config, has_unique_id, allow_optional
     )
 
-    verify_parameter_types(supp_run_setts, run_config)
-
     # TODO: verify a single algorithm is evaluated in a single run.
     verify_integer_settings(run_config.algorithm["MDSA"]["m_val"])
     # TODO: verify radiation setting for single run.
 
     # TODO: test unique id type
     return run_config
-
-
-def verify_parameter_types(
-    supp_run_setts: Supported_run_settings,
-    run_config: Run_config,
-) -> None:
-    """Checks for each parameter in the supported_run_settings object whether
-    it is of a valid type."""
-    for supported_key in supp_run_setts.parameters.keys():
-        if not isinstance(
-            getattr(run_config, supported_key),
-            supp_run_setts.parameters[supported_key],
-        ):
-            raise Exception(
-                f"Error, {supported_key} is of type: "
-                + f"{type(getattr(run_config,supported_key))} whereas it is "
-                "expected to be of type :"
-                + f"{supp_run_setts.parameters[supported_key]}"
-            )
 
 
 def verify_run_config_dict_is_complete(
@@ -127,19 +105,19 @@ def verify_run_config_dict_contains_only_valid_entries(
 
 @typechecked
 def verify_has_unique_id(
-    run_config: Run_config,
+    some_dict: dict,
 ) -> None:
     """Verifies the config setting has a unique id.
 
     TODO: eliminate duplicate func naming.
     """
-    if not isinstance(run_config, Dict):
+    if not isinstance(some_dict, Dict):
         raise Exception(
             "The configuration settings is not a dictionary,"
-            + f"instead it is: of type:{type(run_config)}."
+            + f"instead it is: of type:{type(some_dict)}."
         )
-    if getattr(run_config, "unique_id") is not None:
+    if "unique_id" not in some_dict.keys():
         raise Exception(
             "The configuration settings do not contain a unique id even though"
-            + f" that was expected. run_config is:{run_config}."
+            + f" that was expected. some_dict is:{some_dict}."
         )

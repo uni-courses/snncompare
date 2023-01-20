@@ -15,7 +15,7 @@
   "neuron_models": [
     "LIF"
   ],
-  "overwrite_images_only": true,
+  "overwrite_images_only": false,
   "radiations": {},
   "recreate_s1": true,
   "recreate_s2": true,

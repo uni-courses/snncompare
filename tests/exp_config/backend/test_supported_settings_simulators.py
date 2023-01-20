@@ -6,7 +6,7 @@ import unittest
 
 from typeguard import typechecked
 
-from snncompare.exp_config.verify_experiment_settings import verify_exp_config
+from snncompare.exp_config.Exp_config import verify_exp_config
 from tests.exp_config.exp_config.test_generic_experiment_settings import (
     adap_sets,
     rad_sets,

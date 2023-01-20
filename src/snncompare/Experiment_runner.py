@@ -13,7 +13,11 @@ from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
-from snncompare.exp_config.Exp_config import Exp_config
+from snncompare.exp_config.Exp_config import (
+    Exp_config,
+    Supported_experiment_settings,
+    append_unique_exp_config_id,
+)
 from snncompare.exp_config.run_config.Run_config import Run_config
 
 from .exp_config.run_config.Supported_run_settings import (
@@ -22,7 +26,10 @@ from .exp_config.run_config.Supported_run_settings import (
 from .exp_config.run_config.verify_run_completion import (
     assert_stage_is_completed,
 )
-from .exp_config.run_config.verify_run_settings import verify_run_config
+from .exp_config.run_config.verify_run_settings import (
+    verify_has_unique_id,
+    verify_run_config,
+)
 from .export_results.load_json_to_nx_graph import (
     dicts_are_equal,
     load_json_to_nx_graph_from_file,
@@ -75,7 +82,7 @@ class Experiment_runner:
         self.exp_config = exp_config
 
         # Load the ranges of supported settings.
-        # self.supp_exp_config = Supported_experiment_settings()
+        self.supp_exp_config = Supported_experiment_settings()
 
         # Verify the experiment exp_config are complete and valid.
         # pylint: disable=R0801
@@ -89,14 +96,13 @@ class Experiment_runner:
         # If the experiment exp_config does not contain a hash-code,
         # create the unique hash code for this configuration.
         # TODO: restore
-        # if not self.supp_exp_config.has_unique_config_id(self.exp_config):
-        #    self.supp_exp_config.append_unique_exp_config_id(
-        #        self.exp_config,
-        #        allow_optional=True,
-        #    )
+        if not self.supp_exp_config.has_unique_config_id(self.exp_config):
+            append_unique_exp_config_id(
+                self.exp_config,
+            )
 
         # Verify the unique hash code for this configuration is valid.
-        # verify_has_unique_id(self.exp_config)
+        verify_has_unique_id(self.exp_config.__dict__)
 
         self.run_configs = self.generate_run_configs(
             exp_config, specific_run_config

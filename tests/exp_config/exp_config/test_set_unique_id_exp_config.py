@@ -16,12 +16,10 @@ from snncompare.exp_config.custom_setts.run_configs.algo_test import (
 )
 from snncompare.exp_config.Exp_config import (
     Exp_config,
-    append_unique_exp_config_id,
-)
-from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
+    append_unique_exp_config_id,
+    verify_exp_config,
 )
-from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 
 
 class Test_setting_unique_id_exp_config(unittest.TestCase):
