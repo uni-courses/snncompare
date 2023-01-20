@@ -1,21 +1,17 @@
 """Contains a default run configuration used to test the MDSA algorithm."""
-
 import json
 from typing import Dict
 
 import jsons
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
+from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.exp_config.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
-from snncompare.exp_config.Supported_experiment_settings import (
-    Supported_experiment_settings,
-)
-from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from snncompare.export_results.export_json_results import (
     encode_tuples,
     write_dict_to_json,
@@ -23,48 +19,56 @@ from snncompare.export_results.export_json_results import (
 from snncompare.helper import file_exists
 
 
+@typechecked
 def store_exp_config_to_file(
-    custom_config_path: str, exp_config: Exp_config, filename: str
+    custom_config_path: str, exp_config: "Exp_config", filename: str
 ) -> None:
     """Verifies the experiment setting and then exports it to a dictionary."""
 
+    # supported_experiment_settings = Supported_experiment_settings()
     # Verify the experiment exp_config are complete and valid.
     # pylint: disable=R0801
-    verify_exp_config(
-        Supported_experiment_settings(),
-        exp_config,
-        has_unique_id=False,
-        allow_optional=False,
-    )
+    # verify_exp_config(
+    #    supported_experiment_settings,
+    #    exp_config,
+    #    has_unique_id=False,
+    #    allow_optional=False,
+    # )
 
     # epxort to file.
     filepath = f"{custom_config_path}{filename}.json"
-    new_dict = encode_tuples(exp_config)
+    new_dict = encode_tuples(exp_config.__dict__)
     write_dict_to_json(filepath, jsons.dump(new_dict))
 
 
-def load_exp_config_from_file(custom_config_path: str, filename: str) -> Dict:
+@typechecked
+def load_exp_config_from_file(
+    custom_config_path: str, filename: str
+) -> "Exp_config":
     """Loads an experiment config from file, then verifies and returns it."""
     filepath = f"{custom_config_path}{filename}.json"
     if file_exists(filepath):
         with open(filepath, encoding="utf-8") as json_file:
             encoded_exp_config = json.load(json_file)
-            exp_config = encode_tuples(encoded_exp_config, decode=True)
+            exp_config_dict = encode_tuples(encoded_exp_config, decode=True)
             json_file.close()
 
         # Verify the experiment exp_config are complete and valid.
         # pylint: disable=R0801
-        verify_exp_config(
-            Supported_experiment_settings(),
-            exp_config,
-            has_unique_id=False,
-            allow_optional=False,
-        )
+        # verify_exp_config(
+        #    Supported_experiment_settings(),
+        #    exp_config,
+        #    has_unique_id=False,
+        #    allow_optional=False,
+        # )
+        # The ** loads the dict into the object.
+        exp_config = Exp_config(**exp_config_dict)
         return exp_config
     raise FileNotFoundError(f"Error, {filepath} was not found.")
 
 
-def long_exp_config_for_mdsa_testing() -> Dict:
+@typechecked
+def long_exp_config_for_mdsa_testing() -> "Exp_config":
     """Contains a default experiment configuration used to test the MDSA
     algorithm."""
     # Create prerequisites
@@ -78,9 +82,8 @@ def long_exp_config_for_mdsa_testing() -> Dict:
         "algorithms": {
             "MDSA": get_algo_configs(MDSA(list(range(0, 6, 1))).__dict__)
         },
-        "iterations": list(range(0, 1, 1)),
         # TODO: Change into list with "Seeds"
-        "seed": 7,
+        "seeds": [7],
         # TODO: merge into: "input graph properties object
         # TODO: include verification."
         "min_max_graphs": 1,
@@ -95,7 +98,7 @@ def long_exp_config_for_mdsa_testing() -> Dict:
         "recreate_s2": True,
         "overwrite_images_only": True,
         "recreate_s4": True,
-        "radiations": None,
+        "radiations": {},
         # TODO: pass algo to see if it is compatible with the algorithm.
         # TODO: move into "Backend options"
         "simulators": ["nx"],
@@ -103,35 +106,40 @@ def long_exp_config_for_mdsa_testing() -> Dict:
         "synaptic_models": ["LIF"],
     }
 
-    verify_exp_config(
-        Supported_experiment_settings(),
-        long_mdsa_testing,
-        has_unique_id=False,
-        allow_optional=True,
-    )
-    return long_mdsa_testing
+    # verify_exp_config(
+    # Supported_experiment_settings(),
+    # long_mdsa_testing,
+    # has_unique_id=False,
+    # allow_optional=True,
+    # )
+    # The ** loads the dict into the object.
+    exp_config = Exp_config(**long_mdsa_testing)
+    return exp_config
 
 
+@typechecked
 def minimal_mdsa_test_exp_config() -> Dict:
     """Returns a experiment config for minimal MDSA testing."""
     minimal_mdsa_testing = long_exp_config_for_mdsa_testing()
-    minimal_mdsa_testing["size_and_max_graphs"] = [(3, 1)]
-    minimal_mdsa_testing["algorithms"] = (
+    minimal_mdsa_testing.size_and_max_graphs = [(3, 1)]
+    minimal_mdsa_testing.algorithms = (
         {"MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)},
     )
     return minimal_mdsa_testing
 
 
+@typechecked
 def short_mdsa_test_exp_config() -> Dict:
     """Returns a experiment config for short MDSA testing."""
     short_mdsa_testing = long_exp_config_for_mdsa_testing()
-    short_mdsa_testing["size_and_max_graphs"] = [(3, 1), (5, 1)]
-    short_mdsa_testing["algorithms"] = (
+    short_mdsa_testing.size_and_max_graphs = [(3, 1), (5, 1)]
+    short_mdsa_testing.algorithms = (
         {"MDSA": get_algo_configs(MDSA(list(range(0, 2, 1))).__dict__)},
     )
     return short_mdsa_testing
 
 
+@typechecked
 def run_config_with_error() -> Run_config:
     """Returns run_config for which error is found."""
     some_run_config: Run_config = Run_config(
@@ -145,7 +153,6 @@ def run_config_with_error() -> Run_config:
         overwrite_images_only=True,
         radiation=None,
         seed=7,
-        show_snns=False,
         simulator="nx",
     )
     Supported_run_settings().append_unique_run_config_id(
@@ -154,11 +161,14 @@ def run_config_with_error() -> Run_config:
     return some_run_config
 
 
-def get_exp_config_mdsa_size5_m4() -> Dict:
+@typechecked
+def get_exp_config_mdsa_size5_m4() -> "Exp_config":
     """Returns a default experiment setting with  graph size 7, m=4."""
-    mdsa_creation_only_size_7_m_4: Dict = long_exp_config_for_mdsa_testing()
-    mdsa_creation_only_size_7_m_4["algorithms"] = {
+    mdsa_creation_only_size_7_m_4: "Exp_config" = (
+        long_exp_config_for_mdsa_testing()
+    )
+    mdsa_creation_only_size_7_m_4.algorithms = {
         "MDSA": get_algo_configs(MDSA(list(range(4, 5, 1))).__dict__)
     }
-    mdsa_creation_only_size_7_m_4["size_and_max_graphs"] = [(5, 1)]
+    mdsa_creation_only_size_7_m_4.size_and_max_graphs = [(5, 1)]
     return mdsa_creation_only_size_7_m_4

@@ -48,7 +48,6 @@ with_adaptation_with_radiation = {
     "radiation": {
         "delta_synaptic_w": (0.05, 0.4),
     },
-    "seed": 5,
     "simulator": "lava",
 }
 

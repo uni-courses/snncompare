@@ -3,7 +3,7 @@ import random
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
 import networkx as nx
 import pylab as plt
@@ -11,7 +11,12 @@ from networkx.classes.graph import Graph
 from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from snncompare.export_plots.Plot_to_tex import Plot_to_tex
+
+if TYPE_CHECKING:
+    from snncompare.exp_config import Supported_experiment_settings
+    from snncompare.exp_config.Exp_config import Exp_config
 
 
 @typechecked
@@ -96,7 +101,6 @@ def compute_mark(input_graph: nx.Graph, rand_ceil: float) -> None:
 @typechecked
 def plot_alipour(
     configuration: str,
-    iteration: int,
     seed: int,
     size: int,
     m: int,
@@ -132,7 +136,7 @@ def plot_alipour(
         plot_export = Plot_to_tex()
         plot_export.export_plot(
             plt,
-            f"alipour_{seed}_size{size}_m{m}_iter{iteration}_combined_"
+            f"alipour_{seed}_size{size}_m{m}_iter_combined_"
             + f"{configuration}",
             extensions=["png"],  # TODO: include run_config extensions.
         )
@@ -183,7 +187,6 @@ def file_exists(filepath: str) -> bool:
 @typechecked
 def compute_marks_for_m_larger_than_one(
     input_graph: nx.Graph,
-    iteration: int,
     m: int,
     seed: int,
     size: int,
@@ -224,19 +227,15 @@ def compute_marks_for_m_larger_than_one(
         if show or export:
             plot_alipour(
                 "0rand_mark",
-                iteration,
                 seed,
                 size,
                 loop,
                 input_graph,
                 show=show,
             )
-            plot_alipour(
-                "1weight", iteration, seed, size, loop, input_graph, show=show
-            )
+            plot_alipour("1weight", seed, size, loop, input_graph, show=show)
             plot_alipour(
                 "2inhib_weight",
-                iteration,
                 seed,
                 size,
                 loop,
@@ -379,7 +378,6 @@ def get_actual_duration(snn_graph: nx.DiGraph) -> int:
 def get_expected_stages(
     export_images: bool,
     overwrite_images_only: bool,
-    show_snns: bool,
     stage_index: int,
     to_run: Dict,
 ) -> List[int]:
@@ -387,19 +385,40 @@ def get_expected_stages(
     experiment."""
     expected_stages = list(range(1, stage_index + 1))
 
-    if (
-        to_run["stage_3"]
-        or overwrite_images_only
-        or show_snns
-        or export_images
-    ):
+    if to_run["stage_3"] or overwrite_images_only or export_images:
         print("")
     elif 3 in expected_stages:
         expected_stages.remove(3)
 
     print(f"expected_stages-{expected_stages}")
     print(f"or overwrite_images_only={overwrite_images_only}")
-    print(f"or show_snns={show_snns}")
     print(f'to_run["stage_3"]={to_run["stage_3"]}')
     # Sort and remove dupes.
     return list(set(sorted(expected_stages)))
+
+
+@typechecked
+def remove_optional_args_exp_config(
+    supported_experiment_settings: "Supported_experiment_settings",
+    copied_exp_config: "Exp_config",
+) -> "Exp_config":
+    """removes the optional arguments from a run config."""
+    non_unique_attributes = [
+        "recreate_s1",
+        "recreate_s2",
+        "overwrite_images_only",
+        "recreate_s4",
+        "export_images",
+        "export_types",
+        "unique_id",
+    ]
+    for attribute_name in non_unique_attributes:
+        # TODO: set to default value instead
+        setattr(copied_exp_config, attribute_name, None)
+    verify_exp_config(
+        supp_exp_config=supported_experiment_settings,
+        exp_config=copied_exp_config,
+        has_unique_id=False,
+        allow_optional=False,
+    )
+    return copied_exp_config

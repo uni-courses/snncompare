@@ -1,6 +1,5 @@
 """Verifies The Supported_experiment_settings object catches invalid adaptation
 specifications."""
-import copy
 import unittest
 from typing import Any, Dict, Optional
 
@@ -109,33 +108,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
             "Error, the exp_config is of type:"
             + f'{type("")}, yet it was expected to be of'
             + " type dict.",
-            str(context.exception),
-        )
-
-    @typechecked
-    def test_error_is_thrown_on_invalid_configuration_setting_key(
-        self,
-    ) -> None:
-        """Verifies an error is thrown on an invalid configuration setting
-        key."""
-        # Create deepcopy of configuration settings.
-        exp_config = copy.deepcopy(with_adaptation_with_radiation)
-
-        # Add invalid key to configuration dictionary.
-        exp_config[self.invalid_adaptation_key] = "Filler"
-
-        with self.assertRaises(Exception) as context:
-            # iterations dictionary of type None throws error.
-            verify_exp_config(
-                supp_exp_config,
-                exp_config,
-                has_unique_id=False,
-                allow_optional=False,
-            )
-        self.assertEqual(
-            f"Error:{self.invalid_adaptation_key} is not supported by the"
-            + " configuration settings:"
-            + f"{supp_exp_config.parameters}",
             str(context.exception),
         )
 

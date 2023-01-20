@@ -7,58 +7,20 @@ setting types should be identical.)
 import copy
 import hashlib
 import json
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict
 
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from typeguard import typechecked
 
-from snncompare.exp_config.Exp_config import Exp_config
+from snncompare.exp_config.verify_experiment_settings import (
+    verify_exp_config,
+    verify_min_max,
+)
+from snncompare.helper import remove_optional_args_exp_config
 
-from .verify_experiment_settings import verify_exp_config, verify_min_max
-
-
-# pylint: disable=R0903
-# The settings object contains all the settings as a dictionary, hence no
-# hierarchy is used, leading to 10/7 instance attributes.
-class Exp_setts_typing:
-    """Stores the supported experiment setting parameter ranges.
-
-    An experiment can consist of multiple runs. A run is a particular
-    combination of experiment setting parameters.
-    """
-
-    @typechecked
-    def __init__(
-        self,
-    ) -> None:
-
-        # exp_config dictionary keys:
-        self.parameters = {
-            "adaptations": Dict,
-            "algorithms": Dict,
-            "iterations": list,
-            "max_graph_size": int,
-            "max_max_graphs": int,
-            "min_graph_size": int,
-            "min_max_graphs": int,
-            "neuron_models": list,
-            "recreate_s1": bool,
-            "recreate_s2": bool,
-            "overwrite_images_only": bool,
-            "recreate_s4": bool,
-            "radiations": Dict,
-            "seed": int,
-            "simulators": list,
-            "size_and_max_graphs": list,
-            "synaptic_models": list,
-        }
-        self.optional_parameters = {
-            "show_snns": bool,
-            "export_images": bool,
-            "export_types": List[str],
-            "unique_id": str,
-        }
+if TYPE_CHECKING:
+    from snncompare.exp_config.Exp_config import Exp_config
 
 
 # pylint: disable=R0902
@@ -69,8 +31,6 @@ class Supported_experiment_settings:
     def __init__(
         self,
     ) -> None:
-        self.parameters = Exp_setts_typing().parameters
-        self.optional_parameters = Exp_setts_typing().optional_parameters
 
         self.seed = 5
 
@@ -202,20 +162,20 @@ class Supported_experiment_settings:
         }
 
     @typechecked
-    def has_unique_config_id(self, exp_config: Exp_config) -> bool:
+    def has_unique_config_id(self, some_config: "Exp_config") -> bool:
         """
 
         :param exp_config:
 
         """
-        if "unique_id" in exp_config.keys():
+        if "unique_id" in some_config.keys():
             return True
         return False
 
     @typechecked
     def append_unique_exp_config_id(
         self,
-        exp_config: Exp_config,
+        exp_config: "Exp_config",
         allow_optional: bool = True,
     ) -> Dict:
         """Checks if an experiment configuration dictionary already has a
@@ -241,8 +201,12 @@ class Supported_experiment_settings:
         # Compute a unique code belonging to this particular experiment
         # configuration.
         # TODO: remove optional arguments from config.
-        exp_config_without_unique_id = remove_optional_exp_config(
-            copy.deepcopy(exp_config)
+        supported_experiment_settings = Supported_experiment_settings()
+        exp_config_without_unique_id: "Exp_config" = (
+            remove_optional_args_exp_config(
+                supported_experiment_settings=supported_experiment_settings,
+                copied_exp_config=copy.deepcopy(exp_config),
+            )
         )
 
         unique_id = str(
@@ -250,7 +214,7 @@ class Supported_experiment_settings:
                 json.dumps(exp_config_without_unique_id).encode("utf-8")
             ).hexdigest()
         )
-        exp_config.unique_id = unique_id
+        exp_config["unique_id"] = unique_id
         verify_exp_config(
             self,
             exp_config,
@@ -258,25 +222,3 @@ class Supported_experiment_settings:
             allow_optional=allow_optional,
         )
         return exp_config
-
-
-@typechecked
-def remove_optional_exp_config(exp_config: Exp_config) -> Dict:
-    """Eliminates all optional settings from an incoming experiment config."""
-    supp_setts = Supported_experiment_settings()
-    to_pop = []
-    for key in exp_config.keys():
-        if key in supp_setts.optional_parameters:
-            to_pop.append(key)
-    for pop_key in to_pop:
-        exp_config.pop(pop_key)
-    for key in exp_config.keys():
-        if key not in supp_setts.parameters:
-            raise Exception(
-                f"Error, key:{key} not in mandatory parameters:"
-                + f"{supp_setts.parameters}"
-            )
-    verify_exp_config(
-        supp_setts, exp_config, has_unique_id=False, allow_optional=False
-    )
-    return exp_config

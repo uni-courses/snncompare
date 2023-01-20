@@ -1,13 +1,7 @@
 """"Stores the run config Dict type."""
-import sys
 from typing import Dict, List, Optional, Union
 
 from typeguard import typechecked
-
-if sys.version_info < (3, 11):
-    pass
-else:
-    pass
 
 
 # pylint: disable=R0902
@@ -20,8 +14,8 @@ class Exp_config:
     @typechecked
     def __init__(
         self,
-        adaptations: Union[None, Dict[str, int]],
-        algorithms: Dict[str, Dict[str, int]],
+        adaptations: Union[None, Dict[str, int], dict],
+        algorithms: Dict[str, List[Dict[str, int]]],
         max_graph_size: int,
         max_max_graphs: int,
         min_graph_size: int,
@@ -44,7 +38,7 @@ class Exp_config:
 
         # Required properties
         self.adaptations: Union[None, Dict[str, int]] = adaptations
-        self.algorithms: Dict[str, Dict[str, int]] = algorithms
+        self.algorithms: Dict[str, List[Dict[str, int]]] = algorithms
         self.max_graph_size: int = max_graph_size
         self.max_max_graphs: int = max_max_graphs
         self.min_graph_size: int = min_graph_size

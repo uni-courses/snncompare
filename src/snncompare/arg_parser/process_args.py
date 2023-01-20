@@ -11,7 +11,6 @@ from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
-from snncompare.exp_config.verify_experiment_settings import verify_exp_config
 from snncompare.Experiment_runner import Experiment_runner
 
 from ..exp_config.custom_setts.run_configs.algo_test import (
@@ -46,12 +45,12 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     #    exp_config.export_images = True
     #    exp_config.overwrite_images = True
 
-    verify_exp_config(
-        Supported_experiment_settings(),
-        exp_config,
-        has_unique_id=False,
-        allow_optional=True,
-    )
+    # verify_exp_config(
+    #    Supported_experiment_settings(),
+    #    exp_config,
+    #    has_unique_id=False,
+    #    allow_optional=True,
+    # )
 
     # python -m src.snncompare -e mdsa_creation_only_size_3_4 -v
     Experiment_runner(exp_config)
@@ -59,6 +58,7 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     print("Done")
 
 
+@typechecked
 def manage_export_parsing(
     args: argparse.Namespace, exp_config: Exp_config
 ) -> None:
@@ -93,13 +93,8 @@ def manage_export_parsing(
         exp_config.export_images = True
         exp_config.export_types = extensions
 
-    # Determine whether user wants to pause computation to show images.
-    if args.visualise_snn:
-        exp_config.show_snns = True
-    else:
-        exp_config.show_snns = False
 
-
+@typechecked
 def manage_exp_config_parsing(
     args: argparse.Namespace, exp_config: Exp_config
 ) -> None:

@@ -39,7 +39,6 @@ class Supported_run_settings:
         self.parameters: Dict = {
             "adaptation": Union[None, Dict],
             "algorithm": Dict,
-            "iteration": int,
             "graph_size": int,
             "graph_nr": int,
             "radiation": Union[None, Dict],
@@ -54,7 +53,6 @@ class Supported_run_settings:
             "recreate_s2": bool,
             "overwrite_images_only": bool,
             "recreate_s4": bool,
-            "show_snns": bool,
             "unique_id": str,
         }
 

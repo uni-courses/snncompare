@@ -102,7 +102,6 @@ def load_pre_existing_graph_dict(
             get_expected_stages(
                 export_images=run_config.export_images,
                 overwrite_images_only=run_config.overwrite_images_only,
-                show_snns=run_config.show_snns,
                 stage_index=stage_index,
                 to_run=to_run,
             ),

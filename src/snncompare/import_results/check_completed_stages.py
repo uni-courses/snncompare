@@ -70,12 +70,14 @@ def has_outputted_stage(
             # TODO: append expected_filepath to run_config per stage.
 
         if stage_index == 3:
-            if run_config.export_images or run_config.show_snns:
+            if run_config.export_images:
                 if has_outputted_stage(run_config, 2, to_run):
                     if results_nx_graphs is None:
                         nx_graphs_dict = get_stage_2_nx_graphs(
                             run_config, to_run
                         )
+                    else:
+                        nx_graphs_dict = results_nx_graphs["graphs_dict"]
 
                     stage_3_img_filepaths = get_expected_image_paths_stage_3(
                         nx_graphs_dict=nx_graphs_dict,
@@ -178,7 +180,6 @@ def has_valid_json_results(
                 expected_stages = get_expected_stages(
                     export_images=run_config.export_images,
                     overwrite_images_only=run_config.overwrite_images_only,
-                    show_snns=run_config.show_snns,
                     stage_index=4,
                     to_run=to_run,
                 )

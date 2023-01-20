@@ -128,7 +128,6 @@ def export_results_to_json(
             get_expected_stages(
                 export_images=export_images,
                 overwrite_images_only=False,  # TODO: get actual value.
-                show_snns=False,  # TODO: get actual value.
                 stage_index=stage_index,
                 to_run=to_run,
             ),

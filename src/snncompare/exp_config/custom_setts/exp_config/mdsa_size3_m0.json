@@ -7,9 +7,6 @@
       }
     ]
   },
-  "iterations": [
-    0
-  ],
   "max_graph_size": 4,
   "max_max_graphs": 2,
   "min_graph_size": 3,
@@ -22,7 +19,9 @@
   "recreate_s1": true,
   "recreate_s2": true,
   "recreate_s4": true,
-  "seed": 7,
+  "seeds": [
+    7
+  ],
   "simulators": [
     "nx"
   ],

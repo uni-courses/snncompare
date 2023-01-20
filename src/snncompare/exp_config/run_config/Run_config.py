@@ -65,7 +65,6 @@ class Run_config:
         self,
         adaptation: Union[None, Dict[str, int]],
         algorithm: Dict[str, Dict[str, int]],
-        iteration: int,
         graph_size: int,
         graph_nr: int,
         radiation: Union[
@@ -80,7 +79,6 @@ class Run_config:
         recreate_s2: Optional[bool] = None,
         overwrite_images_only: Optional[bool] = None,
         recreate_s4: Optional[bool] = None,
-        show_snns: Optional[bool] = None,
         unique_id: Optional[str] = None,
     ):
         """Stores run configuration settings for the experiment."""
@@ -88,7 +86,6 @@ class Run_config:
         # Required properties
         self.adaptation: Union[None, Dict[str, int]] = adaptation
         self.algorithm: Dict[str, Dict[str, int]] = algorithm
-        self.iteration: int = iteration
         self.graph_size: int = graph_size
         self.graph_nr: int = graph_nr
         self.radiation: Union[
@@ -105,7 +102,6 @@ class Run_config:
         self.recreate_s2: Optional[bool] = recreate_s2
         self.overwrite_images_only: Optional[bool] = overwrite_images_only
         self.recreate_s4: Optional[bool] = recreate_s4
-        self.show_snns: Optional[bool] = show_snns
         self.unique_id: Optional[str] = unique_id
 
         # Verify run config object.
@@ -118,7 +114,6 @@ def dict_to_run_config(some_dict: Dict) -> Run_config:
     run_config: Run_config = Run_config(
         adaptation=some_dict["adaptation"],
         algorithm=some_dict["algorithm"],
-        iteration=some_dict["iteration"],
         graph_size=some_dict["graph_size"],
         graph_nr=some_dict["graph_nr"],
         radiation=some_dict["radiation"],

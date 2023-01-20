@@ -7,9 +7,7 @@
       }
     ]
   },
-  "iterations": [
-    0
-  ],
+  "export_images": false,
   "max_graph_size": 5,
   "max_max_graphs": 2,
   "min_graph_size": 3,
@@ -18,11 +16,13 @@
     "LIF"
   ],
   "overwrite_images_only": true,
-  "radiations": null,
+  "radiations": {},
   "recreate_s1": true,
   "recreate_s2": true,
   "recreate_s4": true,
-  "seed": 7,
+  "seeds": [
+    7
+  ],
   "simulators": [
     "nx"
   ],

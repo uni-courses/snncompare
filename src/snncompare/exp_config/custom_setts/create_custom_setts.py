@@ -1,6 +1,6 @@
 """Used to create custom experiment and run configuration files."""
 
-from typing import Dict
+from typing import TYPE_CHECKING, Dict
 
 from snncompare.exp_config.custom_setts.run_configs.algo_test import (
     get_exp_config_mdsa_size5_m4,
@@ -9,11 +9,16 @@ from snncompare.exp_config.custom_setts.run_configs.algo_test import (
     store_exp_config_to_file,
 )
 
+if TYPE_CHECKING:
+    from snncompare.exp_config.Exp_config import Exp_config
+
 
 def create_basic_test_config(custom_config_path: str) -> None:
     """Creates and exports an experiment setup that can be used to quickly test
     the MDSA algorithm."""
-    mdsa_creation_only_size_3_4: Dict = long_exp_config_for_mdsa_testing()
+    mdsa_creation_only_size_3_4: Exp_config = (
+        long_exp_config_for_mdsa_testing()
+    )
     store_exp_config_to_file(
         custom_config_path,
         mdsa_creation_only_size_3_4,

@@ -34,6 +34,7 @@ def write_dict_to_json(output_filepath: str, some_dict: Dict) -> None:
             )
 
 
+@typechecked
 def encode_tuples(some_dict: Dict, decode: bool = False) -> Dict:
     """Loops through the values of the dict and if it detects a list with
     tuples, it encodes the tuples for json exporting.

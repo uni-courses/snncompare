@@ -14,6 +14,7 @@ from typeguard import typechecked
 from snncompare.exp_config.custom_setts.run_configs.algo_test import (
     long_exp_config_for_mdsa_testing,
 )
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.Supported_experiment_settings import (
     Supported_experiment_settings,
 )
@@ -36,7 +37,6 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         ]
 
         for exp_config in self.exp_config_list:
-            exp_config.show_snns = False
             exp_config.export_images = False
             verify_exp_config(
                 Supported_experiment_settings(),
@@ -98,9 +98,8 @@ def get_config_one() -> Dict:
         "algorithms": {
             "MDSA": get_algo_configs(MDSA(list(range(1, 2, 1))).__dict__)
         },
-        "iterations": list(range(0, 1, 1)),
+        "seeds": list(range(7, 8, 1)),
         # TODO: Change into list with "Seeds"
-        "seed": 7,
         # TODO: merge into: "input graph properties object
         # TODO: include verification."
         "min_max_graphs": 1,
@@ -134,9 +133,11 @@ def get_config_one() -> Dict:
 
 def get_config_two() -> Dict:
     """Returns a default experiment setting with  graph size 7, m=4."""
-    mdsa_creation_only_size_7_m_4: Dict = long_exp_config_for_mdsa_testing()
-    mdsa_creation_only_size_7_m_4["algorithms"] = {
+    mdsa_creation_only_size_7_m_4: Exp_config = (
+        long_exp_config_for_mdsa_testing()
+    )
+    mdsa_creation_only_size_7_m_4.algorithms = {
         "MDSA": get_algo_configs(MDSA(list(range(4, 5, 1))).__dict__)
     }
-    mdsa_creation_only_size_7_m_4["size_and_max_graphs"] = [(5, 1)]
+    mdsa_creation_only_size_7_m_4.size_and_max_graphs = [(5, 1)]
     return mdsa_creation_only_size_7_m_4

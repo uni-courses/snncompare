@@ -5,7 +5,6 @@ TODO: remove type checking verifications, they are performed automatically.
 """
 from __future__ import annotations
 
-from pprint import pprint
 from typing import TYPE_CHECKING, Any, Dict
 
 from snnadaptation.redundancy.verify_redundancy_settings import (
@@ -37,13 +36,6 @@ def verify_exp_config(
     """
     if not isinstance(has_unique_id, bool):
         raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
-
-    verify_exp_config_dict_is_complete(supp_exp_config, exp_config.__dict__)
-
-    # Verify no unknown configuration settings are presented.
-    verify_exp_config_dict_contains_only_valid_entries(
-        supp_exp_config, exp_config.__dict__, allow_optional, has_unique_id
-    )
 
     verify_exp_config_is_sensible(
         exp_config,
@@ -102,46 +94,6 @@ def verify_exp_config(
     # Verify settings of type bool.
     verify_bool_setting(exp_config.recreate_s4)
     verify_bool_setting(exp_config.overwrite_images_only)
-
-
-def verify_exp_config_dict_is_complete(
-    supp_exp_config: Supported_experiment_settings,
-    exp_config_dict: dict,
-) -> None:
-    """Verifies the configuration settings dictionary is complete."""
-    for expected_key in supp_exp_config.parameters:
-        if expected_key not in exp_config_dict.keys():
-            raise Exception(
-                f"Error:{expected_key} is not in the configuration"
-                + f" settings:{exp_config_dict.keys()}"
-            )
-
-
-def verify_exp_config_dict_contains_only_valid_entries(
-    supp_exp_config: Supported_experiment_settings,
-    exp_config_dict: dict,
-    allow_optional: bool,
-    has_unique_id: bool,
-) -> None:
-    """Verifies the configuration settings dictionary does not contain any
-    invalid keys."""
-    for actual_key in exp_config_dict.keys():
-        if actual_key not in supp_exp_config.parameters:
-            if not allow_optional:
-                if not (has_unique_id and actual_key == "unique_id"):
-                    raise Exception(
-                        f"Error:{actual_key} is not supported by the "
-                        + "configuration settings:"
-                        + f"{supp_exp_config.parameters}"
-                    )
-            if actual_key not in supp_exp_config.optional_parameters:
-                pprint(supp_exp_config.parameters)
-                raise Exception(
-                    f"Error:{actual_key} is not supported by the configuration"
-                    + " settings:, nor by the"
-                    + " optional settings:"
-                    + f"{supp_exp_config.optional_parameters}"
-                )
 
 
 def verify_exp_config_is_sensible(

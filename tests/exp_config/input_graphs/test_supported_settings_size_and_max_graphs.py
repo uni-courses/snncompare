@@ -124,14 +124,14 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         exp_config_first = copy.deepcopy(self.with_adaptation_with_radiation)
         exp_config_second = copy.deepcopy(self.with_adaptation_with_radiation)
         # Set negative value of size_and_max_graphs in copy.
-        exp_config_first["size_and_max_graphs"] = [
+        exp_config_first.size_and_max_graphs = [
             (2, self.supp_exp_config.max_max_graphs),
             (
                 self.supp_exp_config.min_graph_size,
                 self.supp_exp_config.max_max_graphs,
             ),
         ]
-        exp_config_second["size_and_max_graphs"] = [
+        exp_config_second.size_and_max_graphs = [
             (
                 self.supp_exp_config.min_graph_size,
                 self.supp_exp_config.max_max_graphs,
@@ -182,14 +182,14 @@ class Test_size_and_max_graphs_settings(unittest.TestCase):
         # Set the desired graph size to 50, which is larger than allowed in
         # self.supp_exp_config.max_graph_size. The max_graphs is set to the
         # maximum which is acceptable.
-        exp_config_first["size_and_max_graphs"] = [
+        exp_config_first.size_and_max_graphs = [
             (50, self.supp_exp_config.max_max_graphs),
             (
                 self.supp_exp_config.min_graph_size,
                 self.supp_exp_config.max_max_graphs,
             ),
         ]
-        exp_config_second["size_and_max_graphs"] = [
+        exp_config_second.size_and_max_graphs = [
             (
                 self.supp_exp_config.min_graph_size,
                 self.supp_exp_config.max_max_graphs,

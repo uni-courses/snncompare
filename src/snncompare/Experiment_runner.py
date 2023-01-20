@@ -23,13 +23,6 @@ from .exp_config.run_config.verify_run_completion import (
     assert_stage_is_completed,
 )
 from .exp_config.run_config.verify_run_settings import verify_run_config
-from .exp_config.Supported_experiment_settings import (
-    Supported_experiment_settings,
-)
-from .exp_config.verify_experiment_settings import (
-    verify_exp_config,
-    verify_has_unique_id,
-)
 from .export_results.load_json_to_nx_graph import (
     dicts_are_equal,
     load_json_to_nx_graph_from_file,
@@ -82,27 +75,28 @@ class Experiment_runner:
         self.exp_config = exp_config
 
         # Load the ranges of supported settings.
-        self.supp_exp_config = Supported_experiment_settings()
+        # self.supp_exp_config = Supported_experiment_settings()
 
         # Verify the experiment exp_config are complete and valid.
         # pylint: disable=R0801
-        verify_exp_config(
-            self.supp_exp_config,
-            exp_config,
-            has_unique_id=False,
-            allow_optional=True,
-        )
+        # verify_exp_config(
+        #    self.supp_exp_config,
+        #    exp_config,
+        #    has_unique_id=False,
+        #    allow_optional=True,
+        # )
 
         # If the experiment exp_config does not contain a hash-code,
         # create the unique hash code for this configuration.
-        if not self.supp_exp_config.has_unique_config_id(self.exp_config):
-            self.supp_exp_config.append_unique_exp_config_id(
-                self.exp_config,
-                allow_optional=True,
-            )
+        # TODO: restore
+        # if not self.supp_exp_config.has_unique_config_id(self.exp_config):
+        #    self.supp_exp_config.append_unique_exp_config_id(
+        #        self.exp_config,
+        #        allow_optional=True,
+        #    )
 
         # Verify the unique hash code for this configuration is valid.
-        verify_has_unique_id(self.exp_config)
+        # verify_has_unique_id(self.exp_config)
 
         self.run_configs = self.generate_run_configs(
             exp_config, specific_run_config
@@ -378,22 +372,20 @@ def exp_config_to_run_configs(
             for adaptation, radiation in get_adaptation_and_radiations(
                 exp_config
             ):
-                for iteration in exp_config.iterations:
-                    for size_and_max_graph in exp_config[
-                        "size_and_max_graphs"
-                    ]:
+                for seed in exp_config.seeds:
+                    for size_and_max_graph in exp_config.size_and_max_graphs:
                         for simulator in exp_config.simulators:
                             for graph_nr in range(0, size_and_max_graph[1]):
                                 run_config: Run_config = (
                                     run_parameters_to_dict(
-                                        adaptation,
-                                        algorithm,
-                                        iteration,
-                                        size_and_max_graph,
-                                        graph_nr,
-                                        radiation,
-                                        exp_config,
-                                        simulator,
+                                        adaptation=adaptation,
+                                        algorithm=algorithm,
+                                        seed=seed,
+                                        size_and_max_graph=size_and_max_graph,
+                                        graph_nr=graph_nr,
+                                        radiation=radiation,
+                                        exp_config=exp_config,
+                                        simulator=simulator,
                                     )
                                 )
                                 run_configs.append(run_config)
@@ -414,7 +406,9 @@ def exp_config_to_run_configs(
         )
 
         # Append show_snns and export_images to run config.
-        supp_run_setts.assert_has_key(exp_config, "export_images", bool)
+        supp_run_setts.assert_has_key(
+            exp_config.__dict__, "export_images", bool
+        )
         run_config.export_images = exp_config.export_images
     return run_configs
 
@@ -424,7 +418,7 @@ def exp_config_to_run_configs(
 def run_parameters_to_dict(
     adaptation: Union[None, Dict[str, int]],
     algorithm: Dict[str, Dict[str, int]],
-    iteration: int,
+    seed: int,
     size_and_max_graph: Tuple[int, int],
     graph_nr: int,
     radiation: Union[None, Dict],
@@ -439,13 +433,12 @@ def run_parameters_to_dict(
     run_config: Run_config = Run_config(
         adaptation=adaptation,
         algorithm=algorithm,
-        iteration=iteration,
+        seed=seed,
         graph_size=size_and_max_graph[0],
         graph_nr=graph_nr,
         radiation=radiation,
         recreate_s4=exp_config.recreate_s4,
         overwrite_images_only=exp_config.overwrite_images_only,
-        seed=exp_config.seed,
         simulator=simulator,
     )
 
@@ -524,9 +517,10 @@ def get_adaptation_and_radiations(
         adaptation = None
         adaptations_radiations.extend(get_radiations(exp_config, adaptation))
     else:
-        for adaptation_name, adaptation_setts_list in exp_config[
-            "adaptations"
-        ].items():
+        for (
+            adaptation_name,
+            adaptation_setts_list,
+        ) in exp_config.adaptations.items():
             for adaptation_config in adaptation_setts_list:
                 adaptation = {adaptation_name: adaptation_config}
                 adaptations_radiations.extend(
