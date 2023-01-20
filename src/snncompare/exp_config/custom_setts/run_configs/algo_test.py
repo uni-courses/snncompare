@@ -118,28 +118,6 @@ def long_exp_config_for_mdsa_testing() -> "Exp_config":
 
 
 @typechecked
-def minimal_mdsa_test_exp_config() -> Dict:
-    """Returns a experiment config for minimal MDSA testing."""
-    minimal_mdsa_testing = long_exp_config_for_mdsa_testing()
-    minimal_mdsa_testing.size_and_max_graphs = [(3, 1)]
-    minimal_mdsa_testing.algorithms = (
-        {"MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)},
-    )
-    return minimal_mdsa_testing
-
-
-@typechecked
-def short_mdsa_test_exp_config() -> Dict:
-    """Returns a experiment config for short MDSA testing."""
-    short_mdsa_testing = long_exp_config_for_mdsa_testing()
-    short_mdsa_testing.size_and_max_graphs = [(3, 1), (5, 1)]
-    short_mdsa_testing.algorithms = (
-        {"MDSA": get_algo_configs(MDSA(list(range(0, 2, 1))).__dict__)},
-    )
-    return short_mdsa_testing
-
-
-@typechecked
 def run_config_with_error() -> Run_config:
     """Returns run_config for which error is found."""
     some_run_config: Run_config = Run_config(

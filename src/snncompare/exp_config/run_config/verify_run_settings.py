@@ -129,7 +129,10 @@ def verify_run_config_dict_contains_only_valid_entries(
 def verify_has_unique_id(
     run_config: Run_config,
 ) -> None:
-    """Verifies the config setting has a unique id."""
+    """Verifies the config setting has a unique id.
+
+    TODO: eliminate duplicate func naming.
+    """
     if not isinstance(run_config, Dict):
         raise Exception(
             "The configuration settings is not a dictionary,"

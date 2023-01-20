@@ -185,8 +185,6 @@ def get_expected_range(
     :param setting_name: param supp_exp_config:
     :param supp_exp_config:
     """
-    if setting_name == "iterations":
-        return supp_exp_config.iterations
     if setting_name == "m_val":
         return list(range(MDSA([1]).min_m_vals, MDSA([1]).max_m_vals, 1))
     if setting_name == "simulators":
@@ -369,7 +367,6 @@ def verify_adap_and_rad_settings(
             # Check if values belonging to key are within supported range.
             if check_type == "adaptations":
                 verify_redundancy_settings_for_exp_config(some_dict[key])
-                # verify_adaptation_values(supp_exp_config, some_dict, key)
             elif check_type == "radiations":
                 verify_radiations_values(supp_exp_config, some_dict, key)
         return some_dict
@@ -385,46 +382,6 @@ def verify_algorithm_settings(
     check_type: str,
 ) -> None:
     """TODO: Verifies the settings of the algorithm are valid."""
-
-
-def verify_adaptation_values(
-    supp_exp_config: Supported_experiment_settings, adaptations: dict, key: str
-) -> None:
-    """The configuration settings contain key named: adaptations. The value of
-    belonging to this key is a dictionary, which also has several keys.
-
-    This method checks whether these adaptations dictionary keys, are within
-    the supported range of adaptations setting keys. These adaptations
-    dictionary keys should each have values of the type list. These list
-    elements should have the type float, or be empty lists. The empty list
-    represents: no adaptations is used, signified by the key name: "None".
-
-    This method verifies the keys in the adaptations dictionary are within the
-    supported range. It also checks if the values of the adaptations dictionary
-    keys are a list, and whether all elements in those lists are of type float.
-
-    :param adaptations: Dict:
-    :param key: str:
-    :param supp_exp_config:
-    """
-
-    # Verifies the configuration settings adaptations value is of the same type
-    # as the supported adaptations configuration setting (which is a list)).
-    if not isinstance(
-        adaptations[key], type(supp_exp_config.adaptations[key])
-    ) and (not isinstance(adaptations[key], list)):
-        raise Exception(
-            f'Error, value of adaptations["{key}"]='
-            + f"{adaptations[key]}, (which has type:{type(adaptations[key])}"
-            + "), is of different type than the expected and supported "
-            + f"type: {type(supp_exp_config.adaptations[key])}"
-        )
-
-    # Verifies the values in the list of adaptations settings are of type
-    # float.
-    if isinstance(adaptations[key], list):
-        for setting in adaptations[key]:
-            verify_object_type(setting, float, None)
 
 
 def verify_radiations_values(
@@ -486,7 +443,10 @@ def verify_radiations_values(
 
 @typechecked
 def verify_has_unique_id(exp_config: dict) -> None:
-    """Verifies the config setting has a unique id."""
+    """Verifies the config setting has a unique id.
+
+    TODO: eliminate duplicate func naming.
+    """
     if not isinstance(exp_config, Dict):
         raise Exception(
             "The configuration settings is not a dictionary,"

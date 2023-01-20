@@ -1,9 +1,7 @@
 """Contains helper functions that are used throughout this repository."""
 import random
-import time
-from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import networkx as nx
 import pylab as plt
@@ -45,27 +43,6 @@ def generate_list_of_n_random_nrs(
     raise Exception(
         f"The max_val={max_val} is smaller than the graph size:{len(G)}."
     )
-
-
-@typechecked
-def print_time(status: str, previous_millis: int) -> Tuple[datetime, int]:
-    """
-
-    :param status:
-
-    :param previous_millis:
-
-    """
-    # TODO: remove unused function.
-    now = datetime.now()
-    now_millis = int(round(time.time() * 1000))
-
-    duration_millis = now_millis - previous_millis
-    print(
-        f"{str(now.time())[:8]}, Duration:{duration_millis} [ms], "
-        + f"status:{status}"
-    )
-    return now, now_millis
 
 
 @typechecked

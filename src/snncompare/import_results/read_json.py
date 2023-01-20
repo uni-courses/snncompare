@@ -72,22 +72,6 @@ def set_graph_attributes(graph: Union[nx.Graph, nx.DiGraph]) -> None:
 
 
 @typechecked
-def get_graph_attributes_from_dict_and_return_nx_graph(
-    loaded_graph: Dict,
-) -> Union[nx.Graph, nx.DiGraph]:
-    """Takes a json input graph, which is a dictionary.
-
-    Then gets the graph attributes from that Dict, converts the json
-    input graph dict into a networkx graph, and then adds the attributes
-    to the networkx graph.
-    """
-    #    graph_attributes = loaded_graph["graph"]
-
-    nx_graph = json_graph.node_link_graph(loaded_graph)
-    return nx_graph
-
-
-@typechecked
 def load_json_file_into_dict(
     json_filepath: str,
 ) -> Dict[str, Optional[Dict]]:

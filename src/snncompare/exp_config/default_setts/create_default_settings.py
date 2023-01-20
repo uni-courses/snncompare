@@ -43,11 +43,6 @@ def create_default_graph_json() -> None:
 
 
 @typechecked
-def create_default_exp_config() -> None:
-    """Generates the default experiment settings json file."""
-
-
-@typechecked
 def default_exp_config() -> Exp_config:
     """Creates example experiment configuration setting."""
     # Create prerequisites

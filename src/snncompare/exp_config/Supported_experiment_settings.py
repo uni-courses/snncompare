@@ -42,9 +42,6 @@ class Supported_experiment_settings:
             MDSA(list(range(mdsa_min, mdsa_max, 1))).__dict__
         )
 
-        # The number of times the experiment is repeated.
-        self.iterations = list(range(0, 3, 1))
-
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
         self.min_max_graphs = 1

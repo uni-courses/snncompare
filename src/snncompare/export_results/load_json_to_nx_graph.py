@@ -4,7 +4,6 @@ import json
 from pprint import pprint
 from typing import Dict, List
 
-import networkx as nx
 from networkx.readwrite import json_graph
 from snnbackends.verify_nx_graphs import (
     verify_results_nx_graphs_contain_expected_stages,
@@ -21,19 +20,6 @@ from .helper import run_config_to_filename
 from .verify_json_graphs import (
     verify_results_safely_check_json_graphs_contain_expected_stages,
 )
-
-
-@typechecked
-def json_to_digraph(json_data: Dict) -> nx.DiGraph:
-    """
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    TODO: remove if not used.
-
-    """
-    if json_data is not None:
-        return json_graph.node_link_graph(json_data)
-    raise Exception("Error, did not find json_data.")
 
 
 @typechecked
