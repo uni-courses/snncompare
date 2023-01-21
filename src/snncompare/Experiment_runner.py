@@ -183,6 +183,7 @@ class Experiment_runner:
         expected run configs.
         """
         found_run_config = False
+        pprint(exp_config.__dict__)
         # Generate run configurations.
         run_configs: List[Run_config] = exp_config_to_run_configs(exp_config)
         if specific_run_config is not None:
@@ -400,6 +401,7 @@ def exp_config_to_run_configs(
         if exp_config.export_images:
             run_config.export_types = exp_config.export_types
             run_config.gif = exp_config.gif
+            run_config.overwrite_images_only = exp_config.overwrite_images_only
         verify_run_config(
             supp_run_setts=supp_run_setts,
             run_config=run_config,
@@ -499,6 +501,7 @@ def determine_what_to_run(
         # not be updated stage 3 has already been performed, with
         # recreate_s4=True, and overwrite_images_only=False.
         to_run["stage_3"] = True
+        print(f'to_run["stage_3"]={to_run["stage_3"]}')
 
     # Throw warning to user about potential discrepancy between graph
     # behaviour and old visualisation.

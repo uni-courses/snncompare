@@ -72,16 +72,17 @@ def manage_export_parsing(
     if args.delete_results and os.path.exists("results"):
         shutil.rmtree("results")
 
-    # By default export pdf, if exporting is on.
-    if args.export_images == "export_images":
-        exp_config.export_images = True
-        exp_config.export_types = ["pdf"]
-
     # Don't export if it is not wanted.
-    elif args.export_images is None:
+    if args.export_images is None:
         exp_config.export_images = False
+        if args.overwrite_visualisation:
+            raise ValueError(
+                "Overwrite images is not allowed without export_images."
+            )
     # Allow user to specify image export types (and verify them).
     else:
+        if args.overwrite_visualisation:
+            exp_config.overwrite_images_only = True
         extensions = args.export_images.split(",")
         for extension in extensions:
             if extension in supp_setts.export_types:

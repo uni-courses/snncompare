@@ -192,7 +192,6 @@ def plot_graph_behaviours(
 ) -> None:
     """Exports the plots of the graphs per time step of the run
     configuration."""
-
     # TODO: get this from the experiment settings/run configuration.
     desired_props = get_desired_properties_for_graph_printing()
 
