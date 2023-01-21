@@ -85,9 +85,8 @@ def parse_cli_args() -> argparse.Namespace:
         default=False,
         help=(
             "Ensures new SNN graph is created, even if it already existed."
-            + "implies later stages are rewritten as well, images deleted, "
-            + "unless specified otherwise unless specified otherwise (with: "
-            + "--keep-...)"
+            + "use this to only overwrite specific runs without deleting the"
+            + "entire results jsons."
         ),
     )
 
@@ -99,8 +98,8 @@ def parse_cli_args() -> argparse.Namespace:
         default=False,
         help=(
             "Ensures new SNN graph propagation is performed, even if it "
-            "already existed. implies later stages are rewritten as well, "
-            "images deleted, unless specified otherwise (with: --keep-...)"
+            + "already existed. Use this to only overwrite specific runs "
+            + "without deleting the entire results jsons."
         ),
     )
 
@@ -112,7 +111,8 @@ def parse_cli_args() -> argparse.Namespace:
         default=False,
         help=(
             "Ensures new SNN algorithm results are computed, even if they "
-            "already existed."
+            + "already existed. Use this to only overwrite specific runs "
+            + "without deleting the entire results jsons."
         ),
     )
 
@@ -124,7 +124,8 @@ def parse_cli_args() -> argparse.Namespace:
         default=False,
         help=(
             "Ensures new SNN graph behaviour is visualised, even if it "
-            "already existed."
+            + "already existed. Use this to only overwrite specific runs "
+            + "without deleting the entire image section."
         ),
     )
 
