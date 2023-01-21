@@ -80,12 +80,15 @@ class Run_config:
         overwrite_images_only: Optional[bool] = None,
         recreate_s4: Optional[bool] = None,
         unique_id: Optional[str] = None,
+        gif: Optional[bool] = False,
+        zoom: Optional[bool] = False,
     ):
         """Stores run configuration settings for the experiment."""
 
         # Required properties
         self.adaptation: Union[None, Dict[str, int]] = adaptation
         self.algorithm: Dict[str, Dict[str, int]] = algorithm
+
         self.graph_size: int = graph_size
         self.graph_nr: int = graph_nr
         self.radiation: Union[
@@ -97,12 +100,14 @@ class Run_config:
         # Optional properties
         self.export_images: Optional[bool] = export_images
         self.export_types: Optional[List[str]] = export_types
+        self.gif: Optional[bool] = gif
         self.max_duration: Optional[int] = max_duration
         self.recreate_s1: Optional[bool] = recreate_s1
         self.recreate_s2: Optional[bool] = recreate_s2
         self.overwrite_images_only: Optional[bool] = overwrite_images_only
         self.recreate_s4: Optional[bool] = recreate_s4
         self.unique_id: Optional[str] = unique_id
+        self.zoom: Optional[bool] = zoom
 
         # Verify run config object.
 

@@ -365,8 +365,5 @@ def get_expected_stages(
     elif 3 in expected_stages:
         expected_stages.remove(3)
 
-    print(f"expected_stages-{expected_stages}")
-    print(f"or overwrite_images_only={overwrite_images_only}")
-    print(f'to_run["stage_3"]={to_run["stage_3"]}')
     # Sort and remove dupes.
     return list(set(sorted(expected_stages)))

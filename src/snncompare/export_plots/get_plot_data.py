@@ -28,7 +28,7 @@ def plot_coordinated_graph(
     filename: str = "no_filename",
     show: Optional[bool] = False,
     title: Optional[str] = None,
-    zoomed: Optional[bool] = True,
+    zoom: Optional[bool] = False,
 ) -> None:
     """Some documentation.
 
@@ -111,12 +111,12 @@ def plot_coordinated_graph(
     plot_export = Plot_to_tex()
     plot_export.export_plot(plt, filename, extensions=extensions)
 
-    if zoomed:
-        create_target_dir_if_not_exists("latex/Images/", "graphs/zoomed")
+    if zoom:
+        create_target_dir_if_not_exists("latex/Images/", "graphs/zoom")
         if "png" in extensions:
             copy_region_of_img(
                 src_path="latex/Images/" + "graphs/" + filename + ".png",
-                dst_dir="latex/Images/graphs/zoomed",
+                dst_dir="latex/Images/graphs/zoom",
                 x_coords=(0.0, 1.0),
                 y_coords=(0.3, 0.6),
             )

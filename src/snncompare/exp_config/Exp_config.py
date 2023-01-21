@@ -43,7 +43,9 @@ class Exp_config:
         synaptic_models: list,
         export_images: bool | None = False,
         export_types: list[str] | None = None,
+        gif: bool | None = False,
         unique_id: str | None = None,
+        zoom: bool | None = False,
     ):
         """Stores run configuration settings for the exp_configriment."""
 
@@ -70,6 +72,8 @@ class Exp_config:
         if self.export_images:
             if export_types is not None:
                 self.export_types: list[str] = export_types
+        self.gif: bool = bool(gif)
+        self.zoom: bool = bool(zoom)
 
         if unique_id is not None:
             self.unique_id: str = unique_id

@@ -23,6 +23,7 @@
     ]
   },
   "export_images": false,
+  "gif": false,
   "max_graph_size": 5,
   "max_max_graphs": 2,
   "min_graph_size": 3,
@@ -48,5 +49,6 @@
   ],
   "synaptic_models": [
     "LIF"
-  ]
+  ],
+  "zoom": false
 }

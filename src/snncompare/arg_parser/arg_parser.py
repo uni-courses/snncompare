@@ -184,8 +184,8 @@ def parse_cli_args() -> argparse.Namespace:
         help=(
             "Ensures the SNN behaviour visualisation is exported, as pdf by "
             + "default. Supported are:"
-            + f"{supp_setts.export_types}. Usage:"
-            + f'-x {",".join(supp_setts.export_types)} '
+            + f"{supp_setts.export_types.extend(['gif','zoom'])}. Usage:"
+            + f'-x {",".join(supp_setts.export_types+["gif","zoom"])} '
             + "or:\n"
             + f"--export_images {supp_setts.export_types[0]}"
         ),

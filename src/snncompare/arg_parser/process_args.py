@@ -76,6 +76,7 @@ def manage_export_parsing(
     if args.export_images == "export_images":
         exp_config.export_images = True
         exp_config.export_types = ["pdf"]
+
     # Don't export if it is not wanted.
     elif args.export_images is None:
         exp_config.export_images = False
@@ -85,6 +86,12 @@ def manage_export_parsing(
         for extension in extensions:
             if extension in supp_setts.export_types:
                 print(f"extensions={extensions}")
+            elif extension == "gif":
+                exp_config.gif = True
+                extensions.remove("gif")
+            elif extension == "zoom":
+                exp_config.zoom = True
+                extensions.remove("zoom")
             else:
                 raise Exception(
                     f"Error, image output extension:{extension} is"

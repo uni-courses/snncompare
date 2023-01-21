@@ -219,6 +219,7 @@ def plot_graph_behaviours(
                     show=False,
                     title=None,
                     width=(run_config.algorithm["MDSA"]["m_val"] + 1) * 2.5,
+                    zoom=run_config.zoom,
                     # title=create_custom_plot_titles(
                     #    graph_name, t, run_config.seed
                     # ),

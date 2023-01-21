@@ -48,12 +48,14 @@ class Supported_run_settings:
         self.optional_parameters = {
             "export_images": bool,
             "export_types": List[str],
+            "gif": bool,
             "max_duration": int,
             "recreate_s1": bool,
             "recreate_s2": bool,
             "overwrite_images_only": bool,
             "recreate_s4": bool,
             "unique_id": str,
+            "zoom": bool,
         }
 
     def append_unique_run_config_id(

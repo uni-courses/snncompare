@@ -151,7 +151,6 @@ def copy_export_settings(original: Run_config, loaded: Run_config) -> None:
         if key in supp_run_setts.optional_parameters:
 
             # if key not in minimal_run_config.__dict__.keys():
-            print(f"overwrite key={key}")
             setattr(loaded, key, value)
 
 

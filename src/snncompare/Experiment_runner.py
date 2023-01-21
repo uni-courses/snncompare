@@ -399,6 +399,7 @@ def exp_config_to_run_configs(
     for run_config in run_configs:
         if exp_config.export_images:
             run_config.export_types = exp_config.export_types
+            run_config.gif = exp_config.gif
         verify_run_config(
             supp_run_setts=supp_run_setts,
             run_config=run_config,
