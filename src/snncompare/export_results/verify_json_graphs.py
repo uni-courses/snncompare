@@ -1,13 +1,9 @@
 """Methods used to verify the json graphs."""
-from pprint import pprint
 from typing import Dict, List
 
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import (
-    Run_config,
-    dict_to_run_config,
-)
+from snncompare.exp_config.run_config.Run_config import dict_to_run_config
 
 
 @typechecked
@@ -37,7 +33,6 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
     verify_json_graphs_dict_contain_correct_stages(
         results_json_graphs["graphs_dict"],
         expected_stages,
-        results_json_graphs["run_config"],
     )
 
 
@@ -45,7 +40,6 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
 def verify_json_graphs_dict_contain_correct_stages(
     json_graphs: Dict,
     expected_stages: List[int],
-    run_config: Run_config,
 ) -> None:
     """Verifies the json graphs dict contains the expected stages in each
     graph."""
@@ -58,7 +52,6 @@ def verify_json_graphs_dict_contain_correct_stages(
                 )
             completed_stages = json_graph["graph"]["completed_stages"]
             if expected_stage not in completed_stages:
-                pprint(run_config.__dict__)
                 raise ValueError(
                     "Error, for the above run_config, the expected "
                     + f"stage:{expected_stage}, was not found in "

@@ -3,7 +3,6 @@ import argparse
 import os
 import shutil
 import sys
-from pprint import pprint
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
@@ -130,7 +129,6 @@ def manage_exp_config_parsing(
     if args.m_val is not None:
         if not isinstance(args.m_val, int):
             raise TypeError("args.m_val should be int.")
-        pprint(exp_config)
         # Assume only one iteration is used if graph size is specified.
         exp_config.algorithms["MDSA"] = [{"m_val": args.m_val}]
 
@@ -138,7 +136,6 @@ def manage_exp_config_parsing(
     if args.redundancy is not None:
         if not isinstance(args.redundancy, int):
             raise TypeError("args.redundancy should be int.")
-        pprint(exp_config)
         # Assume only one iteration is used if graph size is specified.
         exp_config.adaptations = {"redundancy": [args.redundancy]}
 
