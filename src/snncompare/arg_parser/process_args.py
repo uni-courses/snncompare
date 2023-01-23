@@ -138,3 +138,10 @@ def manage_exp_config_parsing(
         pprint(exp_config)
         # Assume only one iteration is used if graph size is specified.
         exp_config.adaptations = {"redundancy": [args.redundancy]}
+
+    if args.recreate_stage_1:
+        exp_config.recreate_s1 = True
+    if args.recreate_stage_2:
+        exp_config.recreate_s2 = True
+    if args.recreate_stage_4:
+        exp_config.recreate_s4 = True

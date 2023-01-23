@@ -350,8 +350,13 @@ def get_max_sim_duration(
                 * (len(input_graph) + 1)
                 * ((algo_settings["m_val"]) + 1)  # +_6 for delay
             )
+            print(f'algo_settings["m_val"]={algo_settings["m_val"]}')
+            print(f"sim_time={sim_time}")
+            # exit()
             return sim_time
-        raise Exception("Error, algo_name:{algo_name} is not (yet) supported.")
+        raise Exception(
+            f"Error, algo_name:{algo_name} is not (yet) supported."
+        )
     raise Exception("Error, the simulation time was not found.")
 
 
@@ -473,6 +478,9 @@ def exp_config_to_run_configs(
             run_config.export_types = exp_config.export_types
             run_config.gif = exp_config.gif
             run_config.overwrite_images_only = exp_config.overwrite_images_only
+        run_config.recreate_s1 = exp_config.recreate_s1
+        run_config.recreate_s2 = exp_config.recreate_s2
+        run_config.recreate_s4 = exp_config.recreate_s4
         verify_run_config(
             supp_run_setts=supp_run_setts,
             run_config=run_config,

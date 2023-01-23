@@ -148,6 +148,33 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-r1",
+        "--recreate_stage_1",
+        action="store_true",
+        default=False,
+        help=("Recreate results up to stage 1."),
+    )
+
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-r2",
+        "--recreate_stage_2",
+        action="store_true",
+        default=False,
+        help=("Recreate results up to stage 2."),
+    )
+
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-r4",
+        "--recreate_stage_4",
+        action="store_true",
+        default=False,
+        help=("Recreate results up to stage 4."),
+    )
+
     # Allow user to set a neuron redundancy value.
     parser.add_argument(
         "-rd",

@@ -267,6 +267,7 @@ class Experiment_runner:
                 results_nx_graphs["run_config"],
                 results_nx_graphs["graphs_dict"],
             )
+            # print(f'duration={results_nx_graphs["graphs_dict"]}')
             output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
 
         assert_stage_is_completed(

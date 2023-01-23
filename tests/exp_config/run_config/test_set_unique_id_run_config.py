@@ -16,8 +16,8 @@ from snncompare.exp_config.Exp_config import (
     Supported_experiment_settings,
     verify_exp_config,
 )
-from snncompare.exp_config.run_config import Run_config
-from snncompare.Experiment_runner import exp_config_to_run_configs
+from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.helper import exp_config_to_run_configs
 from tests.exp_config.exp_config.test_set_unique_id_exp_config import (
     get_config_one,
 )
