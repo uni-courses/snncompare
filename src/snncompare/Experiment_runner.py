@@ -123,6 +123,7 @@ class Experiment_runner:
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
             self.to_run = determine_what_to_run(run_config)
+            print(self.to_run)
             print("\nstart stage I:  ", end=" ")
 
             duration, results_nx_graphs = timeit.Timer(  # type:ignore[misc]
@@ -153,7 +154,6 @@ class Experiment_runner:
             duration, _ = timeit.Timer(  # type:ignore[misc]
                 functools.partial(
                     self.__perform_run_stage_4,
-                    self.exp_config.export_images,
                     results_nx_graphs,
                     self.to_run,
                 )
@@ -189,7 +189,7 @@ class Experiment_runner:
             }
 
             # Exports results, including graphs as dict.
-            output_files_stage_1_and_2(results_nx_graphs, 1, to_run)
+            output_files_stage_1_and_2(results_nx_graphs, 1)
         else:
             results_nx_graphs = load_results_stage_1(run_config)
         self.equalise_loaded_run_config(
@@ -255,7 +255,7 @@ class Experiment_runner:
                 ):
                     # Load results from file.
                     nx_graphs_dict = load_json_to_nx_graph_from_file(
-                        results_nx_graphs["run_config"], 2, to_run
+                        results_nx_graphs["run_config"], 2
                     )
                     results_nx_graphs["graphs_dict"] = nx_graphs_dict
 
@@ -267,8 +267,7 @@ class Experiment_runner:
                 results_nx_graphs["run_config"],
                 results_nx_graphs["graphs_dict"],
             )
-            # print(f'duration={results_nx_graphs["graphs_dict"]}')
-            output_files_stage_1_and_2(results_nx_graphs, 2, to_run)
+            output_files_stage_1_and_2(results_nx_graphs, 2)
 
         assert_stage_is_completed(
             results_nx_graphs["run_config"], 2, to_run, verbose=True
@@ -302,7 +301,12 @@ class Experiment_runner:
                 results_nx_graphs["run_config"].overwrite_images_only
                 or results_nx_graphs["run_config"].export_images
             ):
-                output_stage_files_3_and_4(results_nx_graphs, 3, to_run)
+                output_stage_files_3_and_4(results_nx_graphs, 3)
+
+        if (
+            has_outputted_stage(results_nx_graphs["run_config"], 3, to_run)
+            or to_run["stage_3"]
+        ):
             assert_stage_is_completed(
                 results_nx_graphs["run_config"],
                 3,
@@ -315,7 +319,7 @@ class Experiment_runner:
 
     @typechecked
     def __perform_run_stage_4(
-        self, export_images: bool, results_nx_graphs: Dict, to_run: Dict
+        self, results_nx_graphs: Dict, to_run: Dict
     ) -> None:
         """Performs the run for stage 4.
 
@@ -327,7 +331,7 @@ class Experiment_runner:
             results_nx_graphs["run_config"],
             results_nx_graphs["graphs_dict"],
         ):
-            export_results_to_json(export_images, results_nx_graphs, 4, to_run)
+            export_results_to_json(results_nx_graphs, 4)
         assert_stage_is_completed(
             results_nx_graphs["run_config"], 4, to_run, verbose=True
         )
@@ -380,7 +384,6 @@ def determine_what_to_run(
         # not be updated stage 3 has already been performed, with
         # recreate_s4=True, and overwrite_images_only=False.
         to_run["stage_3"] = True
-        print(f'to_run["stage_3"]={to_run["stage_3"]}')
 
     # Throw warning to user about potential discrepancy between graph
     # behaviour and old visualisation.

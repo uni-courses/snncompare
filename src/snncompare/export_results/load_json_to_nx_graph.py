@@ -25,7 +25,6 @@ from .verify_json_graphs import (
 def load_json_to_nx_graph_from_file(
     run_config: Run_config,
     stage_index: int,
-    to_run: Dict,
 ) -> Dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
     exists, and then loads them back as json dicts.
@@ -37,7 +36,7 @@ def load_json_to_nx_graph_from_file(
     nx_graphs_dict = {}
     # Load existing graph dict if it already exists, and if overwrite is off.
     json_graphs_dict: Dict = load_pre_existing_graph_dict(
-        run_config, stage_index, to_run
+        run_config, stage_index
     )
     for graph_name, graph in json_graphs_dict.items():
         nx_graph = json_graph.node_link_graph(graph)
@@ -50,7 +49,6 @@ def load_json_to_nx_graph_from_file(
         # json_graphs_dict, stage_index, to_run
         results_nx_graphs,
         stage_index,
-        to_run,
     )
     # verify_results_nx_graphs_contain_expected_stages(
     # {"graphs_dict": nx_graphs_dict}, stage_index, to_run
@@ -62,7 +60,6 @@ def load_json_to_nx_graph_from_file(
 def load_pre_existing_graph_dict(
     run_config: Run_config,
     stage_index: int,
-    to_run: Dict,
 ) -> Dict:
     """Returns the pre-existing graphs that were generated during earlier
     stages of the experiment.
@@ -85,10 +82,7 @@ def load_pre_existing_graph_dict(
         return load_verified_json_graphs_from_json(
             run_config,
             get_expected_stages(
-                export_images=run_config.export_images,
-                overwrite_images_only=run_config.overwrite_images_only,
                 stage_index=stage_index,
-                to_run=to_run,
             ),
         )
     raise Exception(f"Error, unexpected stage_index:{stage_index}")
@@ -116,7 +110,7 @@ def load_verified_json_graphs_from_json(
         pprint(run_config.__dict__)
         print("Loaded run_config:")
         pprint(results_json_graphs["run_config"].__dict__)
-        raise Exception("Error, difference in run configs, see above.")
+        raise TabError("Error, difference in run configs, see above.")
 
     return results_json_graphs["graphs_dict"]
 

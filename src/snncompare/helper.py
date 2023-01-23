@@ -365,18 +365,13 @@ def get_actual_duration(snn_graph: nx.DiGraph) -> int:
 
 @typechecked
 def get_expected_stages(
-    export_images: bool,
-    overwrite_images_only: bool,
     stage_index: int,
-    to_run: Dict,
 ) -> List[int]:
     """Computes which stages should be expected at this stage of the
     experiment."""
     expected_stages = list(range(1, stage_index + 1))
-
-    if to_run["stage_3"] or overwrite_images_only or export_images:
-        print("")
-    elif 3 in expected_stages:
+    # stage 3 is checked on completeness by looking if image files exist.
+    if 3 in expected_stages:
         expected_stages.remove(3)
 
     # Sort and remove dupes.

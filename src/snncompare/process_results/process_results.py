@@ -77,10 +77,8 @@ def perform_mdsa_results_computation_if_needed(
 
 @typechecked
 def export_results_to_json(
-    export_images: bool,
     results_nx_graphs: Dict,
     stage_index: int,
-    to_run: Dict,
 ) -> None:
     """Integrates the results per graph type into the graph, then export the
     results dictionary (again) into the stage 4 folder."""
@@ -126,14 +124,11 @@ def export_results_to_json(
             graph_name,
             nx_graph,
             get_expected_stages(
-                export_images=export_images,
-                overwrite_images_only=False,  # TODO: get actual value.
                 stage_index=stage_index,
-                to_run=to_run,
             ),
         )
 
-    output_stage_files_3_and_4(results_nx_graphs, 4, to_run)
+    output_stage_files_3_and_4(results_nx_graphs, 4)
 
 
 @typechecked

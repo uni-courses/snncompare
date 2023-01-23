@@ -9,7 +9,7 @@ from .Output import output_stage_json
 
 @typechecked
 def output_files_stage_1_and_2(
-    results_nx_graphs: Dict, stage_index: int, to_run: Dict
+    results_nx_graphs: Dict, stage_index: int
 ) -> None:
 
     """Converts the graphs of the incoming results dict into json dict graphs,
@@ -32,7 +32,6 @@ def output_files_stage_1_and_2(
         results_nx_graphs,
         json_filename,
         stage_index,
-        to_run,
     )
     # Verifies while loading that the output dict contains the expected
     # completed stages.

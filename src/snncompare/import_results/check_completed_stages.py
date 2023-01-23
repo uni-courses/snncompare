@@ -1,5 +1,6 @@
 """Method used to perform checks on whether the input is loaded correctly."""
 from pathlib import Path
+from pprint import pprint
 from typing import Dict, List, Optional
 
 from snnbackends.verify_nx_graphs import verify_completed_stages_list
@@ -27,19 +28,19 @@ from ..helper import get_expected_stages, get_extensions_list
 @typechecked
 def get_stage_2_nx_graphs(
     run_config: Run_config,
-    to_run: Dict,
 ) -> Dict:
     """Loads the json graphs for stage 2 from file.
 
     Then converts them to nx graphs and returns them.
     """
     # Load results from file.
-    nx_graphs_dict = load_json_to_nx_graph_from_file(run_config, 2, to_run)
+    nx_graphs_dict = load_json_to_nx_graph_from_file(run_config, 2)
     return nx_graphs_dict
 
 
 # pylint: disable=R0911
 # pylint: disable=R0912
+# pylint: disable=R0914
 @typechecked
 def has_outputted_stage(
     run_config: Run_config,
@@ -73,9 +74,7 @@ def has_outputted_stage(
             if run_config.export_images:
                 if has_outputted_stage(run_config, 2, to_run):
                     if results_nx_graphs is None:
-                        nx_graphs_dict = get_stage_2_nx_graphs(
-                            run_config, to_run
-                        )
+                        nx_graphs_dict = get_stage_2_nx_graphs(run_config)
                     else:
                         nx_graphs_dict = results_nx_graphs["graphs_dict"]
 
@@ -100,23 +99,24 @@ def has_outputted_stage(
             # TODO: separate loading and checking if it can be loaded.
             try:
                 json_graphs = load_pre_existing_graph_dict(
-                    run_config, stage_index, to_run
+                    run_config, stage_index
                 )
             # pylint: disable=R0801
-            except KeyError:
+            except KeyError as k:
                 if verbose:
-                    print(f"KeyError for: {filepath}")
+                    print(f"KeyError for: {filepath}: {repr(k)}")
                 return False
-            except ValueError:
+            except ValueError as v:
                 if verbose:
-                    print(f"ValueError for: {filepath}")
+                    print(f"ValueError for: {filepath}:")
+                    pprint(repr(v))
                 return False
-            except TypeError:
+            except TypeError as t:
                 if verbose:
-                    print(f"TypeError for: {filepath}")
+                    print(f"TypeError for: {filepath}: {repr(t)}")
                 return False
             if stage_index == 4:
-                return has_valid_json_results(json_graphs, run_config, to_run)
+                return has_valid_json_results(json_graphs, run_config)
     return True
 
 
@@ -159,7 +159,6 @@ def nx_graphs_have_completed_stage(
 def has_valid_json_results(
     json_graphs: Dict,
     run_config: Run_config,
-    to_run: Dict,
 ) -> bool:
     """Checks if the json_graphs contain the expected results.
 
@@ -178,10 +177,7 @@ def has_valid_json_results(
                     return False
 
                 expected_stages = get_expected_stages(
-                    export_images=run_config.export_images,
-                    overwrite_images_only=run_config.overwrite_images_only,
                     stage_index=4,
-                    to_run=to_run,
                 )
 
                 for graph_name, json_graph in json_graphs.items():

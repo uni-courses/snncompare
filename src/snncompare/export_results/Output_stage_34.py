@@ -12,7 +12,7 @@ from .Output import output_stage_json, plot_graph_behaviours
 
 @typechecked
 def output_stage_files_3_and_4(
-    results_nx_graphs: Dict, stage_index: int, to_run: Dict
+    results_nx_graphs: Dict, stage_index: int
 ) -> None:
     """Merges the experiment configuration Dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
@@ -68,7 +68,6 @@ def output_stage_files_3_and_4(
                 results_nx_graphs,
                 filename,
                 stage_index,
-                to_run,
             )
 
     elif results_nx_graphs["run_config"].simulator == "lava":
