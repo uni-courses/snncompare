@@ -21,7 +21,6 @@ def sim_graphs(
     :param stage_1_graphs: Dict:
     """
     for graph_name, snn_graph in stage_1_graphs.items():
-        print(f"graph_name={graph_name}")
         stage_1_graphs[graph_name].graph[
             "sim_duration"
         ] = get_max_sim_duration(stage_1_graphs["input_graph"], run_config)

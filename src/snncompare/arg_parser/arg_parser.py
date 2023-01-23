@@ -19,7 +19,7 @@ def parse_cli_args() -> argparse.Namespace:
 
     parser.add_argument(
         "-c",
-        "--create_boxplots",
+        "--create-boxplots",
         action="store_true",
         default=False,
         help=("Create boxplots with adaptation effectivity."),

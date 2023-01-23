@@ -2,6 +2,7 @@
 import argparse
 import os
 import shutil
+import sys
 from pprint import pprint
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
@@ -109,6 +110,8 @@ def manage_export_parsing(
 
     if args.create_boxplots:
         create_performance_plots(exp_config)
+        print("Created boxplots.")
+        sys.exit()
 
 
 @typechecked

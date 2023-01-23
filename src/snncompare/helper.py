@@ -350,9 +350,6 @@ def get_max_sim_duration(
                 * (len(input_graph) + 1)
                 * ((algo_settings["m_val"]) + 1)  # +_6 for delay
             )
-            print(f'algo_settings["m_val"]={algo_settings["m_val"]}')
-            print(f"sim_time={sim_time}")
-            # exit()
             return sim_time
         raise Exception(
             f"Error, algo_name:{algo_name} is not (yet) supported."
