@@ -7,7 +7,7 @@ import functools
 import timeit
 from decimal import Decimal
 from pprint import pprint
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
@@ -19,19 +19,13 @@ from snncompare.exp_config.Exp_config import (
     append_unique_exp_config_id,
 )
 from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.helper import dicts_are_equal, generate_run_configs
 
-from .exp_config.run_config.Supported_run_settings import (
-    Supported_run_settings,
-)
 from .exp_config.run_config.verify_run_completion import (
     assert_stage_is_completed,
 )
-from .exp_config.run_config.verify_run_settings import (
-    verify_has_unique_id,
-    verify_run_config,
-)
+from .exp_config.run_config.verify_run_settings import verify_has_unique_id
 from .export_results.load_json_to_nx_graph import (
-    dicts_are_equal,
     load_json_to_nx_graph_from_file,
 )
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
@@ -104,7 +98,7 @@ class Experiment_runner:
         # Verify the unique hash code for this configuration is valid.
         verify_has_unique_id(self.exp_config.__dict__)
 
-        self.run_configs = self.generate_run_configs(
+        self.run_configs = generate_run_configs(
             exp_config, specific_run_config
         )
 
@@ -171,55 +165,6 @@ class Experiment_runner:
             }
 
     @typechecked
-    def generate_run_configs(
-        self,
-        exp_config: Exp_config,
-        specific_run_config: Optional[Run_config] = None,
-    ) -> List[Run_config]:
-        """Generates the run configs belonging to an experiment config, and
-        then removes all run configs except for the desired run config.
-
-        Throws an error if the desired run config is not within the
-        expected run configs.
-        """
-        found_run_config = False
-        pprint(exp_config.__dict__)
-        # Generate run configurations.
-        run_configs: List[Run_config] = exp_config_to_run_configs(exp_config)
-        if specific_run_config is not None:
-            if specific_run_config.unique_id is None:
-                pprint(specific_run_config.__dict__)
-                # Append unique_id to run_config
-                Supported_run_settings().append_unique_run_config_id(
-                    specific_run_config, allow_optional=True
-                )
-            for gen_run_config in run_configs:
-                if dicts_are_equal(
-                    gen_run_config.__dict__,
-                    specific_run_config.__dict__,
-                    without_unique_id=True,
-                ):
-                    found_run_config = True
-                    if (
-                        gen_run_config.unique_id
-                        != specific_run_config.unique_id
-                    ):
-                        raise Exception(
-                            "Error, equal dict but unequal unique_ids."
-                        )
-                    break
-
-            if not found_run_config:
-                pprint(run_configs)
-                raise Exception(
-                    f"The expected run config:{specific_run_config} was not"
-                    "found."
-                )
-            run_configs = [specific_run_config]
-
-        return run_configs
-
-    @typechecked
     def __perform_run_stage_1(
         self,
         exp_config: Exp_config,
@@ -247,9 +192,39 @@ class Experiment_runner:
             output_files_stage_1_and_2(results_nx_graphs, 1, to_run)
         else:
             results_nx_graphs = load_results_stage_1(run_config)
-
+        self.equalise_loaded_run_config(
+            results_nx_graphs["run_config"],
+            run_config,
+        )
         assert_stage_is_completed(run_config, 1, to_run)
         return results_nx_graphs
+
+    @typechecked
+    def equalise_loaded_run_config(
+        self,
+        loaded_from_json: Run_config,
+        incoming: Run_config,
+    ) -> None:
+        """Ensures the non-impactfull run config that is loaded from json are
+        identical to those of the  incoming run_config."""
+        for key, val in incoming.__dict__.items():
+
+            if loaded_from_json.__dict__[key] != val:
+                print(
+                    f"setting run config[{key}] from "
+                    + f"{loaded_from_json.__dict__[key]} to:{val}"
+                )
+                loaded_from_json.__dict__[key] = val
+        if not dicts_are_equal(
+            loaded_from_json.__dict__,
+            incoming.__dict__,
+            without_unique_id=False,
+        ):
+            pprint(loaded_from_json.__dict__)
+            pprint(incoming.__dict__)
+            raise AttributeError(
+                "Run_config and loaded run_config from json are not equal."
+            )
 
     @typechecked
     def __perform_run_stage_2(
@@ -334,6 +309,7 @@ class Experiment_runner:
                 verbose=True,
                 results_nx_graphs=results_nx_graphs,
             )
+
             # TODO: assert gif file exists
 
     @typechecked
@@ -354,104 +330,6 @@ class Experiment_runner:
         assert_stage_is_completed(
             results_nx_graphs["run_config"], 4, to_run, verbose=True
         )
-
-
-@typechecked
-def exp_config_to_run_configs(
-    exp_config: Exp_config,
-) -> List[Run_config]:
-    """Generates all the run_config dictionaries of a single experiment
-    configuration. Then verifies whether each run_config is valid.
-
-    TODO: Ensure this can be done modular, and lower the depth of the loop.
-    """
-    # pylint: disable=R0914
-    supp_run_setts = Supported_run_settings()
-    run_configs: List[Run_config] = []
-
-    # pylint: disable=R1702
-    # TODO: make it loop through a list of keys.
-    # for algorithm in exp_config.algorithms:
-    for algorithm_name, algo_specs in exp_config.algorithms.items():
-        for algo_config in algo_specs:
-            algorithm = {algorithm_name: algo_config}
-
-            for adaptation, radiation in get_adaptation_and_radiations(
-                exp_config
-            ):
-                for seed in exp_config.seeds:
-                    for size_and_max_graph in exp_config.size_and_max_graphs:
-                        for simulator in exp_config.simulators:
-                            for graph_nr in range(0, size_and_max_graph[1]):
-                                run_config: Run_config = (
-                                    run_parameters_to_dict(
-                                        adaptation=adaptation,
-                                        algorithm=algorithm,
-                                        seed=seed,
-                                        size_and_max_graph=size_and_max_graph,
-                                        graph_nr=graph_nr,
-                                        radiation=radiation,
-                                        exp_config=exp_config,
-                                        simulator=simulator,
-                                    )
-                                )
-                                run_configs.append(run_config)
-
-    for run_config in run_configs:
-        if exp_config.export_images:
-            run_config.export_types = exp_config.export_types
-            run_config.gif = exp_config.gif
-            run_config.overwrite_images_only = exp_config.overwrite_images_only
-        verify_run_config(
-            supp_run_setts=supp_run_setts,
-            run_config=run_config,
-            has_unique_id=False,
-            allow_optional=True,
-        )
-
-        # Append unique_id to run_config
-        supp_run_setts.append_unique_run_config_id(
-            run_config, allow_optional=True
-        )
-
-        # Append show_snns and export_images to run config.
-        supp_run_setts.assert_has_key(
-            exp_config.__dict__, "export_images", bool
-        )
-        run_config.export_images = exp_config.export_images
-    return run_configs
-
-
-# pylint: disable=R0913
-@typechecked
-def run_parameters_to_dict(
-    adaptation: Union[None, Dict[str, int]],
-    algorithm: Dict[str, Dict[str, int]],
-    seed: int,
-    size_and_max_graph: Tuple[int, int],
-    graph_nr: int,
-    radiation: Union[None, Dict],
-    exp_config: Exp_config,
-    simulator: str,
-) -> Run_config:
-    """Stores selected parameters into a dictionary.
-
-    Written as separate argument to keep code width under 80 lines. #
-    TODO: verify typing.
-    """
-    run_config: Run_config = Run_config(
-        adaptation=adaptation,
-        algorithm=algorithm,
-        seed=seed,
-        graph_size=size_and_max_graph[0],
-        graph_nr=graph_nr,
-        radiation=radiation,
-        recreate_s4=exp_config.recreate_s4,
-        overwrite_images_only=exp_config.overwrite_images_only,
-        simulator=simulator,
-    )
-
-    return run_config
 
 
 @typechecked
@@ -514,47 +392,3 @@ def determine_what_to_run(
     ):
         to_run["stage_4"] = True
     return to_run
-
-
-def get_adaptation_and_radiations(
-    exp_config: Exp_config,
-) -> List[tuple]:
-    """Returns a list of adaptations and radiations that will be used for the
-    experiment."""
-
-    adaptations_radiations: List[tuple] = []
-    if exp_config.adaptations is None:
-        adaptation = None
-        adaptations_radiations.extend(get_radiations(exp_config, adaptation))
-    else:
-        for (
-            adaptation_name,
-            adaptation_setts_list,
-        ) in exp_config.adaptations.items():
-            for adaptation_config in adaptation_setts_list:
-                adaptation = {adaptation_name: adaptation_config}
-                adaptations_radiations.extend(
-                    get_radiations(exp_config, adaptation)
-                )
-    return adaptations_radiations
-
-
-def get_radiations(
-    exp_config: Exp_config, adaptation: Union[None, Dict[str, int]]
-) -> List[Tuple[Union[None, Dict], Union[None, Dict]]]:
-    """Returns the radiations."""
-    adaptation_and_radiations: List[
-        Tuple[Union[None, Dict], Union[None, Dict]]
-    ] = []
-    if exp_config.radiations is None:
-        adaptation_and_radiations.append((adaptation, None))
-    else:
-        for (
-            radiation_name,
-            radiation_setts_list,
-        ) in exp_config.radiations.items():
-            # TODO: verify it is of type list.
-            for rad_config in radiation_setts_list:
-                radiation = {radiation_name: rad_config}
-                adaptation_and_radiations.append((adaptation, radiation))
-    return adaptation_and_radiations

@@ -12,6 +12,9 @@ from snncompare.exp_config.Exp_config import (
     Supported_experiment_settings,
 )
 from snncompare.Experiment_runner import Experiment_runner
+from snncompare.export_results.analysis.create_performance_plots import (
+    create_performance_plots,
+)
 
 from ..exp_config.custom_setts.run_configs.algo_test import (
     load_exp_config_from_file,
@@ -58,6 +61,7 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     print("Done")
 
 
+# pylint: disable=R0912
 @typechecked
 def manage_export_parsing(
     args: argparse.Namespace, exp_config: Exp_config
@@ -82,7 +86,9 @@ def manage_export_parsing(
     # Allow user to specify image export types (and verify them).
     else:
         if args.overwrite_visualisation:
-            exp_config.overwrite_images_only = True
+            exp_config.overwrite_images_only = args.overwrite_visualisation
+        else:
+            exp_config.overwrite_images_only = False
         extensions = args.export_images.split(",")
         for extension in extensions:
             if extension in supp_setts.export_types:
@@ -100,6 +106,9 @@ def manage_export_parsing(
                 )
         exp_config.export_images = True
         exp_config.export_types = extensions
+
+    if args.create_boxplots:
+        create_performance_plots(exp_config)
 
 
 @typechecked

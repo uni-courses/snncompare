@@ -1,5 +1,4 @@
 """Converts the json graphs back into nx graphs."""
-import copy
 import json
 from pprint import pprint
 from typing import Dict, List
@@ -15,7 +14,7 @@ from snncompare.exp_config.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
 
-from ..helper import file_exists, get_expected_stages
+from ..helper import dicts_are_equal, file_exists, get_expected_stages
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
     verify_results_safely_check_json_graphs_contain_expected_stages,
@@ -101,24 +100,10 @@ def load_verified_json_graphs_from_json(
     expected_stages: List[int],
 ) -> Dict:
     """Loads the json dict and returns the graphs of the relevant stages."""
-    results_json_graphs = {}
-
-    filename: str = run_config_to_filename(run_config)
-    json_filepath = f"results/{filename}.json"
-
-    if not file_exists(json_filepath):
-        raise FileNotFoundError(f"Error, {json_filepath} was not found.")
-
-    # Read output JSON file into dict.
-    with open(json_filepath, encoding="utf-8") as json_file:
-        results_json_graphs = json.load(json_file)
-        json_file.close()
-
-    verify_results_safely_check_json_graphs_contain_expected_stages(
-        results_json_graphs, expected_stages
+    results_json_graphs = load_json_results(
+        run_config,
+        expected_stages,
     )
-
-    copy_export_settings(run_config, results_json_graphs["run_config"])
 
     if run_config.unique_id != results_json_graphs[
         "run_config"
@@ -137,6 +122,32 @@ def load_verified_json_graphs_from_json(
 
 
 @typechecked
+def load_json_results(
+    run_config: Run_config,
+    expected_stages: List[int],
+) -> Dict:
+    """Loads results from json file."""
+    results_json_graphs = {}
+    filename: str = run_config_to_filename(run_config)
+    json_filepath = f"results/{filename}.json"
+
+    if not file_exists(json_filepath):
+        raise FileNotFoundError(f"Error, {json_filepath} was not found.")
+
+    # Read output JSON file into dict.
+    with open(json_filepath, encoding="utf-8") as json_file:
+        results_json_graphs = json.load(json_file)
+        json_file.close()
+
+    verify_results_safely_check_json_graphs_contain_expected_stages(
+        results_json_graphs, expected_stages
+    )
+
+    copy_export_settings(run_config, results_json_graphs["run_config"])
+    return results_json_graphs
+
+
+@typechecked
 def copy_export_settings(original: Run_config, loaded: Run_config) -> None:
     """Copies the non essential parameters from the original into the loaded
     run_config."""
@@ -152,17 +163,3 @@ def copy_export_settings(original: Run_config, loaded: Run_config) -> None:
 
             # if key not in minimal_run_config.__dict__.keys():
             setattr(loaded, key, value)
-
-
-@typechecked
-def dicts_are_equal(left: Dict, right: Dict, without_unique_id: bool) -> bool:
-    """Determines whether two run configurations are equal or not."""
-    if without_unique_id:
-        left_copy = copy.deepcopy(left)
-        right_copy = copy.deepcopy(right)
-        if "unique_id" in left_copy:
-            left_copy.pop("unique_id")
-        if "unique_id" in right_copy:
-            right_copy.pop("unique_id")
-        return left_copy == right_copy
-    return left == right
