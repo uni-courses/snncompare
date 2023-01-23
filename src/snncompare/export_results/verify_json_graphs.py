@@ -53,9 +53,6 @@ def verify_json_graphs_dict_contain_correct_stages(
                 )
             completed_stages = json_graph["graph"]["completed_stages"]
             if expected_stage not in completed_stages:
-                print(f"expected_stages={expected_stages}")
-                print(f"For:{graph_name}, json_graph.graph:")
-                # pprint.pformat(json_graph["graph"], indent=4)
                 raise ValueError(
                     "Error, for the above run_config, the expected stage:"
                     + f"{expected_stage}, in:"

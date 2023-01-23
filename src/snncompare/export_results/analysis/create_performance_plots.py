@@ -17,7 +17,10 @@ from snncompare.export_results.load_json_to_nx_graph import (
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from snncompare.helper import generate_run_configs
+from snncompare.helper import (
+    generate_run_configs,
+    get_adaptation_and_radiations,
+)
 from snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
@@ -76,40 +79,51 @@ def create_performance_plots(exp_config: Exp_config) -> None:
         )
         # Terminate code.
 
-    # Get json data per run_config.
-    run_config_nx_graphs = get_json_data(completed_run_configs)
+    for _, radiation in get_adaptation_and_radiations(exp_config):
+        for radiation_name, radiation_value in radiation.items():
+            print(f"radiation={radiation}")
+            # Filter
+            wanted_run_configs: List[Run_config] = []
+            for run_config in completed_run_configs:
+                if run_config.radiation == radiation:
+                    wanted_run_configs.append(run_config)
 
-    # Get results per line.
-    boxplot_data: Dict[str, Boxplot_x_serie] = get_boxplot_datapoints(
-        run_config_nx_graphs=run_config_nx_graphs
-    )
+            # Get json data per run_config.
+            run_config_nx_graphs = get_json_data(wanted_run_configs)
 
-    y_series = boxplot_data_to_y_series(boxplot_data)
+            # Get results per line.
+            boxplot_data: Dict[str, Boxplot_x_serie] = get_boxplot_datapoints(
+                run_config_nx_graphs=run_config_nx_graphs
+            )
 
-    # Generate line plots
-    # Generate box plots.
-    create_box_plot(
-        extensions=["png"],
-        filename="boxplot",
-        legendPosition=0,
-        output_dir="latex/Images",
-        x_axis_label="x-axis label [units]",
-        y_axis_label="y-axis label [units]",
-        y_series=y_series,
-    )
+            y_series = boxplot_data_to_y_series(boxplot_data)
 
-    # Allow user to select subset of parameter ranges.
-    # (This is done in the experiment setting)
-    # graph_sizes 10-30
-    # m_values 0 to 10
-    # adaptation 0-4
-    # radiation 0,0.1,0.25
+            # Generate line plots
+            # Generate box plots.
+            create_box_plot(
+                extensions=["png"],
+                filename=f"boxplot_{radiation_name}={radiation_value}",
+                legendPosition=0,
+                output_dir="latex/Images",
+                x_axis_label="x-axis label [units]",
+                y_axis_label="y-axis label [units]",
+                y_series=y_series,
+                title=f"{radiation_name}={radiation_value}",
+                x_axis_label_rotation=45,
+            )
 
-    # Get results per data
+        # Allow user to select subset of parameter ranges.
+        # (This is done in the experiment setting)
+        # graph_sizes 10-30
+        # m_values 0 to 10
+        # adaptation 0-4
+        # radiation 0,0.1,0.25
 
-    # Create dummy box plots.
+        # Get results per data
 
-    # Create dummy line plots.
+        # Create dummy box plots.
+
+        # Create dummy line plots.
 
 
 @typechecked
@@ -165,6 +179,7 @@ def get_boxplot_datapoints(
             if algo_name == "MDSA":
 
                 graph_names = get_expected_stage_1_graph_names(run_config)
+
                 for graph_name in graph_names:
                     if graph_name != "input_graph":
                         add_graph_scores(
@@ -182,11 +197,10 @@ def add_graph_scores(
     boxplot_data: Dict[str, Boxplot_x_serie], graph_type: str, result: Dict
 ) -> None:
     """Adds the scores for the graphs.."""
-    if result:
+    if result["passed"]:
         boxplot_data[graph_type].correct_results += 1
     else:
         boxplot_data[graph_type].wrong_results += 1
-        print(f"{graph_type}, {boxplot_data[graph_type].__dict__}")
 
 
 @typechecked
