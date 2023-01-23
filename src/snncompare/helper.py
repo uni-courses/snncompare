@@ -490,7 +490,7 @@ def exp_config_to_run_configs(
             exp_config.__dict__, "export_images", bool
         )
         run_config.export_images = exp_config.export_images
-    return run_configs
+    return list(reversed(run_configs))
 
 
 # pylint: disable=R0913
