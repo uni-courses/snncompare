@@ -57,13 +57,11 @@ class Boxplot_data:
 def create_performance_plots(exp_config: Exp_config) -> None:
     """Ensures all performance boxplots are created."""
 
-    # Determine which lines are plotted, e.g.
-    # which algorithm with/without adaptation.
-
     pickle_run_configs_filepath: str = (
         "latex/Images/completed_run_configs.pickle"
     )
     run_configs: List[Run_config]
+
     # Get run_configs
     if Path(pickle_run_configs_filepath).is_file():
         completed_run_configs = load_pickle(
@@ -79,9 +77,7 @@ def create_performance_plots(exp_config: Exp_config) -> None:
             missing_run_configs,
         ) = get_completed_and_missing_run_configs(run_configs)
 
-        # Verify all json results are available.
-
-        # If not, create a list of run_configs that still need to be completed.
+        # Create a list of run_configs that still need to be completed.
         # prompt user whether user wants to complete these run_configs.
         for missing_run_config in missing_run_configs:
             # Execute those run_configs
@@ -90,7 +86,6 @@ def create_performance_plots(exp_config: Exp_config) -> None:
                 specific_run_config=missing_run_config,
                 perform_run=True,
             )
-            # Terminate code.
 
         store_pickle(
             completed_run_configs, filepath=pickle_run_configs_filepath
@@ -98,30 +93,28 @@ def create_performance_plots(exp_config: Exp_config) -> None:
     print("Loaded run_configs")
 
     count: int = 0
-    for _, radiation in get_adaptation_and_radiations(exp_config):
-        # for radiation_name, radiation_value in radiation.items():
+    for adaptation, radiation in get_adaptation_and_radiations(exp_config):
+        print(f"adaptation={adaptation}")
         for radiation_name, radiation_value in reversed(radiation.items()):
             count = count + 1
             print(f"radiation={radiation}")
-            # Filter
+
+            # Get run configs belonging to this radiation type/level.
             wanted_run_configs: List[Run_config] = []
             for run_config in completed_run_configs:
                 if run_config.radiation == radiation:
                     wanted_run_configs.append(run_config)
-            print("filtered_wanted_run_configs.")
 
             # Get results per line.
             boxplot_data: Dict[
                 str, Dict[int, Boxplot_x_val]
             ] = get_boxplot_datapoints(
                 wanted_run_configs=wanted_run_configs,
-                # run_config_nx_graphs=run_config_nx_graphs,
                 seeds=exp_config.seeds,
             )
 
             y_series = boxplot_data_to_y_series(boxplot_data)
 
-            # Generate line plots
             # Generate box plots.
             create_box_plot(
                 extensions=["png"],
@@ -157,7 +150,8 @@ def get_completed_and_missing_run_configs(
             missing_run_configs.append(run_config)
         else:
             completed_run_configs.append(run_config)
-    print(f"Want:{len(run_configs)}, missing:{len(missing_run_configs)}")
+    if len(missing_run_configs) > 0:
+        print(f"Want:{len(run_configs)}, missing:{len(missing_run_configs)}")
     return completed_run_configs, missing_run_configs
 
 
@@ -169,13 +163,14 @@ def get_boxplot_datapoints(
 ) -> Dict[str, Dict[int, Boxplot_x_val]]:
     """Returns the run configs that still need to be ran."""
 
-    # TODO: create the boxplot data per seed.
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = get_mdsa_boxplot_data(
         seeds
     )
+
     # Create x-axis categories (no redundancy, n-redundancy).
     # for run_config, graphs_dict in run_config_nx_graphs.items():
     for wanted_run_config in wanted_run_configs:
+
         # Get the results per x-axis category per graph type.
         for algo_name in wanted_run_config.algorithm.keys():
             if algo_name == "MDSA":
@@ -196,7 +191,6 @@ def get_boxplot_datapoints(
                             seed=wanted_run_config.seed,
                         )
 
-    # return data.
     return boxplot_data
 
 
@@ -244,8 +238,9 @@ def boxplot_data_to_y_series(
 
     TODO: do this in Boxplot_x_vals itself.
     """
-    data: Dict[str, List[float]] = {}
+
     # Initialise dataseries.
+    data: Dict[str, List[float]] = {}
     for name in boxplot_data.keys():
         data[name] = []
 
