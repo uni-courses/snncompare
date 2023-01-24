@@ -155,6 +155,8 @@ or:
 
 ```bash
 python -m src.snncompare -e mdsa_long_no_overwrite
+python -m src.snncompare -e boxplot -c
+python -m src.snncompare -e mdsa_size3_m0_adap_rad -c
 ```
 
 For more info, run:

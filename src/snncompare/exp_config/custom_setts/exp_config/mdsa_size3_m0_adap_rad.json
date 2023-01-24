@@ -1,7 +1,8 @@
 {
   "adaptations": {
     "redundancy": [
-      1
+      2,
+      4
     ]
   },
   "algorithms": {
@@ -18,17 +19,19 @@
   "neuron_models": [
     "LIF"
   ],
-  "overwrite_images_only": true,
+  "overwrite_images_only": false,
   "radiations": {
     "neuron_death": [
       0.25
     ]
   },
-  "recreate_s1": true,
-  "recreate_s2": true,
-  "recreate_s4": true,
+  "recreate_s1": false,
+  "recreate_s2": false,
+  "recreate_s4": false,
   "seeds": [
-    7
+    7,
+    8,
+    9
   ],
   "simulators": [
     "nx"

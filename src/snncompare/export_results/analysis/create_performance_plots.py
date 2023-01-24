@@ -3,6 +3,9 @@ the performance of the SNNs."""
 
 # Take in exp_config or run_configs
 # If exp_config, get run_configs
+import copy
+import pickle  # nosec
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 from easyplot.box_plot.box_plot import create_box_plot
@@ -27,7 +30,7 @@ from snncompare.import_results.check_completed_stages import (
 
 
 # pylint: disable = R0903
-class Boxplot_x_serie:
+class Boxplot_x_val:
     """Stores an x_serie for the boxplot."""
 
     @typechecked
@@ -46,8 +49,8 @@ class Boxplot_data:
     """Stores the data that is to be exported into a box plot."""
 
     @typechecked
-    def __init__(self, x_series: List[Boxplot_x_serie]) -> None:
-        self.x_series: List[Boxplot_x_serie] = x_series
+    def __init__(self, x_series: List[Boxplot_x_val]) -> None:
+        self.x_series: List[Boxplot_x_val] = x_series
 
 
 @typechecked
@@ -57,43 +60,63 @@ def create_performance_plots(exp_config: Exp_config) -> None:
     # Determine which lines are plotted, e.g.
     # which algorithm with/without adaptation.
 
+    pickle_run_configs_filepath: str = (
+        "latex/Images/completed_run_configs.pickle"
+    )
+    run_configs: List[Run_config]
     # Get run_configs
-    run_configs = generate_run_configs(exp_config, specific_run_config=None)
-
-    # Get list of required run_configs.
-    (
-        completed_run_configs,
-        missing_run_configs,
-    ) = get_completed_and_missing_run_configs(run_configs)
-
-    # Verify all json results are available.
-
-    # If not, create a list of run_configs that still need to be completed.
-    # prompt user whether user wants to complete these run_configs.
-    for missing_run_config in missing_run_configs:
-        # Execute those run_configs
-        Experiment_runner(
-            exp_config=exp_config,
-            specific_run_config=missing_run_config,
-            perform_run=True,
+    if Path(pickle_run_configs_filepath).is_file():
+        completed_run_configs = load_pickle(
+            filepath=pickle_run_configs_filepath
         )
-        # Terminate code.
+    else:
+        run_configs = generate_run_configs(
+            exp_config, specific_run_config=None
+        )
+        # Get list of required run_configs.
+        (
+            completed_run_configs,
+            missing_run_configs,
+        ) = get_completed_and_missing_run_configs(run_configs)
 
+        # Verify all json results are available.
+
+        # If not, create a list of run_configs that still need to be completed.
+        # prompt user whether user wants to complete these run_configs.
+        for missing_run_config in missing_run_configs:
+            # Execute those run_configs
+            Experiment_runner(
+                exp_config=exp_config,
+                specific_run_config=missing_run_config,
+                perform_run=True,
+            )
+            # Terminate code.
+
+        store_pickle(
+            completed_run_configs, filepath=pickle_run_configs_filepath
+        )
+    print("Loaded run_configs")
+
+    count: int = 0
     for _, radiation in get_adaptation_and_radiations(exp_config):
-        for radiation_name, radiation_value in radiation.items():
+        # for radiation_name, radiation_value in radiation.items():
+        for radiation_name, radiation_value in reversed(radiation.items()):
+            count = count + 1
             print(f"radiation={radiation}")
             # Filter
             wanted_run_configs: List[Run_config] = []
             for run_config in completed_run_configs:
                 if run_config.radiation == radiation:
                     wanted_run_configs.append(run_config)
-
-            # Get json data per run_config.
-            run_config_nx_graphs = get_json_data(wanted_run_configs)
+            print("filtered_wanted_run_configs.")
 
             # Get results per line.
-            boxplot_data: Dict[str, Boxplot_x_serie] = get_boxplot_datapoints(
-                run_config_nx_graphs=run_config_nx_graphs
+            boxplot_data: Dict[
+                str, Dict[int, Boxplot_x_val]
+            ] = get_boxplot_datapoints(
+                wanted_run_configs=wanted_run_configs,
+                # run_config_nx_graphs=run_config_nx_graphs,
+                seeds=exp_config.seeds,
             )
 
             y_series = boxplot_data_to_y_series(boxplot_data)
@@ -102,7 +125,7 @@ def create_performance_plots(exp_config: Exp_config) -> None:
             # Generate box plots.
             create_box_plot(
                 extensions=["png"],
-                filename=f"boxplot_{radiation_name}={radiation_value}",
+                filename=f"{count}_boxplot_{radiation_name}={radiation_value}",
                 legendPosition=0,
                 output_dir="latex/Images",
                 x_axis_label="x-axis label [units]",
@@ -111,33 +134,6 @@ def create_performance_plots(exp_config: Exp_config) -> None:
                 title=f"{radiation_name}={radiation_value}",
                 x_axis_label_rotation=45,
             )
-
-        # Allow user to select subset of parameter ranges.
-        # (This is done in the experiment setting)
-        # graph_sizes 10-30
-        # m_values 0 to 10
-        # adaptation 0-4
-        # radiation 0,0.1,0.25
-
-        # Get results per data
-
-        # Create dummy box plots.
-
-        # Create dummy line plots.
-
-
-@typechecked
-def get_json_data(run_configs: List[Run_config]) -> Dict:
-    """Loads the data from the relevant .json dicts and returns it."""
-    run_config_nx_graphs: Dict[Run_config, Dict] = {}
-    for run_config in run_configs:
-        run_config_nx_graphs[run_config] = load_verified_json_graphs_from_json(
-            run_config=run_config,
-            expected_stages=[1, 2, 4],
-        )
-
-    # TODO: write logif if file does not exist.
-    return run_config_nx_graphs
 
 
 @typechecked
@@ -167,25 +163,37 @@ def get_completed_and_missing_run_configs(
 
 @typechecked
 def get_boxplot_datapoints(
-    run_config_nx_graphs: Dict,
-) -> Dict[str, Boxplot_x_serie]:
+    wanted_run_configs: List[Run_config],
+    # run_config_nx_graphs: Dict,
+    seeds: List[int],
+) -> Dict[str, Dict[int, Boxplot_x_val]]:
     """Returns the run configs that still need to be ran."""
 
-    boxplot_data: Dict[str, Boxplot_x_serie] = get_mdsa_boxplot_data()
+    # TODO: create the boxplot data per seed.
+    boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = get_mdsa_boxplot_data(
+        seeds
+    )
     # Create x-axis categories (no redundancy, n-redundancy).
-    for run_config, graphs_dict in run_config_nx_graphs.items():
+    # for run_config, graphs_dict in run_config_nx_graphs.items():
+    for wanted_run_config in wanted_run_configs:
         # Get the results per x-axis category per graph type.
-        for algo_name in run_config.algorithm.keys():
+        for algo_name in wanted_run_config.algorithm.keys():
             if algo_name == "MDSA":
 
-                graph_names = get_expected_stage_1_graph_names(run_config)
-
+                graph_names = get_expected_stage_1_graph_names(
+                    wanted_run_config
+                )
+                graphs_dict = load_verified_json_graphs_from_json(
+                    run_config=wanted_run_config,
+                    expected_stages=[1, 2, 4],
+                )
                 for graph_name in graph_names:
                     if graph_name != "input_graph":
                         add_graph_scores(
                             boxplot_data=boxplot_data,
                             graph_type=graph_name,
                             result=graphs_dict[graph_name]["graph"]["results"],
+                            seed=wanted_run_config.seed,
                         )
 
     # return data.
@@ -194,55 +202,70 @@ def get_boxplot_datapoints(
 
 @typechecked
 def add_graph_scores(
-    boxplot_data: Dict[str, Boxplot_x_serie], graph_type: str, result: Dict
+    boxplot_data: Dict[str, Dict[int, Boxplot_x_val]],
+    graph_type: str,
+    result: Dict,
+    seed: int,
 ) -> None:
     """Adds the scores for the graphs.."""
     if result["passed"]:
-        boxplot_data[graph_type].correct_results += 1
+        boxplot_data[graph_type][seed].correct_results += 1
     else:
-        boxplot_data[graph_type].wrong_results += 1
+        boxplot_data[graph_type][seed].wrong_results += 1
 
 
 @typechecked
-def get_mdsa_boxplot_data() -> Dict[str, Boxplot_x_serie]:
+def get_mdsa_boxplot_data(
+    seeds: List[int],
+) -> Dict[str, Dict[int, Boxplot_x_val]]:
     """Creates the boxplot data objects for the MDSA algorithm."""
-    boxplot_data: Dict[str, Boxplot_x_serie] = {
-        "snn_algo_graph": Boxplot_x_serie(
+    x_series_data: Dict[int, Boxplot_x_val] = {}
+    for seed in seeds:
+        x_series_data[seed] = Boxplot_x_val(
             correct_results=0,
             wrong_results=0,
-        ),
-        "adapted_snn_graph": Boxplot_x_serie(
-            correct_results=0,
-            wrong_results=0,
-        ),
-        "rad_snn_algo_graph": Boxplot_x_serie(
-            correct_results=0,
-            wrong_results=0,
-        ),
-        "rad_adapted_snn_graph": Boxplot_x_serie(
-            correct_results=0,
-            wrong_results=0,
-        ),
+        )
+
+    boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = {
+        "snn_algo_graph": copy.deepcopy(x_series_data),
+        "adapted_snn_graph": copy.deepcopy(x_series_data),
+        "rad_snn_algo_graph": copy.deepcopy(x_series_data),
+        "rad_adapted_snn_graph": copy.deepcopy(x_series_data),
     }
+
     return boxplot_data
 
 
 @typechecked
 def boxplot_data_to_y_series(
-    boxplot_data: Dict[str, Boxplot_x_serie]
+    boxplot_data: Dict[str, Dict[int, Boxplot_x_val]]
 ) -> Dict[str, List[float]]:
     """Converts boxplot_data into x_labels and y_series for boxplot plotting.
 
-    TODO: do this in Boxplot_x_series itself.
+    TODO: do this in Boxplot_x_vals itself.
     """
     data: Dict[str, List[float]] = {}
     # Initialise dataseries.
     for name in boxplot_data.keys():
         data[name] = []
 
-    for name, y_vals in boxplot_data.items():
-        data[name].append(
-            y_vals.correct_results
-            / (y_vals.correct_results + y_vals.wrong_results)
-        )
+    for name, seed_and_y_vals in boxplot_data.items():
+        for y_val in seed_and_y_vals.values():
+            data[name].append(
+                y_val.correct_results
+                / (y_val.correct_results + y_val.wrong_results)
+            )
     return data
+
+
+def store_pickle(run_configs: List[Run_config], filepath: str) -> None:
+    """Stores run_config list into pickle file."""
+    with open(filepath, "wb") as handle:
+        pickle.dump(run_configs, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def load_pickle(filepath: str) -> List[Run_config]:
+    """Stores run_config list into pickle file."""
+    with open(filepath, "rb") as handle:
+        run_configs: List[Run_config] = pickle.load(handle)  # nosec
+    return run_configs
