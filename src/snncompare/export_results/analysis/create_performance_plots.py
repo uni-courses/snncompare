@@ -6,6 +6,7 @@ the performance of the SNNs."""
 import copy
 import pickle  # nosec
 from pathlib import Path
+from pprint import pprint
 from typing import Dict, List, Tuple
 
 from easyplot.box_plot.box_plot import create_box_plot
@@ -53,6 +54,8 @@ class Boxplot_data:
         self.x_series: List[Boxplot_x_val] = x_series
 
 
+# pylint: disable=R0912
+# pylint: disable=R0914
 @typechecked
 def create_performance_plots(exp_config: Exp_config) -> None:
     """Ensures all performance boxplots are created."""
@@ -93,10 +96,52 @@ def create_performance_plots(exp_config: Exp_config) -> None:
     print("Loaded run_configs")
 
     count: int = 0
-    for adaptation, radiation in get_adaptation_and_radiations(exp_config):
-        print(f"adaptation={adaptation}")
+    adaptations_radiations = get_adaptation_and_radiations(exp_config)
+    radiations = list(map(lambda x: x[1], adaptations_radiations))
+
+    unique_radiations = [
+        dict(t) for t in {tuple(d.items()) for d in radiations}
+    ]
+    adaptations_per_radiation: List = []
+    for i, unique_rad in enumerate(unique_radiations):
+        adaptations_per_radiation.append([])
+    for i, unique_rad in enumerate(unique_radiations):
+        for adaptation, radiation in adaptations_radiations:
+            if unique_rad == radiation:
+                adaptations_per_radiation[i].append(adaptation)
+    rad_adap_dict: Dict = {}
+    print(f"adaptations_per_radiation={adaptations_per_radiation}")
+    pprint(rad_adap_dict)
+
+    # Sort the unique_radiations.
+    keys = list(map(lambda x: list(x.keys()), unique_radiations))
+    print(keys)
+    unique_keys = []
+    for elem in keys:
+        for key in elem:
+            if key not in unique_keys:
+                unique_keys.append(key)
+
+    for unique_key in unique_keys:
+        # pylint: disable=W0640
+        sorted_radiations = sorted(
+            unique_radiations, key=lambda d: d[unique_key]
+        )
+    print(f"sorted_radiations={sorted_radiations}")
+    original_order = []
+    for radiation in sorted_radiations:
+        for value in radiation.values():
+            for i, original_radiation in enumerate(unique_radiations):
+                for key, val in original_radiation.items():
+                    if value == val:
+                        original_order.append(i)
+    print(f"original_order={original_order}")
+
+    for i in original_order:
+        radiation = unique_radiations[i]
         for radiation_name, radiation_value in reversed(radiation.items()):
             count = count + 1
+
             print(f"radiation={radiation}")
 
             # Get run configs belonging to this radiation type/level.
@@ -109,7 +154,7 @@ def create_performance_plots(exp_config: Exp_config) -> None:
             boxplot_data: Dict[
                 str, Dict[int, Boxplot_x_val]
             ] = get_boxplot_datapoints(
-                adaptation=adaptation,
+                adaptations=adaptations_per_radiation[i],
                 wanted_run_configs=wanted_run_configs,
                 seeds=exp_config.seeds,
             )
@@ -158,7 +203,7 @@ def get_completed_and_missing_run_configs(
 
 @typechecked
 def get_boxplot_datapoints(
-    adaptation: Dict[str, int],
+    adaptations: List[Dict[str, int]],
     wanted_run_configs: List[Run_config],
     # run_config_nx_graphs: Dict,
     seeds: List[int],
@@ -166,7 +211,7 @@ def get_boxplot_datapoints(
     """Returns the run configs that still need to be ran."""
 
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = get_mdsa_boxplot_data(
-        adaptation=adaptation,
+        adaptations=adaptations,
         graph_names=get_expected_stage_1_graph_names(wanted_run_configs[0]),
         seeds=seeds,
     )
@@ -174,38 +219,37 @@ def get_boxplot_datapoints(
     # Create x-axis categories (no redundancy, n-redundancy).
     # for run_config, graphs_dict in run_config_nx_graphs.items():
     for wanted_run_config in wanted_run_configs:
-        if wanted_run_config.adaptation == adaptation:
-            # Get the results per x-axis category per graph type.
-            for algo_name in wanted_run_config.algorithm.keys():
-                if algo_name == "MDSA":
+        # Get the results per x-axis category per graph type.
+        for algo_name in wanted_run_config.algorithm.keys():
+            if algo_name == "MDSA":
 
-                    graph_names = get_expected_stage_1_graph_names(
-                        wanted_run_config
-                    )
-                    graphs_dict: Dict = load_verified_json_graphs_from_json(
-                        run_config=wanted_run_config,
-                        expected_stages=[1, 2, 4],
-                    )
+                graph_names = get_expected_stage_1_graph_names(
+                    wanted_run_config
+                )
+                graphs_dict: Dict = load_verified_json_graphs_from_json(
+                    run_config=wanted_run_config,
+                    expected_stages=[1, 2, 4],
+                )
 
-                    x_labels, results = get_x_labels(
-                        adaptation=adaptation,
-                        graphs_dict=graphs_dict,
-                        graph_names=graph_names,
+                x_labels, results = get_x_labels(
+                    adaptations=adaptations,
+                    graphs_dict=graphs_dict,
+                    graph_names=graph_names,
+                )
+                for x_label in x_labels:
+                    add_graph_scores(
+                        boxplot_data=boxplot_data,
+                        x_label=x_label,
+                        result=results[x_label],
+                        seed=wanted_run_config.seed,
                     )
-                    for x_label in x_labels:
-                        add_graph_scores(
-                            boxplot_data=boxplot_data,
-                            graph_type=x_label,
-                            result=results[x_label],
-                            seed=wanted_run_config.seed,
-                        )
 
     return boxplot_data
 
 
 @typechecked
 def get_x_labels(
-    adaptation: Dict[str, int],
+    adaptations: List[Dict[str, int]],
     graphs_dict: Dict,
     graph_names: List[str],
 ) -> Tuple[List[str], Dict]:
@@ -214,8 +258,12 @@ def get_x_labels(
     results = {}
     for graph_name in graph_names:
         if graph_name == "rad_adapted_snn_graph":
-            x_labels.append(f'red_{adaptation["redundancy"]}')
-            results[x_labels[-1]] = graphs_dict[graph_name]["graph"]["results"]
+            for adaptation in adaptations:
+                for name, value in adaptation.items():
+                    x_labels.append(f"{name}:{value}")
+                    results[x_labels[-1]] = graphs_dict[graph_name]["graph"][
+                        "results"
+                    ]
         elif graph_name != "input_graph":
             x_labels.append(graph_name)
             results[x_labels[-1]] = graphs_dict[graph_name]["graph"]["results"]
@@ -225,20 +273,20 @@ def get_x_labels(
 @typechecked
 def add_graph_scores(
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]],
-    graph_type: str,
+    x_label: str,
     result: Dict,
     seed: int,
 ) -> None:
     """Adds the scores for the graphs.."""
     if result["passed"]:
-        boxplot_data[graph_type][seed].correct_results += 1
+        boxplot_data[x_label][seed].correct_results += 1
     else:
-        boxplot_data[graph_type][seed].wrong_results += 1
+        boxplot_data[x_label][seed].wrong_results += 1
 
 
 @typechecked
 def get_mdsa_boxplot_data(
-    adaptation: Dict[str, int],
+    adaptations: List[Dict[str, int]],
     graph_names: List[str],
     seeds: List[int],
 ) -> Dict[str, Dict[int, Boxplot_x_val]]:
@@ -252,18 +300,13 @@ def get_mdsa_boxplot_data(
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = {}
     for graph_name in graph_names:
         if graph_name == "rad_adapted_snn_graph":
-            boxplot_data[f'red_{adaptation["redundancy"]}'] = copy.deepcopy(
-                x_series_data
-            )
+            for adaptation in adaptations:
+                for name, value in adaptation.items():
+                    boxplot_data[f"{name}:{value}"] = copy.deepcopy(
+                        x_series_data
+                    )
         elif graph_name != "input_graph":
             boxplot_data[graph_name] = copy.deepcopy(x_series_data)
-    # boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = {
-    # "snn_algo_graph": copy.deepcopy(x_series_data),
-    # "adapted_snn_graph": copy.deepcopy(x_series_data),
-    # "rad_snn_algo_graph": copy.deepcopy(x_series_data),
-    # "rad_adapted_snn_graph": copy.deepcopy(x_series_data),
-    # }
-
     return boxplot_data
 
 

@@ -10,17 +10,58 @@ else:
     pass
 
 
+# pylint: disable=R0903
 class Algorithm(TypedDict):
     """Example typed dict to make the property types explicit."""
 
     alg_name: Dict[str, int]
 
 
-class Adaptation(TypedDict):
-    """Example typed dict to make the property types explicit."""
+# pylint: disable=R0903
+class Adaptation:
+    """Adaptations."""
 
-    redundancy: int
-    population: int
+    @typechecked
+    def __init__(
+        self,
+        name: str,
+        int_param: Optional[int],
+    ):
+        if name == "Redundancy":
+            self.name = name
+            self.adaptation = Redundancy(int_param)
+        else:
+            raise TypeError("Error, adaptation:{name} not yet supported.")
+
+
+# pylint: disable=R0903
+class Redundancy:
+    """Adaptation example."""
+
+    @typechecked
+    def __init__(self, redundancy: int):
+        if redundancy < 2:
+            raise ValueError("Error, redundancy should be 2 or larger.")
+        if redundancy % 2 == 1:
+            raise ValueError("Error, redundancy should be even integer.")
+        self.redundancy = redundancy
+
+
+# pylint: disable=R0903
+class Neuron_death:
+    """Adaptation example."""
+
+    @typechecked
+    def __init__(self, probability: float):
+        if probability < 0:
+            raise ValueError(
+                "Error, neuron death probability should be 0 or larger."
+            )
+        if probability > 1:
+            raise ValueError(
+                "Error, neuron death probability should be 1 or smaller."
+            )
+        self.probability = probability
 
 
 class Radiation(TypedDict):
