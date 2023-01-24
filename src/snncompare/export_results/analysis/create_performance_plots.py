@@ -109,6 +109,7 @@ def create_performance_plots(exp_config: Exp_config) -> None:
             boxplot_data: Dict[
                 str, Dict[int, Boxplot_x_val]
             ] = get_boxplot_datapoints(
+                adaptation=adaptation,
                 wanted_run_configs=wanted_run_configs,
                 seeds=exp_config.seeds,
             )
@@ -157,6 +158,7 @@ def get_completed_and_missing_run_configs(
 
 @typechecked
 def get_boxplot_datapoints(
+    adaptation: Dict[str, int],
     wanted_run_configs: List[Run_config],
     # run_config_nx_graphs: Dict,
     seeds: List[int],
@@ -164,34 +166,60 @@ def get_boxplot_datapoints(
     """Returns the run configs that still need to be ran."""
 
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = get_mdsa_boxplot_data(
-        seeds
+        adaptation=adaptation,
+        graph_names=get_expected_stage_1_graph_names(wanted_run_configs[0]),
+        seeds=seeds,
     )
 
     # Create x-axis categories (no redundancy, n-redundancy).
     # for run_config, graphs_dict in run_config_nx_graphs.items():
     for wanted_run_config in wanted_run_configs:
+        if wanted_run_config.adaptation == adaptation:
+            # Get the results per x-axis category per graph type.
+            for algo_name in wanted_run_config.algorithm.keys():
+                if algo_name == "MDSA":
 
-        # Get the results per x-axis category per graph type.
-        for algo_name in wanted_run_config.algorithm.keys():
-            if algo_name == "MDSA":
+                    graph_names = get_expected_stage_1_graph_names(
+                        wanted_run_config
+                    )
+                    graphs_dict: Dict = load_verified_json_graphs_from_json(
+                        run_config=wanted_run_config,
+                        expected_stages=[1, 2, 4],
+                    )
 
-                graph_names = get_expected_stage_1_graph_names(
-                    wanted_run_config
-                )
-                graphs_dict = load_verified_json_graphs_from_json(
-                    run_config=wanted_run_config,
-                    expected_stages=[1, 2, 4],
-                )
-                for graph_name in graph_names:
-                    if graph_name != "input_graph":
+                    x_labels, results = get_x_labels(
+                        adaptation=adaptation,
+                        graphs_dict=graphs_dict,
+                        graph_names=graph_names,
+                    )
+                    for x_label in x_labels:
                         add_graph_scores(
                             boxplot_data=boxplot_data,
-                            graph_type=graph_name,
-                            result=graphs_dict[graph_name]["graph"]["results"],
+                            graph_type=x_label,
+                            result=results[x_label],
                             seed=wanted_run_config.seed,
                         )
 
     return boxplot_data
+
+
+@typechecked
+def get_x_labels(
+    adaptation: Dict[str, int],
+    graphs_dict: Dict,
+    graph_names: List[str],
+) -> Tuple[List[str], Dict]:
+    """Returns the x-axis labels per dataserie/boxplot."""
+    x_labels: List[str] = []
+    results = {}
+    for graph_name in graph_names:
+        if graph_name == "rad_adapted_snn_graph":
+            x_labels.append(f'red_{adaptation["redundancy"]}')
+            results[x_labels[-1]] = graphs_dict[graph_name]["graph"]["results"]
+        elif graph_name != "input_graph":
+            x_labels.append(graph_name)
+            results[x_labels[-1]] = graphs_dict[graph_name]["graph"]["results"]
+    return x_labels, results
 
 
 @typechecked
@@ -210,6 +238,8 @@ def add_graph_scores(
 
 @typechecked
 def get_mdsa_boxplot_data(
+    adaptation: Dict[str, int],
+    graph_names: List[str],
     seeds: List[int],
 ) -> Dict[str, Dict[int, Boxplot_x_val]]:
     """Creates the boxplot data objects for the MDSA algorithm."""
@@ -219,13 +249,20 @@ def get_mdsa_boxplot_data(
             correct_results=0,
             wrong_results=0,
         )
-
-    boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = {
-        "snn_algo_graph": copy.deepcopy(x_series_data),
-        "adapted_snn_graph": copy.deepcopy(x_series_data),
-        "rad_snn_algo_graph": copy.deepcopy(x_series_data),
-        "rad_adapted_snn_graph": copy.deepcopy(x_series_data),
-    }
+    boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = {}
+    for graph_name in graph_names:
+        if graph_name == "rad_adapted_snn_graph":
+            boxplot_data[f'red_{adaptation["redundancy"]}'] = copy.deepcopy(
+                x_series_data
+            )
+        elif graph_name != "input_graph":
+            boxplot_data[graph_name] = copy.deepcopy(x_series_data)
+    # boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = {
+    # "snn_algo_graph": copy.deepcopy(x_series_data),
+    # "adapted_snn_graph": copy.deepcopy(x_series_data),
+    # "rad_snn_algo_graph": copy.deepcopy(x_series_data),
+    # "rad_adapted_snn_graph": copy.deepcopy(x_series_data),
+    # }
 
     return boxplot_data
 
