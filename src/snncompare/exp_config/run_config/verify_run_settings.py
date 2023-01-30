@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Dict
 
 from typeguard import typechecked
 
-from snncompare.exp_config.Exp_config import verify_integer_settings
 from snncompare.exp_config.run_config.Run_config import Run_config
 
 # pylint: disable=R0801
@@ -57,9 +56,7 @@ def verify_run_config(
     )
 
     # TODO: verify a single algorithm is evaluated in a single run.
-    verify_integer_settings(
-        integer_setting=run_config.algorithm["MDSA"]["m_val"]
-    )
+
     # TODO: verify radiation setting for single run.
 
     # TODO: test unique id type

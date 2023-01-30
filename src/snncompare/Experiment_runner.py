@@ -127,23 +127,16 @@ class Experiment_runner:
 
             print("\nstart stage I:  ", end=" ")
 
-            duration, results_nx_graphs = timeit.Timer(  # type:ignore[misc]
-                functools.partial(
-                    self.__perform_run_stage_1,
-                    exp_config,
-                    run_config,
-                )
-            ).timeit(1)
-            print(f"{round(duration,5)} [s]")
+            results_nx_graphs = self.__perform_run_stage_1(
+                exp_config=exp_config,
+                run_config=run_config,
+            )
             print("Start stage II  ", end=" ")
-            duration, _ = timeit.Timer(  # type:ignore[misc]
-                functools.partial(
-                    self.__perform_run_stage_2,
-                    results_nx_graphs,
-                    run_config,
-                )
-            ).timeit(1)
-            print(f"{round(duration,5)} [s]")
+            self.__perform_run_stage_2(
+                results_nx_graphs,
+                run_config,
+            )
+
             print("Start stage III ", end=" ")
             duration, _ = timeit.Timer(  # type:ignore[misc]
                 functools.partial(

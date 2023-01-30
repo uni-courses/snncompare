@@ -535,8 +535,8 @@ def verify_size_and_max_graphs_settings(
 def verify_integer_settings(
     *,
     integer_setting: int,
-    min_val: int | None = None,
-    max_val: int | None = None,
+    min_val: int,
+    max_val: int,
 ) -> None:
     """Verifies an integer setting is of type integer and that it is within the
     supported minimum and maximum value range.

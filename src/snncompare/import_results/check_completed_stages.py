@@ -46,9 +46,7 @@ def has_outputted_stage(
         raise ValueError(
             f"Error, stage_index:{stage_index} was not in range:{[1,2,3,4,5]}"
         )
-    expected_filepaths = get_expected_files(
-        run_config=run_config, stage_index=stage_index
-    )
+    expected_filepaths = get_expected_files(run_config=run_config)
 
     if not expected_files_exist(expected_filepaths=expected_filepaths):
         return False
