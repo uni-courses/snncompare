@@ -34,6 +34,7 @@ def get_stage_2_nx_graphs(
 
 @typechecked
 def has_outputted_stage(
+    *,
     run_config: Run_config,
     stage_index: int,
 ) -> bool:
