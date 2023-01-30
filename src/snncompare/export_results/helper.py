@@ -13,14 +13,16 @@ from ..helper import get_actual_duration
 
 @typechecked
 def flatten(
-    d: Dict, parent_key: str = "", sep: str = "_"
+    *, d: Dict, parent_key: str = "", sep: str = "_"
 ) -> Union[Dict, Dict[str, float], Dict[str, int]]:
     """Flattens a dictionary (makes multiple lines into a oneliner)."""
     items: List = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
         if isinstance(v, collections.abc.MutableMapping):
-            items.extend(flatten(dict(v), new_key, sep=sep).items())
+            items.extend(
+                flatten(d=dict(v), parent_key=new_key, sep=sep).items()
+            )
         else:
             items.append((new_key, v))
     return dict(items)
@@ -32,6 +34,7 @@ def flatten(
 
 @typechecked
 def run_config_to_filename(
+    *,
     run_config: Run_config,
 ) -> str:
     """Converts a run_config dictionary into a filename.
@@ -53,7 +56,7 @@ def run_config_to_filename(
     if "export_types" in stripped_run_config.keys():
         stripped_run_config.pop("export_types")  # Irrellevant
     # instead (To reduce filename length).
-    filename = str(flatten(stripped_run_config))
+    filename = str(flatten(d=stripped_run_config))
 
     # Remove the ' symbols.
     # Don't, that makes it more difficult to load the dict again.
@@ -70,6 +73,7 @@ def run_config_to_filename(
 
 @typechecked
 def get_expected_image_paths_stage_3(
+    *,
     nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph]],
     input_graph: nx.Graph,
     run_config: Run_config,
@@ -80,7 +84,7 @@ def get_expected_image_paths_stage_3(
     (If export is on).
     """
     image_filepaths = []
-    filename: str = run_config_to_filename(run_config)
+    filename: str = run_config_to_filename(run_config=run_config)
 
     if "alg_props" not in input_graph.graph.keys():
         raise Exception("Error, algo_props is not set.")
@@ -90,7 +94,7 @@ def get_expected_image_paths_stage_3(
     for extension in extensions:
         for graph_name, snn_graph in nx_graphs_dict.items():
             if graph_name != "input_graph":
-                sim_duration = get_actual_duration(snn_graph)
+                sim_duration = get_actual_duration(snn_graph=snn_graph)
                 for t in range(0, sim_duration):
                     image_filepaths.append(
                         image_dir + f"{graph_name}_{filename}_{t}.{extension}"

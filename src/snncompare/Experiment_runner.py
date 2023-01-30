@@ -40,7 +40,7 @@ from .process_results.process_results import (
 from .simulation.stage2_sim import sim_graphs
 
 template = """
-def inner(_it, _timer{init}):
+def inner(*,_it, _timer{init}):
     {setup}
     _t0 = _timer()
     for _i in _it:
@@ -70,7 +70,7 @@ class Experiment_runner:
     ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.
-        create_root_dir_if_not_exists("results")
+        create_root_dir_if_not_exists(root_dir_name="results")
 
         # Store the experiment configuration settings.
         self.exp_config = exp_config
@@ -90,16 +90,18 @@ class Experiment_runner:
         # If the experiment exp_config does not contain a hash-code,
         # create the unique hash code for this configuration.
         # TODO: restore
-        if not self.supp_exp_config.has_unique_config_id(self.exp_config):
+        if not self.supp_exp_config.has_unique_config_id(
+            some_config=self.exp_config
+        ):
             append_unique_exp_config_id(
-                self.exp_config,
+                exp_config=self.exp_config,
             )
 
         # Verify the unique hash code for this configuration is valid.
-        verify_has_unique_id(self.exp_config.__dict__)
+        verify_has_unique_id(some_dict=self.exp_config.__dict__)
 
         self.run_configs = generate_run_configs(
-            exp_config, specific_run_config
+            exp_config=exp_config, specific_run_config=specific_run_config
         )
 
         # Perform runs accordingly.
@@ -178,9 +180,12 @@ class Experiment_runner:
         """
 
         # Check if stage 1 is performed. If not, perform it.
-        if not has_outputted_stage(run_config, 1) or run_config.recreate_s1:
+        if (
+            not has_outputted_stage(run_config=run_config, stage_index=1)
+            or run_config.recreate_s1
+        ):
             # Run first stage of experiment, get input graph.
-            stage_1_graphs: Dict = get_used_graphs(run_config)
+            stage_1_graphs: Dict = get_used_graphs(run_config=run_config)
             results_nx_graphs = {
                 "exp_config": exp_config,
                 "run_config": run_config,
@@ -188,12 +193,14 @@ class Experiment_runner:
             }
 
             # Exports results, including graphs as dict.
-            output_files_stage_1_and_2(results_nx_graphs, 1)
+            output_files_stage_1_and_2(
+                results_nx_graphs=results_nx_graphs, stage_index=1
+            )
         else:
-            results_nx_graphs = load_results_stage_1(run_config)
+            results_nx_graphs = load_results_stage_1(run_config=run_config)
         self.equalise_loaded_run_config(
-            results_nx_graphs["run_config"],
-            run_config,
+            loaded_from_json=results_nx_graphs["run_config"],
+            incoming=run_config,
         )
 
         assert_stage_is_completed(
@@ -239,7 +246,9 @@ class Experiment_runner:
                 run_config=run_config,
                 stage_1_graphs=results_nx_graphs["graphs_dict"],
             )
-            output_files_stage_1_and_2(results_nx_graphs, 2)
+            output_files_stage_1_and_2(
+                results_nx_graphs=results_nx_graphs, stage_index=2
+            )
 
         assert_stage_is_completed(
             run_config=run_config,
@@ -268,7 +277,9 @@ class Experiment_runner:
         """
         if run_config.export_images:
             # Generate output json dicts (and plots) of propagated graphs.
-            output_stage_files_3_and_4(results_nx_graphs, 3)
+            output_stage_files_3_and_4(
+                results_nx_graphs=results_nx_graphs, stage_index=3
+            )
 
         assert_stage_is_completed(
             run_config=run_config,
@@ -290,10 +301,12 @@ class Experiment_runner:
         last entry of each graph.
         """
         if set_results(
-            run_config,
-            results_nx_graphs["graphs_dict"],
+            run_config=run_config,
+            stage_2_graphs=results_nx_graphs["graphs_dict"],
         ):
-            export_results_to_json(results_nx_graphs, 4)
+            export_results_to_json(
+                results_nx_graphs=results_nx_graphs, stage_index=4
+            )
 
         assert_stage_is_completed(
             run_config=run_config,
@@ -317,8 +330,8 @@ class Experiment_runner:
                 )
                 loaded_from_json.__dict__[key] = val
         if not dicts_are_equal(
-            loaded_from_json.__dict__,
-            incoming.__dict__,
+            left=loaded_from_json.__dict__,
+            right=incoming.__dict__,
             without_unique_id=False,
         ):
             pprint(loaded_from_json.__dict__)

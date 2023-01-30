@@ -155,7 +155,7 @@ class Run_config:
         # Compute hash of run config object.
 
 
-def dict_to_run_config(some_dict: Dict) -> Run_config:
+def dict_to_run_config(*, some_dict: Dict) -> Run_config:
     """Converts a dict into a Run_config object."""
     run_config: Run_config = Run_config(
         adaptation=some_dict["adaptation"],

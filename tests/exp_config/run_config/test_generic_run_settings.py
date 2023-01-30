@@ -62,8 +62,8 @@ class Test_generic_configuration_settings(unittest.TestCase):
         """Verifies a valid configuration settings object and object type is
         returned."""
         returned_dict = verify_run_config(
-            self.supp_run_settings,
-            self.valid_run_setting,
+            supp_run_setts=self.supp_run_settings,
+            run_config=self.valid_run_setting,
             has_unique_id=False,
             allow_optional=False,
         )
@@ -86,8 +86,8 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_run_config(
-                self.supp_run_settings,
-                exp_config,
+                supp_run_setts=self.supp_run_settings,
+                run_config=exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -101,6 +101,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 
 @typechecked
 def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
+    *,
     invalid_config_setting_value: Any,
     exp_config: Exp_config,
     expected_type: type,
@@ -121,8 +122,8 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
         )
     with test_object.assertRaises(Exception) as context:
         verify_run_config(
-            test_object.supp_exp_config,
-            exp_config,
+            supp_run_setts=test_object.supp_exp_config,
+            run_config=exp_config,
             has_unique_id=False,
             allow_optional=False,
         )

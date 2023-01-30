@@ -19,13 +19,16 @@ from snncompare.exp_config.run_config.Run_config import Run_config
 
 @typechecked
 def load_results_from_json(
+    *,
     json_filepath: str,
     run_config: Run_config,
 ) -> Dict:
     """Loads the results from a json file, and then converts the graph dicts
     back into a nx.DiGraph object."""
     # Load the json dictionary of results.
-    results_loaded_graphs: Dict = load_json_file_into_dict(json_filepath)
+    results_loaded_graphs: Dict = load_json_file_into_dict(
+        json_filepath=json_filepath
+    )
 
     # Verify the dict contains a key for the graph dict.
     if "graphs_dict" not in results_loaded_graphs:
@@ -44,15 +47,19 @@ def load_results_from_json(
         ] = json_graph.node_link_graph(
             results_loaded_graphs["graphs_dict"][graph_name]
         )
-        set_graph_attributes(results_loaded_graphs["graphs_dict"][graph_name])
+        set_graph_attributes(
+            graph=results_loaded_graphs["graphs_dict"][graph_name]
+        )
 
     # TODO: Verify node and edge attributes are of valid object type.
-    verify_results_nx_graphs(results_loaded_graphs, run_config)
+    verify_results_nx_graphs(
+        results_nx_graphs=results_loaded_graphs, run_config=run_config
+    )
     return results_loaded_graphs
 
 
 @typechecked
-def set_graph_attributes(graph: Union[nx.Graph, nx.DiGraph]) -> None:
+def set_graph_attributes(*, graph: Union[nx.Graph, nx.DiGraph]) -> None:
     """Converts the edge and node attributes Synapse and nx_Lif back into their
     respective objects."""
     for edge in graph.edges:
@@ -73,6 +80,7 @@ def set_graph_attributes(graph: Union[nx.Graph, nx.DiGraph]) -> None:
 
 @typechecked
 def load_json_file_into_dict(
+    *,
     json_filepath: str,
 ) -> Dict[str, Optional[Dict]]:
     """TODO: make this into a private function that cannot be called by

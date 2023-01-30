@@ -9,6 +9,7 @@ from ...import_results.check_completed_stages import has_outputted_stage
 
 @typechecked
 def assert_stage_is_completed(
+    *,
     run_config: Run_config,
     stage_index: int,
 ) -> None:

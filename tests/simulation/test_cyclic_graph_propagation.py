@@ -72,7 +72,9 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
             size = len(get_cyclic_graph_without_directed_path())
             # Ensure the simulation works for all starter neurons.
             for starter_neuron in range(size):
-                G = get_graph_for_cyclic_propagation(self.test_scope)
+                G = get_graph_for_cyclic_propagation(
+                    test_scope=self.test_scope
+                )
 
                 # pylint: disable=R0801
                 # Assert graph is connected.
@@ -88,24 +90,24 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
                 # Assert each edge has a weight.
                 for edge in G.edges:
 
-                    assert_synaptic_edgeweight_type_is_correct(G, edge)
+                    assert_synaptic_edgeweight_type_is_correct(G=G, edge=edge)
 
                 # Assert no duplicate edges exist.
-                assert_no_duplicate_edges_exist(G)
+                assert_no_duplicate_edges_exist(G=G)
 
                 # Assert all neuron properties are specified.
-                verify_networkx_snn_spec(G, t=0, backend="lava")
+                verify_networkx_snn_spec(snn_graph=G, t=0, backend="lava")
 
                 # TODO: Generate networkx network.
 
                 # Generate lava network.
-                add_lava_neurons_to_networkx_graph(G, t=0)
+                add_lava_neurons_to_networkx_graph(G=G, t=0)
 
                 # Verify the simulations produce identical static
                 # neuron properties.
-                compare_static_snn_properties(self, G, t=0)
+                compare_static_snn_properties(test_object=self, G=G, t=0)
 
-                print_neuron_properties_per_graph(G, True, t=0)
+                print_neuron_properties_per_graph(G=G, static=True, t=0)
 
                 # plot_circular_graph(
                 #    -1,
@@ -115,7 +117,10 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
                 # )
 
             run_simulation_for_t_steps(
-                self, G, starter_neuron, sim_duration=20
+                test_object=self,
+                G=G,
+                starter_neuron=starter_neuron,
+                sim_duration=20,
             )
 
     @typechecked
@@ -136,6 +141,7 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
 
 
 def run_simulation_for_t_steps(
+    *,
     test_object: (
         Test_propagation_with_recurrent_edges
         | Test_cyclic_propagation_with_recurrent_edges
@@ -146,19 +152,19 @@ def run_simulation_for_t_steps(
 ) -> None:
     """Runs the SNN simulation on a graph for t timesteps."""
     for t in range(sim_duration):
-        G = get_graph_for_cyclic_propagation(test_object.test_scope)
+        G = get_graph_for_cyclic_propagation(test_scope=test_object.test_scope)
         print(f"t={t}")
         print("")
         # Run the simulation on networkx.
-        run_snn_on_networkx({}, G, t)
+        run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=t)
 
         # Run the simulation on lava.
-        simulate_snn_on_lava(G, starter_neuron, t)
+        simulate_snn_on_lava(G=G, starter_node_name=starter_neuron, t=t)
 
         print(f"After t={t+1} simulation steps.")
-        print_neuron_properties_per_graph(G, False, t)
+        print_neuron_properties_per_graph(G=G, static=False, t=t)
         # Verify dynamic neuron properties.
-        test_object.compare_dynamic_snn_properties(G, t)
+        test_object.compare_dynamic_snn_properties(G=G, t=t)
 
         # Terminate Loihi simulation.
         G.nodes[starter_neuron]["lava_LIF"].stop()

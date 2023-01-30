@@ -21,7 +21,7 @@ from snncompare.helper import file_exists
 
 @typechecked
 def store_exp_config_to_file(
-    custom_config_path: str, exp_config: "Exp_config", filename: str
+    *, custom_config_path: str, exp_config: "Exp_config", filename: str
 ) -> None:
     """Verifies the experiment setting and then exports it to a dictionary."""
 
@@ -37,20 +37,24 @@ def store_exp_config_to_file(
 
     # epxort to file.
     filepath = f"{custom_config_path}{filename}.json"
-    new_dict = encode_tuples(exp_config.__dict__)
-    write_dict_to_json(filepath, jsons.dump(new_dict))
+    new_dict = encode_tuples(some_dict=exp_config.__dict__)
+    write_dict_to_json(
+        output_filepath=filepath, some_dict=jsons.dump(new_dict)
+    )
 
 
 @typechecked
 def load_exp_config_from_file(
-    custom_config_path: str, filename: str
+    *, custom_config_path: str, filename: str
 ) -> "Exp_config":
     """Loads an experiment config from file, then verifies and returns it."""
     filepath = f"{custom_config_path}{filename}.json"
-    if file_exists(filepath):
+    if file_exists(filepath=filepath):
         with open(filepath, encoding="utf-8") as json_file:
             encoded_exp_config = json.load(json_file)
-            exp_config_dict = encode_tuples(encoded_exp_config, decode=True)
+            exp_config_dict = encode_tuples(
+                some_dict=encoded_exp_config, decode=True
+            )
             json_file.close()
 
         # Verify the experiment exp_config are complete and valid.
@@ -80,7 +84,9 @@ def long_exp_config_for_mdsa_testing() -> "Exp_config":
         "adaptations": None,
         # TODO: set using a verification setting.
         "algorithms": {
-            "MDSA": get_algo_configs(MDSA(list(range(0, 6, 1))).__dict__)
+            "MDSA": get_algo_configs(
+                algo_spec=MDSA(list(range(0, 6, 1))).__dict__
+            )
         },
         # TODO: Change into list with "Seeds"
         "seeds": [7],
@@ -146,7 +152,7 @@ def get_exp_config_mdsa_size5_m4() -> "Exp_config":
         long_exp_config_for_mdsa_testing()
     )
     mdsa_creation_only_size_7_m_4.algorithms = {
-        "MDSA": get_algo_configs(MDSA(list(range(4, 5, 1))).__dict__)
+        "MDSA": get_algo_configs(algo_spec=MDSA(list(range(4, 5, 1))).__dict__)
     }
     mdsa_creation_only_size_7_m_4.size_and_max_graphs = [(5, 1)]
     return mdsa_creation_only_size_7_m_4

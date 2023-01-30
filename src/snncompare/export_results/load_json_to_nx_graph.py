@@ -23,6 +23,7 @@ from .verify_json_graphs import (
 
 @typechecked
 def load_json_to_nx_graph_from_file(
+    *,
     run_config: Run_config,
     stage_index: int,
 ) -> Dict:
@@ -36,7 +37,7 @@ def load_json_to_nx_graph_from_file(
     nx_graphs_dict = {}
     # Load existing graph dict if it already exists, and if overwrite is off.
     json_graphs_dict: Dict = load_pre_existing_graph_dict(
-        run_config, stage_index
+        run_config=run_config, stage_index=stage_index
     )
     for graph_name, graph in json_graphs_dict.items():
         nx_graph = json_graph.node_link_graph(graph)
@@ -46,8 +47,8 @@ def load_json_to_nx_graph_from_file(
         "graphs_dict": nx_graphs_dict,
     }
     verify_results_nx_graphs_contain_expected_stages(
-        results_nx_graphs,
-        stage_index,
+        results_nx_graphs=results_nx_graphs,
+        stage_index=stage_index,
     )
 
     return nx_graphs_dict
@@ -55,6 +56,7 @@ def load_json_to_nx_graph_from_file(
 
 @typechecked
 def load_pre_existing_graph_dict(
+    *,
     run_config: Run_config,
     stage_index: int,
 ) -> Dict:
@@ -71,14 +73,20 @@ def load_pre_existing_graph_dict(
 
         if not run_config.recreate_s4:
             # Load graphs stages 1, 2, 3, 4
-            return load_verified_json_graphs_from_json(run_config, [1, 2])
-        return load_verified_json_graphs_from_json(run_config, [1])
+            return load_verified_json_graphs_from_json(
+                run_config=run_config, expected_stages=[1, 2]
+            )
+        return load_verified_json_graphs_from_json(
+            run_config=run_config, expected_stages=[1]
+        )
     if stage_index == 3:
-        return load_verified_json_graphs_from_json(run_config, [1, 2, 3])
+        return load_verified_json_graphs_from_json(
+            run_config=run_config, expected_stages=[1, 2, 3]
+        )
     if stage_index == 4:
         return load_verified_json_graphs_from_json(
-            run_config,
-            get_expected_stages(
+            run_config=run_config,
+            expected_stages=get_expected_stages(
                 stage_index=stage_index,
             ),
         )
@@ -87,20 +95,21 @@ def load_pre_existing_graph_dict(
 
 @typechecked
 def load_verified_json_graphs_from_json(
+    *,
     run_config: Run_config,
     expected_stages: List[int],
 ) -> Dict:
     """Loads the json dict and returns the graphs of the relevant stages."""
     results_json_graphs = load_json_results(
-        run_config,
-        expected_stages,
+        run_config=run_config,
+        expected_stages=expected_stages,
     )
 
     if run_config.unique_id != results_json_graphs[
         "run_config"
     ].unique_id or not dicts_are_equal(
-        results_json_graphs["run_config"].__dict__,
-        run_config.__dict__,
+        left=results_json_graphs["run_config"].__dict__,
+        right=run_config.__dict__,
         without_unique_id=True,
     ):
         print("Current run_config:")
@@ -114,15 +123,16 @@ def load_verified_json_graphs_from_json(
 
 @typechecked
 def load_json_results(
+    *,
     run_config: Run_config,
     expected_stages: List[int],
 ) -> Dict:
     """Loads results from json file."""
     results_json_graphs = {}
-    filename: str = run_config_to_filename(run_config)
+    filename: str = run_config_to_filename(run_config=run_config)
     json_filepath = f"results/{filename}.json"
 
-    if not file_exists(json_filepath):
+    if not file_exists(filepath=json_filepath):
         raise FileNotFoundError(f"Error, {json_filepath} was not found.")
 
     # Read output JSON file into dict.
@@ -131,15 +141,18 @@ def load_json_results(
         json_file.close()
 
     verify_results_safely_check_json_graphs_contain_expected_stages(
-        results_json_graphs, expected_stages
+        results_json_graphs=results_json_graphs,
+        expected_stages=expected_stages,
     )
 
-    copy_export_settings(run_config, results_json_graphs["run_config"])
+    copy_export_settings(
+        original=run_config, loaded=results_json_graphs["run_config"]
+    )
     return results_json_graphs
 
 
 @typechecked
-def copy_export_settings(original: Run_config, loaded: Run_config) -> None:
+def copy_export_settings(*, original: Run_config, loaded: Run_config) -> None:
     """Copies the non essential parameters from the original into the loaded
     run_config."""
 

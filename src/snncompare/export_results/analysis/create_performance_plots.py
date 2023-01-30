@@ -57,7 +57,7 @@ class Boxplot_data:
 # pylint: disable=R0912
 # pylint: disable=R0914
 @typechecked
-def create_performance_plots(exp_config: Exp_config) -> None:
+def create_performance_plots(*, exp_config: Exp_config) -> None:
     """Ensures all performance boxplots are created."""
 
     pickle_run_configs_filepath: str = (
@@ -72,13 +72,13 @@ def create_performance_plots(exp_config: Exp_config) -> None:
         )
     else:
         run_configs = generate_run_configs(
-            exp_config, specific_run_config=None
+            exp_config=exp_config, specific_run_config=None
         )
         # Get list of required run_configs.
         (
             completed_run_configs,
             missing_run_configs,
-        ) = get_completed_and_missing_run_configs(run_configs)
+        ) = get_completed_and_missing_run_configs(run_configs=run_configs)
 
         # Create a list of run_configs that still need to be completed.
         # prompt user whether user wants to complete these run_configs.
@@ -91,12 +91,15 @@ def create_performance_plots(exp_config: Exp_config) -> None:
             )
 
         store_pickle(
-            completed_run_configs, filepath=pickle_run_configs_filepath
+            run_configs=completed_run_configs,
+            filepath=pickle_run_configs_filepath,
         )
     print("Loaded run_configs")
 
     count: int = 0
-    adaptations_radiations = get_adaptation_and_radiations(exp_config)
+    adaptations_radiations = get_adaptation_and_radiations(
+        exp_config=exp_config
+    )
     radiations = list(map(lambda x: x[1], adaptations_radiations))
 
     unique_radiations = [
@@ -159,7 +162,7 @@ def create_performance_plots(exp_config: Exp_config) -> None:
                 seeds=exp_config.seeds,
             )
 
-            y_series = boxplot_data_to_y_series(boxplot_data)
+            y_series = boxplot_data_to_y_series(boxplot_data=boxplot_data)
 
             # Generate box plots.
             create_box_plot(
@@ -177,6 +180,7 @@ def create_performance_plots(exp_config: Exp_config) -> None:
 
 @typechecked
 def get_completed_and_missing_run_configs(
+    *,
     run_configs: List[Run_config],
 ) -> Tuple[List[Run_config], List[Run_config]]:
     """Returns the run configs that still need to be ran."""
@@ -197,6 +201,7 @@ def get_completed_and_missing_run_configs(
 
 @typechecked
 def get_boxplot_datapoints(
+    *,
     adaptations: List[Dict[str, int]],
     wanted_run_configs: List[Run_config],
     # run_config_nx_graphs: Dict,
@@ -206,7 +211,9 @@ def get_boxplot_datapoints(
 
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = get_mdsa_boxplot_data(
         adaptations=adaptations,
-        graph_names=get_expected_stage_1_graph_names(wanted_run_configs[0]),
+        graph_names=get_expected_stage_1_graph_names(
+            run_config=wanted_run_configs[0]
+        ),
         seeds=seeds,
     )
 
@@ -218,7 +225,7 @@ def get_boxplot_datapoints(
             if algo_name == "MDSA":
 
                 graph_names = get_expected_stage_1_graph_names(
-                    wanted_run_config
+                    run_config=wanted_run_config
                 )
                 graphs_dict: Dict = load_verified_json_graphs_from_json(
                     run_config=wanted_run_config,
@@ -243,6 +250,7 @@ def get_boxplot_datapoints(
 
 @typechecked
 def get_x_labels(
+    *,
     adaptations: List[Dict[str, int]],
     graphs_dict: Dict,
     graph_names: List[str],
@@ -266,6 +274,7 @@ def get_x_labels(
 
 @typechecked
 def add_graph_scores(
+    *,
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]],
     x_label: str,
     result: Dict,
@@ -280,6 +289,7 @@ def add_graph_scores(
 
 @typechecked
 def get_mdsa_boxplot_data(
+    *,
     adaptations: List[Dict[str, int]],
     graph_names: List[str],
     seeds: List[int],
@@ -306,7 +316,7 @@ def get_mdsa_boxplot_data(
 
 @typechecked
 def boxplot_data_to_y_series(
-    boxplot_data: Dict[str, Dict[int, Boxplot_x_val]]
+    *, boxplot_data: Dict[str, Dict[int, Boxplot_x_val]]
 ) -> Dict[str, List[float]]:
     """Converts boxplot_data into x_labels and y_series for boxplot plotting.
 
@@ -327,13 +337,13 @@ def boxplot_data_to_y_series(
     return data
 
 
-def store_pickle(run_configs: List[Run_config], filepath: str) -> None:
+def store_pickle(*, run_configs: List[Run_config], filepath: str) -> None:
     """Stores run_config list into pickle file."""
     with open(filepath, "wb") as handle:
         pickle.dump(run_configs, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def load_pickle(filepath: str) -> List[Run_config]:
+def load_pickle(*, filepath: str) -> List[Run_config]:
     """Stores run_config list into pickle file."""
     with open(filepath, "rb") as handle:
         run_configs: List[Run_config] = pickle.load(handle)  # nosec

@@ -21,6 +21,7 @@ from ..helper import get_expected_stages
 
 @typechecked
 def get_stage_2_nx_graphs(
+    *,
     run_config: Run_config,
 ) -> Dict:
     """Loads the json graphs for stage 2 from file.
@@ -28,7 +29,9 @@ def get_stage_2_nx_graphs(
     Then converts them to nx graphs and returns them.
     """
     # Load results from file.
-    nx_graphs_dict = load_json_to_nx_graph_from_file(run_config, 2)
+    nx_graphs_dict = load_json_to_nx_graph_from_file(
+        run_config=run_config, stage_index=2
+    )
     return nx_graphs_dict
 
 
@@ -47,7 +50,7 @@ def has_outputted_stage(
         run_config=run_config, stage_index=stage_index
     )
 
-    if not expected_files_exist(expected_filepaths):
+    if not expected_files_exist(expected_filepaths=expected_filepaths):
         return False
 
     if not expected_jsons_are_valid(
@@ -60,10 +63,10 @@ def has_outputted_stage(
 
 
 @typechecked
-def get_expected_files(run_config: Run_config) -> List[str]:
+def get_expected_files(*, run_config: Run_config) -> List[str]:
     """Returns the list of expected files for a run configuration."""
     expected_filepaths = []
-    filename = run_config_to_filename(run_config)
+    filename = run_config_to_filename(run_config=run_config)
     relative_output_dir = "results/"
 
     output_file_extensions = [".json"]
@@ -77,7 +80,7 @@ def get_expected_files(run_config: Run_config) -> List[str]:
 
 @typechecked
 def expected_files_exist(
-    expected_filepaths: List[str], verbose: Optional[bool] = False
+    *, expected_filepaths: List[str], verbose: Optional[bool] = False
 ) -> bool:
     """Returns True if a file exists, False otherwise."""
 
@@ -92,6 +95,7 @@ def expected_files_exist(
 
 @typechecked
 def expected_jsons_are_valid(
+    *,
     expected_filepaths: List[str],
     run_config: Run_config,
     stage_index: int,
@@ -111,6 +115,7 @@ def expected_jsons_are_valid(
 
 @typechecked
 def expected_json_content_is_valid(
+    *,
     filepath: str,
     run_config: Run_config,
     stage_index: int,
@@ -123,7 +128,9 @@ def expected_json_content_is_valid(
         # Load the json graphs from json file to see if they exist.
         # TODO: separate loading and checking if it can be loaded.
         try:
-            json_graphs = load_pre_existing_graph_dict(run_config, stage_index)
+            json_graphs = load_pre_existing_graph_dict(
+                run_config=run_config, stage_index=stage_index
+            )
         # pylint: disable=R0801
         except KeyError as k:
             if verbose:
@@ -139,7 +146,9 @@ def expected_json_content_is_valid(
                 print(f"TypeError for: {filepath}: {repr(t)}")
             return False
         if stage_index == 4:
-            return has_valid_json_results(json_graphs, run_config)
+            return has_valid_json_results(
+                json_graphs=json_graphs, run_config=run_config
+            )
     else:
         raise FileNotFoundError(f"Error, the file:{filepath} is not a json.")
     return True
@@ -147,6 +156,7 @@ def expected_json_content_is_valid(
 
 @typechecked
 def nx_graphs_have_completed_stage(
+    *,
     run_config: Run_config,
     results_nx_graphs: Dict,
     stage_index: int,
@@ -160,7 +170,7 @@ def nx_graphs_have_completed_stage(
     """
 
     # Loop through expected graph names for this run_config.
-    for graph_name in get_expected_stage_1_graph_names(run_config):
+    for graph_name in get_expected_stage_1_graph_names(run_config=run_config):
         graph = results_nx_graphs["graphs_dict"][graph_name]
         if graph_name not in results_nx_graphs["graphs_dict"]:
             return False
@@ -175,13 +185,16 @@ def nx_graphs_have_completed_stage(
             )
         if stage_index not in graph.graph["completed_stages"]:
             return False
-        verify_completed_stages_list(graph.graph["completed_stages"])
+        verify_completed_stages_list(
+            completed_stages=graph.graph["completed_stages"]
+        )
     return True
 
 
 # pylint: disable=R1702
 @typechecked
 def has_valid_json_results(
+    *,
     json_graphs: Dict,
     run_config: Run_config,
 ) -> bool:
@@ -193,7 +206,7 @@ def has_valid_json_results(
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
                 graphnames_with_results = get_expected_stage_1_graph_names(
-                    run_config
+                    run_config=run_config
                 )
                 graphnames_with_results.remove("input_graph")
                 if not set(graphnames_with_results).issubset(

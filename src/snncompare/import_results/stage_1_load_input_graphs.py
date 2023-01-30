@@ -13,6 +13,7 @@ from .read_json import load_results_from_json
 
 @typechecked
 def load_results_stage_1(
+    *,
     run_config: Run_config,
 ) -> Dict:
     """Loads the experiment config, run config and graphs from the json file.
@@ -21,7 +22,7 @@ def load_results_stage_1(
     dict loading the same.
     """
     # Get the json filename.
-    filename = run_config_to_filename(run_config)
+    filename = run_config_to_filename(run_config=run_config)
     relative_output_dir = "results/"
     json_filepath = relative_output_dir + filename + ".json"
     stage_1_dict = load_results_from_json(
@@ -41,6 +42,8 @@ def load_results_stage_1(
         raise Exception("Error, difference in run configs, see above.")
 
     # Verify the graph names are as expected for the graph name.
-    assert_graphs_are_in_dict(run_config, stage_1_dict["graphs_dict"], 1)
+    assert_graphs_are_in_dict(
+        run_config=run_config, graphs=stage_1_dict["graphs_dict"], stage=1
+    )
 
     return stage_1_dict

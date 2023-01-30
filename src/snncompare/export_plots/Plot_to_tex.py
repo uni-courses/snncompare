@@ -86,10 +86,10 @@ class Plot_to_tex:
         ax = fig.add_subplot(111)
 
         # generate colours
-        cmap = get_cmap(plt, len(y_series[:, 0]))
+        cmap = get_cmap(some_plt=plt, nr_of_colours=len(y_series[:, 0]))
 
         # generate line types
-        lineTypes = generateLineTypes(y_series)
+        lineTypes = generateLineTypes(y_series=y_series)
 
         for i in range(0, len(y_series)):
             # overwrite linetypes to single type
@@ -158,7 +158,10 @@ class Plot_to_tex:
 
     @typechecked
     def export_plot(
-        self, some_plt: matplotlib.pyplot, filename: str, extensions: List[str]
+        self,
+        some_plt: matplotlib.pyplot,
+        filename: str,
+        extensions: List[str],
     ) -> None:
         """
 
@@ -201,6 +204,7 @@ class Plot_to_tex:
 # how-to-generate-random-colors-in-matplotlib
 @typechecked
 def get_cmap(
+    *,
     some_plt: matplotlib.pyplot,
     nr_of_colours: int,
     name: str = "hsv",
@@ -215,7 +219,7 @@ def get_cmap(
 
 
 @typechecked
-def generateLineTypes(y_series: np.ndarray) -> List:
+def generateLineTypes(*, y_series: np.ndarray) -> List:
     """
 
     :param y_series:

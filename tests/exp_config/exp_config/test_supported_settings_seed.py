@@ -52,8 +52,8 @@ class Test_seed_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
-                self.supp_exp_config,
-                exp_config,
+                supp_exp_config=self.supp_exp_config,
+                exp_config=exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -83,8 +83,8 @@ class Test_seed_settings(unittest.TestCase):
         for invalid_config_setting_value in [None, "stro"]:
             exp_config.seed = invalid_config_setting_value
             verify_invalid_config_sett_val_throws_error(
-                invalid_config_setting_value,
-                exp_config,
-                expected_type,
-                self,
+                invalid_config_setting_value=invalid_config_setting_value,
+                exp_config=exp_config,
+                expected_type=expected_type,
+                test_object=self,
             )

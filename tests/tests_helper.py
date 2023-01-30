@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 @typechecked
 def get_n_random_run_configs(
-    run_configs: list[Run_config], n: int, seed: int | None = None
+    *, run_configs: list[Run_config], n: int, seed: int | None = None
 ) -> list[Run_config]:
     """Returns n random experiment configurations.
 
@@ -45,7 +45,7 @@ def get_n_random_run_configs(
 
 
 @typechecked
-def assertIsFile(path: PosixPath) -> None:
+def assertIsFile(*, path: PosixPath) -> None:
     """Asserts a file exists.
 
     Throws error if a file does not exist.
@@ -57,6 +57,7 @@ def assertIsFile(path: PosixPath) -> None:
 
 @typechecked
 def create_result_file_for_testing(
+    *,
     json_filepath: str,
     graph_names: list[str],
     completed_stages: list[int],
@@ -73,27 +74,36 @@ def create_result_file_for_testing(
     # TODO: create the output results file with the respective graphs.
     if max(completed_stages) == 1:
         dummy_result = create_results_dict_for_testing_stage_1(
-            graph_names, completed_stages, input_graph, run_config
+            graph_names=graph_names,
+            completed_stages=completed_stages,
+            input_graph=input_graph,
+            run_config=run_config,
         )
     elif max(completed_stages) in [2, 3, 4]:
         dummy_result = create_results_dict_for_testing_stage_2(
-            graph_names, completed_stages, input_graph, run_config
+            graph_names=graph_names,
+            completed_stages=completed_stages,
+            input_graph=input_graph,
+            run_config=run_config,
         )
     if max(completed_stages) == 4:
-        add_results_to_stage_4(dummy_result)
+        add_results_to_stage_4(dummy_nx_results=dummy_result)
 
     # TODO: support stage 4 dummy creation.
 
     # TODO: Optional: ensure output files exists.
-    write_dict_to_json(json_filepath, jsons.dump(dummy_result))
+    write_dict_to_json(
+        output_filepath=json_filepath, some_dict=jsons.dump(dummy_result)
+    )
 
     # Verify output JSON file exists.
     filepath = pathlib.PosixPath(json_filepath)
-    assertIsFile(filepath)
+    assertIsFile(path=filepath)
 
 
 @typechecked
 def create_results_dict_for_testing_stage_1(
+    *,
     graph_names: list[str],
     completed_stages: list[int],
     input_graph: nx.Graph,
@@ -133,6 +143,7 @@ def create_results_dict_for_testing_stage_1(
 
 @typechecked
 def create_results_dict_for_testing_stage_2(
+    *,
     graph_names: list[str],
     completed_stages: list[int],
     input_graph: nx.Graph,
@@ -179,7 +190,7 @@ def create_results_dict_for_testing_stage_2(
 
 
 @typechecked
-def add_results_to_stage_4(dummy_nx_results: dict) -> None:
+def add_results_to_stage_4(*, dummy_nx_results: dict) -> None:
     """Creates dummy results in the last timestep/list element of the graph for
     stage 4."""
     for graph_name, nx_graph_list in dummy_nx_results["graphs_dict"].items():
@@ -190,6 +201,7 @@ def add_results_to_stage_4(dummy_nx_results: dict) -> None:
 
 @typechecked
 def create_dummy_output_images_stage_3(
+    *,
     graph_names: list[str],
     input_graph: nx.Graph,
     run_config: Run_config,
@@ -199,7 +211,10 @@ def create_dummy_output_images_stage_3(
     stage 3, if exporting is on."""
 
     image_filepaths = get_expected_image_paths_stage_3(
-        graph_names, input_graph, run_config, extensions
+        nx_graphs_dict=graph_names,
+        input_graph=input_graph,
+        run_config=run_config,
+        extensions=extensions,
     )
     for image_filepath in image_filepaths:
         # ensure output images exist.
@@ -208,7 +223,7 @@ def create_dummy_output_images_stage_3(
 
         # Verify output JSON file exists.
         filepath = pathlib.PosixPath(image_filepath)
-        assertIsFile(filepath)
+        assertIsFile(path=filepath)
 
 
 @typechecked
@@ -239,6 +254,7 @@ def get_cyclic_graph_without_directed_path() -> nx.DiGraph:
 
 
 def compare_static_snn_properties(
+    *,
     test_object: (
         Test_propagation_with_recurrent_edges
         | Test_cyclic_propagation_with_recurrent_edges
