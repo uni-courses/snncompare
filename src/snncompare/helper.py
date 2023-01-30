@@ -12,7 +12,6 @@ from networkx.classes.graph import Graph
 # from snncompare.export_results.load_json_to_nx_graph import dicts_are_equal
 from typeguard import typechecked
 
-# from snncompare.Experiment_runner import exp_config_to_run_configs
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.exp_config.run_config.Supported_run_settings import (
@@ -254,50 +253,6 @@ def set_node_default_values(
         input_graph.degree(node) * (rand_ceil + 1)
         + input_graph.nodes[node]["random_number"]
     )
-
-
-@typechecked
-def get_extensions_list(
-    run_config: Run_config,
-    stage_index: int,
-) -> List:
-    """TODO: make this into 1 symmetric method/improve structure.
-
-    :param run_config: param stage_index:
-    :param stage_index:
-
-    extensions = list(get_extensions_dict(run_config, stage_index).values())
-    """
-    if stage_index == 3:
-        if run_config.export_images:
-            return run_config.export_types
-        return []
-    return list(get_extensions_dict(run_config, stage_index).values())
-
-
-@typechecked
-def get_extensions_dict(
-    run_config: Run_config,
-    stage_index: int,
-) -> Dict:
-    """Returns the file extensions of the output types. The dictionary key
-    describes the content of the file, and the extension is given as the value.
-    Config_and_graphs means that the experiment or run config is included in
-    the file. Graphs means that the networkx graphs have been encoded.
-
-    :param run_config: param stage_index:
-    :param stage_index:
-    """
-    if stage_index == 1:
-        return {"config_and_graphs": ".json"}
-    if stage_index == 2:
-        if run_config.simulator == "lava":
-            return {"config": ".json"}
-        # The networkx simulator is used:
-        return {"config_and_graphs": ".json"}
-    if stage_index == 4:
-        return {"config_graphs_and_results": ".json"}
-    raise Exception("Unsupported experiment stage.")
 
 
 @typechecked

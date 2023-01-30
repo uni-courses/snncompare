@@ -46,13 +46,10 @@ def load_json_to_nx_graph_from_file(
         "graphs_dict": nx_graphs_dict,
     }
     verify_results_nx_graphs_contain_expected_stages(
-        # json_graphs_dict, stage_index, to_run
         results_nx_graphs,
         stage_index,
     )
-    # verify_results_nx_graphs_contain_expected_stages(
-    # {"graphs_dict": nx_graphs_dict}, stage_index, to_run
-    # )
+
     return nx_graphs_dict
 
 

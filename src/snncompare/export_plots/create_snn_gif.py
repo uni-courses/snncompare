@@ -11,7 +11,6 @@ from snncompare.export_results.helper import (
 from snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
-from snncompare.helper import get_extensions_list
 
 
 def create_gif_of_run_config(results_nx_graphs: Dict) -> None:
@@ -19,7 +18,7 @@ def create_gif_of_run_config(results_nx_graphs: Dict) -> None:
     run_config = results_nx_graphs["run_config"]
     if run_config.gif:
         expected_filepaths = []
-        extensions = get_extensions_list(run_config, stage_index=3)
+        extensions = (run_config.export_types,)
         print(f"extensions={extensions}")
         output_filename = run_config_to_filename(run_config)
 

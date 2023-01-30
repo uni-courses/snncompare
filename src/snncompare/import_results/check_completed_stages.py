@@ -7,14 +7,8 @@ from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.graph_generation.stage_1_get_input_graphs import (
-    get_input_graph,
-)
 
-from ..export_results.helper import (
-    get_expected_image_paths_stage_3,
-    run_config_to_filename,
-)
+from ..export_results.helper import run_config_to_filename
 from ..export_results.load_json_to_nx_graph import (
     load_json_to_nx_graph_from_file,
     load_pre_existing_graph_dict,
@@ -22,7 +16,7 @@ from ..export_results.load_json_to_nx_graph import (
 from ..export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from ..helper import get_expected_stages, get_extensions_list
+from ..helper import get_expected_stages
 
 
 @typechecked
@@ -38,55 +32,53 @@ def get_stage_2_nx_graphs(
     return nx_graphs_dict
 
 
-# pylint: disable=R0911
-# pylint: disable=R0912
-# pylint: disable=R0914
 @typechecked
 def has_outputted_stage(
     run_config: Run_config,
     stage_index: int,
-    to_run: Dict,
-    verbose: bool = False,
-    results_nx_graphs: Optional[Dict] = None,
 ) -> bool:
-    """Checks whether the the required output files exist, for a given
-    simulation and whether their content is valid. Returns True if the file
-    exists, and its content is valid, False otherwise.
+    """Checks if a stage has been outputted or not."""
+    if stage_index not in [1, 2, 3, 4, 5]:
+        raise ValueError(
+            f"Error, stage_index:{stage_index} was not in range:{[1,2,3,4,5]}"
+        )
+    expected_filepaths = get_expected_files(
+        run_config=run_config, stage_index=stage_index
+    )
 
-    :param run_config: param stage_index:
-    :param stage_index:
-    """
+    if not expected_files_exist(expected_filepaths):
+        return False
+
+    if not expected_jsons_are_valid(
+        expected_filepaths=expected_filepaths,
+        run_config=run_config,
+        stage_index=stage_index,
+    ):
+        return False
+    return True
+
+
+@typechecked
+def get_expected_files(run_config: Run_config) -> List[str]:
+    """Returns the list of expected files for a run configuration."""
     expected_filepaths = []
-
     filename = run_config_to_filename(run_config)
-
     relative_output_dir = "results/"
-    extensions = get_extensions_list(run_config, stage_index)
-    for extension in extensions:
-        if stage_index in [1, 2, 4]:
 
-            expected_filepaths.append(
-                relative_output_dir + filename + extension
-            )
-            # TODO: append expected_filepath to run_config per stage.
+    output_file_extensions = [".json"]
+    if run_config.export_images:
+        output_file_extensions.append(run_config.export_types)
 
-        if stage_index == 3:
-            if run_config.export_images:
-                if has_outputted_stage(run_config, 2, to_run):
-                    if results_nx_graphs is None:
-                        nx_graphs_dict = get_stage_2_nx_graphs(run_config)
-                    else:
-                        nx_graphs_dict = results_nx_graphs["graphs_dict"]
+    for extension in output_file_extensions:
+        expected_filepaths.append(relative_output_dir + filename + extension)
+    return expected_filepaths
 
-                    stage_3_img_filepaths = get_expected_image_paths_stage_3(
-                        nx_graphs_dict=nx_graphs_dict,
-                        input_graph=get_input_graph(run_config),
-                        run_config=run_config,
-                        extensions=extensions,
-                    )
-                    expected_filepaths.extend(stage_3_img_filepaths)
-                else:
-                    return False  # If stage 2 is not completed, neither is 3.
+
+@typechecked
+def expected_files_exist(
+    expected_filepaths: List[str], verbose: Optional[bool] = False
+) -> bool:
+    """Returns True if a file exists, False otherwise."""
 
     # Check if the expected output files already exist.
     for filepath in expected_filepaths:
@@ -94,29 +86,61 @@ def has_outputted_stage(
             if verbose:
                 print(f"File={filepath} missing.")
             return False
+    return True
+
+
+@typechecked
+def expected_jsons_are_valid(
+    expected_filepaths: List[str],
+    run_config: Run_config,
+    stage_index: int,
+) -> bool:
+    """Checks for all expected json files whether they can successfully be
+    loaded into this experiment."""
+    for filepath in expected_filepaths:
         if filepath[-5:] == ".json":
-            # Load the json graphs from json file to see if they exist.
-            # TODO: separate loading and checking if it can be loaded.
-            try:
-                json_graphs = load_pre_existing_graph_dict(
-                    run_config, stage_index
-                )
-            # pylint: disable=R0801
-            except KeyError as k:
-                if verbose:
-                    print(f"KeyError for: {filepath}: {repr(k)}")
+            if not expected_json_content_is_valid(
+                filepath=filepath,
+                run_config=run_config,
+                stage_index=stage_index,
+            ):
                 return False
-            except ValueError as v:
-                if verbose:
-                    print(f"ValueError for: {filepath}:")
-                    pprint(repr(v))
-                return False
-            except TypeError as t:
-                if verbose:
-                    print(f"TypeError for: {filepath}: {repr(t)}")
-                return False
-            if stage_index == 4:
-                return has_valid_json_results(json_graphs, run_config)
+    return True
+
+
+@typechecked
+def expected_json_content_is_valid(
+    filepath: str,
+    run_config: Run_config,
+    stage_index: int,
+    verbose: Optional[bool] = False,
+) -> bool:
+    """Safely checks if a json file can successfully be loaded into this
+    experiment."""
+
+    if filepath[-5:] == ".json":
+        # Load the json graphs from json file to see if they exist.
+        # TODO: separate loading and checking if it can be loaded.
+        try:
+            json_graphs = load_pre_existing_graph_dict(run_config, stage_index)
+        # pylint: disable=R0801
+        except KeyError as k:
+            if verbose:
+                print(f"KeyError for: {filepath}: {repr(k)}")
+            return False
+        except ValueError as v:
+            if verbose:
+                print(f"ValueError for: {filepath}:")
+                pprint(repr(v))
+            return False
+        except TypeError as t:
+            if verbose:
+                print(f"TypeError for: {filepath}: {repr(t)}")
+            return False
+        if stage_index == 4:
+            return has_valid_json_results(json_graphs, run_config)
+    else:
+        raise FileNotFoundError(f"Error, the file:{filepath} is not a json.")
     return True
 
 

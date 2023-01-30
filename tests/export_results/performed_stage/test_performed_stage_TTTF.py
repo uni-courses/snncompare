@@ -17,10 +17,7 @@ from snncompare.exp_config.default_setts.create_default_settings import (
     default_exp_config,
 )
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.Experiment_runner import (
-    Experiment_runner,
-    determine_what_to_run,
-)
+from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_results.helper import run_config_to_filename
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
@@ -28,7 +25,6 @@ from snncompare.export_results.verify_stage_1_graphs import (
 from snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
-from snncompare.helper import get_extensions_list
 from snncompare.import_results.check_completed_stages import (
     has_outputted_stage,
 )
@@ -70,7 +66,6 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.experiment_runner = Experiment_runner(
             exp_config=self.exp_config,
         )
-        # TODO: verify the to_run is computed correctly.
 
         # Pick (first) run config and get the output locations for testing.
         # TODO: make random, and make it loop through all/random run configs.
@@ -91,7 +86,6 @@ class Test_stage_1_output_json(unittest.TestCase):
         is not yet completed."""
 
         for run_config in self.experiment_runner.run_configs:
-            to_run = determine_what_to_run(run_config)
             json_filepath = (
                 f"results/{run_config_to_filename(run_config)}.json"
             )
@@ -150,16 +144,16 @@ class Test_stage_1_output_json(unittest.TestCase):
                 stage_1_graph_names,
                 get_input_graph(run_config),
                 run_config,
-                get_extensions_list(run_config, 3),
+                extensions=["png"],
             )
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
-            self.assertTrue(has_outputted_stage(run_config, 1, to_run))
+            self.assertTrue(has_outputted_stage(run_config, 1))
 
             # Test for stage 1, 2, and 4.
-            self.assertTrue(has_outputted_stage(run_config, 2, to_run))
-            self.assertTrue(has_outputted_stage(run_config, 3, to_run))
-            self.assertFalse(has_outputted_stage(run_config, 4, to_run))
+            self.assertTrue(has_outputted_stage(run_config, 2))
+            self.assertTrue(has_outputted_stage(run_config, 3))
+            self.assertFalse(has_outputted_stage(run_config, 4))
 
             # TODO: write test for stage 3.

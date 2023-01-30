@@ -9,7 +9,13 @@ CONDA_ENVIRONMENT_NAME="snncompare"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        -r|--rebuild) rebuild=1; ;;
+        -b|--branch)
+		    branch=1;
+			BRANCH_NAME="$2"
+      		shift # past argument
+      		shift # past value
+      		;;
+		-r|--rebuild) rebuild=1; ;;
         -p|--precommit) precommit=1 ;;
 		-pu|--precommit-update) precommit_update=1 ;;
 		-c|--commitpush)
@@ -116,6 +122,21 @@ run_precommit_update() {
 }
 
 
+checkout_new_branch() {
+    local git_path="$1"
+	local branch_name="$2"
+    if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
+		eval "$(conda shell.bash hook)"
+		cd "$git_path" && conda deactivate && conda activate snncompare && git checkout -b "$branch_name"
+		cd "$git_path" && conda deactivate && conda activate snncompare && git add -A
+		cd "$git_path" && conda deactivate && conda activate snncompare && git commit -m "$message"
+		cd "$git_path" && conda deactivate && conda activate snncompare && git push --set-upstream origin "$branch_name"
+	else
+		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
+        exit 5
+	fi
+}
+
 commit_and_push() {
     local git_path="$1"
 	local message="$2"
@@ -156,9 +177,10 @@ install_pip_package() {
 
 for reponame in "${arr[@]}"
 do
+	echo ""
+	echo ""
 	echo "$reponame"
-	echo ""
-	echo ""
+
 	# Assert the required folders exist.
 	manual_assert_dir_exists "$DIR_WITH_REPOS$reponame"
 
@@ -168,6 +190,10 @@ do
 
    		# Install package locally
    		install_pip_package "$DIR_WITH_REPOS$reponame"
+	fi
+
+	if [ "$branch" == 1 ]; then
+		checkout_new_branch "$DIR_WITH_REPOS$reponame" "$BRANCH_NAME"
 	fi
 
 	if [ "$precommit" == 1 ]; then

@@ -8,7 +8,6 @@ from snncompare.exp_config.run_config.Run_config import Run_config
 
 from ..export_results.helper import run_config_to_filename
 from ..export_results.verify_stage_1_graphs import assert_graphs_are_in_dict
-from ..helper import get_extensions_list
 from .read_json import load_results_from_json
 
 
@@ -21,17 +20,13 @@ def load_results_stage_1(
     # TODO: ensure it only loads the graphs of stage 1. OR: make all
     dict loading the same.
     """
-    stage_index = 1
-
     # Get the json filename.
     filename = run_config_to_filename(run_config)
     relative_output_dir = "results/"
-    extensions = get_extensions_list(run_config, stage_index)
-    for extension in extensions:
-        if extension == ".json":
-            filepath = relative_output_dir + filename + extension
-
-    stage_1_dict = load_results_from_json(filepath, run_config)
+    json_filepath = relative_output_dir + filename + ".json"
+    stage_1_dict = load_results_from_json(
+        json_filepath=json_filepath, run_config=run_config
+    )
 
     # Split the dictionary into three separate dicts.
     # The ** loads the dict into the object.

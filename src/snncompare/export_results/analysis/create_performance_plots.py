@@ -186,12 +186,6 @@ def get_completed_and_missing_run_configs(
         if not has_outputted_stage(
             run_config=run_config,
             stage_index=4,
-            to_run={
-                "stage_1": True,
-                "stage_2": True,
-                "stage_3": False,
-                "stage_4": True,
-            },
         ):
             missing_run_configs.append(run_config)
         else:
