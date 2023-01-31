@@ -25,16 +25,6 @@ def store_exp_config_to_file(
 ) -> None:
     """Verifies the experiment setting and then exports it to a dictionary."""
 
-    # supported_experiment_settings = Supported_experiment_settings()
-    # Verify the experiment exp_config are complete and valid.
-    # pylint: disable=R0801
-    # verify_exp_config(
-    #    supported_experiment_settings,
-    #    exp_config,
-    #    has_unique_id=False,
-    #    allow_optional=False,
-    # )
-
     # epxort to file.
     filepath = f"{custom_config_path}{filename}.json"
     new_dict = encode_tuples(some_dict=exp_config.__dict__)
@@ -57,14 +47,6 @@ def load_exp_config_from_file(
             )
             json_file.close()
 
-        # Verify the experiment exp_config are complete and valid.
-        # pylint: disable=R0801
-        # verify_exp_config(
-        #    Supported_experiment_settings(),
-        #    exp_config,
-        #    has_unique_id=False,
-        #    allow_optional=False,
-        # )
         # The ** loads the dict into the object.
         exp_config = Exp_config(**exp_config_dict)
         return exp_config
@@ -75,8 +57,6 @@ def load_exp_config_from_file(
 def long_exp_config_for_mdsa_testing() -> "Exp_config":
     """Contains a default experiment configuration used to test the MDSA
     algorithm."""
-    # Create prerequisites
-    # supp_exp_config = Supported_experiment_settings()
 
     # Create the experiment configuration settings for a run with adaptation
     # and with radiation.
@@ -96,8 +76,6 @@ def long_exp_config_for_mdsa_testing() -> "Exp_config":
         "max_max_graphs": 2,
         "min_graph_size": 3,
         "max_graph_size": 5,
-        # "size_and_max_graphs": [(3, 1), (4, 3)],
-        # "size_and_max_graphs": [(3, 1),(4, 1)],
         "size_and_max_graphs": [(3, 1), (4, 3), (5, 6)],
         # Move into "overwrite options"
         "recreate_s1": True,
@@ -112,12 +90,6 @@ def long_exp_config_for_mdsa_testing() -> "Exp_config":
         "synaptic_models": ["LIF"],
     }
 
-    # verify_exp_config(
-    # Supported_experiment_settings(),
-    # long_mdsa_testing,
-    # has_unique_id=False,
-    # allow_optional=True,
-    # )
     # The ** loads the dict into the object.
     exp_config = Exp_config(**long_mdsa_testing)
     return exp_config

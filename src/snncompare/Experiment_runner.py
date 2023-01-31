@@ -10,7 +10,10 @@ from pprint import pprint
 from typing import Dict, List, Optional
 
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
-from snnbackends.verify_nx_graphs import verify_results_nx_graphs
+from snnbackends.verify_nx_graphs import (
+    verify_results_nx_graphs,
+    verify_results_nx_graphs_contain_expected_stages,
+)
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import (
@@ -78,15 +81,6 @@ class Experiment_runner:
         # Load the ranges of supported settings.
         self.supp_exp_config = Supported_experiment_settings()
 
-        # Verify the experiment exp_config are complete and valid.
-        # pylint: disable=R0801
-        # verify_exp_config(
-        #    self.supp_exp_config,
-        #    exp_config,
-        #    has_unique_id=False,
-        #    allow_optional=True,
-        # )
-
         # If the experiment exp_config does not contain a hash-code,
         # create the unique hash code for this configuration.
         # TODO: restore
@@ -103,7 +97,6 @@ class Experiment_runner:
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config
         )
-        print(f"self.run_configs={self.run_configs}")
         # Perform runs accordingly.
         if perform_run:
             self.__perform_run(self.exp_config, self.run_configs)
@@ -125,24 +118,24 @@ class Experiment_runner:
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
 
-            print("\nstart stage I:  ", end=" ")
+            print("\nstart stage I:  ")
 
             results_nx_graphs = self.__perform_run_stage_1(
                 exp_config=exp_config,
                 run_config=run_config,
             )
-            print("Start stage II  ", end=" ")
-            self.__perform_run_stage_2(
-                results_nx_graphs,
-                run_config,
+            print("Start stage II  ")
+            results_nx_graphs = self.__perform_run_stage_2(
+                results_nx_graphs=results_nx_graphs,
+                run_config=run_config,
             )
 
-            print("Start stage III ", end=" ")
+            print("Start stage III ")
             self.__perform_run_stage_3(
                 results_nx_graphs=results_nx_graphs, run_config=run_config
             )
 
-            print("Start stage IV  ", end=" ")
+            print("Start stage IV  ")
             self.__perform_run_stage_4(
                 results_nx_graphs=results_nx_graphs, run_config=run_config
             )
@@ -205,7 +198,7 @@ class Experiment_runner:
         self,
         results_nx_graphs: Dict,
         run_config: Run_config,
-    ) -> None:
+    ) -> Dict:
         """Performs the run for stage 2 or loads the data from file depending
         on the run configuration.
 
@@ -257,6 +250,15 @@ class Experiment_runner:
             run_config=run_config,
             stage_index=2,
         )
+        verify_results_nx_graphs_contain_expected_stages(
+            results_nx_graphs=results_nx_graphs,
+            stage_index=2,
+            expected_stages=[
+                1,
+                2,
+            ],
+        )
+        return results_nx_graphs
 
     @typechecked
     def __perform_run_stage_3(
@@ -304,6 +306,15 @@ class Experiment_runner:
         default/Neumann implementation. Then stores this result in the
         last entry of each graph.
         """
+        verify_results_nx_graphs_contain_expected_stages(
+            results_nx_graphs=results_nx_graphs,
+            stage_index=2,
+            expected_stages=[
+                1,
+                2,
+            ],
+        )
+
         if set_results(
             run_config=run_config,
             stage_2_graphs=results_nx_graphs["graphs_dict"],
