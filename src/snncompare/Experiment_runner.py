@@ -103,7 +103,7 @@ class Experiment_runner:
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config
         )
-
+        print(f"self.run_configs={self.run_configs}")
         # Perform runs accordingly.
         if perform_run:
             self.__perform_run(self.exp_config, self.run_configs)

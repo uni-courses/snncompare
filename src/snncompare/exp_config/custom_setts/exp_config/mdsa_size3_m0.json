@@ -14,11 +14,11 @@
   "neuron_models": [
     "LIF"
   ],
-  "overwrite_images_only": true,
-  "radiations": null,
-  "recreate_s1": true,
-  "recreate_s2": true,
-  "recreate_s4": true,
+  "overwrite_images_only": false,
+  "radiations": {},
+  "recreate_s1": false,
+  "recreate_s2": false,
+  "recreate_s4": false,
   "seeds": [
     7
   ],

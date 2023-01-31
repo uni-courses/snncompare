@@ -102,7 +102,7 @@ def expected_jsons_are_valid(
                 filepath=filepath,
                 run_config=run_config,
                 stage_index=stage_index,
-                verbose=True,
+                verbose=False,
             ):
                 return False
     return True

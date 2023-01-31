@@ -405,7 +405,7 @@ def exp_config_to_run_configs(
     TODO: Ensure this can be done modular, and lower the depth of the loop.
     """
     # pylint: disable=R0914
-    supp_run_setts = Supported_run_settings()
+
     run_configs: List[Run_config] = []
 
     # pylint: disable=R1702
@@ -418,24 +418,57 @@ def exp_config_to_run_configs(
             for adaptation, radiation in get_adaptation_and_radiations(
                 exp_config=exp_config
             ):
-                for seed in exp_config.seeds:
-                    for size_and_max_graph in exp_config.size_and_max_graphs:
-                        for simulator in exp_config.simulators:
-                            for graph_nr in range(0, size_and_max_graph[1]):
-                                run_config: Run_config = (
-                                    run_parameters_to_dict(
-                                        adaptation=adaptation,
-                                        algorithm=algorithm,
-                                        seed=seed,
-                                        size_and_max_graph=size_and_max_graph,
-                                        graph_nr=graph_nr,
-                                        radiation=radiation,
-                                        exp_config=exp_config,
-                                        simulator=simulator,
-                                    )
-                                )
-                                run_configs.append(run_config)
+                fill_remaining_run_config_settings(
+                    adaptation=adaptation,
+                    algorithm=algorithm,
+                    exp_config=exp_config,
+                    radiation=radiation,
+                    run_configs=run_configs,
+                )
 
+    set_run_config_export_settings(
+        exp_config=exp_config,
+        run_configs=run_configs,
+    )
+    return list(reversed(run_configs))
+
+
+@typechecked
+def fill_remaining_run_config_settings(
+    *,
+    adaptation: Union[None, Dict],
+    algorithm: Dict,
+    exp_config: Exp_config,
+    radiation: Union[None, Dict],
+    run_configs: List[Run_config],
+) -> None:
+    """Generate basic settings for a run config."""
+    for seed in exp_config.seeds:
+        for size_and_max_graph in exp_config.size_and_max_graphs:
+            for simulator in exp_config.simulators:
+                for graph_nr in range(0, size_and_max_graph[1]):
+                    run_config: Run_config = run_parameters_to_dict(
+                        adaptation=adaptation,
+                        algorithm=algorithm,
+                        seed=seed,
+                        size_and_max_graph=size_and_max_graph,
+                        graph_nr=graph_nr,
+                        radiation=radiation,
+                        exp_config=exp_config,
+                        simulator=simulator,
+                    )
+                    run_configs.append(run_config)
+
+
+@typechecked
+def set_run_config_export_settings(
+    *,
+    exp_config: Exp_config,
+    run_configs: List[Run_config],
+) -> None:
+    """Sets the export settings for run configs that are created based on an
+    experiment config."""
+    supp_run_setts = Supported_run_settings()
     for run_config in run_configs:
         if exp_config.export_images:
             run_config.export_types = exp_config.export_types
@@ -461,7 +494,6 @@ def exp_config_to_run_configs(
             exp_config.__dict__, "export_images", bool
         )
         run_config.export_images = exp_config.export_images
-    return list(reversed(run_configs))
 
 
 # pylint: disable=R0913
@@ -522,6 +554,10 @@ def get_adaptation_and_radiations(
                         exp_config=exp_config, adaptation=adaptation
                     )
                 )
+
+    # Make sure it contains at least 1 empty entry:
+    if not adaptations_radiations:  # Empty list evaluates to False.
+        return [(None, None)]
     return adaptations_radiations
 
 
