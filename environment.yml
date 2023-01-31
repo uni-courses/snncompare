@@ -5,6 +5,9 @@
 # First run: conda env create --file environment.yml
 # If you change this file, run: conda env update --file environment.yml
 
+# Remove with:
+# conda remove --name snncompare --all
+
 # Instructions for this networkx-to-lava-nc repository only. First time usage
 # On Ubuntu (this is needed for lava-nc):
 # sudo apt upgrade
@@ -93,4 +96,6 @@ dependencies:
     # Allow for auto generation of type-hints during runtime.
     - pyannotate
     # Time function durations.
-    - showme
+    - customshowme
+    # Create boxplots.
+    - simplt

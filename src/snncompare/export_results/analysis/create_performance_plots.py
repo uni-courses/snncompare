@@ -9,7 +9,7 @@ from pathlib import Path
 from pprint import pprint
 from typing import Dict, List, Tuple
 
-from easyplot.box_plot.box_plot import create_box_plot
+from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config

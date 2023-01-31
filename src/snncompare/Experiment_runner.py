@@ -9,6 +9,7 @@ import timeit
 from pprint import pprint
 from typing import Dict, List, Optional
 
+import customshowme
 from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import (
     verify_results_nx_graphs,
@@ -145,6 +146,7 @@ class Experiment_runner:
             }
 
     # @showme.time
+    @customshowme.time
     @typechecked
     def __perform_run_stage_1(
         self,

@@ -37,7 +37,6 @@ def has_outputted_stage(
     # pprint(expected_filepaths)
 
     if not expected_files_exist(expected_filepaths=expected_filepaths):
-        print("files did not exist")
         return False
 
     if not expected_jsons_are_valid(
