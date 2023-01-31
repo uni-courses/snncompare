@@ -18,6 +18,7 @@ while [[ "$#" -gt 0 ]]; do
 		-r|--rebuild) rebuild=1; ;;
         -p|--precommit) precommit=1 ;;
 		-pu|--precommit-update) precommit_update=1 ;;
+		-pip|--publish-to-pip) publish_to_pip=1 ;;
 		-c|--commitpush)
 			commitpush=1
 			COMMIT_MESSAGE="$2"
@@ -163,6 +164,17 @@ build_pip_package() {
 	fi
 }
 
+publish_to_pip() {
+    local git_path="$1"
+    if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
+		eval "$(conda shell.bash hook)"
+		cd "$git_path" && conda deactivate && conda activate snncompare && python3 setup.py sdist bdist_wheel
+		cd "$git_path" && conda deactivate && conda activate snncompare && python -m twine upload dist/\*
+	else
+		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
+        exit 5
+	fi
+}
 
 install_pip_package() {
     local git_path="$1"
@@ -209,6 +221,10 @@ do
 				cd "$DIR_WITH_REPOS$reponame" && conda deactivate && conda activate snncompare
 			fi
 		fi
+	fi
+
+	if [ "$publish_to_pip" == 1 ]; then
+		publish_to_pip "$DIR_WITH_REPOS$reponame"
 	fi
 
 	if [ "$commitpush" == 1 ]; then

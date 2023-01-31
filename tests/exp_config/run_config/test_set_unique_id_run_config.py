@@ -37,8 +37,8 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
 
         self.exp_config.export_images = False
         verify_exp_config(
-            Supported_experiment_settings(),
-            self.exp_config,
+            supp_exp_config=Supported_experiment_settings(),
+            exp_config=self.exp_config,
             has_unique_id=False,
             allow_optional=True,
         )
@@ -51,7 +51,9 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         exp_config = copy.deepcopy(self.exp_config)
 
         # Generate run configurations.
-        run_configs: List[Run_config] = exp_config_to_run_configs(exp_config)
+        run_configs: List[Run_config] = exp_config_to_run_configs(
+            exp_config=exp_config
+        )
         self.assertGreaterEqual(len(run_configs), 2)
 
         no_ids = copy.deepcopy(run_configs)
@@ -94,7 +96,9 @@ class Test_setting_unique_id_run_config(unittest.TestCase):
         exp_config = copy.deepcopy(long_mdsa_testing)
 
         # Generate run configurations.
-        run_configs: List[Run_config] = exp_config_to_run_configs(exp_config)
+        run_configs: List[Run_config] = exp_config_to_run_configs(
+            exp_config=exp_config
+        )
         self.assertGreaterEqual(len(run_configs), 2)
 
         no_ids = copy.deepcopy(run_configs)

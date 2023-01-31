@@ -188,6 +188,7 @@ def get_completed_and_missing_run_configs(
     completed_run_configs: List[Run_config] = []
     for run_config in run_configs:
         if not has_outputted_stage(
+            expected_stages=[1, 2, 4],  # Assume results have been created.
             run_config=run_config,
             stage_index=4,
         ):

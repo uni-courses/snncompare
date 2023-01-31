@@ -10,8 +10,7 @@ from snncompare.exp_config.run_config.Run_config import Run_config
 
 from ..export_results.helper import run_config_to_filename
 from ..export_results.load_json_to_nx_graph import (
-    load_json_to_nx_graph_from_file,
-    load_pre_existing_graph_dict,
+    load_verified_json_graphs_from_json,
 )
 from ..export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
@@ -20,24 +19,9 @@ from ..helper import get_expected_stages
 
 
 @typechecked
-def get_stage_2_nx_graphs(
-    *,
-    run_config: Run_config,
-) -> Dict:
-    """Loads the json graphs for stage 2 from file.
-
-    Then converts them to nx graphs and returns them.
-    """
-    # Load results from file.
-    nx_graphs_dict = load_json_to_nx_graph_from_file(
-        run_config=run_config, stage_index=2
-    )
-    return nx_graphs_dict
-
-
-@typechecked
 def has_outputted_stage(
     *,
+    expected_stages: List[int],
     run_config: Run_config,
     stage_index: int,
 ) -> bool:
@@ -46,22 +30,31 @@ def has_outputted_stage(
         raise ValueError(
             f"Error, stage_index:{stage_index} was not in range:{[1,2,3,4,5]}"
         )
-    expected_filepaths = get_expected_files(run_config=run_config)
+    expected_filepaths = get_expected_files(
+        run_config=run_config, stage_index=stage_index
+    )
+    # print(f'expected_filepaths=')
+    # pprint(expected_filepaths)
 
     if not expected_files_exist(expected_filepaths=expected_filepaths):
+        print("files did not exist")
         return False
 
     if not expected_jsons_are_valid(
         expected_filepaths=expected_filepaths,
+        expected_stages=expected_stages,
         run_config=run_config,
         stage_index=stage_index,
     ):
+        print("json not valid")
         return False
     return True
 
 
 @typechecked
-def get_expected_files(*, run_config: Run_config) -> List[str]:
+def get_expected_files(
+    *, run_config: Run_config, stage_index: int
+) -> List[str]:
     """Returns the list of expected files for a run configuration."""
     expected_filepaths = []
     filename = run_config_to_filename(run_config=run_config)
@@ -69,7 +62,8 @@ def get_expected_files(*, run_config: Run_config) -> List[str]:
 
     output_file_extensions = [".json"]
     if run_config.export_images:
-        output_file_extensions.append(run_config.export_types)
+        if stage_index >= 3:
+            output_file_extensions.append(run_config.export_types)
 
     for extension in output_file_extensions:
         expected_filepaths.append(relative_output_dir + filename + extension)
@@ -95,6 +89,7 @@ def expected_files_exist(
 def expected_jsons_are_valid(
     *,
     expected_filepaths: List[str],
+    expected_stages: List[int],
     run_config: Run_config,
     stage_index: int,
 ) -> bool:
@@ -103,9 +98,11 @@ def expected_jsons_are_valid(
     for filepath in expected_filepaths:
         if filepath[-5:] == ".json":
             if not expected_json_content_is_valid(
+                expected_stages=expected_stages,
                 filepath=filepath,
                 run_config=run_config,
                 stage_index=stage_index,
+                verbose=True,
             ):
                 return False
     return True
@@ -114,6 +111,7 @@ def expected_jsons_are_valid(
 @typechecked
 def expected_json_content_is_valid(
     *,
+    expected_stages: List[int],
     filepath: str,
     run_config: Run_config,
     stage_index: int,
@@ -126,8 +124,8 @@ def expected_json_content_is_valid(
         # Load the json graphs from json file to see if they exist.
         # TODO: separate loading and checking if it can be loaded.
         try:
-            json_graphs = load_pre_existing_graph_dict(
-                run_config=run_config, stage_index=stage_index
+            json_graphs = load_verified_json_graphs_from_json(
+                run_config=run_config, expected_stages=expected_stages
             )
         # pylint: disable=R0801
         except KeyError as k:

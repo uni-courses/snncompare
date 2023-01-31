@@ -52,7 +52,7 @@ class Test_stage_1_output_json(unittest.TestCase):
             shutil.rmtree("results")
         if os.path.exists("latex"):
             shutil.rmtree("latex")
-        create_root_dir_if_not_exists("latex/Images/graphs")
+        create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
 
         # Initialise experiment settings, and run experiment.
         self.exp_config: Exp_config = default_exp_config()
@@ -72,7 +72,9 @@ class Test_stage_1_output_json(unittest.TestCase):
         nr_of_tested_configs: int = 10
         seed: int = 42
         self.run_configs = get_n_random_run_configs(
-            self.experiment_runner.run_configs, nr_of_tested_configs, seed
+            run_configs=self.experiment_runner.run_configs,
+            n=nr_of_tested_configs,
+            seed=seed,
         )
 
     # Loop through (random) run configs.
@@ -86,23 +88,25 @@ class Test_stage_1_output_json(unittest.TestCase):
 
         for run_config in self.experiment_runner.run_configs:
             json_filepath = (
-                f"results/{run_config_to_filename(run_config)}.json"
+                f"results/{run_config_to_filename(run_config=run_config)}.json"
             )
 
             # TODO: determine per stage per run config which graph names are
             # expected.
-            stage_1_graph_names = get_expected_stage_1_graph_names(run_config)
+            stage_1_graph_names = get_expected_stage_1_graph_names(
+                run_config=run_config
+            )
             create_result_file_for_testing(
-                json_filepath,
-                stage_1_graph_names,
-                self.expected_completed_stages,
-                get_input_graph(run_config),
-                run_config,
+                json_filepath=json_filepath,
+                graph_names=stage_1_graph_names,
+                completed_stages=self.expected_completed_stages,
+                input_graph=get_input_graph(run_config=run_config),
+                run_config=run_config,
             )
 
             # Read output JSON file into dict.
             stage_1_output_dict = load_results_from_json(
-                json_filepath, run_config
+                json_filepath=json_filepath, run_config=run_config
             )
 
             # Verify the 3 dicts are in the result dict.
@@ -140,15 +144,46 @@ class Test_stage_1_output_json(unittest.TestCase):
                         self.assertIsInstance(nx_graph_frame, nx.DiGraph)
 
             create_dummy_output_images_stage_3(
-                stage_1_graph_names,
-                get_input_graph(run_config),
-                run_config,
+                graph_names=stage_1_graph_names,
+                input_graph=get_input_graph(run_config=run_config),
+                run_config=run_config,
                 extensions=["png"],
             )
 
             # Test whether the performed stage function returns False for the
             # uncompleted stages in the graphs.
-            self.assertTrue(has_outputted_stage(run_config, 1))
-            self.assertTrue(has_outputted_stage(run_config, 2))
-            self.assertTrue(has_outputted_stage(run_config, 3))
-            self.assertTrue(has_outputted_stage(run_config, 4))
+            # TODO: update expected stages.
+            self.assertTrue(
+                has_outputted_stage(
+                    expected_stages=[
+                        1,
+                    ],
+                    run_config=run_config,
+                    stage_index=1,
+                )
+            )
+            self.assertTrue(
+                has_outputted_stage(
+                    expected_stages=[1, 2],
+                    run_config=run_config,
+                    stage_index=2,
+                )
+            )
+            self.assertTrue(
+                has_outputted_stage(
+                    expected_stages=[
+                        1,
+                        2,
+                        3,
+                    ],
+                    run_config=run_config,
+                    stage_index=3,
+                )
+            )
+            self.assertTrue(
+                has_outputted_stage(
+                    expected_stages=[1, 2, 3, 4],
+                    run_config=run_config,
+                    stage_index=4,
+                )
+            )

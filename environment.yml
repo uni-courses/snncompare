@@ -92,3 +92,5 @@ dependencies:
     #- pipreqs
     # Allow for auto generation of type-hints during runtime.
     - pyannotate
+    # Time function durations.
+    - showme

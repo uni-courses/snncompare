@@ -64,20 +64,20 @@ class Test_get_graph_on_networkx(unittest.TestCase):
 
         # TODO: Generate networkx network.
 
-        verify_networkx_snn_spec(G, t=0, backend="nx")
+        verify_networkx_snn_spec(snn_graph=G, t=0, backend="nx")
 
-        add_lava_neurons_to_networkx_graph(G, t=0)
-        verify_networkx_snn_spec(G, t=0, backend="lava")
+        add_lava_neurons_to_networkx_graph(G=G, t=0)
+        verify_networkx_snn_spec(snn_graph=G, t=0, backend="lava")
 
         # Verify the graph can run on Networkx
-        run_snn_on_networkx({}, G, 2)
+        run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=2)
 
         # Add the recurrent edge.
         G.add_edge(0, 0)
 
         with self.assertRaises(Exception) as context:
             # Verify running on Networkx throws error.
-            run_snn_on_networkx({}, G, 30)
+            run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=30)
 
         self.assertEqual(
             "Not all synapse properties of edge: (0, 0) are specified. It only"
@@ -88,7 +88,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # Verify running on Lava throws error.
             starter_neuron = 0
-            simulate_snn_on_lava(G, starter_neuron, 2)
+            simulate_snn_on_lava(G=G, starter_node_name=starter_neuron, t=2)
 
         print(f"str(context.exception)={str(context.exception)}")
         self.assertEqual(
@@ -133,7 +133,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
 
         # Simulate network for 1 timestep.
         # add_nx_neurons_to_networkx_graph(G)
-        run_snn_on_networkx({}, G, 1)
+        run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=1)
 
         # Assert dynaic properties of neuron 0 at t=1.
         self.assertEqual(G.nodes[0]["nx_lif"][t].u.get(), 0)
@@ -180,7 +180,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         self.assertEqual(G.nodes[1]["nx_lif"][t].v.get(), 0)
 
         # Simulate network for 1 timestep.
-        run_snn_on_networkx({}, G, 1)
+        run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=1)
         # Assert dynamic properties of neuron 0 at t=1.
         self.assertEqual(G.nodes[0]["nx_lif"][t].u.get(), 0)
         self.assertEqual(
@@ -197,7 +197,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         # "for t in range(sim_duration):"  will run it twice with sim_duration=
         # 1, instead of once with sim_duration=2. Inside the simulation, the
         # nr of LIF neurons are verified based on this sim_duration.
-        run_snn_on_networkx({}, G, 2)
+        run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=2)
         # Assert dynamic properties of neuron 0 at t=2.
         self.assertEqual(G.nodes[0]["nx_lif"][t].u.get(), 0)
         self.assertEqual(
@@ -213,7 +213,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         # TODO: assert dynamic properties per timestep.
         G = get_networkx_graph_of_2_neurons()
         run_snn_on_networkx(
-            {}, G, 3
+            run_config={}, snn_graph=G, sim_duration=3
         )  # Reset network again and run for sim_time=3
         # Assert dynamic properties of neuron 0 at t=3.
         self.assertEqual(G.nodes[0]["nx_lif"][t].u.get(), 0)
@@ -269,7 +269,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         self.assertFalse(G.nodes[1]["nx_lif"][t].spikes)
 
         # Simulate network for 1 timestep.
-        run_snn_on_networkx({}, G, 1)
+        run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=1)
 
         self.assertTrue(G.nodes[0]["nx_lif"][t].spikes)
         self.assertFalse(G.nodes[1]["nx_lif"][t].spikes)
@@ -289,7 +289,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         G = get_networkx_graph_of_2_neurons()
         G.add_edge(0, 0, weight=-20.0)
         run_snn_on_networkx(
-            {}, G, 2
+            run_config={}, snn_graph=G, sim_duration=2
         )  # Reset network again and run for sim_time=3
 
         self.assertFalse(G.nodes[0]["nx_lif"][t].spikes)  # self-inhibition.
@@ -314,7 +314,7 @@ class Test_get_graph_on_networkx(unittest.TestCase):
         # TODO: assert dynamic properties per timestep.
         G = get_networkx_graph_of_2_neurons()
         G.add_edge(0, 0, weight=-20.0)
-        run_snn_on_networkx({}, G, 3)
+        run_snn_on_networkx(run_config={}, snn_graph=G, sim_duration=3)
 
         # Assert dynamic properties of neuron 0 at t=3.
         # u[t] = u[t-1] * (1-du) + a_in, a_in=0

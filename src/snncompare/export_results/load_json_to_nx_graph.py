@@ -13,8 +13,8 @@ from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.exp_config.run_config.Supported_run_settings import (
     Supported_run_settings,
 )
+from snncompare.helper import dicts_are_equal, file_exists
 
-from ..helper import dicts_are_equal, file_exists, get_expected_stages
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
     verify_results_safely_check_json_graphs_contain_expected_stages,
@@ -26,6 +26,7 @@ def load_json_to_nx_graph_from_file(
     *,
     run_config: Run_config,
     stage_index: int,
+    expected_stages: List[int],
 ) -> Dict:
     """Assumes a json file with the graphs dict of stage 1 or 2 respectively
     exists, and then loads them back as json dicts.
@@ -35,10 +36,10 @@ def load_json_to_nx_graph_from_file(
     with the exp_config and run_config.
     """
     nx_graphs_dict = {}
-    # Load existing graph dict if it already exists, and if overwrite is off.
-    json_graphs_dict: Dict = load_pre_existing_graph_dict(
-        run_config=run_config, stage_index=stage_index
+    json_graphs_dict: Dict = load_verified_json_graphs_from_json(
+        run_config=run_config, expected_stages=expected_stages
     )
+
     for graph_name, graph in json_graphs_dict.items():
         nx_graph = json_graph.node_link_graph(graph)
         nx_graphs_dict[graph_name] = nx_graph
@@ -49,48 +50,9 @@ def load_json_to_nx_graph_from_file(
     verify_results_nx_graphs_contain_expected_stages(
         results_nx_graphs=results_nx_graphs,
         stage_index=stage_index,
+        expected_stages=expected_stages,
     )
-
     return nx_graphs_dict
-
-
-@typechecked
-def load_pre_existing_graph_dict(
-    *,
-    run_config: Run_config,
-    stage_index: int,
-) -> Dict:
-    """Returns the pre-existing graphs that were generated during earlier
-    stages of the experiment.
-
-    TODO: write tests to verify it returns the
-    correct data.
-    """
-    if stage_index == 1:  # you should always return an empty dict.
-        # TODO: fix.
-        return {}
-    if stage_index == 2:
-
-        if not run_config.recreate_s4:
-            # Load graphs stages 1, 2, 3, 4
-            return load_verified_json_graphs_from_json(
-                run_config=run_config, expected_stages=[1, 2]
-            )
-        return load_verified_json_graphs_from_json(
-            run_config=run_config, expected_stages=[1]
-        )
-    if stage_index == 3:
-        return load_verified_json_graphs_from_json(
-            run_config=run_config, expected_stages=[1, 2, 3]
-        )
-    if stage_index == 4:
-        return load_verified_json_graphs_from_json(
-            run_config=run_config,
-            expected_stages=get_expected_stages(
-                stage_index=stage_index,
-            ),
-        )
-    raise Exception(f"Error, unexpected stage_index:{stage_index}")
 
 
 @typechecked

@@ -3,9 +3,9 @@ setting of the experiment configuration settings.
 
 (The values of the settings may vary, yet the types should be the same.)
 """
-import functools
+
+# import showme
 import timeit
-from decimal import Decimal
 from pprint import pprint
 from typing import Dict, List, Optional
 
@@ -118,7 +118,7 @@ class Experiment_runner:
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
-        duration: float
+
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
 
@@ -138,26 +138,20 @@ class Experiment_runner:
             )
 
             print("Start stage III ", end=" ")
-            duration, _ = timeit.Timer(  # type:ignore[misc]
-                functools.partial(
-                    self.__perform_run_stage_3, results_nx_graphs, run_config
-                )
-            ).timeit(1)
-            print(f"{round( Decimal(round(float(duration), 5)),5)} [s]")
+            self.__perform_run_stage_3(
+                results_nx_graphs=results_nx_graphs, run_config=run_config
+            )
 
             print("Start stage IV  ", end=" ")
-            duration, _ = timeit.Timer(  # type:ignore[misc]
-                functools.partial(
-                    self.__perform_run_stage_4,
-                    results_nx_graphs,
-                )
-            ).timeit(1)
-            print(f"{round(duration,5)} [s]")
+            self.__perform_run_stage_4(
+                results_nx_graphs=results_nx_graphs, run_config=run_config
+            )
             # Store run results in dict of Experiment_runner.
             self.results_nx_graphs: Dict = {
                 run_config.unique_id: results_nx_graphs  # type:ignore[index]
             }
 
+    # @showme.time
     @typechecked
     def __perform_run_stage_1(
         self,
@@ -174,7 +168,9 @@ class Experiment_runner:
 
         # Check if stage 1 is performed. If not, perform it.
         if (
-            not has_outputted_stage(run_config=run_config, stage_index=1)
+            not has_outputted_stage(
+                expected_stages=[1], run_config=run_config, stage_index=1
+            )
             or run_config.recreate_s1
         ):
             # Run first stage of experiment, get input graph.
@@ -197,11 +193,13 @@ class Experiment_runner:
         )
 
         assert_stage_is_completed(
+            expected_stages=[1],
             run_config=run_config,
             stage_index=1,
         )
         return results_nx_graphs
 
+    # @showme.time
     @typechecked
     def __perform_run_stage_2(
         self,
@@ -220,21 +218,21 @@ class Experiment_runner:
         )
 
         if (
-            not has_outputted_stage(run_config=run_config, stage_index=2)
-            or run_config.recreate_s4
-        ):
-
-            # Load results from file.
-            nx_graphs_dict = load_json_to_nx_graph_from_file(
-                run_config=run_config,
-                stage_index=2,
+            not has_outputted_stage(
+                expected_stages=[1, 2], run_config=run_config, stage_index=2
             )
-            results_nx_graphs["graphs_dict"] = nx_graphs_dict
-
-            # TODO: Verify the (incoming (and loaded)) graph types are as
-            # expected.
+            or run_config.recreate_s2
+        ):
+            # Only stage I should be loaded.
+            results_nx_graphs = load_results_stage_1(run_config=run_config)
+            self.equalise_loaded_run_config(
+                loaded_from_json=results_nx_graphs["run_config"],
+                incoming=run_config,
+            )
+            # TODO: remove stage 2 artifacts from loaded data.
 
             # Run simulation on networkx or lava backend.
+            print("PERFORMING SIMULATION.")
             sim_graphs(
                 run_config=run_config,
                 stage_1_graphs=results_nx_graphs["graphs_dict"],
@@ -242,8 +240,20 @@ class Experiment_runner:
             output_files_stage_1_and_2(
                 results_nx_graphs=results_nx_graphs, stage_index=2
             )
+        else:
+            # Load results of stage 1 and 2 from file.
+            nx_graphs_dict = load_json_to_nx_graph_from_file(
+                run_config=run_config,
+                stage_index=2,
+                expected_stages=[1, 2],
+            )
+
+            results_nx_graphs["graphs_dict"] = nx_graphs_dict
+        # TODO: Verify the (incoming (and loaded)) graph types are as
+        # expected.
 
         assert_stage_is_completed(
+            expected_stages=[1, 2],
             run_config=run_config,
             stage_index=2,
         )
@@ -275,6 +285,7 @@ class Experiment_runner:
             )
 
         assert_stage_is_completed(
+            expected_stages=[1, 2],
             run_config=run_config,
             stage_index=3,
         )
@@ -302,6 +313,7 @@ class Experiment_runner:
             )
 
         assert_stage_is_completed(
+            expected_stages=[1, 2, 4],  # TODO: determine if 3 should be in.
             run_config=run_config,
             stage_index=4,
         )
