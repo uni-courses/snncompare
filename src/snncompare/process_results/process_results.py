@@ -29,6 +29,7 @@ from ..import_results.check_completed_stages import (
 
 @typechecked
 def set_results(
+    *,
     run_config: Run_config,
     stage_2_graphs: Dict,
 ) -> bool:
@@ -55,6 +56,7 @@ def set_results(
 
 @typechecked
 def perform_mdsa_results_computation_if_needed(
+    *,
     m_val: int,
     run_config: Run_config,
     stage_2_graphs: Dict,
@@ -67,16 +69,23 @@ def perform_mdsa_results_computation_if_needed(
             or run_config.recreate_s4
         ):
             set_new_results = True
-            set_mdsa_snn_results(m_val, run_config, stage_2_graphs)
+            set_mdsa_snn_results(
+                m_val=m_val,
+                run_config=run_config,
+                stage_2_graphs=stage_2_graphs,
+            )
 
             # Indicate the graphs have completed stage 1.
             for nx_graph in stage_2_graphs.values():
-                add_stage_completion_to_graph(nx_graph, 4)
+                add_stage_completion_to_graph(
+                    input_graph=nx_graph, stage_index=4
+                )
     return set_new_results
 
 
 @typechecked
 def export_results_to_json(
+    *,
     results_nx_graphs: Dict,
     stage_index: int,
 ) -> None:
@@ -90,24 +99,32 @@ def export_results_to_json(
         if graph_name == "snn_algo_graph":
             # stage_4_graphs[graph_name]["results"] =results["snn_algo_result"]
             add_result_to_last_graph(
-                stage_4_graphs[graph_name],
-                results_nx_graphs["graphs_dict"][graph_name].graph["results"],
+                snn_graphs=stage_4_graphs[graph_name],
+                result_per_type=results_nx_graphs["graphs_dict"][
+                    graph_name
+                ].graph["results"],
             )
         elif graph_name == "adapted_snn_graph":
             add_result_to_last_graph(
-                stage_4_graphs[graph_name],
-                results_nx_graphs["graphs_dict"][graph_name].graph["results"],
+                snn_graphs=stage_4_graphs[graph_name],
+                result_per_type=results_nx_graphs["graphs_dict"][
+                    graph_name
+                ].graph["results"],
             )
         elif graph_name == "rad_snn_algo_graph":
             add_result_to_last_graph(
-                stage_4_graphs[graph_name],
-                results_nx_graphs["graphs_dict"][graph_name].graph["results"],
+                snn_graphs=stage_4_graphs[graph_name],
+                result_per_type=results_nx_graphs["graphs_dict"][
+                    graph_name
+                ].graph["results"],
             )
         elif graph_name == "rad_adapted_snn_graph":
 
             add_result_to_last_graph(
-                stage_4_graphs[graph_name],
-                results_nx_graphs["graphs_dict"][graph_name].graph["results"],
+                snn_graphs=stage_4_graphs[graph_name],
+                result_per_type=results_nx_graphs["graphs_dict"][
+                    graph_name
+                ].graph["results"],
             )
 
     # overwrite nx_graphs with stage_4_graphs
@@ -115,25 +132,29 @@ def export_results_to_json(
 
     # Verify the results_nx_graphs are valid.
     nx_graphs_have_completed_stage(
-        results_nx_graphs["run_config"], results_nx_graphs, 4
+        run_config=results_nx_graphs["run_config"],
+        results_nx_graphs=results_nx_graphs,
+        stage_index=4,
     )
 
     # Export graphs with embedded results to json.
     for graph_name, nx_graph in stage_4_graphs.items():
         verify_nx_graph_contains_correct_stages(
-            graph_name,
-            nx_graph,
-            get_expected_stages(
+            graph_name=graph_name,
+            nx_graph=nx_graph,
+            expected_stages=get_expected_stages(
                 stage_index=stage_index,
             ),
         )
 
-    output_stage_files_3_and_4(results_nx_graphs, 4)
+    output_stage_files_3_and_4(
+        results_nx_graphs=results_nx_graphs, stage_index=4
+    )
 
 
 @typechecked
 def add_result_to_last_graph(
-    snn_graphs: nx.DiGraph, result_per_type: Dict
+    *, snn_graphs: nx.DiGraph, result_per_type: Dict
 ) -> None:
     """Checks whether the incoming snn_graph is a list of graphs or single
     graph.

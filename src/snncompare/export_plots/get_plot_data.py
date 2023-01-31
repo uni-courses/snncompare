@@ -19,6 +19,7 @@ from snncompare.export_plots.Plot_to_tex import Plot_to_tex
 # pylint: disable=R0914
 @typechecked
 def plot_coordinated_graph(
+    *,
     extensions: List[str],
     desired_properties: Union[List, None],
     G: Union[nx.Graph, nx.DiGraph],
@@ -47,12 +48,12 @@ def plot_coordinated_graph(
     if desired_properties is None:
         desired_properties = []
 
-    color_map, spiking_edges = set_nx_node_colours(G, t)
-    edge_color_map = set_edge_colours(G, spiking_edges)
-    set_node_positions(G, t)
+    color_map, spiking_edges = set_nx_node_colours(G=G, t=t)
+    edge_color_map = set_edge_colours(G=G, spiking_edges=spiking_edges)
+    set_node_positions(snn_graph=G, t=t)
 
     # Width=edge width.
-    width, height = get_width_and_height(G, t)
+    width, height = get_width_and_height(snn_graph=G, t=t)
     # TODO: limit to max filesize
     plt.figure(3, figsize=(width / 20, height / 20), dpi=100)
     nx.draw(
@@ -77,7 +78,12 @@ def plot_coordinated_graph(
         for (node, (x, y)) in nx.get_node_attributes(G, "pos").items()
     }
 
-    get_edge_labels(label_fontsize, node_labels_dict, G, node_pos)
+    get_edge_labels(
+        label_fontsize=label_fontsize,
+        node_labels_dict=node_labels_dict,
+        snn_graph=G,
+        pos=node_pos,
+    )
 
     # plt.axis("off")
     plt.axis("on")
@@ -96,23 +102,27 @@ def plot_coordinated_graph(
         plt.suptitle(title, fontsize=14)
 
     add_neuron_properties_to_plot(
-        axis,
-        desired_properties,
-        G,
-        node_props_fontsize,
-        node_labels_list,
-        node_pos,
-        t,
+        axis=axis,
+        desired_properties=desired_properties,
+        G=G,
+        node_props_fontsize=node_props_fontsize,
+        node_names=node_labels_list,
+        pos=node_pos,
+        t=t,
     )
 
     if show:
         plt.show()
 
     plot_export = Plot_to_tex()
-    plot_export.export_plot(plt, filename, extensions=extensions)
+    plot_export.export_plot(
+        some_plt=plt, filename=filename, extensions=extensions
+    )
 
     if zoom:
-        create_target_dir_if_not_exists("latex/Images/", "graphs/zoom")
+        create_target_dir_if_not_exists(
+            path="latex/Images/", new_dir_name="graphs/zoom"
+        )
         if "png" in extensions:
             copy_region_of_img(
                 src_path="latex/Images/" + "graphs/" + filename + ".png",
@@ -128,6 +138,7 @@ def plot_coordinated_graph(
 
 @typechecked
 def get_edge_labels(
+    *,
     label_fontsize: int,
     node_labels_dict: Dict,
     snn_graph: nx.DiGraph,
@@ -156,56 +167,56 @@ def get_edge_labels(
 
 
 @typechecked
-def set_node_positions(snn_graph: nx.DiGraph, t: int) -> None:
+def set_node_positions(*, snn_graph: nx.DiGraph, t: int) -> None:
     """Sets the positions of the nodes of the snn graph."""
     # TODO: include backend check.
-    for nodename in snn_graph.nodes:
-        snn_graph.nodes[nodename]["pos"] = snn_graph.nodes[nodename]["nx_lif"][
-            t
-        ].pos
+    for node_name in snn_graph.nodes:
+        snn_graph.nodes[node_name]["pos"] = snn_graph.nodes[node_name][
+            "nx_lif"
+        ][t].pos
 
 
 @typechecked
 def get_annotation_text(
-    desired_properties: List[str], G: nx.Graph, nodename: str, t: int
+    *, desired_properties: List[str], G: nx.Graph, node_name: str, t: int
 ) -> str:
     """Returns a string with the annotation text.
 
     :param desired_properties:
     :param G: The original graph on which the MDSA algorithm is ran.
-    :param nodename: Node of the name of a networkx graph.
+    :param node_name: Node of the name of a networkx graph.
     """
-    if nodename[:4] == "r_{red_level}_":
+    if node_name[:4] == "r_{red_level}_":
         return ""
     annotation = ""
     if "bias" in desired_properties:
         annotation = (
-            annotation + f'bias={G.nodes[nodename]["nx_lif"][t].bias.get()}\n'
+            annotation + f'bias={G.nodes[node_name]["nx_lif"][t].bias.get()}\n'
         )
     if "du" in desired_properties:
         annotation = (
-            annotation + f'du={G.nodes[nodename]["nx_lif"][t].du.get()}\n'
+            annotation + f'du={G.nodes[node_name]["nx_lif"][t].du.get()}\n'
         )
     if "dv" in desired_properties:
         annotation = (
-            annotation + f'dv={G.nodes[nodename]["nx_lif"][t].dv.get()}\n'
+            annotation + f'dv={G.nodes[node_name]["nx_lif"][t].dv.get()}\n'
         )
     if "u" in desired_properties:
         annotation = (
-            annotation + f'u={G.nodes[nodename]["nx_lif"][t].u.get()}\n'
+            annotation + f'u={G.nodes[node_name]["nx_lif"][t].u.get()}\n'
         )
     if "v" in desired_properties:
         annotation = (
-            annotation + f'v={G.nodes[nodename]["nx_lif"][t].v.get()}\n'
+            annotation + f'v={G.nodes[node_name]["nx_lif"][t].v.get()}\n'
         )
     if "vth" in desired_properties:
         annotation = (
-            annotation + f'vth={G.nodes[nodename]["nx_lif"][t].vth.get()}\n'
+            annotation + f'vth={G.nodes[node_name]["nx_lif"][t].vth.get()}\n'
         )
     if "a_in_next" in desired_properties:
         annotation = (
             annotation
-            + f'a_in_next={G.nodes[nodename]["nx_lif"][t].a_in_next}\n'
+            + f'a_in_next={G.nodes[node_name]["nx_lif"][t].a_in_next}\n'
         )
 
     return annotation
@@ -214,11 +225,12 @@ def get_annotation_text(
 # pylint: disable=R0913
 @typechecked
 def add_neuron_properties_to_plot(
+    *,
     axis: matplotlib.axes._axes.Axes,
     desired_properties: List,
     G: nx.DiGraph,
     node_props_fontsize: int,
-    nodenames: List[str],
+    node_names: List[str],
     pos: Dict[str, Tuple[float, float]],
     t: int,
 ) -> None:
@@ -228,26 +240,29 @@ def add_neuron_properties_to_plot(
     :param axis:
     :param desired_properties:
     :param G: The original graph on which the MDSA algorithm is ran.
-    :param nodenames:
+    :param node_names:
     :param pos:
     """
-    for nodename in nodenames:
+    for node_name in node_names:
 
         # Shift the x-coordinates of the redundant neurons to right for
         # readability.
-        if nodename[:3] == "red":
+        if node_name[:3] == "red":
             shift_right = 0.15
         else:
             shift_right = 0
 
         annotation_text = get_annotation_text(
-            desired_properties, G, nodename, t
+            desired_properties=desired_properties,
+            G=G,
+            node_name=node_name,
+            t=t,
         )
 
         # Include text in plot.
         axis.text(
-            pos[nodename][0] + shift_right,
-            pos[nodename][1],
+            pos[node_name][0] + shift_right,
+            pos[node_name][1],
             annotation_text,
             transform=axis.transData,
             fontsize=node_props_fontsize,
@@ -255,7 +270,7 @@ def add_neuron_properties_to_plot(
 
 
 @typechecked
-def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
+def set_nx_node_colours(*, G: nx.DiGraph, t: int) -> Tuple[List, List]:
     """Returns a list of node colours in order of G.nodes."""
     color_map = []
     spiking_edges = []
@@ -276,7 +291,9 @@ def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
                 for neighbour in nx.all_neighbors(G, node_name):
                     spiking_edges.append((node_name, neighbour))
             if node_name not in colour_dict:
-                set_node_colours_with_redundancy(colour_dict, node_name)
+                set_node_colours_with_redundancy(
+                    colour_dict=colour_dict, node_name=node_name
+                )
         else:
             colour_dict[node_name] = (0, 0, 0, 1)
     for node_name in G.nodes:
@@ -286,7 +303,7 @@ def set_nx_node_colours(G: nx.DiGraph, t: int) -> Tuple[List, List]:
 
 @typechecked
 def set_node_colours_with_redundancy(
-    colour_dict: Dict, node_name: str
+    *, colour_dict: Dict, node_name: str
 ) -> None:
     """Sets the colour of the redundant node different than the original
     node."""
@@ -299,7 +316,7 @@ def set_node_colours_with_redundancy(
 
 
 @typechecked
-def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
+def set_edge_colours(*, G: nx.DiGraph, spiking_edges: List) -> List:
     """Some documentation.
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -316,7 +333,7 @@ def set_edge_colours(G: nx.DiGraph, spiking_edges: List) -> List:
 
 
 @typechecked
-def get_labels(G: nx.DiGraph, current: bool = True) -> Dict:
+def get_labels(*, G: nx.DiGraph, current: bool = True) -> Dict:
     """Some documentation.
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -347,7 +364,7 @@ def get_labels(G: nx.DiGraph, current: bool = True) -> Dict:
 
 
 @typechecked
-def get_width_and_height(snn_graph: nx.DiGraph, t: int) -> List[float]:
+def get_width_and_height(*, snn_graph: nx.DiGraph, t: int) -> List[float]:
     """Finds the most left and most right positions of the nodes and computes
     the width.
 
@@ -355,8 +372,8 @@ def get_width_and_height(snn_graph: nx.DiGraph, t: int) -> List[float]:
     height. Then returns width, height.
     """
     xys = []
-    for nodename in snn_graph.nodes:
-        xys.append(snn_graph.nodes[nodename]["nx_lif"][t].pos)
+    for node_name in snn_graph.nodes:
+        xys.append(snn_graph.nodes[node_name]["nx_lif"][t].pos)
 
     xmin = min(list(map(lambda xy: xy[0], xys)))
     xmax = max(list(map(lambda xy: xy[0], xys)))

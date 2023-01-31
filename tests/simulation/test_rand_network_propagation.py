@@ -58,10 +58,10 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                         # Only generate graphs that have at least 1 edge.
                         if math.floor(size * density) > 1:
                             G = gnp_random_connected_graph(
-                                density,
-                                recurrent_density,
-                                size,
-                                self.test_scope,
+                                density=density,
+                                recurrent_density=recurrent_density,
+                                size=size,
+                                test_scope=self.test_scope,
                             )
                             # pylint: disable=R0801
                             # For clarity of what is tested is is considered
@@ -84,27 +84,35 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             # Assert each edge has a weight.
                             for edge in G.edges:
                                 assert_synaptic_edgeweight_type_is_correct(
-                                    G, edge
+                                    G=G, edge=edge
                                 )
 
                             # Assert no duplicate edges exist.
-                            assert_no_duplicate_edges_exist(G)
+                            assert_no_duplicate_edges_exist(G=G)
 
                             # Assert all neuron properties are specified.
-                            verify_networkx_snn_spec(G, t=0, backend="nx")
+                            verify_networkx_snn_spec(
+                                snn_graph=G, t=0, backend="nx"
+                            )
 
                             # TODO: Generate networkx network.
 
                             # Generate lava network.
-                            add_lava_neurons_to_networkx_graph(G, t=0)
-                            verify_networkx_snn_spec(G, t=0, backend="lava")
+                            add_lava_neurons_to_networkx_graph(G=G, t=0)
+                            verify_networkx_snn_spec(
+                                snn_graph=G, t=0, backend="lava"
+                            )
 
                             # Verify the simulations produce identical static
                             # neuron properties.
                             print("")
-                            compare_static_snn_properties(self, G)
+                            compare_static_snn_properties(
+                                test_object=self, G=G
+                            )
 
-                            print_neuron_properties_per_graph(G, True, t=0)
+                            print_neuron_properties_per_graph(
+                                G=G, static=True, t=0
+                            )
 
                             # TODO: determine why you can't make a deep copy
                             # of this graph. Probably because it runs Lava

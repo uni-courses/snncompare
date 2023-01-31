@@ -40,8 +40,8 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         for exp_config in self.exp_config_list:
             exp_config.export_images = False
             verify_exp_config(
-                Supported_experiment_settings(),
-                exp_config,
+                supp_exp_config=Supported_experiment_settings(),
+                exp_config=exp_config,
                 has_unique_id=False,
                 allow_optional=True,
             )
@@ -67,7 +67,7 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         # Verify the run configs are all different, (exclude the unique_id from
         # the comparison.)
         for index, exp_config in enumerate(self.exp_config_list):
-            append_unique_exp_config_id(exp_config)
+            append_unique_exp_config_id(exp_config=exp_config)
             if index == 0:
                 self.assertEqual(
                     exp_config.unique_id,
@@ -94,7 +94,9 @@ def get_config_one() -> Dict:
         "adaptations": None,
         # TODO: set using a verification setting.
         "algorithms": {
-            "MDSA": get_algo_configs(MDSA(list(range(1, 2, 1))).__dict__)
+            "MDSA": get_algo_configs(
+                algo_spec=MDSA(list(range(1, 2, 1))).__dict__
+            )
         },
         "seeds": list(range(7, 8, 1)),
         # TODO: Change into list with "Seeds"
@@ -121,8 +123,8 @@ def get_config_one() -> Dict:
     }
 
     verify_exp_config(
-        Supported_experiment_settings(),
-        mdsa_creation_only_size_3_4,
+        supp_exp_config=Supported_experiment_settings(),
+        exp_config=mdsa_creation_only_size_3_4,
         has_unique_id=False,
         allow_optional=True,
     )
@@ -135,7 +137,7 @@ def get_config_two() -> Dict:
         long_exp_config_for_mdsa_testing()
     )
     mdsa_creation_only_size_7_m_4.algorithms = {
-        "MDSA": get_algo_configs(MDSA(list(range(4, 5, 1))).__dict__)
+        "MDSA": get_algo_configs(algo_spec=MDSA(list(range(4, 5, 1))).__dict__)
     }
     mdsa_creation_only_size_7_m_4.size_and_max_graphs = [(5, 1)]
     return mdsa_creation_only_size_7_m_4

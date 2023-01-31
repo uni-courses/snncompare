@@ -12,7 +12,7 @@ from .Output import output_stage_json, plot_graph_behaviours
 
 @typechecked
 def output_stage_files_3_and_4(
-    results_nx_graphs: Dict, stage_index: int
+    *, results_nx_graphs: Dict, stage_index: int
 ) -> None:
     """Merges the experiment configuration Dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
@@ -42,21 +42,25 @@ def output_stage_files_3_and_4(
     # TODO: merge experiment config, results_nx_graphs['run_config'] into
     # single dict.
     if results_nx_graphs["run_config"].simulator == "nx":
-        filename = run_config_to_filename(results_nx_graphs["run_config"])
+        filename = run_config_to_filename(
+            run_config=results_nx_graphs["run_config"]
+        )
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
         # TODO: Distinguish between showing snns and outputting snns.
         if results_nx_graphs["run_config"].export_images and stage_index == 3:
             # Output graph behaviour for stage stage_index.
             plot_graph_behaviours(
-                filename,
-                results_nx_graphs["graphs_dict"],
-                results_nx_graphs["run_config"],
+                filepath=filename,
+                stage_2_graphs=results_nx_graphs["graphs_dict"],
+                run_config=results_nx_graphs["run_config"],
             )
 
-            create_gif_of_run_config(results_nx_graphs)
+            create_gif_of_run_config(results_nx_graphs=results_nx_graphs)
             for nx_graph in results_nx_graphs["graphs_dict"].values():
-                add_stage_completion_to_graph(nx_graph, 3)
+                add_stage_completion_to_graph(
+                    input_graph=nx_graph, stage_index=3
+                )
 
         if (
             # results_nx_graphs["run_config"].export_images or
@@ -65,9 +69,9 @@ def output_stage_files_3_and_4(
         ):
             # Output the json dictionary of the files.
             output_stage_json(
-                results_nx_graphs,
-                filename,
-                stage_index,
+                results_nx_graphs=results_nx_graphs,
+                filename=filename,
+                stage_index=stage_index,
             )
 
     elif results_nx_graphs["run_config"].simulator == "lava":

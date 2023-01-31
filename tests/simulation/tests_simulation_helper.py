@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 @typechecked
 def get_graph_for_cyclic_propagation(
+    *,
     test_scope: Long_scope_of_tests,
 ) -> DiGraph:
     """Returns the graph for the test:
@@ -21,10 +22,10 @@ def get_graph_for_cyclic_propagation(
     test_random_networks_are_propagated_the_same_on_networkx_and_lava
     """
     G = get_cyclic_graph_without_directed_path()
-    set_rand_neuron_properties(G, test_scope)
+    set_rand_neuron_properties(G=G, test_scope=test_scope)
 
     # TODO: Generate networkx network.
 
     # Generate lava network.
-    add_lava_neurons_to_networkx_graph(G, t=0)
+    add_lava_neurons_to_networkx_graph(G=G, t=0)
     return G

@@ -86,7 +86,11 @@ class Stage_1_graphs:
         self.exp_config = exp_config
         self.run_config = run_config
         self.stage_1_graphs: Dict = stage_1_graphs
-        verify_stage_1_graphs(exp_config, run_config, self.stage_1_graphs)
+        verify_stage_1_graphs(
+            exp_config=exp_config,
+            run_config=run_config,
+            graphs=self.stage_1_graphs,
+        )
         # G_original
         # G_SNN_input
         # G_SNN_adapted
@@ -108,7 +112,11 @@ class Stage_2_graphs:
         self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_2 = graphs_stage_2
-        verify_stage_2_graphs(exp_config, run_config, self.graphs_stage_2)
+        verify_stage_2_graphs(
+            exp_config=exp_config,
+            run_config=run_config,
+            graphs=self.graphs_stage_2,
+        )
 
 
 # pylint: disable=R0903
@@ -125,7 +133,11 @@ class Stage_3_graphs:
         self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_3 = graphs_stage_3
-        verify_stage_3_graphs(exp_config, run_config, self.graphs_stage_3)
+        verify_stage_3_graphs(
+            exp_config=exp_config,
+            run_config=run_config,
+            graphs_stage_3=self.graphs_stage_3,
+        )
 
 
 # pylint: disable=R0903
@@ -143,12 +155,16 @@ class Stage_4_graphs:
         self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_4 = graphs_stage_4
-        verify_stage_4_graphs(exp_config, run_config, self.graphs_stage_4)
+        verify_stage_4_graphs(
+            exp_config=exp_config,
+            run_config=run_config,
+            graphs_stage_4=self.graphs_stage_4,
+        )
 
 
 @typechecked
 def output_stage_json(
-    results_nx_graphs: Dict, filename: str, stage_index: int
+    *, results_nx_graphs: Dict, filename: str, stage_index: int
 ) -> None:
     """Exports results dict to a json file."""
 
@@ -158,20 +174,24 @@ def output_stage_json(
             + f"{stage_index} was an empty dict."
         )
     verify_results_nx_graphs(
-        results_nx_graphs, results_nx_graphs["run_config"]
+        results_nx_graphs=results_nx_graphs,
+        run_config=results_nx_graphs["run_config"],
     )
     print(f"stage_index={stage_index}")
     verify_results_nx_graphs_contain_expected_stages(
-        results_nx_graphs, stage_index
+        results_nx_graphs=results_nx_graphs, stage_index=stage_index
     )
 
     results_json_graphs = convert_digraphs_to_json(
-        results_nx_graphs, stage_index
+        results_nx_graphs=results_nx_graphs, stage_index=stage_index
     )
 
     # TODO: Optional: ensure output files exists.
     output_filepath = f"results/{filename}.json"
-    write_dict_to_json(output_filepath, jsons.dump(results_json_graphs))
+    write_dict_to_json(
+        output_filepath=output_filepath,
+        some_dict=jsons.dump(results_json_graphs),
+    )
 
     # Ensure output file exists.
     if not pathlib.Path(pathlib.Path(output_filepath)).resolve().is_file():
@@ -186,6 +206,7 @@ def output_stage_json(
 
 @typechecked
 def plot_graph_behaviours(
+    *,
     filepath: str,
     stage_2_graphs: Dict,
     run_config: Run_config,
@@ -225,7 +246,9 @@ def plot_graph_behaviours(
                 )
         else:
             plot_uncoordinated_graph(
-                snn_graph, f"results/{graph_name}_{filepath}.png", show=False
+                G=snn_graph,
+                filepath=f"results/{graph_name}_{filepath}.png",
+                show=False,
             )
 
 
@@ -233,7 +256,7 @@ def plot_graph_behaviours(
 # pylint: disable=R0915
 @typechecked
 def create_custom_plot_titles(
-    graph_name: str, t: int, seed: int
+    *, graph_name: str, t: int, seed: int
 ) -> Optional[str]:
     """Creates custom titles for the SNN graphs for seed = 42."""
     # TODO: update to specify specific run_config instead of seed, to ensure

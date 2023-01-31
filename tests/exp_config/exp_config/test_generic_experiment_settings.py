@@ -56,8 +56,8 @@ class Test_generic_configuration_settings(unittest.TestCase):
         """Verifies a valid configuration settings object and object type is
         returned."""
         verify_exp_config(
-            supp_exp_config,
-            with_adaptation_with_radiation,
+            supp_exp_config=supp_exp_config,
+            exp_config=with_adaptation_with_radiation,
             has_unique_id=False,
             allow_optional=False,
         )
@@ -75,8 +75,8 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # Configuration Settings of type None throw error.
             verify_exp_config(
-                supp_exp_config,
-                None,
+                supp_exp_config=supp_exp_config,
+                exp_config=None,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -99,8 +99,8 @@ class Test_generic_configuration_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # iterations dictionary of type None throws error.
             verify_exp_config(
-                supp_exp_config,
-                "string_instead_of_dict",
+                supp_exp_config=supp_exp_config,
+                exp_config="string_instead_of_dict",
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -115,6 +115,7 @@ class Test_generic_configuration_settings(unittest.TestCase):
 # pylint: disable=R0913
 @typechecked
 def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
+    *,
     invalid_config_setting_value: Optional[str],
     exp_config: Exp_config,
     expected_type: type,
@@ -141,8 +142,8 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
         )
     with test_object.assertRaises(Exception) as context:
         verify_exp_config(
-            test_object.supp_exp_config,
-            exp_config,
+            supp_exp_config=test_object.supp_exp_config,
+            exp_config=exp_config,
             has_unique_id=False,
             allow_optional=False,
         )

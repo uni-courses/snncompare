@@ -55,10 +55,10 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                 # Only generate graphs that have at least 1 edge.
                 if math.floor(size * density) > 1:
                     G = gnp_random_connected_graph(
-                        density,
-                        recurrent_edge_density,
-                        size,
-                        self.test_scope,
+                        density=density,
+                        recurrent_density=recurrent_edge_density,
+                        size=size,
+                        test_scope=self.test_scope,
                     )
 
                     # Assert graph is connected.
@@ -76,13 +76,15 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
 
                     # Assert each edge has a weight.
                     for edge in G.edges:
-                        assert_synaptic_edgeweight_type_is_correct(G, edge)
+                        assert_synaptic_edgeweight_type_is_correct(
+                            G=G, edge=edge
+                        )
 
                     # Assert no duplicate edges exist.
-                    assert_no_duplicate_edges_exist(G)
+                    assert_no_duplicate_edges_exist(G=G)
 
                     # Assert all neuron properties are specified.
-                    verify_networkx_snn_spec(G, t=0, backend="nx")
+                    verify_networkx_snn_spec(snn_graph=G, t=0, backend="nx")
 
     @typechecked
     def test_generates_valid_snn_networks_with_recursive_edges(self) -> None:
@@ -107,10 +109,10 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                 # Only generate graphs that have at least 1 edge.
                 if math.floor(size * density) > 1:
                     G = gnp_random_connected_graph(
-                        density,
-                        recurrent_edge_density,
-                        size,
-                        self.test_scope,
+                        density=density,
+                        recurrent_density=recurrent_edge_density,
+                        size=size,
+                        test_scope=self.test_scope,
                     )
 
                     # Assert graph is connected.
@@ -129,13 +131,15 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
 
                     # Assert each edge has a weight.
                     for edge in G.edges:
-                        assert_synaptic_edgeweight_type_is_correct(G, edge)
+                        assert_synaptic_edgeweight_type_is_correct(
+                            G=G, edge=edge
+                        )
 
                     # Assert no duplicate edges exist.
-                    assert_no_duplicate_edges_exist(G)
+                    assert_no_duplicate_edges_exist(G=G)
 
                     # Assert all neuron properties are specified.
-                    verify_networkx_snn_spec(G, t=0, backend="nx")
+                    verify_networkx_snn_spec(snn_graph=G, t=0, backend="nx")
 
 
 # Assert number of edges without recurrent edges.

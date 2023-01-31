@@ -50,8 +50,8 @@ class Test_adaptation_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
-                self.supp_exp_config,
-                exp_config,
+                supp_exp_config=self.supp_exp_config,
+                exp_config=exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -76,7 +76,9 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # Adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config, None, "adaptations"
+                supp_exp_config=self.supp_exp_config,
+                some_dict=None,
+                check_type="adaptations",
             )
 
         self.assertEqual(
@@ -98,9 +100,9 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config,
-                "string_instead_of_dict",
-                "adaptations",
+                supp_exp_config=self.supp_exp_config,
+                some_dict="string_instead_of_dict",
+                check_type="adaptations",
             )
 
         self.assertEqual(
@@ -118,7 +120,9 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config, {}, "adaptations"
+                supp_exp_config=self.supp_exp_config,
+                some_dict={},
+                check_type="adaptations",
             )
 
         self.assertEqual(
@@ -135,9 +139,9 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config,
-                self.invalid_adaptation_key,
-                "adaptations",
+                supp_exp_config=self.supp_exp_config,
+                some_dict=self.invalid_adaptation_key,
+                check_type="adaptations",
             )
 
         self.assertEqual(
@@ -158,9 +162,9 @@ class Test_adaptation_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # adaptation dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config,
-                self.invalid_adaptation_value,
-                "adaptations",
+                supp_exp_config=self.supp_exp_config,
+                some_dict=self.invalid_adaptation_value,
+                check_type="adaptations",
             )
 
         self.assertEqual(

@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Dict
 
 from typeguard import typechecked
 
-from snncompare.exp_config.Exp_config import verify_integer_settings
 from snncompare.exp_config.run_config.Run_config import Run_config
 
 # pylint: disable=R0801
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
 
 # pylint: disable=W0613
 def verify_run_config(
+    *,
     supp_run_setts: Supported_run_settings,
     run_config: Run_config,
     has_unique_id: bool,
@@ -43,15 +43,20 @@ def verify_run_config(
             + " type dict."
         )
 
-    verify_run_config_dict_is_complete(supp_run_setts, run_config)
+    verify_run_config_dict_is_complete(
+        supp_run_setts=supp_run_setts, run_config=run_config
+    )
 
     # Verify no unknown configuration settings are presented.
     verify_run_config_dict_contains_only_valid_entries(
-        supp_run_setts, run_config, has_unique_id, allow_optional
+        supp_run_setts=supp_run_setts,
+        run_config=run_config,
+        has_unique_id=has_unique_id,
+        allow_optional=allow_optional,
     )
 
     # TODO: verify a single algorithm is evaluated in a single run.
-    verify_integer_settings(run_config.algorithm["MDSA"]["m_val"])
+
     # TODO: verify radiation setting for single run.
 
     # TODO: test unique id type
@@ -59,6 +64,7 @@ def verify_run_config(
 
 
 def verify_run_config_dict_is_complete(
+    *,
     supp_run_setts: Supported_run_settings,
     run_config: Run_config,
 ) -> None:
@@ -76,6 +82,7 @@ def verify_run_config_dict_is_complete(
 
 
 def verify_run_config_dict_contains_only_valid_entries(
+    *,
     supp_run_setts: Supported_run_settings,
     run_config: Run_config,
     has_unique_id: bool,
@@ -105,6 +112,7 @@ def verify_run_config_dict_contains_only_valid_entries(
 
 @typechecked
 def verify_has_unique_id(
+    *,
     some_dict: dict,
 ) -> None:
     """Verifies the config setting has a unique id.

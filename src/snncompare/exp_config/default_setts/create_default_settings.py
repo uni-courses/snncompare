@@ -31,15 +31,18 @@ def create_default_graph_json() -> None:
     default_nx_graph: nx.Graph = used_graphs.five[0]
 
     # Convert nx.DiGraph to dict.
-    default_json_graph = digraph_to_json(default_nx_graph)
+    default_json_graph = digraph_to_json(G=default_nx_graph)
 
     graphs_json_filepath = (
         "src/snncompare/exp_config/default_setts/default_graph_MDSA.json"
     )
-    write_dict_to_json(graphs_json_filepath, jsons.dump(default_json_graph))
+    write_dict_to_json(
+        output_filepath=graphs_json_filepath,
+        some_dict=jsons.dump(default_json_graph),
+    )
 
     # Verify file exists and that it has a valid content.
-    verify_input_graph_path(graphs_json_filepath)
+    verify_input_graph_path(graph_path=graphs_json_filepath)
 
     # Verify file content.
 
@@ -57,14 +60,20 @@ def default_exp_config() -> Exp_config:
     with_adaptation_with_radiation: Dict = {
         # TODO: set using a verification setting.
         "algorithms": {
-            "MDSA": get_algo_configs(MDSA(list(range(0, 1, 1))).__dict__)
+            "MDSA": get_algo_configs(
+                algo_spec=MDSA(list(range(0, 1, 1))).__dict__
+            )
         },
         # TODO: pass algo to see if it is compatible with the algorithm.
         "adaptations": verify_adap_and_rad_settings(
-            supp_exp_config, adap_sets.with_adaptation, "adaptations"
+            supp_exp_config=supp_exp_config,
+            some_dict=adap_sets.with_adaptation,
+            check_type="adaptations",
         ),
         "radiations": verify_adap_and_rad_settings(
-            supp_exp_config, rad_sets.with_radiation, "radiations"
+            supp_exp_config=supp_exp_config,
+            some_dict=rad_sets.with_radiation,
+            check_type="radiations",
         ),
         # "iterations": list(range(0, 3, 1)),
         "iterations": list(range(0, 1, 1)),

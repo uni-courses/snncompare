@@ -25,6 +25,7 @@ from ..graph_generation.stage_1_get_input_graphs import (
 
 @typechecked
 def verify_stage_1_graphs(
+    *,
     exp_config: Exp_config,
     run_config: Run_config,
     graphs: Dict,
@@ -37,13 +38,14 @@ def verify_stage_1_graphs(
     # TODO: Verify run_config is valid "subset" of experiment config.
 
     # Verify the graphs that are required for the run_config are generated.
-    assert_graphs_are_in_dict(run_config, graphs, 1)
+    assert_graphs_are_in_dict(run_config=run_config, graphs=graphs, stage=1)
 
     # TODO: verify the properties required by the run config are in the graphs.
 
 
 @typechecked
 def get_expected_stage_1_graph_names(
+    *,
     run_config: Run_config,
 ) -> List[str]:
     """Parses the run config and returns a list with the graph names that are
@@ -51,18 +53,19 @@ def get_expected_stage_1_graph_names(
 
     # TODO: make into hash
     expected_graph_names = ["input_graph", "snn_algo_graph"]
-    if has_adaptation(run_config):
+    if has_adaptation(run_config=run_config):
         expected_graph_names.append("adapted_snn_graph")
 
-    if has_radiation(run_config):
+    if has_radiation(run_config=run_config):
         expected_graph_names.append("rad_snn_algo_graph")
-        if has_adaptation(run_config):
+        if has_adaptation(run_config=run_config):
             expected_graph_names.append("rad_adapted_snn_graph")
     return expected_graph_names
 
 
 @typechecked
 def expected_graphs_are_in_dict(
+    *,
     run_config: Run_config,
     graphs: Dict,
     stage: int,
@@ -72,7 +75,9 @@ def expected_graphs_are_in_dict(
 
     if stage == 1:
         # Compute which graphs are expected, based on run config.
-        expected_graphs = get_expected_stage_1_graph_names(run_config)
+        expected_graphs = get_expected_stage_1_graph_names(
+            run_config=run_config
+        )
     else:
         # TODO: implement.
         raise Exception(f"Stage {stage} not yet implemented.")
@@ -85,11 +90,14 @@ def expected_graphs_are_in_dict(
 
 @typechecked
 def assert_graphs_are_in_dict(
+    *,
     run_config: Run_config,
     graphs: Dict,
     stage: int,
 ) -> None:
     """Throws error if the not all the expected graphs are in the list of
     graphs."""
-    if not expected_graphs_are_in_dict(run_config, graphs, stage):
+    if not expected_graphs_are_in_dict(
+        run_config=run_config, graphs=graphs, stage=stage
+    ):
         raise Exception(f"Error, graph is missing:{graphs},stage:{stage}")

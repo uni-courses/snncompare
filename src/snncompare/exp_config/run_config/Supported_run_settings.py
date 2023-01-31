@@ -75,8 +75,8 @@ class Supported_run_settings:
             )
 
         verify_run_config(
-            self,
-            run_config,
+            supp_run_setts=self,
+            run_config=run_config,
             has_unique_id=False,
             allow_optional=allow_optional,
         )
@@ -92,8 +92,8 @@ class Supported_run_settings:
         )
         run_config.unique_id = unique_id
         verify_run_config(
-            self,
-            run_config,
+            supp_run_setts=self,
+            run_config=run_config,
             has_unique_id=True,
             allow_optional=allow_optional,
         )
@@ -111,8 +111,8 @@ class Supported_run_settings:
         for key in optional_keys:
             setattr(copied_run_config, key, None)
         verify_run_config(
-            self,
-            copied_run_config,
+            supp_run_setts=self,
+            run_config=copied_run_config,
             has_unique_id=False,
             allow_optional=False,
         )

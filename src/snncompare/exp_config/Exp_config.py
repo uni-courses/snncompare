@@ -90,6 +90,7 @@ class Exp_config:
 
 @typechecked
 def remove_optional_args_exp_config(
+    *,
     supported_experiment_settings: Supported_experiment_settings,
     copied_exp_config: Exp_config,
 ) -> Exp_config:
@@ -136,14 +137,13 @@ class Supported_experiment_settings:
         mdsa_min = MDSA([]).min_m_vals
         mdsa_max = MDSA([]).max_m_vals
         self.algorithms = get_algo_configs(
-            MDSA(list(range(mdsa_min, mdsa_max, 1))).__dict__
+            algo_spec=MDSA(list(range(mdsa_min, mdsa_max, 1))).__dict__
         )
 
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
         self.min_max_graphs = 1
         self.max_max_graphs = 15
-        # verify_min_max(self.min_max_graphs, self.max_max_graphs)
 
         # Specify the maximum graph size.
         self.min_graph_size = 3
@@ -271,6 +271,7 @@ class Supported_experiment_settings:
 
 @typechecked
 def append_unique_exp_config_id(
+    *,
     exp_config: Exp_config,
 ) -> Exp_config:
     """Checks if an experiment configuration dictionary already has a unique
@@ -307,6 +308,7 @@ def append_unique_exp_config_id(
 # pylint: disable=W0613
 @typechecked
 def verify_exp_config(
+    *,
     supp_exp_config: Supported_experiment_settings,
     exp_config: Exp_config,
     has_unique_id: bool,
@@ -320,61 +322,71 @@ def verify_exp_config(
     """
 
     verify_exp_config_is_sensible(
-        exp_config,
-        supp_exp_config,
+        exp_config=exp_config,
+        supp_exp_config=supp_exp_config,
     )
 
     # Verify settings are sensible.
 
     # Verify the algorithms
-    verify_algos_in_exp_config(exp_config)
+    verify_algos_in_exp_config(exp_config=exp_config)
 
     # Verify settings of type: list and tuple.
-    verify_list_setting(supp_exp_config, exp_config.seeds, int, "seeds")
+    verify_list_setting(
+        supp_exp_config=supp_exp_config,
+        setting=exp_config.seeds,
+        element_type=int,
+        setting_name="seeds",
+    )
 
     verify_list_setting(
-        supp_exp_config, exp_config.simulators, str, "simulators"
+        supp_exp_config=supp_exp_config,
+        setting=exp_config.simulators,
+        element_type=str,
+        setting_name="simulators",
     )
     verify_size_and_max_graphs_settings(
-        supp_exp_config, exp_config.size_and_max_graphs
+        supp_exp_config=supp_exp_config,
+        size_and_max_graphs_setting=exp_config.size_and_max_graphs,
     )
 
     # Verify settings of type integer.
     verify_integer_settings(
-        exp_config.min_max_graphs,
-        supp_exp_config.min_max_graphs,
-        supp_exp_config.max_max_graphs,
+        integer_setting=exp_config.min_max_graphs,
+        min_val=supp_exp_config.min_max_graphs,
+        max_val=supp_exp_config.max_max_graphs,
     )
     verify_integer_settings(
-        exp_config.max_max_graphs,
-        supp_exp_config.min_max_graphs,
-        supp_exp_config.max_max_graphs,
+        integer_setting=exp_config.max_max_graphs,
+        min_val=supp_exp_config.min_max_graphs,
+        max_val=supp_exp_config.max_max_graphs,
     )
     verify_integer_settings(
-        exp_config.min_graph_size,
-        supp_exp_config.min_graph_size,
-        supp_exp_config.max_graph_size,
+        integer_setting=exp_config.min_graph_size,
+        min_val=supp_exp_config.min_graph_size,
+        max_val=supp_exp_config.max_graph_size,
     )
     verify_integer_settings(
-        exp_config.max_graph_size,
-        supp_exp_config.min_graph_size,
-        supp_exp_config.max_graph_size,
+        integer_setting=exp_config.max_graph_size,
+        min_val=supp_exp_config.min_graph_size,
+        max_val=supp_exp_config.max_graph_size,
     )
 
     # Verify a lower bound/min is not larger than a upper bound/max value.
     verify_min_max(
-        exp_config.min_graph_size,
-        exp_config.max_graph_size,
+        min_val=exp_config.min_graph_size,
+        max_val=exp_config.max_graph_size,
     )
     verify_min_max(
-        exp_config.min_max_graphs,
-        exp_config.max_max_graphs,
+        min_val=exp_config.min_max_graphs,
+        max_val=exp_config.max_max_graphs,
     )
 
     # Verify settings of type bool.
 
 
 def verify_exp_config_is_sensible(
+    *,
     exp_config: Exp_config,
     supp_exp_config: Supported_experiment_settings,
 ) -> None:
@@ -407,7 +419,9 @@ def verify_exp_config_is_sensible(
 
 @typechecked
 def verify_list_element_types_and_list_len(  # type:ignore[misc]
-    list_setting: Any, element_type: type
+    *,
+    list_setting: Any,
+    element_type: type,
 ) -> None:
     """Verifies the types and minimum length of configuration settings that are
     stored with a value of type list.
@@ -415,7 +429,9 @@ def verify_list_element_types_and_list_len(  # type:ignore[misc]
     :param list_setting: param element_type:
     :param element_type:
     """
-    verify_object_type(list_setting, list, element_type=element_type)
+    verify_object_type(
+        obj=list_setting, expected_type=list, element_type=element_type
+    )
     if len(list_setting) < 1:
         raise Exception(
             "Error, list was expected contain at least 1 integer."
@@ -424,6 +440,7 @@ def verify_list_element_types_and_list_len(  # type:ignore[misc]
 
 
 def verify_list_setting(  # type:ignore[misc]
+    *,
     supp_exp_config: Supported_experiment_settings,
     setting: Any,
     element_type: type,
@@ -440,11 +457,15 @@ def verify_list_setting(  # type:ignore[misc]
     """
 
     # Check if the configuration setting is a list with length at least 1.
-    verify_list_element_types_and_list_len(setting, element_type)
+    verify_list_element_types_and_list_len(
+        list_setting=setting, element_type=element_type
+    )
 
     # Verify the configuration setting list elements are all within the
     # supported range.
-    expected_range = get_expected_range(setting_name, supp_exp_config)
+    expected_range = get_expected_range(
+        setting_name=setting_name, supp_exp_config=supp_exp_config
+    )
     for element in setting:
         if element not in expected_range:
             raise Exception(
@@ -455,7 +476,7 @@ def verify_list_setting(  # type:ignore[misc]
 
 
 def get_expected_range(
-    setting_name: str, supp_exp_config: Supported_experiment_settings
+    *, setting_name: str, supp_exp_config: Supported_experiment_settings
 ) -> list[int] | list[str]:
     """Returns the ranges as specified in the Supported_experiment_settings
     object for the asked setting.
@@ -475,6 +496,7 @@ def get_expected_range(
 
 
 def verify_size_and_max_graphs_settings(
+    *,
     supp_exp_config: Supported_experiment_settings,
     size_and_max_graphs_setting: list[tuple[int, int]] | None,
 ) -> None:
@@ -486,7 +508,9 @@ def verify_size_and_max_graphs_settings(
     :param size_and_max_graphs_setting:
     :param supp_exp_config:
     """
-    verify_list_element_types_and_list_len(size_and_max_graphs_setting, tuple)
+    verify_list_element_types_and_list_len(
+        list_setting=size_and_max_graphs_setting, element_type=tuple
+    )
 
     # Verify the tuples contain valid values for size and max_graphs.
     if size_and_max_graphs_setting is not None:
@@ -495,26 +519,29 @@ def verify_size_and_max_graphs_settings(
             max_graphs = size_and_max_graphs[1]
 
             verify_integer_settings(
-                size,
-                supp_exp_config.min_graph_size,
-                supp_exp_config.max_graph_size,
+                integer_setting=size,
+                min_val=supp_exp_config.min_graph_size,
+                max_val=supp_exp_config.max_graph_size,
             )
 
             verify_integer_settings(
-                max_graphs,
-                supp_exp_config.min_max_graphs,
-                supp_exp_config.max_max_graphs,
+                integer_setting=max_graphs,
+                min_val=supp_exp_config.min_max_graphs,
+                max_val=supp_exp_config.max_max_graphs,
             )
 
 
 @typechecked
 def verify_integer_settings(
+    *,
     integer_setting: int,
-    min_val: int | None = None,
-    max_val: int | None = None,
+    min_val: int,
+    max_val: int,
 ) -> None:
     """Verifies an integer setting is of type integer and that it is within the
-    supported minimum and maximum value range..
+    supported minimum and maximum value range.
+
+    TODO: remove optional arguments.
 
     :param integer_setting:
     :param min_val:
@@ -533,10 +560,12 @@ def verify_integer_settings(
                 + f" {max_val}. Instead, it is:"
                 + f"{integer_setting}"
             )
+    else:
+        raise Exception("Error, meaningless verification.")
 
 
 @typechecked
-def verify_min_max(min_val: int, max_val: int) -> None:
+def verify_min_max(*, min_val: int, max_val: int) -> None:
     """Verifies a lower bound/minimum value is indeed smaller than an
     upperbound/maximum value.
 
@@ -551,6 +580,7 @@ def verify_min_max(min_val: int, max_val: int) -> None:
 
 # TODO: determine why this can not be typechecked.
 def verify_object_type(
+    *,
     obj: float | list | tuple,
     expected_type: type,
     element_type: type | None = None,
@@ -589,6 +619,7 @@ def verify_object_type(
 
 
 def verify_adap_and_rad_settings(
+    *,
     supp_exp_config: Supported_experiment_settings,
     some_dict: dict | str | None,
     check_type: str,
@@ -625,9 +656,15 @@ def verify_adap_and_rad_settings(
                 )
             # Check if values belonging to key are within supported range.
             if check_type == "adaptations":
-                verify_redundancy_settings_for_exp_config(some_dict[key])
+                verify_redundancy_settings_for_exp_config(
+                    adaptation=some_dict[key]
+                )
             elif check_type == "radiations":
-                verify_radiations_values(supp_exp_config, some_dict, key)
+                verify_radiations_values(
+                    supp_exp_config=supp_exp_config,
+                    radiations=some_dict,
+                    key=key,
+                )
         return some_dict
     raise Exception(
         "Error, property is expected to be a Dict, yet"
@@ -636,6 +673,7 @@ def verify_adap_and_rad_settings(
 
 
 def verify_algorithm_settings(
+    *,
     supp_exp_config: Supported_experiment_settings,
     some_dict: dict,
     check_type: str,
@@ -644,7 +682,10 @@ def verify_algorithm_settings(
 
 
 def verify_radiations_values(
-    supp_exp_config: Supported_experiment_settings, radiations: dict, key: str
+    *,
+    supp_exp_config: Supported_experiment_settings,
+    radiations: dict,
+    key: str,
 ) -> None:
     """The configuration settings contain key named: radiations. The value of
     belonging to this key is a dictionary, which also has several keys.
@@ -683,13 +724,19 @@ def verify_radiations_values(
             # Verify radiations setting can be of type float.
             if isinstance(setting, float):
                 # TODO: superfluous check.
-                verify_object_type(setting, float, None)
+                verify_object_type(
+                    obj=setting, expected_type=float, element_type=None
+                )
             # Verify radiations setting can be of type tuple.
             elif isinstance(setting, tuple):
                 # Verify the radiations setting tuple is of type float,
                 # float.
                 # TODO: change type((1.0, 2.0)) to the type it is.
-                verify_object_type(setting, tuple, type((1.0, 2.0)))
+                verify_object_type(
+                    obj=setting,
+                    expected_type=tuple,
+                    element_type=type((1.0, 2.0)),
+                )
 
             else:
                 # Throw error if the radiations setting is something other

@@ -9,7 +9,7 @@ from snncompare.exp_config.run_config.Run_config import dict_to_run_config
 
 @typechecked
 def verify_results_safely_check_json_graphs_contain_expected_stages(
-    results_json_graphs: Dict, expected_stages: List[int]
+    *, results_json_graphs: Dict, expected_stages: List[int]
 ) -> None:
     """Checks whether the loaded graphs from json contain at least the expected
     stages for this stage of the experiment."""
@@ -28,17 +28,18 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
         )
 
     results_json_graphs["run_config"] = dict_to_run_config(
-        results_json_graphs["run_config"]
+        some_dict=results_json_graphs["run_config"]
     )
 
     verify_json_graphs_dict_contain_correct_stages(
-        results_json_graphs["graphs_dict"],
-        expected_stages,
+        json_graphs=results_json_graphs["graphs_dict"],
+        expected_stages=expected_stages,
     )
 
 
 @typechecked
 def verify_json_graphs_dict_contain_correct_stages(
+    *,
     json_graphs: Dict,
     expected_stages: List[int],
 ) -> None:

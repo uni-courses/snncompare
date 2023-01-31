@@ -32,6 +32,7 @@ from ..helper import add_stage_completion_to_graph
 
 @typechecked
 def get_used_graphs(
+    *,
     run_config: Run_config,
 ) -> Dict:
     """First gets the input graph.
@@ -42,37 +43,42 @@ def get_used_graphs(
     """
     # TODO: move to central place in MDSA algo spec.
     graphs = {}
-    graphs["input_graph"] = get_input_graph(run_config)
+    graphs["input_graph"] = get_input_graph(run_config=run_config)
 
     graphs["snn_algo_graph"] = get_new_mdsa_graph(
-        run_config, graphs["input_graph"]
+        run_config=run_config, input_graph=graphs["input_graph"]
     )
 
     # TODO: write test to verify the algorithm yields valid results on default
     # MDSA SNN.
-    if has_adaptation(run_config):
+    if has_adaptation(run_config=run_config):
         graphs["adapted_snn_graph"] = get_adapted_graph(
-            graphs["snn_algo_graph"], run_config
+            snn_algo_graph=graphs["snn_algo_graph"], run_config=run_config
         )
 
-    if has_radiation(run_config):
+    if has_radiation(run_config=run_config):
         graphs["rad_snn_algo_graph"] = get_radiation_graph(
-            graphs["snn_algo_graph"], run_config, run_config.seed
+            snn_graph=graphs["snn_algo_graph"],
+            run_config=run_config,
+            seed=run_config.seed,
         )
-        if has_adaptation(run_config):
+        if has_adaptation(run_config=run_config):
             graphs["rad_adapted_snn_graph"] = get_radiation_graph(
-                graphs["adapted_snn_graph"], run_config, run_config.seed
+                snn_graph=graphs["adapted_snn_graph"],
+                run_config=run_config,
+                seed=run_config.seed,
             )
 
     # TODO: move this into a separate location/function.
     # Indicate the graphs have completed stage 1.
     for graph in graphs.values():
-        add_stage_completion_to_graph(graph, 1)
+        add_stage_completion_to_graph(input_graph=graph, stage_index=1)
     return graphs
 
 
 @typechecked
 def get_input_graph(
+    *,
     run_config: Run_config,
 ) -> nx.Graph:
     """TODO: support retrieving graph sizes larger than size 5.
@@ -81,7 +87,7 @@ def get_input_graph(
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
-    input_graph: nx.Graph = get_the_input_graph(run_config)
+    input_graph: nx.Graph = get_the_input_graph(run_config=run_config)
 
     # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
     return input_graph
@@ -89,14 +95,16 @@ def get_input_graph(
 
 @typechecked
 def get_the_input_graph(
+    *,
     run_config: Run_config,
 ) -> nx.Graph:
     """Returns a specific input graph from the list of input graphs."""
-    return get_input_graphs(run_config)[run_config.graph_nr]
+    return get_input_graphs(run_config=run_config)[run_config.graph_nr]
 
 
 @typechecked
 def get_input_graphs(
+    *,
     run_config: Run_config,
 ) -> List[nx.Graph]:
     """Removes graphs that are not used, because of a maximum nr of graphs that
@@ -130,6 +138,7 @@ def get_input_graphs(
 
 @typechecked
 def get_adapted_graph(
+    *,
     snn_algo_graph: nx.DiGraph,
     run_config: Run_config,
 ) -> nx.DiGraph:
@@ -144,9 +153,11 @@ def get_adapted_graph(
                 + " be reached."
             )
         if adaptation_name == "redundancy":
-            verify_redundancy_settings_for_run_config(run_config.adaptation)
+            verify_redundancy_settings_for_run_config(
+                adaptation=run_config.adaptation
+            )
             adaptation_graph: nx.DiGraph = get_redundant_graph(
-                snn_algo_graph, adaptation_setting
+                snn_algo_graph=snn_algo_graph, red_lev=adaptation_setting
             )
             return adaptation_graph
         raise Exception(
@@ -156,6 +167,7 @@ def get_adapted_graph(
 
 @typechecked
 def has_adaptation(
+    *,
     run_config: Run_config,
 ) -> bool:
     """Checks if the adaptation contains a None setting.
@@ -174,6 +186,7 @@ def has_adaptation(
 
 @typechecked
 def has_radiation(
+    *,
     run_config: Run_config,
 ) -> bool:
     """Checks if the radiation contains a None setting.
@@ -192,16 +205,17 @@ def has_radiation(
 
 @typechecked
 def get_redundant_graph(
-    snn_algo_graph: nx.DiGraph, red_lev: int
+    *, snn_algo_graph: nx.DiGraph, red_lev: int
 ) -> nx.DiGraph:
     """Returns a networkx graph that has a form of adaptation added."""
     adaptation_graph = copy.deepcopy(snn_algo_graph)
-    apply_redundancy(adaptation_graph, red_lev)
+    apply_redundancy(adaptation_graph=adaptation_graph, redundancy=red_lev)
     return adaptation_graph
 
 
 @typechecked
 def get_radiation_graph(
+    *,
     snn_graph: nx.DiGraph,
     run_config: Run_config,
     seed: int,
@@ -237,11 +251,15 @@ def get_radiation_graph(
             rad_dam = Radiation_damage(probability=radiation_setting)
             radiation_graph: nx.DiGraph = copy.deepcopy(snn_graph)
             dead_neuron_names = rad_dam.inject_simulated_radiation(
-                radiation_graph, rad_dam.neuron_death_probability, seed
+                get_degree=radiation_graph,
+                probability=rad_dam.neuron_death_probability,
+                seed=seed,
             )
             # TODO: verify radiation is injected with V1000
             verify_radiation_is_applied(
-                radiation_graph, dead_neuron_names, radiation_name
+                some_graph=radiation_graph,
+                dead_neuron_names=dead_neuron_names,
+                rad_type=radiation_name,
             )
 
             return radiation_graph

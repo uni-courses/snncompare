@@ -53,8 +53,8 @@ class Test_radiations_settings(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             verify_exp_config(
-                self.supp_exp_config,
-                exp_config,
+                supp_exp_config=self.supp_exp_config,
+                exp_config=exp_config,
                 has_unique_id=False,
                 allow_optional=False,
             )
@@ -79,7 +79,9 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config, None, "radiations"
+                supp_exp_config=self.supp_exp_config,
+                some_dict=None,
+                check_type="radiations",
             )
 
         self.assertEqual(
@@ -102,7 +104,9 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config, "string_instead_of_dict", "radiations"
+                supp_exp_config=self.supp_exp_config,
+                some_dict="string_instead_of_dict",
+                check_type="radiations",
             )
 
         self.assertEqual(
@@ -120,7 +124,9 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config, {}, "radiations"
+                supp_exp_config=self.supp_exp_config,
+                some_dict={},
+                check_type="radiations",
             )
 
         self.assertEqual(
@@ -137,9 +143,9 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config,
-                self.invalid_radiations_key,
-                "radiations",
+                supp_exp_config=self.supp_exp_config,
+                some_dict=self.invalid_radiations_key,
+                check_type="radiations",
             )
 
         self.assertEqual(
@@ -160,9 +166,9 @@ class Test_radiations_settings(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             # radiations dictionary of type None throws error.
             verify_adap_and_rad_settings(
-                self.supp_exp_config,
-                self.invalid_radiations_value,
-                "radiations",
+                supp_exp_config=self.supp_exp_config,
+                some_dict=self.invalid_radiations_value,
+                check_type="radiations",
             )
 
         self.assertEqual(

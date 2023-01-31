@@ -12,7 +12,6 @@ from networkx.classes.graph import Graph
 # from snncompare.export_results.load_json_to_nx_graph import dicts_are_equal
 from typeguard import typechecked
 
-# from snncompare.Experiment_runner import exp_config_to_run_configs
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.exp_config.run_config.Supported_run_settings import (
@@ -29,7 +28,7 @@ if TYPE_CHECKING:
 
 @typechecked
 def generate_list_of_n_random_nrs(
-    G: Graph, max_val: Optional[int] = None, seed: Optional[int] = None
+    *, G: Graph, max_val: Optional[int] = None, seed: Optional[int] = None
 ) -> List[int]:
     """Generates list of numbers in range of 1 to (and including) len(G), or:
 
@@ -56,7 +55,7 @@ def generate_list_of_n_random_nrs(
 
 
 @typechecked
-def compute_mark(input_graph: nx.Graph, rand_ceil: float) -> None:
+def compute_mark(*, input_graph: nx.Graph, rand_ceil: float) -> None:
     """Computes the mark at the counter neurons after the simulation is
     completed.
 
@@ -87,6 +86,7 @@ def compute_mark(input_graph: nx.Graph, rand_ceil: float) -> None:
 
 @typechecked
 def plot_alipour(
+    *,
     configuration: str,
     seed: int,
     size: int,
@@ -110,7 +110,7 @@ def plot_alipour(
     """
     # pylint: disable=R0913
     # TODO: reduce 8/5 input arguments to at most 5/5.
-    the_labels = get_alipour_labels(G, configuration=configuration)
+    the_labels = get_alipour_labels(G=G, configuration=configuration)
     # nx.draw_networkx_labels(G, pos=None, labels=the_labels)
     npos = nx.circular_layout(
         G,
@@ -133,7 +133,7 @@ def plot_alipour(
 
 
 @typechecked
-def get_alipour_labels(G: nx.DiGraph, configuration: str) -> Dict[str, str]:
+def get_alipour_labels(*, G: nx.DiGraph, configuration: str) -> Dict[str, str]:
     """
 
     :param G: The original graph on which the MDSA algorithm is ran.
@@ -159,7 +159,7 @@ def get_alipour_labels(G: nx.DiGraph, configuration: str) -> Dict[str, str]:
 
 # checks if file exists
 @typechecked
-def file_exists(filepath: str) -> bool:
+def file_exists(*, filepath: str) -> bool:
     """
 
     :param string:
@@ -173,6 +173,7 @@ def file_exists(filepath: str) -> bool:
 
 @typechecked
 def compute_marks_for_m_larger_than_one(
+    *,
     input_graph: nx.Graph,
     m: int,
     seed: int,
@@ -213,26 +214,34 @@ def compute_marks_for_m_larger_than_one(
 
         if show or export:
             plot_alipour(
-                "0rand_mark",
-                seed,
-                size,
-                loop,
-                input_graph,
+                configuration="0rand_mark",
+                seed=seed,
+                size=size,
+                m=loop,
+                G=input_graph,
                 show=show,
             )
-            plot_alipour("1weight", seed, size, loop, input_graph, show=show)
             plot_alipour(
-                "2inhib_weight",
-                seed,
-                size,
-                loop,
-                input_graph,
+                configuration="1weight",
+                seed=seed,
+                size=size,
+                m=loop,
+                G=input_graph,
+                show=show,
+            )
+            plot_alipour(
+                configuration="2inhib_weight",
+                seed=seed,
+                size=size,
+                m=loop,
+                G=input_graph,
                 show=show,
             )
 
 
 @typechecked
 def set_node_default_values(
+    *,
     input_graph: nx.Graph,
     node: int,
     rand_ceil: float,
@@ -257,52 +266,8 @@ def set_node_default_values(
 
 
 @typechecked
-def get_extensions_list(
-    run_config: Run_config,
-    stage_index: int,
-) -> List:
-    """TODO: make this into 1 symmetric method/improve structure.
-
-    :param run_config: param stage_index:
-    :param stage_index:
-
-    extensions = list(get_extensions_dict(run_config, stage_index).values())
-    """
-    if stage_index == 3:
-        if run_config.export_images:
-            return run_config.export_types
-        return []
-    return list(get_extensions_dict(run_config, stage_index).values())
-
-
-@typechecked
-def get_extensions_dict(
-    run_config: Run_config,
-    stage_index: int,
-) -> Dict:
-    """Returns the file extensions of the output types. The dictionary key
-    describes the content of the file, and the extension is given as the value.
-    Config_and_graphs means that the experiment or run config is included in
-    the file. Graphs means that the networkx graphs have been encoded.
-
-    :param run_config: param stage_index:
-    :param stage_index:
-    """
-    if stage_index == 1:
-        return {"config_and_graphs": ".json"}
-    if stage_index == 2:
-        if run_config.simulator == "lava":
-            return {"config": ".json"}
-        # The networkx simulator is used:
-        return {"config_and_graphs": ".json"}
-    if stage_index == 4:
-        return {"config_graphs_and_results": ".json"}
-    raise Exception("Unsupported experiment stage.")
-
-
-@typechecked
 def add_stage_completion_to_graph(
-    input_graph: nx.Graph, stage_index: int
+    *, input_graph: nx.Graph, stage_index: int
 ) -> None:
     """Adds the completed stage to the list of completed stages for the
     incoming graph."""
@@ -337,6 +302,7 @@ def add_stage_completion_to_graph(
 
 @typechecked
 def get_max_sim_duration(
+    *,
     input_graph: nx.Graph,
     run_config: Run_config,
 ) -> int:
@@ -358,13 +324,14 @@ def get_max_sim_duration(
 
 
 @typechecked
-def get_actual_duration(snn_graph: nx.DiGraph) -> int:
+def get_actual_duration(*, snn_graph: nx.DiGraph) -> int:
     """Compute the simulation duration for a given algorithm and graph."""
     return snn_graph.graph["sim_duration"]
 
 
 @typechecked
 def get_expected_stages(
+    *,
     stage_index: int,
 ) -> List[int]:
     """Computes which stages should be expected at this stage of the
@@ -380,6 +347,7 @@ def get_expected_stages(
 
 @typechecked
 def generate_run_configs(
+    *,
     exp_config: Exp_config,
     specific_run_config: Optional[Run_config] = None,
 ) -> List[Run_config]:
@@ -392,7 +360,9 @@ def generate_run_configs(
     found_run_config = False
     pprint(exp_config.__dict__)
     # Generate run configurations.
-    run_configs: List[Run_config] = exp_config_to_run_configs(exp_config)
+    run_configs: List[Run_config] = exp_config_to_run_configs(
+        exp_config=exp_config
+    )
     if specific_run_config is not None:
         if specific_run_config.unique_id is None:
             pprint(specific_run_config.__dict__)
@@ -402,8 +372,8 @@ def generate_run_configs(
             )
         for gen_run_config in run_configs:
             if dicts_are_equal(
-                gen_run_config.__dict__,
-                specific_run_config.__dict__,
+                left=gen_run_config.__dict__,
+                right=specific_run_config.__dict__,
                 without_unique_id=True,
             ):
                 found_run_config = True
@@ -426,6 +396,7 @@ def generate_run_configs(
 
 @typechecked
 def exp_config_to_run_configs(
+    *,
     exp_config: Exp_config,
 ) -> List[Run_config]:
     """Generates all the run_config dictionaries of a single experiment
@@ -434,7 +405,7 @@ def exp_config_to_run_configs(
     TODO: Ensure this can be done modular, and lower the depth of the loop.
     """
     # pylint: disable=R0914
-    supp_run_setts = Supported_run_settings()
+
     run_configs: List[Run_config] = []
 
     # pylint: disable=R1702
@@ -445,26 +416,59 @@ def exp_config_to_run_configs(
             algorithm = {algorithm_name: algo_config}
 
             for adaptation, radiation in get_adaptation_and_radiations(
-                exp_config
+                exp_config=exp_config
             ):
-                for seed in exp_config.seeds:
-                    for size_and_max_graph in exp_config.size_and_max_graphs:
-                        for simulator in exp_config.simulators:
-                            for graph_nr in range(0, size_and_max_graph[1]):
-                                run_config: Run_config = (
-                                    run_parameters_to_dict(
-                                        adaptation=adaptation,
-                                        algorithm=algorithm,
-                                        seed=seed,
-                                        size_and_max_graph=size_and_max_graph,
-                                        graph_nr=graph_nr,
-                                        radiation=radiation,
-                                        exp_config=exp_config,
-                                        simulator=simulator,
-                                    )
-                                )
-                                run_configs.append(run_config)
+                fill_remaining_run_config_settings(
+                    adaptation=adaptation,
+                    algorithm=algorithm,
+                    exp_config=exp_config,
+                    radiation=radiation,
+                    run_configs=run_configs,
+                )
 
+    set_run_config_export_settings(
+        exp_config=exp_config,
+        run_configs=run_configs,
+    )
+    return list(reversed(run_configs))
+
+
+@typechecked
+def fill_remaining_run_config_settings(
+    *,
+    adaptation: Union[None, Dict],
+    algorithm: Dict,
+    exp_config: Exp_config,
+    radiation: Union[None, Dict],
+    run_configs: List[Run_config],
+) -> None:
+    """Generate basic settings for a run config."""
+    for seed in exp_config.seeds:
+        for size_and_max_graph in exp_config.size_and_max_graphs:
+            for simulator in exp_config.simulators:
+                for graph_nr in range(0, size_and_max_graph[1]):
+                    run_config: Run_config = run_parameters_to_dict(
+                        adaptation=adaptation,
+                        algorithm=algorithm,
+                        seed=seed,
+                        size_and_max_graph=size_and_max_graph,
+                        graph_nr=graph_nr,
+                        radiation=radiation,
+                        exp_config=exp_config,
+                        simulator=simulator,
+                    )
+                    run_configs.append(run_config)
+
+
+@typechecked
+def set_run_config_export_settings(
+    *,
+    exp_config: Exp_config,
+    run_configs: List[Run_config],
+) -> None:
+    """Sets the export settings for run configs that are created based on an
+    experiment config."""
+    supp_run_setts = Supported_run_settings()
     for run_config in run_configs:
         if exp_config.export_images:
             run_config.export_types = exp_config.export_types
@@ -490,12 +494,12 @@ def exp_config_to_run_configs(
             exp_config.__dict__, "export_images", bool
         )
         run_config.export_images = exp_config.export_images
-    return list(reversed(run_configs))
 
 
 # pylint: disable=R0913
 @typechecked
 def run_parameters_to_dict(
+    *,
     adaptation: Union[None, Dict[str, int]],
     algorithm: Dict[str, Dict[str, int]],
     seed: int,
@@ -526,6 +530,7 @@ def run_parameters_to_dict(
 
 
 def get_adaptation_and_radiations(
+    *,
     exp_config: Exp_config,
 ) -> List[tuple]:
     """Returns a list of adaptations and radiations that will be used for the
@@ -534,7 +539,9 @@ def get_adaptation_and_radiations(
     adaptations_radiations: List[tuple] = []
     if exp_config.adaptations is None:
         adaptation = None
-        adaptations_radiations.extend(get_radiations(exp_config, adaptation))
+        adaptations_radiations.extend(
+            get_radiations(exp_config=exp_config, adaptation=adaptation)
+        )
     else:
         for (
             adaptation_name,
@@ -543,13 +550,19 @@ def get_adaptation_and_radiations(
             for adaptation_config in adaptation_setts_list:
                 adaptation = {adaptation_name: adaptation_config}
                 adaptations_radiations.extend(
-                    get_radiations(exp_config, adaptation)
+                    get_radiations(
+                        exp_config=exp_config, adaptation=adaptation
+                    )
                 )
+
+    # Make sure it contains at least 1 empty entry:
+    if not adaptations_radiations:  # Empty list evaluates to False.
+        return [(None, None)]
     return adaptations_radiations
 
 
 def get_radiations(
-    exp_config: Exp_config, adaptation: Union[None, Dict[str, int]]
+    *, exp_config: Exp_config, adaptation: Union[None, Dict[str, int]]
 ) -> List[Tuple[Union[None, Dict], Union[None, Dict]]]:
     """Returns the radiations."""
     adaptation_and_radiations: List[
@@ -570,7 +583,9 @@ def get_radiations(
 
 
 @typechecked
-def dicts_are_equal(left: Dict, right: Dict, without_unique_id: bool) -> bool:
+def dicts_are_equal(
+    *, left: Dict, right: Dict, without_unique_id: bool
+) -> bool:
     """Determines whether two run configurations are equal or not."""
     if without_unique_id:
         left_copy = copy.deepcopy(left)

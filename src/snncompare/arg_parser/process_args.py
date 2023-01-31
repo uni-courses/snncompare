@@ -22,7 +22,7 @@ from ..exp_config.custom_setts.run_configs.algo_test import (
 
 
 @typechecked
-def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
+def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     """Processes the arguments and ensures the accompanying tasks are executed.
 
     TODO: --graph-filepath
@@ -38,11 +38,12 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
     # mdsa_size5_m4
     # mdsa_size4_m0
     exp_config: Exp_config = load_exp_config_from_file(
-        custom_config_path, args.experiment_settings_name
+        custom_config_path=custom_config_path,
+        filename=args.experiment_settings_name,
     )
 
-    manage_export_parsing(args, exp_config)
-    manage_exp_config_parsing(args, exp_config)
+    manage_export_parsing(args=args, exp_config=exp_config)
+    manage_exp_config_parsing(args=args, exp_config=exp_config)
 
     # if not args.overwrite_images_only:
     #    exp_config.export_images = True
@@ -64,10 +65,10 @@ def process_args(args: argparse.Namespace, custom_config_path: str) -> None:
 # pylint: disable=R0912
 @typechecked
 def manage_export_parsing(
-    args: argparse.Namespace, exp_config: Exp_config
+    *, args: argparse.Namespace, exp_config: Exp_config
 ) -> None:
     """Performs the argument parsing related to data export settings."""
-    create_root_dir_if_not_exists("latex/Images/graphs")
+    create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
     supp_setts = Supported_experiment_settings()
 
     if args.delete_images and os.path.exists("latex"):
@@ -108,14 +109,14 @@ def manage_export_parsing(
         exp_config.export_types = extensions
 
     if args.create_boxplots:
-        create_performance_plots(exp_config)
+        create_performance_plots(exp_config=exp_config)
         print("Created boxplots.")
         sys.exit()
 
 
 @typechecked
 def manage_exp_config_parsing(
-    args: argparse.Namespace, exp_config: Exp_config
+    *, args: argparse.Namespace, exp_config: Exp_config
 ) -> None:
     """Performs the argument parsing related to experiment settings."""
     # Process the graph_size argument.

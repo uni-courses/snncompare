@@ -9,7 +9,7 @@ from typeguard import typechecked
 
 
 @typechecked
-def write_dict_to_json(output_filepath: str, some_dict: Dict) -> None:
+def write_dict_to_json(*, output_filepath: str, some_dict: Dict) -> None:
     """Writes a dict file to a .json file."""
 
     with open(output_filepath, "w", encoding="utf-8") as fp:
@@ -35,7 +35,7 @@ def write_dict_to_json(output_filepath: str, some_dict: Dict) -> None:
 
 
 @typechecked
-def encode_tuples(some_dict: Dict, decode: bool = False) -> Dict:
+def encode_tuples(*, some_dict: Dict, decode: bool = False) -> Dict:
     """Loops through the values of the dict and if it detects a list with
     tuples, it encodes the tuples for json exporting.
 
@@ -64,17 +64,20 @@ class MultiDimensionalArrayEncoder(json.JSONEncoder):
 
     def encode(self, o: Any) -> Any:  # type:ignore[misc]
         def hint_tuples(  # type:ignore[misc]
-            item: Union[tuple, List, Dict, Any]
+            *,
+            item: Union[tuple, List, Dict, Any],
         ) -> Any:
             if isinstance(item, tuple):
                 return {"__tuple__": True, "items": item}
             if isinstance(item, list):
-                return [hint_tuples(e) for e in item]
+                return [hint_tuples(item=e) for e in item]
             if isinstance(item, Dict):
-                return {key: hint_tuples(value) for key, value in item.items()}
+                return {
+                    key: hint_tuples(item=value) for key, value in item.items()
+                }
             return item
 
-        return super().encode(hint_tuples(o))
+        return super().encode(hint_tuples(item=o))
 
 
 def hinted_tuple_hook(obj: Dict) -> Union[Dict, tuple]:

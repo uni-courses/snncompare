@@ -10,24 +10,25 @@ from ..helper import file_exists
 
 
 @typechecked
-def verify_args(args: argparse.Namespace, custom_config_path: str) -> None:
+def verify_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     """Performs the checks to verify the parser."""
     if isinstance(args.graph_filepath, str):
-        verify_input_graph_path(args.graph_filepath)
+        verify_input_graph_path(graph_path=args.graph_filepath)
 
     # Verify output extension is passed correctly.
 
     verify_experiment_settings(
-        custom_config_path, args.experiment_settings_name
+        custom_config_path=custom_config_path,
+        exp_config_name=args.experiment_settings_name,
     )
 
 
 @typechecked
-def verify_input_graph_path(graph_path: str) -> None:
+def verify_input_graph_path(*, graph_path: str) -> None:
     """Verifies the filepath for the input graph exists and contains a valid
     networkx graph."""
     # Assert graph file exists.
-    if not file_exists(graph_path):
+    if not file_exists(filepath=graph_path):
         raise FileNotFoundError(f"Input Graph path was invalid:{graph_path}")
 
     # Read output JSON file into dict.
@@ -48,13 +49,13 @@ def verify_input_graph_path(graph_path: str) -> None:
 
 @typechecked
 def verify_experiment_settings(
-    custom_config_path: str, exp_config_name: str
+    *, custom_config_path: str, exp_config_name: str
 ) -> None:
     """Verifies the filepath for the input graph exists and contains a valid
     networkx graph."""
     # Assert graph file exists.
     exp_config_path = f"{custom_config_path}{exp_config_name}.json"
-    if not file_exists(exp_config_path):
+    if not file_exists(filepath=exp_config_path):
         raise FileNotFoundError(
             "Input experiment settings path was invalid: "
             + f"{exp_config_path}"
