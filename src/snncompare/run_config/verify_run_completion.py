@@ -4,12 +4,11 @@ from typing import Dict, List
 
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
-
-from ...import_results.check_completed_stages import (
+from snncompare.import_results.check_completed_stages import (
     has_outputted_images,
     has_outputted_stage_jsons,
 )
+from snncompare.run_config.Run_config import Run_config
 
 
 @typechecked

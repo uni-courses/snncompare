@@ -9,11 +9,9 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.exp_config.run_config.Supported_run_settings import (
-    Supported_run_settings,
-)
 from snncompare.helper import dicts_are_equal, file_exists
+from snncompare.run_config.Run_config import Run_config
+from snncompare.run_config.Supported_run_settings import Supported_run_settings
 
 from .helper import run_config_to_filename
 from .verify_json_graphs import (

@@ -11,14 +11,14 @@ from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from typeguard import typechecked
 
-from snncompare.exp_config.custom_setts.run_configs.algo_test import (
-    long_exp_config_for_mdsa_testing,
-)
 from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
     append_unique_exp_config_id,
     verify_exp_config,
+)
+from snncompare.json_configurations.run_configs.algo_test import (
+    long_exp_config_for_mdsa_testing,
 )
 
 

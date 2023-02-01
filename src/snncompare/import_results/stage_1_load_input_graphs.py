@@ -4,7 +4,7 @@ from typing import Dict
 
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 from ..export_results.helper import run_config_to_filename
 from ..export_results.verify_stage_1_graphs import assert_graphs_are_in_dict

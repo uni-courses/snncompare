@@ -5,17 +5,17 @@ that invokes this script."""
 
 
 from snncompare.arg_parser.arg_verification import verify_args
-from snncompare.exp_config.custom_setts.create_custom_setts import (
+from snncompare.json_configurations.create_custom_setts import (
     create_basic_test_config,
 )
 
 from .arg_parser.arg_parser import parse_cli_args
 from .arg_parser.process_args import process_args
-from .exp_config.default_setts.create_default_settings import (
+from .json_configurations.create_default_settings import (
     create_default_graph_json,
 )
 
-custom_config_path = "src/snncompare/exp_config/custom_setts/exp_config/"
+custom_config_path = "src/snncompare/json_configurations/exp_config/"
 
 create_basic_test_config(custom_config_path=custom_config_path)
 create_default_graph_json()

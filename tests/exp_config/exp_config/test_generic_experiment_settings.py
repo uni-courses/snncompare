@@ -9,13 +9,13 @@ from snnadaptation.redundancy.Adaptation_Rad_settings import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_config.default_setts.create_default_settings import (
-    default_exp_config,
-)
 from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
     verify_exp_config,
+)
+from snncompare.json_configurations.create_default_settings import (
+    default_exp_config,
 )
 
 supp_exp_config = Supported_experiment_settings()

@@ -16,7 +16,7 @@ from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
 )
 
-from ..exp_config.custom_setts.run_configs.algo_test import (
+from ..json_configurations.run_configs.algo_test import (
     load_exp_config_from_file,
 )
 

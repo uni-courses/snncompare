@@ -8,16 +8,16 @@ from typing import List
 
 from typeguard import typechecked
 
-from snncompare.exp_config.custom_setts.run_configs.algo_test import (
-    long_exp_config_for_mdsa_testing,
-)
 from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
     verify_exp_config,
 )
-from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.helper import exp_config_to_run_configs
+from snncompare.json_configurations.run_configs.algo_test import (
+    long_exp_config_for_mdsa_testing,
+)
+from snncompare.run_config.Run_config import Run_config
 from tests.exp_config.exp_config.test_set_unique_id_exp_config import (
     get_config_one,
 )

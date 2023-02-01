@@ -22,15 +22,10 @@ from snncompare.exp_config.Exp_config import (
     Supported_experiment_settings,
     append_unique_exp_config_id,
 )
-from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.helper import dicts_are_equal, generate_run_configs
+from snncompare.run_config.Run_config import Run_config
 
-from .exp_config.run_config.verify_run_completion import (
-    assert_stage_3_is_completed,
-    assert_stage_is_completed,
-)
-from .exp_config.run_config.verify_run_settings import verify_has_unique_id
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
 from .graph_generation.stage_1_create_graphs import get_used_graphs
@@ -40,6 +35,11 @@ from .process_results.process_results import (
     export_results_to_json,
     set_results,
 )
+from .run_config.verify_run_completion import (
+    assert_stage_3_is_completed,
+    assert_stage_is_completed,
+)
+from .run_config.verify_run_settings import verify_has_unique_id
 from .simulation.stage2_sim import sim_graphs
 
 template = """

@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, Dict
 
-from snncompare.exp_config.custom_setts.run_configs.algo_test import (
+from snncompare.json_configurations.run_configs.algo_test import (
     get_exp_config_mdsa_size5_m4,
     load_exp_config_from_file,
     long_exp_config_for_mdsa_testing,

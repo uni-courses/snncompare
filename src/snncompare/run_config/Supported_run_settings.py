@@ -14,7 +14,7 @@ from typing import Dict, List, Union
 
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 from .verify_run_settings import verify_run_config
 

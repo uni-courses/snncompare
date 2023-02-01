@@ -13,7 +13,6 @@ from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_results.load_json_to_nx_graph import (
     load_verified_json_graphs_from_json,
@@ -28,6 +27,7 @@ from snncompare.helper import (
 from snncompare.import_results.check_completed_stages import (
     has_outputted_stage_jsons,
 )
+from snncompare.run_config.Run_config import Run_config
 
 
 # pylint: disable = R0903

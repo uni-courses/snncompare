@@ -11,9 +11,6 @@ import unittest
 
 from typeguard import typechecked
 
-from snncompare.exp_config.default_setts.create_default_settings import (
-    default_exp_config,
-)
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
@@ -28,6 +25,9 @@ from snncompare.import_results.check_completed_stages import (
     has_outputted_stage_jsons,
 )
 from snncompare.import_results.read_json import load_results_from_json
+from snncompare.json_configurations.create_default_settings import (
+    default_exp_config,
+)
 from tests.tests_helper import (
     create_result_file_for_testing,
     get_n_random_run_configs,

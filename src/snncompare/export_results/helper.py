@@ -6,7 +6,7 @@ from typing import Dict, List, Union
 import networkx as nx
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 from ..helper import get_actual_duration
 

@@ -8,12 +8,8 @@ from typing import Any, Dict
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.exp_config.run_config.Supported_run_settings import (
-    Supported_run_settings,
-)
-from snncompare.exp_config.run_config.verify_run_settings import (
-    verify_run_config,
-)
+from snncompare.run_config.Supported_run_settings import Supported_run_settings
+from snncompare.run_config.verify_run_settings import verify_run_config
 
 with_adaptation_with_radiation = {
     "adaptation": {"redundancy": 1.0},

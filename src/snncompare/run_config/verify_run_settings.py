@@ -9,13 +9,13 @@ from typing import TYPE_CHECKING, Dict
 
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 # pylint: disable=R0801
 
 
 if TYPE_CHECKING:
-    from snncompare.exp_config.run_config.Supported_run_settings import (
+    from snncompare.run_config.Supported_run_settings import (
         Supported_run_settings,
     )
 

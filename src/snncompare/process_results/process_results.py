@@ -18,7 +18,7 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 from ..export_results.Output_stage_34 import output_stage_files_3_and_4
 from ..helper import add_stage_completion_to_graph, get_expected_stages

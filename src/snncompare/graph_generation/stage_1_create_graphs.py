@@ -25,7 +25,7 @@ from snnradiation.Radiation_damage import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 from ..helper import add_stage_completion_to_graph
 

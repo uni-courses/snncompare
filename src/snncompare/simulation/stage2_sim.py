@@ -6,7 +6,7 @@ import networkx as nx
 from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 from ..helper import add_stage_completion_to_graph, get_max_sim_duration
 
