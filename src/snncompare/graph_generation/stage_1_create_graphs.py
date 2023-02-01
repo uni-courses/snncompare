@@ -43,7 +43,9 @@ def get_used_graphs(
     """
     # TODO: move to central place in MDSA algo spec.
     graphs = {}
-    graphs["input_graph"] = get_input_graph(run_config=run_config)
+    graphs["input_graph"] = get_input_graph_of_run_config(
+        run_config=run_config
+    )
 
     graphs["snn_algo_graph"] = get_new_mdsa_graph(
         run_config=run_config, input_graph=graphs["input_graph"]
@@ -77,7 +79,7 @@ def get_used_graphs(
 
 
 @typechecked
-def get_input_graph(
+def get_input_graph_of_run_config(
     *,
     run_config: Run_config,
 ) -> nx.Graph:
@@ -87,19 +89,12 @@ def get_input_graph(
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
-    input_graph: nx.Graph = get_the_input_graph(run_config=run_config)
+    input_graph: nx.Graph = get_input_graphs(run_config=run_config)[
+        run_config.graph_nr
+    ]
 
     # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
     return input_graph
-
-
-@typechecked
-def get_the_input_graph(
-    *,
-    run_config: Run_config,
-) -> nx.Graph:
-    """Returns a specific input graph from the list of input graphs."""
-    return get_input_graphs(run_config=run_config)[run_config.graph_nr]
 
 
 @typechecked

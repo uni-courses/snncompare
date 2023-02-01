@@ -17,7 +17,7 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
 
-from ..graph_generation.stage_1_get_input_graphs import (
+from ..graph_generation.stage_1_create_graphs import (
     has_adaptation,
     has_radiation,
 )

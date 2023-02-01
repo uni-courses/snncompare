@@ -8,8 +8,8 @@ from snncompare.export_results.helper import (
     get_expected_image_paths_stage_3,
     run_config_to_filename,
 )
-from snncompare.graph_generation.stage_1_get_input_graphs import (
-    get_input_graph,
+from snncompare.graph_generation.stage_1_create_graphs import (
+    get_input_graph_of_run_config,
 )
 
 
@@ -28,7 +28,9 @@ def create_gif_of_run_config(*, results_nx_graphs: Dict) -> None:
                 expected_filepaths.extend(
                     get_expected_image_paths_stage_3(
                         nx_graphs_dict=results_nx_graphs["graphs_dict"],
-                        input_graph=get_input_graph(run_config=run_config),
+                        input_graph=get_input_graph_of_run_config(
+                            run_config=run_config
+                        ),
                         run_config=run_config,
                         extensions=["png"],
                     )

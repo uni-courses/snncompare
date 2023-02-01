@@ -9,7 +9,7 @@ from pathlib import Path
 from pprint import pprint
 from typing import Dict, List, Tuple
 
-from easyplot.box_plot.box_plot import create_box_plot
+from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
@@ -26,7 +26,7 @@ from snncompare.helper import (
     get_adaptation_and_radiations,
 )
 from snncompare.import_results.check_completed_stages import (
-    has_outputted_stage,
+    has_outputted_stage_jsons,
 )
 
 
@@ -187,7 +187,7 @@ def get_completed_and_missing_run_configs(
     missing_run_configs: List[Run_config] = []
     completed_run_configs: List[Run_config] = []
     for run_config in run_configs:
-        if not has_outputted_stage(
+        if not has_outputted_stage_jsons(
             expected_stages=[1, 2, 4],  # Assume results have been created.
             run_config=run_config,
             stage_index=4,

@@ -9,10 +9,12 @@ import matplotlib
 import networkx as nx
 from matplotlib import pyplot as plt
 from snnalgorithms.zoom_in_images import copy_region_of_img
-from snnbackends.plot_graphs import create_target_dir_if_not_exists
 from typeguard import typechecked
 
-from snncompare.export_plots.Plot_to_tex import Plot_to_tex
+from snncompare.export_plots.plot_graphs import (
+    create_target_dir_if_not_exists,
+    export_plot,
+)
 
 
 # pylint: disable=R0913
@@ -114,18 +116,13 @@ def plot_coordinated_graph(
     if show:
         plt.show()
 
-    plot_export = Plot_to_tex()
-    plot_export.export_plot(
-        some_plt=plt, filename=filename, extensions=extensions
-    )
+    export_plot(some_plt=plt, filename=filename, extensions=extensions)
 
     if zoom:
-        create_target_dir_if_not_exists(
-            path="latex/Images/", new_dir_name="graphs/zoom"
-        )
+        create_target_dir_if_not_exists(some_path="latex/Images/graphs/zoom")
         if "png" in extensions:
             copy_region_of_img(
-                src_path="latex/Images/" + "graphs/" + filename + ".png",
+                src_path="latex/Images/graphs/" + filename + ".png",
                 dst_dir="latex/Images/graphs/zoom",
                 x_coords=(0.0, 1.0),
                 y_coords=(0.3, 0.6),

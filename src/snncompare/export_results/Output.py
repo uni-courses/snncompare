@@ -12,7 +12,6 @@ import pathlib
 from typing import Dict, List, Optional
 
 import jsons
-from snnbackends.plot_graphs import plot_uncoordinated_graph
 from snnbackends.verify_nx_graphs import (
     verify_results_nx_graphs,
     verify_results_nx_graphs_contain_expected_stages,
@@ -21,7 +20,8 @@ from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.export_plots.get_plot_data import plot_coordinated_graph
+from snncompare.export_plots.create_png_plot import plot_coordinated_graph
+from snncompare.export_plots.plot_graphs import plot_uncoordinated_graph
 
 from .export_json_results import write_dict_to_json
 from .export_nx_graph_to_json import convert_digraphs_to_json
@@ -246,8 +246,9 @@ def plot_graph_behaviours(
                 )
         else:
             plot_uncoordinated_graph(
+                extensions=run_config.export_types,
                 G=snn_graph,
-                filepath=f"results/{graph_name}_{filepath}.png",
+                filename=f"{graph_name}_{filepath}.png",
                 show=False,
             )
 

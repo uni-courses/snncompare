@@ -1,5 +1,5 @@
-"""Performs tests check whether the has_outputted_stage function correctly
-determines which stages have been completed and not for:
+"""Performs tests check whether the has_outputted_stage_jsons( function
+correctly determines which stages have been completed and not for:
 Stage1=Done
 Stage2=Not yet done.
 Stage3=Not yet done.
@@ -9,7 +9,6 @@ import os
 import shutil
 import unittest
 
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
 from snncompare.exp_config.default_setts.create_default_settings import (
@@ -17,15 +16,16 @@ from snncompare.exp_config.default_setts.create_default_settings import (
 )
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
+from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_results.helper import run_config_to_filename
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from snncompare.graph_generation.stage_1_get_input_graphs import (
-    get_input_graph,
+from snncompare.graph_generation.stage_1_create_graphs import (
+    get_input_graph_of_run_config,
 )
 from snncompare.import_results.check_completed_stages import (
-    has_outputted_stage,
+    has_outputted_stage_jsons,
 )
 from snncompare.import_results.read_json import load_results_from_json
 from tests.tests_helper import (
@@ -80,9 +80,9 @@ class Test_stage_1_output_json(unittest.TestCase):
     @typechecked
     def test_output_json_contains_(self) -> None:
         """Tests whether deleting all results and creating an artificial json
-        with only stage 1 completed, results in has_outputted_stage() returning
-        that only stage 1 is completed, and that stages 2,3 and 4 are not yet
-        completed."""
+        with only stage 1 completed, results in has_outputted_stage_jsons()
+        returning that only stage 1 is completed, and that stages 2,3 and 4 are
+        not yet completed."""
 
         for run_config in self.experiment_runner.run_configs:
             json_filepath = (
@@ -98,7 +98,9 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath=json_filepath,
                 graph_names=stage_1_graph_names,
                 completed_stages=self.expected_completed_stages,
-                input_graph=get_input_graph(run_config=run_config),
+                input_graph=get_input_graph_of_run_config(
+                    run_config=run_config
+                ),
                 run_config=run_config,
             )
 
@@ -135,7 +137,7 @@ class Test_stage_1_output_json(unittest.TestCase):
             # uncompleted stages in the graphs.
             # TODO: update expected stages.
             self.assertTrue(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[
                         1,
                     ],
@@ -146,14 +148,14 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             # Test for stage 1, 2, and 4.
             self.assertFalse(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[1, 2],
                     run_config=run_config,
                     stage_index=2,
                 )
             )
             self.assertTrue(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[
                         1,
                         2,
@@ -164,7 +166,7 @@ class Test_stage_1_output_json(unittest.TestCase):
                 )
             )
             self.assertFalse(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[1, 2, 3, 4],
                     run_config=run_config,
                     stage_index=4,
