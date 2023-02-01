@@ -55,8 +55,8 @@ class Experiment_runner:
     def __init__(
         self,
         exp_config: Exp_config,
-        specific_run_config: Optional[Run_config] = None,
         perform_run: bool = True,
+        specific_run_config: Optional[Run_config] = None,
     ) -> None:
 
         # Ensure output directories are created for stages 1 to 4.

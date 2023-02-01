@@ -57,7 +57,9 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     # )
 
     # python -m src.snncompare -e mdsa_creation_only_size_3_4 -v
-    Experiment_runner(exp_config)
+    Experiment_runner(
+        exp_config=exp_config, specific_run_config=None, perform_run=True
+    )
     # TODO: verify expected output results have been generated successfully.
     print("Done")
 

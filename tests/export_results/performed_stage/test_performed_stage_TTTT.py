@@ -65,6 +65,8 @@ class Test_stage_1_output_json(unittest.TestCase):
         # Instead of the Experiment_runner.
         self.experiment_runner = Experiment_runner(
             exp_config=self.exp_config,
+            specific_run_config=None,
+            perform_run=True,
         )
 
         # Pick (first) run config and get the output locations for testing.
