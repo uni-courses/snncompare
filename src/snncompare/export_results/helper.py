@@ -1,14 +1,18 @@
 """Contains helper functions for exporting simulation results."""
 import collections
 import copy
-from typing import Dict, List, Union
+import hashlib
+import json
+from typing import TYPE_CHECKING, Dict, List, Union
 
 import networkx as nx
 from typeguard import typechecked
 
-from snncompare.run_config.Run_config import Run_config
-
 from ..helper import get_actual_duration
+
+if TYPE_CHECKING:
+    from snncompare.exp_config.Exp_config import Exp_config
+    from snncompare.run_config.Run_config import Run_config
 
 
 @typechecked
@@ -28,14 +32,10 @@ def flatten(
     return dict(items)
 
 
-# >>> flatten({'a': 1, 'c': {'a': 2, 'b': {'x': 5, 'y' : 10}}, 'd': [1, 2, 3]})
-# {'a': 1, 'c_a': 2, 'c_b_x': 5, 'd': [1, 2, 3], 'c_b_y': 10}
-
-
 @typechecked
 def run_config_to_filename(
     *,
-    run_config: Run_config,
+    run_config: "Run_config",
 ) -> str:
     """Converts a run_config dictionary into a filename.
 
@@ -46,15 +46,6 @@ def run_config_to_filename(
     # TODO: allow user to specify a custom order of parameters.
 
     stripped_run_config = copy.deepcopy(run_config).__dict__
-    stripped_run_config.pop("unique_id")  # Unique Id will be added as tag
-    stripped_run_config.pop("max_duration")  # Empty
-    stripped_run_config.pop("recreate_s4")  # Irrellevant
-    stripped_run_config.pop("recreate_s3")  # Irrellevant
-    stripped_run_config.pop("recreate_s1")  # Irrellevant
-    stripped_run_config.pop("recreate_s2")  # Irrellevant
-    stripped_run_config.pop("export_images")  # Irrellevant
-    if "export_types" in stripped_run_config.keys():
-        stripped_run_config.pop("export_types")  # Irrellevant
     # instead (To reduce filename length).
     filename = str(flatten(d=stripped_run_config))
 
@@ -76,7 +67,7 @@ def get_expected_image_paths_stage_3(
     *,
     nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph]],
     input_graph: nx.Graph,
-    run_config: Run_config,
+    run_config: "Run_config",
     extensions: List[str],
 ) -> List[str]:
     """Returns the expected image filepaths for stage 3.
@@ -100,3 +91,32 @@ def get_expected_image_paths_stage_3(
                         image_dir + f"{graph_name}_{filename}_{t}.{extension}"
                     )
     return image_filepaths
+
+
+@typechecked
+def get_unique_id(
+    *,
+    some_config: Union["Exp_config", "Run_config"],
+) -> str:
+    """Checks if an experiment configuration dictionary already has a unique
+    identifier, and if not it computes and appends it.
+
+    If it does, throws an error.
+    TODO: move into helper
+
+    :param exp_config: Exp_config:
+    """
+    if "unique_id" in some_config.__dict__.keys():
+        raise Exception(
+            f"Error, the exp_config:{some_config}\n"
+            + "already contains a unique identifier."
+        )
+
+    # Compute a unique code belonging to this particular experiment
+    # configuration.
+    unique_id = str(
+        hashlib.sha256(
+            json.dumps(some_config.__dict__).encode("utf-8")
+        ).hexdigest()
+    )
+    return unique_id

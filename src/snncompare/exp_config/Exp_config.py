@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
-import json
 from typing import Any, Dict
 
 from snnadaptation.redundancy.verify_redundancy_settings import (
@@ -13,6 +11,8 @@ from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_exp_config
 from typeguard import typechecked
+
+from snncompare.export_results.helper import get_unique_id
 
 
 # pylint: disable=R0902
@@ -32,20 +32,11 @@ class Exp_config:
         min_graph_size: int,
         min_max_graphs: int,
         neuron_models: list,
-        recreate_s1: bool,
-        recreate_s2: bool,
-        recreate_s3: bool,
-        recreate_s4: bool,
         radiations: dict,
         seeds: list[int],
         simulators: list,
         size_and_max_graphs: list,
         synaptic_models: list,
-        export_images: bool | None = False,
-        export_types: list[str] | None = None,
-        gif: bool | None = False,
-        unique_id: str | None = None,
-        zoom: bool | None = False,
     ):
         """Stores run configuration settings for the exp_configriment."""
 
@@ -57,26 +48,13 @@ class Exp_config:
         self.min_graph_size: int = min_graph_size
         self.min_max_graphs: int = min_max_graphs
         self.neuron_models: list = neuron_models
-        self.recreate_s1: bool = recreate_s1
-        self.recreate_s2: bool = recreate_s2
-        self.recreate_s3: bool = recreate_s3
-        self.recreate_s4: bool = recreate_s4
         self.radiations: dict = radiations
         self.seeds: list[int] = seeds
         self.simulators: list = simulators
         self.size_and_max_graphs: list = size_and_max_graphs
         self.synaptic_models: list = synaptic_models
 
-        # Optional properties
-        self.export_images: bool = bool(export_images)
-        if self.export_images:
-            if export_types is not None:
-                self.export_types: list[str] = export_types
-        self.gif: bool = bool(gif)
-        self.zoom: bool = bool(zoom)
-
-        if unique_id is not None:
-            self.unique_id: str = unique_id
+        self.unique_id: str = get_unique_id(some_config=copy.deepcopy(self))
 
         # Verify run config object.
         supp_exp_config = Supported_experiment_settings()
@@ -86,34 +64,6 @@ class Exp_config:
             has_unique_id=False,
             allow_optional=False,
         )
-
-
-@typechecked
-def remove_optional_args_exp_config(
-    *,
-    supported_experiment_settings: Supported_experiment_settings,
-    copied_exp_config: Exp_config,
-) -> Exp_config:
-    """removes the optional arguments from a run config."""
-    non_unique_attributes = [
-        "recreate_s1",
-        "recreate_s2",
-        "recreate_s3",
-        "recreate_s4",
-        "export_images",
-        "export_types",
-        "unique_id",
-    ]
-    for attribute_name in non_unique_attributes:
-        # TODO: set to default value instead
-        setattr(copied_exp_config, attribute_name, None)
-    verify_exp_config(
-        supp_exp_config=supported_experiment_settings,
-        exp_config=copied_exp_config,
-        has_unique_id=False,
-        allow_optional=False,
-    )
-    return copied_exp_config
 
 
 # pylint: disable=R0902
@@ -269,50 +219,12 @@ class Supported_experiment_settings:
         return False
 
 
-@typechecked
-def append_unique_exp_config_id(
-    *,
-    exp_config: Exp_config,
-) -> Exp_config:
-    """Checks if an experiment configuration dictionary already has a unique
-    identifier, and if not it computes and appends it.
-
-    If it does, throws an error.
-
-    :param exp_config: Exp_config:
-    """
-    if "unique_id" in exp_config.__dict__.keys():
-        raise Exception(
-            f"Error, the exp_config:{exp_config}\n"
-            + "already contains a unique identifier."
-        )
-
-    # Compute a unique code belonging to this particular experiment
-    # configuration.
-    # TODO: remove optional arguments from config.
-    supported_experiment_settings = Supported_experiment_settings()
-    exp_config_without_unique_id: Exp_config = remove_optional_args_exp_config(
-        supported_experiment_settings=supported_experiment_settings,
-        copied_exp_config=copy.deepcopy(exp_config),
-    )
-
-    unique_id = str(
-        hashlib.sha256(
-            json.dumps(exp_config_without_unique_id.__dict__).encode("utf-8")
-        ).hexdigest()
-    )
-    exp_config.unique_id = unique_id
-    return exp_config
-
-
 # pylint: disable=W0613
 @typechecked
 def verify_exp_config(
     *,
     supp_exp_config: Supported_experiment_settings,
     exp_config: Exp_config,
-    has_unique_id: bool,
-    allow_optional: bool,
 ) -> None:
     """Verifies the selected experiment configuration settings are valid.
 
@@ -320,13 +232,6 @@ def verify_exp_config(
     :param has_unique_id: param supp_exp_config:
     :param supp_exp_config:
     """
-
-    verify_exp_config_is_sensible(
-        exp_config=exp_config,
-        supp_exp_config=supp_exp_config,
-    )
-
-    # Verify settings are sensible.
 
     # Verify the algorithms
     verify_algos_in_exp_config(exp_config=exp_config)
@@ -381,40 +286,6 @@ def verify_exp_config(
         min_val=exp_config.min_max_graphs,
         max_val=exp_config.max_max_graphs,
     )
-
-    # Verify settings of type bool.
-
-
-def verify_exp_config_is_sensible(
-    *,
-    exp_config: Exp_config,
-    supp_exp_config: Supported_experiment_settings,
-) -> None:
-    """Verifies the experiment configuration does not contain unsensible
-    options."""
-    # Check that if recreate_s3 is True, that the experiment
-    # configuration actually exports images.
-    if exp_config.recreate_s3:
-        if not exp_config.export_images:
-            raise AttributeError(
-                "Error, the user asked to overwrite the images without"
-                "Telling that the images should be exported."
-            )
-
-    if exp_config.export_images:
-        if len(exp_config.export_types) < 1:
-            raise TypeError(
-                "Error, export types not defined whilst wanting to export"
-                + " images."
-            )
-        for export_type in exp_config.export_types:
-            if export_type not in supp_exp_config.export_types:
-                raise AttributeError(
-                    "Error, the user asked to overwrite the images whilst"
-                    + "specifying invalid image export extensions: "
-                    + f"{export_type}. Expected: "
-                    + f"{supp_exp_config.export_types}"
-                )
 
 
 @typechecked
@@ -540,8 +411,6 @@ def verify_integer_settings(
 ) -> None:
     """Verifies an integer setting is of type integer and that it is within the
     supported minimum and maximum value range.
-
-    TODO: remove optional arguments.
 
     :param integer_setting:
     :param min_val:

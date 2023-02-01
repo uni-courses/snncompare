@@ -5,7 +5,6 @@ setting of the experiment configuration settings.
 """
 
 # import showme
-import timeit
 from pprint import pprint
 from typing import Dict, List, Optional
 
@@ -20,7 +19,6 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
-    append_unique_exp_config_id,
 )
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.helper import dicts_are_equal, generate_run_configs
@@ -39,19 +37,7 @@ from .run_config.verify_run_completion import (
     assert_stage_3_is_completed,
     assert_stage_is_completed,
 )
-from .run_config.verify_run_settings import verify_has_unique_id
 from .simulation.stage2_sim import sim_graphs
-
-template = """
-def inner(*,_it, _timer{init}):
-    {setup}
-    _t0 = _timer()
-    for _i in _it:
-        retval = {stmt}
-    _t1 = _timer()
-    return _t1 - _t0, retval
-"""
-timeit.template = template  # type: ignore[attr-defined]
 
 
 class Experiment_runner:
@@ -80,19 +66,6 @@ class Experiment_runner:
 
         # Load the ranges of supported settings.
         self.supp_exp_config = Supported_experiment_settings()
-
-        # If the experiment exp_config does not contain a hash-code,
-        # create the unique hash code for this configuration.
-        # TODO: restore
-        if not self.supp_exp_config.has_unique_config_id(
-            some_config=self.exp_config
-        ):
-            append_unique_exp_config_id(
-                exp_config=self.exp_config,
-            )
-
-        # Verify the unique hash code for this configuration is valid.
-        verify_has_unique_id(some_dict=self.exp_config.__dict__)
 
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config

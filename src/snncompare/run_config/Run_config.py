@@ -1,8 +1,11 @@
 """"Stores the run config Dict type."""
+import copy
 import sys
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 from typeguard import typechecked
+
+from snncompare.export_results.helper import get_unique_id
 
 if sys.version_info < (3, 11):
     from typing_extensions import TypedDict
@@ -113,16 +116,7 @@ class Run_config:
         ],
         seed: int,
         simulator: str,
-        export_images: Optional[bool] = None,
-        export_types: Optional[List[str]] = None,
         max_duration: Optional[int] = None,
-        recreate_s1: Optional[bool] = None,
-        recreate_s2: Optional[bool] = None,
-        recreate_s3: Optional[bool] = None,
-        recreate_s4: Optional[bool] = None,
-        unique_id: Optional[str] = None,
-        gif: Optional[bool] = False,
-        zoom: Optional[bool] = False,
     ):
         """Stores run configuration settings for the experiment."""
 
@@ -139,16 +133,10 @@ class Run_config:
         self.simulator: str = simulator
 
         # Optional properties
-        self.export_images: Optional[bool] = export_images
-        self.export_types: Optional[List[str]] = export_types
-        self.gif: Optional[bool] = gif
+
         self.max_duration: Optional[int] = max_duration
-        self.recreate_s1: Optional[bool] = recreate_s1
-        self.recreate_s2: Optional[bool] = recreate_s2
-        self.recreate_s3: Optional[bool] = recreate_s3
-        self.recreate_s4: Optional[bool] = recreate_s4
-        self.unique_id: Optional[str] = unique_id
-        self.zoom: Optional[bool] = zoom
+
+        self.unique_id: str = get_unique_id(some_config=copy.deepcopy(self))
 
         # Verify run config object.
 

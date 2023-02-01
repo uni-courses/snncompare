@@ -14,7 +14,6 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
-    append_unique_exp_config_id,
     verify_exp_config,
 )
 from snncompare.json_configurations.run_configs.algo_test import (
@@ -67,7 +66,6 @@ class Test_setting_unique_id_exp_config(unittest.TestCase):
         # Verify the run configs are all different, (exclude the unique_id from
         # the comparison.)
         for index, exp_config in enumerate(self.exp_config_list):
-            append_unique_exp_config_id(exp_config=exp_config)
             if index == 0:
                 self.assertEqual(
                     exp_config.unique_id,
