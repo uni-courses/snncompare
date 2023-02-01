@@ -9,7 +9,7 @@ SubInput: Run configuration within an experiment.
     mechanism.
 """
 import pathlib
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import jsons
 from snnbackends.verify_nx_graphs import (
@@ -240,9 +240,6 @@ def plot_graph_behaviours(
                     title=None,
                     width=(run_config.algorithm["MDSA"]["m_val"] + 1) * 2.5,
                     zoom=run_config.zoom,
-                    # title=create_custom_plot_titles(
-                    #    graph_name, t, run_config.seed
-                    # ),
                 )
         else:
             plot_uncoordinated_graph(
@@ -251,112 +248,6 @@ def plot_graph_behaviours(
                 filename=f"{graph_name}_{filepath}.png",
                 show=False,
             )
-
-
-# pylint: disable=R0912
-# pylint: disable=R0915
-@typechecked
-def create_custom_plot_titles(
-    *, graph_name: str, t: int, seed: int
-) -> Optional[str]:
-    """Creates custom titles for the SNN graphs for seed = 42."""
-    # TODO: update to specify specific run_config instead of seed, to ensure
-    #  the description is accurate/consistent with the SNN propagation.
-    if seed == 42:
-        title = None
-        if graph_name == "snn_algo_graph":
-            if t == 0:
-                title = (
-                    "Initialisation:\n spike_once and random neurons spike, "
-                    + "selector starts."
-                )
-            if t == 1:
-                title = (
-                    "Selector neurons continue exciting\n degree_receivers "
-                    + "(WTA-circuits)."
-                )
-            if t == 21:
-                title = "Selector about to create degree_receiver winner."
-            if t == 22:
-                title = (
-                    "Degree_receiver neurons spike and inhibit selector,\n"
-                    + " excite counter neuron."
-                )
-            if t == 23:
-                title = "WTA circuits completed, score stored in counter."
-            if t == 24:
-                title = "Remaining WTA circuit being completed."
-            if t == 25:
-                title = (
-                    "Algorithm completed, counter neuron amperage read out."
-                )
-            if t == 26:
-                title = "."
-
-        if graph_name == "adapted_snn_graph":
-            if t == 0:
-                title = (
-                    "Initialisation Adapted SNN:\n All neurons have a "
-                    + "redundant neuron."
-                )
-            if t == 1:
-                title = (
-                    "Selector neurons have inhibited redundant selector"
-                    + " neurons."
-                )
-            if t == 21:
-                title = "Selector about to create degree_receiver winner."
-            if t == 22:
-                title = (
-                    "Degree_receiver neurons spike and inhibit selector,\n"
-                    + "excite counter neuron."
-                )
-            if t == 23:
-                title = "WTA circuits completed, score stored in counter."
-            if t == 24:
-                title = "Remaining WTA circuit being completed."
-            if t == 25:
-                title = (
-                    "Algorithm completed, counter neuron amperage read out."
-                )
-            if t == 26:
-                title = "."
-
-        if graph_name == "rad_adapted_snn_graph":
-            if t == 0:
-                title = (
-                    "Simulated Radiation Damage:\n Red neurons died, "
-                    + "(don't spike)."
-                )
-            if t == 1:
-                title = (
-                    "Redundant spike_once and selector neurons take over.\n "
-                    + "Working neurons inhibited redundant neurons (having "
-                    + "delay=1)."
-                )
-            if t == 20:
-                title = "Selector_2_0 about to create degree_receiver winner."
-            if t == 21:
-                title = (
-                    "Degree_receiver_2_1_0 neuron spike and inhibits selector"
-                    + ",\n excites counter neuron."
-                )
-            if t == 22:
-                title = (
-                    "First WTA circuits completed, score stored in counter. "
-                    + "2nd WTA\n circuit is has winner, inhibits selectors, "
-                    + "stores result in counter."
-                )
-            if t == 23:
-                title = "Third WTA circuit has winner."
-            if t == 24:
-                title = (
-                    "Algorithm completed, counter neuron amperage read out.\n"
-                    + " Redundancy saved the day."
-                )
-            if t == 25:
-                title = "."
-    return title
 
 
 @typechecked
