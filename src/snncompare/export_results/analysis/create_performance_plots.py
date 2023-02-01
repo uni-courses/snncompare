@@ -12,6 +12,10 @@ from typing import Dict, List, Tuple
 from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
+from snncompare.create_configs import (
+    generate_run_configs,
+    get_adaptation_and_radiations,
+)
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_results.load_json_to_nx_graph import (
@@ -19,10 +23,6 @@ from snncompare.export_results.load_json_to_nx_graph import (
 )
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
-)
-from snncompare.helper import (
-    generate_run_configs,
-    get_adaptation_and_radiations,
 )
 from snncompare.import_results.check_completed_stages import (
     has_outputted_stage_jsons,

@@ -16,12 +16,13 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
+from snncompare.create_configs import generate_run_configs
 from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
 )
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
-from snncompare.helper import dicts_are_equal, generate_run_configs
+from snncompare.helper import dicts_are_equal
 from snncompare.run_config.Run_config import Run_config
 
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
