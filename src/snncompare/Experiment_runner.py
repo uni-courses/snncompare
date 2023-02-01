@@ -71,8 +71,8 @@ class Experiment_runner:
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config
         )
-        # Perform runs accordingly.
-        if perform_run:
+
+        if perform_run:  # Used to get quick Experiment_runner for testing.
             self.__perform_run(self.exp_config, self.run_configs)
 
     # pylint: disable=W0238

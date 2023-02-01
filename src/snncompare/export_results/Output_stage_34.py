@@ -43,7 +43,7 @@ def output_stage_files_3_and_4(
     # single dict.
     if results_nx_graphs["run_config"].simulator == "nx":
         filename = run_config_to_filename(
-            run_config=results_nx_graphs["run_config"]
+            run_config_dict=results_nx_graphs["run_config"].__dict__
         )
         # TODO: Check if plots are already generated and if they must be
         # overwritten.
