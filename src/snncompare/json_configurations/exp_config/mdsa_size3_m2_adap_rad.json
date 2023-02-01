@@ -19,7 +19,6 @@
   "neuron_models": [
     "LIF"
   ],
-  "overwrite_images_only": false,
   "radiations": {
     "neuron_death": [
       0.25
@@ -27,6 +26,7 @@
   },
   "recreate_s1": false,
   "recreate_s2": false,
+  "recreate_s3": false,
   "recreate_s4": false,
   "seeds": [
     7

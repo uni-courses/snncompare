@@ -45,7 +45,7 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     manage_export_parsing(args=args, exp_config=exp_config)
     manage_exp_config_parsing(args=args, exp_config=exp_config)
 
-    # if not args.overwrite_images_only:
+    # if not args.recreate_s3:
     #    exp_config.export_images = True
     #    exp_config.overwrite_images = True
 
@@ -87,9 +87,9 @@ def manage_export_parsing(
     # Allow user to specify image export types (and verify them).
     else:
         if args.overwrite_visualisation:
-            exp_config.overwrite_images_only = args.overwrite_visualisation
+            exp_config.recreate_s3 = args.overwrite_visualisation
         else:
-            exp_config.overwrite_images_only = False
+            exp_config.recreate_s3 = False
         extensions = args.export_images.split(",")
         for extension in extensions:
             if extension in supp_setts.export_types:

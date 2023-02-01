@@ -34,7 +34,7 @@ class Exp_config:
         neuron_models: list,
         recreate_s1: bool,
         recreate_s2: bool,
-        overwrite_images_only: bool,
+        recreate_s3: bool,
         recreate_s4: bool,
         radiations: dict,
         seeds: list[int],
@@ -59,7 +59,7 @@ class Exp_config:
         self.neuron_models: list = neuron_models
         self.recreate_s1: bool = recreate_s1
         self.recreate_s2: bool = recreate_s2
-        self.overwrite_images_only: bool = overwrite_images_only
+        self.recreate_s3: bool = recreate_s3
         self.recreate_s4: bool = recreate_s4
         self.radiations: dict = radiations
         self.seeds: list[int] = seeds
@@ -98,7 +98,7 @@ def remove_optional_args_exp_config(
     non_unique_attributes = [
         "recreate_s1",
         "recreate_s2",
-        "overwrite_images_only",
+        "recreate_s3",
         "recreate_s4",
         "export_images",
         "export_types",
@@ -161,7 +161,7 @@ class Supported_experiment_settings:
         # Overwrite the simulation results or not.
         self.recreate_s4 = True
         # Overwrite the visualisation of the SNN behaviour or not.
-        self.overwrite_images_only = True
+        self.recreate_s3 = True
 
         self.seeds = list(range(0, 1000))
 
@@ -392,9 +392,9 @@ def verify_exp_config_is_sensible(
 ) -> None:
     """Verifies the experiment configuration does not contain unsensible
     options."""
-    # Check that if overwrite_images_only is True, that the experiment
+    # Check that if recreate_s3 is True, that the experiment
     # configuration actually exports images.
-    if exp_config.overwrite_images_only:
+    if exp_config.recreate_s3:
         if not exp_config.export_images:
             raise AttributeError(
                 "Error, the user asked to overwrite the images without"

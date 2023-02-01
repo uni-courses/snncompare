@@ -49,7 +49,7 @@ def run_config_to_filename(
     stripped_run_config.pop("unique_id")  # Unique Id will be added as tag
     stripped_run_config.pop("max_duration")  # Empty
     stripped_run_config.pop("recreate_s4")  # Irrellevant
-    stripped_run_config.pop("overwrite_images_only")  # Irrellevant
+    stripped_run_config.pop("recreate_s3")  # Irrellevant
     stripped_run_config.pop("recreate_s1")  # Irrellevant
     stripped_run_config.pop("recreate_s2")  # Irrellevant
     stripped_run_config.pop("export_images")  # Irrellevant

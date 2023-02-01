@@ -112,7 +112,7 @@ def get_config_one() -> Dict:
         # Move into "overwrite options"
         "recreate_s1": True,
         "recreate_s2": True,
-        "overwrite_images_only": True,
+        "recreate_s3": True,
         "recreate_s4": True,
         "radiations": None,
         # TODO: pass algo to see if it is compatible with the algorithm.

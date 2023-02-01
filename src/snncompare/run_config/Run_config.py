@@ -118,7 +118,7 @@ class Run_config:
         max_duration: Optional[int] = None,
         recreate_s1: Optional[bool] = None,
         recreate_s2: Optional[bool] = None,
-        overwrite_images_only: Optional[bool] = None,
+        recreate_s3: Optional[bool] = None,
         recreate_s4: Optional[bool] = None,
         unique_id: Optional[str] = None,
         gif: Optional[bool] = False,
@@ -145,7 +145,7 @@ class Run_config:
         self.max_duration: Optional[int] = max_duration
         self.recreate_s1: Optional[bool] = recreate_s1
         self.recreate_s2: Optional[bool] = recreate_s2
-        self.overwrite_images_only: Optional[bool] = overwrite_images_only
+        self.recreate_s3: Optional[bool] = recreate_s3
         self.recreate_s4: Optional[bool] = recreate_s4
         self.unique_id: Optional[str] = unique_id
         self.zoom: Optional[bool] = zoom

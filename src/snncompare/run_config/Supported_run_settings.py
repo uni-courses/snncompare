@@ -52,7 +52,7 @@ class Supported_run_settings:
             "max_duration": int,
             "recreate_s1": bool,
             "recreate_s2": bool,
-            "overwrite_images_only": bool,
+            "recreate_s3": bool,
             "recreate_s4": bool,
             "unique_id": str,
             "zoom": bool,

@@ -78,7 +78,7 @@ def long_exp_config_for_mdsa_testing() -> "Exp_config":
         # Move into "overwrite options"
         "recreate_s1": True,
         "recreate_s2": True,
-        "overwrite_images_only": False,  # TODO: determine why error if false.
+        "recreate_s3": False,  # TODO: determine why error if false.
         "recreate_s4": True,
         "radiations": {},
         # TODO: pass algo to see if it is compatible with the algorithm.
@@ -104,7 +104,7 @@ def run_config_with_error() -> Run_config:
         graph_size=5,
         iteration=0,
         recreate_s4=True,
-        overwrite_images_only=True,
+        recreate_s3=True,
         radiation=None,
         seed=7,
         simulator="nx",

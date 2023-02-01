@@ -22,7 +22,7 @@ with_adaptation_with_radiation = {
     "graph_nr": 5,
     "iteration": 4,
     "recreate_s4": True,
-    "overwrite_images_only": True,
+    "recreate_s3": True,
     "radiation": {
         "delta_synaptic_w": (0.05, 0.4),
     },

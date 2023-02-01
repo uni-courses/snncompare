@@ -468,7 +468,7 @@ def set_run_config_export_settings(
         if exp_config.export_images:
             run_config.export_types = exp_config.export_types
             run_config.gif = exp_config.gif
-            run_config.overwrite_images_only = exp_config.overwrite_images_only
+            run_config.recreate_s3 = exp_config.recreate_s3
         run_config.recreate_s1 = exp_config.recreate_s1
         run_config.recreate_s2 = exp_config.recreate_s2
         run_config.recreate_s4 = exp_config.recreate_s4
@@ -517,7 +517,7 @@ def run_parameters_to_dict(
         graph_nr=graph_nr,
         radiation=radiation,
         recreate_s4=exp_config.recreate_s4,
-        overwrite_images_only=exp_config.overwrite_images_only,
+        recreate_s3=exp_config.recreate_s3,
         simulator=simulator,
     )
 
