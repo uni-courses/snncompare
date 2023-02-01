@@ -60,8 +60,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
         returned_dict = verify_run_config(
             supp_run_setts=self.supp_run_settings,
             run_config=self.valid_run_setting,
-            has_unique_id=False,
-            allow_optional=False,
         )
         self.assertIsInstance(returned_dict, Dict)
 
@@ -84,8 +82,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
             verify_run_config(
                 supp_run_setts=self.supp_run_settings,
                 run_config=exp_config,
-                has_unique_id=False,
-                allow_optional=False,
             )
         self.assertEqual(
             f"Error:{self.invalid_adaptation_key} is not supported by the"
@@ -120,8 +116,6 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
         verify_run_config(
             supp_run_setts=test_object.supp_exp_config,
             run_config=exp_config,
-            has_unique_id=False,
-            allow_optional=False,
         )
 
     test_object.assertEqual(

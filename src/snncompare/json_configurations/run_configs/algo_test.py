@@ -14,7 +14,6 @@ from snncompare.export_results.export_json_results import (
 )
 from snncompare.helper import file_exists
 from snncompare.run_config.Run_config import Run_config
-from snncompare.run_config.Supported_run_settings import Supported_run_settings
 
 
 @typechecked
@@ -46,6 +45,8 @@ def load_exp_config_from_file(
             json_file.close()
 
         # The ** loads the dict into the object.
+        if "unique_id" in exp_config_dict:
+            exp_config_dict.pop("unique_id")
         exp_config = Exp_config(**exp_config_dict)
         return exp_config
     raise FileNotFoundError(f"Error, {filepath} was not found.")
@@ -76,10 +77,6 @@ def long_exp_config_for_mdsa_testing() -> "Exp_config":
         "max_graph_size": 5,
         "size_and_max_graphs": [(3, 1), (4, 3), (5, 6)],
         # Move into "overwrite options"
-        "recreate_s1": True,
-        "recreate_s2": True,
-        "recreate_s3": False,  # TODO: determine why error if false.
-        "recreate_s4": True,
         "radiations": {},
         # TODO: pass algo to see if it is compatible with the algorithm.
         # TODO: move into "Backend options"
@@ -108,9 +105,6 @@ def run_config_with_error() -> Run_config:
         radiation=None,
         seed=7,
         simulator="nx",
-    )
-    Supported_run_settings().append_unique_run_config_id(
-        some_run_config, allow_optional=True
     )
     return some_run_config
 

@@ -5,9 +5,7 @@
 # controllers.py
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict
-
-from typeguard import typechecked
+from typing import TYPE_CHECKING
 
 from snncompare.run_config.Run_config import Run_config
 
@@ -25,8 +23,6 @@ def verify_run_config(
     *,
     supp_run_setts: Supported_run_settings,
     run_config: Run_config,
-    has_unique_id: bool,
-    allow_optional: bool,
 ) -> Run_config:
     """Verifies the selected experiment configuration settings are valid.
 
@@ -34,8 +30,6 @@ def verify_run_config(
     :param has_unique_id: param supp_exp_config:
     :param supp_exp_config:
     """
-    if not isinstance(has_unique_id, bool):
-        raise Exception(f"has_unique_id={has_unique_id}, should be a boolean")
     if not isinstance(run_config, Run_config):
         raise Exception(
             "Error, the run_config is of type:"
@@ -45,14 +39,6 @@ def verify_run_config(
 
     verify_run_config_dict_is_complete(
         supp_run_setts=supp_run_setts, run_config=run_config
-    )
-
-    # Verify no unknown configuration settings are presented.
-    verify_run_config_dict_contains_only_valid_entries(
-        supp_run_setts=supp_run_setts,
-        run_config=run_config,
-        has_unique_id=has_unique_id,
-        allow_optional=allow_optional,
     )
 
     # TODO: verify a single algorithm is evaluated in a single run.
@@ -79,53 +65,3 @@ def verify_run_config_dict_is_complete(
                 f"Error:{expected_key} is not in the configuration"
                 + f" settings:{run_config.__dict__.keys()}"
             )
-
-
-def verify_run_config_dict_contains_only_valid_entries(
-    *,
-    supp_run_setts: Supported_run_settings,
-    run_config: Run_config,
-    has_unique_id: bool,
-    allow_optional: bool,
-) -> None:
-    """Verifies the configuration settings dictionary does not contain any
-    invalid keys."""
-    for actual_key in run_config.__dict__.keys():
-        if actual_key not in supp_run_setts.parameters:
-            if not allow_optional:
-                if not (has_unique_id and actual_key == "unique_id"):
-                    if getattr(run_config, actual_key) is not None:
-                        raise Exception(
-                            f"Error:{actual_key}, with value:"
-                            + f"{getattr(run_config,actual_key)} is not "
-                            + "supported by the configuration settings:"
-                            + f"{supp_run_setts.parameters}"
-                        )
-            if actual_key not in supp_run_setts.optional_parameters:
-                raise Exception(
-                    f"Error:{actual_key} is not supported by the configuration"
-                    + f" settings:{supp_run_setts.parameters}, nor by the"
-                    + " optional settings:"
-                    + f"{supp_run_setts.optional_parameters}"
-                )
-
-
-@typechecked
-def verify_has_unique_id(
-    *,
-    some_dict: dict,
-) -> None:
-    """Verifies the config setting has a unique id.
-
-    TODO: eliminate duplicate func naming.
-    """
-    if not isinstance(some_dict, Dict):
-        raise Exception(
-            "The configuration settings is not a dictionary,"
-            + f"instead it is: of type:{type(some_dict)}."
-        )
-    if "unique_id" not in some_dict.keys():
-        raise Exception(
-            "The configuration settings do not contain a unique id even though"
-            + f" that was expected. some_dict is:{some_dict}."
-        )

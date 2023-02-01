@@ -33,12 +33,6 @@ def generate_run_configs(
         exp_config=exp_config
     )
     if specific_run_config is not None:
-        if specific_run_config.unique_id is None:
-            pprint(specific_run_config.__dict__)
-            # Append unique_id to run_config
-            Supported_run_settings().append_unique_run_config_id(
-                specific_run_config, allow_optional=True
-            )
         for gen_run_config in run_configs:
             if dicts_are_equal(
                 left=gen_run_config.__dict__,
@@ -123,7 +117,6 @@ def fill_remaining_run_config_settings(
                         size_and_max_graph=size_and_max_graph,
                         graph_nr=graph_nr,
                         radiation=radiation,
-                        exp_config=exp_config,
                         simulator=simulator,
                     )
                     run_configs.append(run_config)
@@ -139,30 +132,15 @@ def set_run_config_export_settings(
     experiment config."""
     supp_run_setts = Supported_run_settings()
     for run_config in run_configs:
-        if exp_config.export_images:
-            run_config.export_types = exp_config.export_types
-            run_config.gif = exp_config.gif
-            run_config.recreate_s3 = exp_config.recreate_s3
-        run_config.recreate_s1 = exp_config.recreate_s1
-        run_config.recreate_s2 = exp_config.recreate_s2
-        run_config.recreate_s4 = exp_config.recreate_s4
         verify_run_config(
             supp_run_setts=supp_run_setts,
             run_config=run_config,
-            has_unique_id=False,
-            allow_optional=True,
-        )
-
-        # Append unique_id to run_config
-        supp_run_setts.append_unique_run_config_id(
-            run_config, allow_optional=True
         )
 
         # Append show_snns and export_images to run config.
         supp_run_setts.assert_has_key(
             exp_config.__dict__, "export_images", bool
         )
-        run_config.export_images = exp_config.export_images
 
 
 # pylint: disable=R0913
@@ -175,7 +153,6 @@ def run_parameters_to_dict(
     size_and_max_graph: Tuple[int, int],
     graph_nr: int,
     radiation: Union[None, Dict],
-    exp_config: "Exp_config",
     simulator: str,
 ) -> Run_config:
     """Stores selected parameters into a dictionary.
@@ -190,8 +167,6 @@ def run_parameters_to_dict(
         graph_size=size_and_max_graph[0],
         graph_nr=graph_nr,
         radiation=radiation,
-        recreate_s4=exp_config.recreate_s4,
-        recreate_s3=exp_config.recreate_s3,
         simulator=simulator,
     )
 

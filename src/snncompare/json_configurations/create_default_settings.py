@@ -87,11 +87,6 @@ def default_exp_config() -> Exp_config:
         "max_graph_size": 20,
         # "size_and_max_graphs": [(3, 1), (4, 3)],
         "size_and_max_graphs": [(3, 1)],
-        # Move into "overwrite options"
-        "recreate_s1": False,
-        "recreate_s2": False,
-        "recreate_s3": False,
-        "recreate_s4": False,
         # TODO: pass algo to see if it is compatible with the algorithm.
         # TODO: move into "Backend options"
         "simulators": ["nx"],

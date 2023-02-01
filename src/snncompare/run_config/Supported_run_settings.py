@@ -7,16 +7,9 @@ setting types should be identical.)
 TODO: determine whether to separate typing object or not, like in
 Supported_experiment_settings.py.
 """
-import copy
-import hashlib
-import json
-from typing import Dict, List, Union
+from typing import Dict, Union
 
 from typeguard import typechecked
-
-from snncompare.run_config.Run_config import Run_config
-
-from .verify_run_settings import verify_run_config
 
 
 # pylint: disable=R0902
@@ -45,78 +38,6 @@ class Supported_run_settings:
             "seed": int,
             "simulator": str,
         }
-        self.optional_parameters = {
-            "export_images": bool,
-            "export_types": List[str],
-            "gif": bool,
-            "max_duration": int,
-            "recreate_s1": bool,
-            "recreate_s2": bool,
-            "recreate_s3": bool,
-            "recreate_s4": bool,
-            "unique_id": str,
-            "zoom": bool,
-        }
-
-    def append_unique_run_config_id(
-        self,
-        run_config: Run_config,
-        allow_optional: bool,
-    ) -> Run_config:
-        """Checks if an run configuration Dictionary already has a unique
-        identifier, and if not it computes and appends it.
-
-        If it does, throws an error.
-        """
-        if getattr(run_config, "unique_id") is not None:
-            raise Exception(
-                f"Error, the run_config:{run_config}\n"
-                + "already contains a unique identifier."
-            )
-
-        verify_run_config(
-            supp_run_setts=self,
-            run_config=run_config,
-            has_unique_id=False,
-            allow_optional=allow_optional,
-        )
-
-        minimal_run_config: Run_config = self.remove_optional_args(
-            copy.deepcopy(run_config)
-        )
-
-        unique_id = str(
-            hashlib.sha256(
-                json.dumps(minimal_run_config.__dict__).encode("utf-8")
-            ).hexdigest()
-        )
-        run_config.unique_id = unique_id
-        verify_run_config(
-            supp_run_setts=self,
-            run_config=run_config,
-            has_unique_id=True,
-            allow_optional=allow_optional,
-        )
-        return run_config
-
-    def remove_optional_args(
-        self,
-        copied_run_config: Run_config,
-    ) -> Run_config:
-        """removes the optional arguments from a run config."""
-        optional_keys = []
-        for key in copied_run_config.__dict__.keys():
-            if key in self.optional_parameters:
-                optional_keys.append(key)
-        for key in optional_keys:
-            setattr(copied_run_config, key, None)
-        verify_run_config(
-            supp_run_setts=self,
-            run_config=copied_run_config,
-            has_unique_id=False,
-            allow_optional=False,
-        )
-        return copied_run_config
 
     @typechecked
     def assert_has_key(

@@ -19,10 +19,6 @@
     "LIF"
   ],
   "radiations": null,
-  "recreate_s1": true,
-  "recreate_s2": true,
-  "recreate_s3": true,
-  "recreate_s4": true,
   "seeds": [
     7
   ],

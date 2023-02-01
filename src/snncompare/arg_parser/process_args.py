@@ -52,8 +52,8 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     # verify_exp_config(
     #    Supported_experiment_settings(),
     #    exp_config,
-    #    has_unique_id=False,
-    #    allow_optional=True,
+    #
+    #
     # )
 
     # python -m src.snncompare -e mdsa_creation_only_size_3_4 -v

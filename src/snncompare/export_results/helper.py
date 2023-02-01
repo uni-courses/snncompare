@@ -3,7 +3,7 @@ import collections
 import copy
 import hashlib
 import json
-from typing import TYPE_CHECKING, Dict, List, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 
 import networkx as nx
 from typeguard import typechecked
@@ -11,7 +11,6 @@ from typeguard import typechecked
 from ..helper import get_actual_duration
 
 if TYPE_CHECKING:
-    from snncompare.exp_config.Exp_config import Exp_config
     from snncompare.run_config.Run_config import Run_config
 
 
@@ -94,9 +93,9 @@ def get_expected_image_paths_stage_3(
 
 
 @typechecked
-def get_unique_id(
+def get_unique_id(  # type:ignore[misc]
     *,
-    some_config: Union["Exp_config", "Run_config"],
+    some_config: Any,
 ) -> str:
     """Checks if an experiment configuration dictionary already has a unique
     identifier, and if not it computes and appends it.

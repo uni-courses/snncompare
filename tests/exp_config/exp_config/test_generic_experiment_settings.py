@@ -58,8 +58,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
         verify_exp_config(
             supp_exp_config=supp_exp_config,
             exp_config=with_adaptation_with_radiation,
-            has_unique_id=False,
-            allow_optional=False,
         )
         self.assertIsInstance(with_adaptation_with_radiation, Dict)
 
@@ -77,8 +75,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
             verify_exp_config(
                 supp_exp_config=supp_exp_config,
                 exp_config=None,
-                has_unique_id=False,
-                allow_optional=False,
             )
 
         self.assertEqual(
@@ -101,8 +97,6 @@ class Test_generic_configuration_settings(unittest.TestCase):
             verify_exp_config(
                 supp_exp_config=supp_exp_config,
                 exp_config="string_instead_of_dict",
-                has_unique_id=False,
-                allow_optional=False,
             )
         self.assertEqual(
             "Error, the exp_config is of type:"
@@ -144,8 +138,6 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
         verify_exp_config(
             supp_exp_config=test_object.supp_exp_config,
             exp_config=exp_config,
-            has_unique_id=False,
-            allow_optional=False,
         )
 
     # Create expected output message.

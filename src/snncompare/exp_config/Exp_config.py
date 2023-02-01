@@ -54,15 +54,14 @@ class Exp_config:
         self.size_and_max_graphs: list = size_and_max_graphs
         self.synaptic_models: list = synaptic_models
 
-        self.unique_id: str = get_unique_id(some_config=copy.deepcopy(self))
+        some_copy: Exp_config = copy.deepcopy(self)
+        self.unique_id: str = get_unique_id(some_config=some_copy)
 
         # Verify run config object.
         supp_exp_config = Supported_experiment_settings()
         verify_exp_config(
             supp_exp_config=supp_exp_config,
             exp_config=self,
-            has_unique_id=False,
-            allow_optional=False,
         )
 
 
@@ -206,17 +205,6 @@ class Supported_experiment_settings:
             ],  # Multiply firing frequency with 5 to limit spike decay
             # impact.
         }
-
-    @typechecked
-    def has_unique_config_id(self, some_config: Exp_config) -> bool:
-        """
-
-        :param exp_config:
-
-        """
-        if "unique_id" in some_config.__dict__.keys():
-            return True
-        return False
 
 
 # pylint: disable=W0613

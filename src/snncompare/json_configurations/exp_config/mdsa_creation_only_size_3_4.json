@@ -22,8 +22,6 @@
       }
     ]
   },
-  "export_images": false,
-  "gif": false,
   "max_graph_size": 5,
   "max_max_graphs": 2,
   "min_graph_size": 3,
@@ -32,10 +30,6 @@
     "LIF"
   ],
   "radiations": {},
-  "recreate_s1": true,
-  "recreate_s2": true,
-  "recreate_s3": false,
-  "recreate_s4": true,
   "seeds": [
     7
   ],
@@ -50,5 +44,5 @@
   "synaptic_models": [
     "LIF"
   ],
-  "zoom": false
+  "unique_id": "da469e25672303d06778ef8d0d67a37dd410c0989a59c883f3f8db5d708a0877"
 }
