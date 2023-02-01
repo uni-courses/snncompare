@@ -28,7 +28,7 @@ def output_files_stage_1_and_2(
 
     # Get the json output filename.
     json_filename = run_config_to_filename(
-        run_config=results_nx_graphs["run_config"]
+        run_config_dict=results_nx_graphs["run_config"].__dict__
     )
     output_stage_json(
         results_nx_graphs=results_nx_graphs,

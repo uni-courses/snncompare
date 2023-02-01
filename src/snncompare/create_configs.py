@@ -1,17 +1,18 @@
 """Contains helper functions that are used throughout this repository."""
 from pprint import pprint
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 # from snncompare.export_results.load_json_to_nx_graph import dicts_are_equal
 from typeguard import typechecked
 
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.helper import dicts_are_equal
 from snncompare.run_config.Run_config import Run_config
 from snncompare.run_config.Supported_run_settings import Supported_run_settings
 from snncompare.run_config.verify_run_settings import verify_run_config
 
-if TYPE_CHECKING:
-    from snncompare.exp_config.Exp_config import Exp_config
+# if TYPE_CHECKING:
+# from snncompare.exp_config.Exp_config import Exp_config
 
 
 @typechecked

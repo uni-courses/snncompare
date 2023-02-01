@@ -86,9 +86,10 @@ class Test_stage_1_output_json(unittest.TestCase):
         completed."""
 
         for run_config in self.experiment_runner.run_configs:
-            json_filepath = (
-                f"results/{run_config_to_filename(run_config=run_config)}.json"
+            filename: str = run_config_to_filename(
+                run_config_dict=run_config.__dict__
             )
+            json_filepath = "results/" + f"{filename}" + ".json"
 
             # TODO: determine per stage per run config which graph names are
             # expected.

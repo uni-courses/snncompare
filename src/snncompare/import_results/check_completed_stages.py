@@ -80,7 +80,7 @@ def has_outputted_images(
 def get_expected_files(*, run_config: Run_config) -> List[str]:
     """Returns the list of expected files for a run configuration."""
     expected_filepaths = []
-    filename = run_config_to_filename(run_config=run_config)
+    filename = run_config_to_filename(run_config_dict=run_config.__dict__)
     relative_output_dir = "results/"
 
     output_file_extensions = [".json"]

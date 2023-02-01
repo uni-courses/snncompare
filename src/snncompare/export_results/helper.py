@@ -34,7 +34,7 @@ def flatten(
 @typechecked
 def run_config_to_filename(
     *,
-    run_config: "Run_config",
+    run_config_dict: Dict,
 ) -> str:
     """Converts a run_config dictionary into a filename.
 
@@ -44,7 +44,8 @@ def run_config_to_filename(
     # TODO: order dictionaries by alphabetical order by default.
     # TODO: allow user to specify a custom order of parameters.
 
-    stripped_run_config = copy.deepcopy(run_config).__dict__
+    # stripped_run_config:Dict = copy.deepcopy(run_config).__dict__
+    stripped_run_config: Dict = copy.deepcopy(run_config_dict)
     # instead (To reduce filename length).
     filename = str(flatten(d=stripped_run_config))
 
@@ -74,7 +75,7 @@ def get_expected_image_paths_stage_3(
     (If export is on).
     """
     image_filepaths = []
-    filename: str = run_config_to_filename(run_config=run_config)
+    filename: str = run_config_to_filename(run_config_dict=run_config.__dict__)
 
     if "alg_props" not in input_graph.graph.keys():
         raise Exception("Error, algo_props is not set.")

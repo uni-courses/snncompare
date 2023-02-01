@@ -22,7 +22,7 @@ def load_results_stage_1(
     dict loading the same.
     """
     # Get the json filename.
-    filename = run_config_to_filename(run_config=run_config)
+    filename = run_config_to_filename(run_config_dict=run_config.__dict__)
     relative_output_dir = "results/"
     json_filepath = relative_output_dir + filename + ".json"
     stage_1_dict = load_results_from_json(

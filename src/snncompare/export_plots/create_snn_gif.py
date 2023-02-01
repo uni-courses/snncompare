@@ -20,7 +20,9 @@ def create_gif_of_run_config(*, results_nx_graphs: Dict) -> None:
         expected_filepaths = []
         extensions = (run_config.export_types,)
         print(f"extensions={extensions}")
-        output_filename = run_config_to_filename(run_config=run_config)
+        output_filename = run_config_to_filename(
+            run_config_dict=run_config.__dict__
+        )
 
         # Get expected png filenames.
         if "png" in extensions:  # No png, no gif
