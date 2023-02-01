@@ -20,7 +20,7 @@ from snncompare.exp_config.run_config.Supported_run_settings import (
 from snncompare.exp_config.run_config.verify_run_settings import (
     verify_run_config,
 )
-from snncompare.export_plots.Plot_to_tex import Plot_to_tex
+from snncompare.export_plots.plot_graphs import export_plot
 
 if TYPE_CHECKING:
     pass
@@ -120,8 +120,7 @@ def plot_alipour(
     if show:
         plt.show()
     if export:
-        plot_export = Plot_to_tex()
-        plot_export.export_plot(
+        export_plot(
             plt,
             f"alipour_{seed}_size{size}_m{m}_iter_combined_"
             + f"{configuration}",

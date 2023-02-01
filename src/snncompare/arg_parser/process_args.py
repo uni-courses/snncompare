@@ -4,7 +4,6 @@ import os
 import shutil
 import sys
 
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import (
@@ -12,6 +11,7 @@ from snncompare.exp_config.Exp_config import (
     Supported_experiment_settings,
 )
 from snncompare.Experiment_runner import Experiment_runner
+from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
 )

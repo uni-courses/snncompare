@@ -10,7 +10,6 @@ import shutil
 import unittest
 
 import networkx as nx
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from typeguard import typechecked
 
 from snncompare.exp_config.default_setts.create_default_settings import (
@@ -18,12 +17,13 @@ from snncompare.exp_config.default_setts.create_default_settings import (
 )
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
+from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_results.helper import run_config_to_filename
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from snncompare.graph_generation.stage_1_get_input_graphs import (
-    get_input_graph,
+from snncompare.graph_generation.stage_1_create_graphs import (
+    get_input_graph_of_run_config,
 )
 from snncompare.import_results.check_completed_stages import (
     has_outputted_stage_jsons,
@@ -99,7 +99,9 @@ class Test_stage_1_output_json(unittest.TestCase):
                 json_filepath=json_filepath,
                 graph_names=stage_1_graph_names,
                 completed_stages=self.expected_completed_stages,
-                input_graph=get_input_graph(run_config=run_config),
+                input_graph=get_input_graph_of_run_config(
+                    run_config=run_config
+                ),
                 run_config=run_config,
             )
 
@@ -144,7 +146,9 @@ class Test_stage_1_output_json(unittest.TestCase):
 
             create_dummy_output_images_stage_3(
                 graph_names=stage_1_graph_names,
-                input_graph=get_input_graph(run_config=run_config),
+                input_graph=get_input_graph_of_run_config(
+                    run_config=run_config
+                ),
                 run_config=run_config,
                 extensions=["png"],
             )

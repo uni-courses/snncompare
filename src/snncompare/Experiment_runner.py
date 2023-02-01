@@ -10,8 +10,8 @@ from pprint import pprint
 from typing import Dict, List, Optional
 
 import customshowme
-from snnbackends.plot_graphs import create_root_dir_if_not_exists
 from snnbackends.verify_nx_graphs import (
+    results_nx_graphs_contain_expected_stages,
     verify_results_nx_graphs,
     verify_results_nx_graphs_contain_expected_stages,
 )
@@ -23,6 +23,7 @@ from snncompare.exp_config.Exp_config import (
     append_unique_exp_config_id,
 )
 from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.helper import dicts_are_equal, generate_run_configs
 
 from .exp_config.run_config.verify_run_completion import (
@@ -32,7 +33,7 @@ from .exp_config.run_config.verify_run_completion import (
 from .exp_config.run_config.verify_run_settings import verify_has_unique_id
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
-from .graph_generation.stage_1_get_input_graphs import get_used_graphs
+from .graph_generation.stage_1_create_graphs import get_used_graphs
 from .import_results.check_completed_stages import has_outputted_stage_jsons
 from .import_results.stage_1_load_input_graphs import load_results_stage_1
 from .process_results.process_results import (
@@ -233,12 +234,20 @@ class Experiment_runner:
             )
         else:
             # TODO: verify loading is required.
-            # Load results of stage 1 and 2 from file.
-            results_nx_graphs = load_results_stage_1(run_config=run_config)
-            self.equalise_loaded_run_config(
-                loaded_from_json=results_nx_graphs["run_config"],
-                incoming=run_config,
-            )
+            if not results_nx_graphs_contain_expected_stages(
+                results_nx_graphs=results_nx_graphs,
+                stage_index=2,
+                expected_stages=[
+                    1,
+                    2,
+                ],
+            ):
+                # Load results of stage 1 and 2 from file.
+                results_nx_graphs = load_results_stage_1(run_config=run_config)
+                self.equalise_loaded_run_config(
+                    loaded_from_json=results_nx_graphs["run_config"],
+                    incoming=run_config,
+                )
         verify_results_nx_graphs_contain_expected_stages(
             results_nx_graphs=results_nx_graphs,
             stage_index=2,

@@ -7,8 +7,8 @@ from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.graph_generation.stage_1_get_input_graphs import (
-    get_input_graph,
+from snncompare.graph_generation.stage_1_create_graphs import (
+    get_input_graph_of_run_config,
 )
 
 from ..export_results.helper import (
@@ -65,7 +65,7 @@ def has_outputted_images(
 
     expected_image_paths: List[str] = get_expected_image_paths_stage_3(
         nx_graphs_dict=results_nx_graphs["graphs_dict"],
-        input_graph=get_input_graph(run_config=run_config),
+        input_graph=get_input_graph_of_run_config(run_config=run_config),
         run_config=run_config,
         extensions=["png"],
     )
