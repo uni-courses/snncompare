@@ -26,16 +26,14 @@ from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.helper import dicts_are_equal, generate_run_configs
 
 from .exp_config.run_config.verify_run_completion import (
+    assert_stage_3_is_completed,
     assert_stage_is_completed,
 )
 from .exp_config.run_config.verify_run_settings import verify_has_unique_id
-from .export_results.load_json_to_nx_graph import (
-    load_json_to_nx_graph_from_file,
-)
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
 from .graph_generation.stage_1_get_input_graphs import get_used_graphs
-from .import_results.check_completed_stages import has_outputted_stage
+from .import_results.check_completed_stages import has_outputted_stage_jsons
 from .import_results.stage_1_load_input_graphs import load_results_stage_1
 from .process_results.process_results import (
     export_results_to_json,
@@ -145,7 +143,6 @@ class Experiment_runner:
                 run_config.unique_id: results_nx_graphs  # type:ignore[index]
             }
 
-    # @showme.time
     @customshowme.time
     @typechecked
     def __perform_run_stage_1(
@@ -163,7 +160,7 @@ class Experiment_runner:
 
         # Check if stage 1 is performed. If not, perform it.
         if (
-            not has_outputted_stage(
+            not has_outputted_stage_jsons(
                 expected_stages=[1], run_config=run_config, stage_index=1
             )
             or run_config.recreate_s1
@@ -194,7 +191,7 @@ class Experiment_runner:
         )
         return results_nx_graphs
 
-    # @showme.time
+    @customshowme.time
     @typechecked
     def __perform_run_stage_2(
         self,
@@ -213,7 +210,7 @@ class Experiment_runner:
         )
 
         if (
-            not has_outputted_stage(
+            not has_outputted_stage_jsons(
                 expected_stages=[1, 2], run_config=run_config, stage_index=2
             )
             or run_config.recreate_s2
@@ -227,7 +224,6 @@ class Experiment_runner:
             # TODO: remove stage 2 artifacts from loaded data.
 
             # Run simulation on networkx or lava backend.
-            print("PERFORMING SIMULATION.")
             sim_graphs(
                 run_config=run_config,
                 stage_1_graphs=results_nx_graphs["graphs_dict"],
@@ -236,22 +232,13 @@ class Experiment_runner:
                 results_nx_graphs=results_nx_graphs, stage_index=2
             )
         else:
+            # TODO: verify loading is required.
             # Load results of stage 1 and 2 from file.
-            nx_graphs_dict = load_json_to_nx_graph_from_file(
-                run_config=run_config,
-                stage_index=2,
-                expected_stages=[1, 2],
+            results_nx_graphs = load_results_stage_1(run_config=run_config)
+            self.equalise_loaded_run_config(
+                loaded_from_json=results_nx_graphs["run_config"],
+                incoming=run_config,
             )
-
-            results_nx_graphs["graphs_dict"] = nx_graphs_dict
-        # TODO: Verify the (incoming (and loaded)) graph types are as
-        # expected.
-
-        assert_stage_is_completed(
-            expected_stages=[1, 2],
-            run_config=run_config,
-            stage_index=2,
-        )
         verify_results_nx_graphs_contain_expected_stages(
             results_nx_graphs=results_nx_graphs,
             stage_index=2,
@@ -260,8 +247,16 @@ class Experiment_runner:
                 2,
             ],
         )
+
+        assert_stage_is_completed(
+            expected_stages=[1, 2],
+            run_config=run_config,
+            stage_index=2,
+        )
+
         return results_nx_graphs
 
+    @customshowme.time
     @typechecked
     def __perform_run_stage_3(
         self,
@@ -288,13 +283,11 @@ class Experiment_runner:
                 results_nx_graphs=results_nx_graphs, stage_index=3
             )
 
-        assert_stage_is_completed(
-            expected_stages=[1, 2],
-            run_config=run_config,
-            stage_index=3,
-        )
-
-        # TODO: assert gif file exists
+            # TODO: assert gif file exists
+            assert_stage_3_is_completed(
+                results_nx_graphs=results_nx_graphs,
+                run_config=run_config,
+            )
 
     @typechecked
     def __perform_run_stage_4(
@@ -342,10 +335,6 @@ class Experiment_runner:
         for key, val in incoming.__dict__.items():
 
             if loaded_from_json.__dict__[key] != val:
-                print(
-                    f"setting run config[{key}] from "
-                    + f"{loaded_from_json.__dict__[key]} to:{val}"
-                )
                 loaded_from_json.__dict__[key] = val
         if not dicts_are_equal(
             left=loaded_from_json.__dict__,

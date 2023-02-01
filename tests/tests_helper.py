@@ -67,8 +67,8 @@ def create_result_file_for_testing(
     """Creates a dummy .json result file that can be used to test functions
     that recognise which stages have been computed already or not.
 
-    In particular, the has_outputted_stage() function is tested with
-    this.
+    In particular, the has_outputted_stage_jsons() function is tested
+    with this.
     """
     dummy_result = {}
     # TODO: create the output results file with the respective graphs.

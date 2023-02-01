@@ -1,5 +1,5 @@
-"""Performs tests check whether the has_outputted_stage function correctly
-determines which stages have been completed and not for:
+"""Performs tests check whether the has_outputted_stage_jsons( function
+correctly determines which stages have been completed and not for:
 Stage1=Done
 Stage2=Done
 Stage3=Done.
@@ -26,7 +26,7 @@ from snncompare.graph_generation.stage_1_get_input_graphs import (
     get_input_graph,
 )
 from snncompare.import_results.check_completed_stages import (
-    has_outputted_stage,
+    has_outputted_stage_jsons,
 )
 from snncompare.import_results.read_json import load_results_from_json
 from tests.tests_helper import (
@@ -83,7 +83,7 @@ class Test_stage_1_output_json(unittest.TestCase):
     @typechecked
     def test_output_json_contains_(self) -> None:
         """Tests whether deleting all results and creating an artificial json
-        with stages 1,2 and 3 completed, results in has_outputted_stage()
+        with stages 1,2 and 3 completed, results in has_outputted_stage_jsons()
         returning that only stages 1, 2 and 3 are completed, and that stages 4
         is not yet completed."""
 
@@ -155,24 +155,24 @@ class Test_stage_1_output_json(unittest.TestCase):
             # uncompleted stages in the graphs.
             # TODO: update expected stage in next line.
             self.assertTrue(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[1], run_config=run_config, stage_index=1
                 )
             )
 
             # Test for stage 1, 2, and 4.
             self.assertTrue(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[1], run_config=run_config, stage_index=2
                 )
             )
             self.assertTrue(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[2], run_config=run_config, stage_index=3
                 )
             )
             self.assertFalse(
-                has_outputted_stage(
+                has_outputted_stage_jsons(
                     expected_stages=[4], run_config=run_config, stage_index=4
                 )
             )

@@ -7,8 +7,14 @@ from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
 from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.graph_generation.stage_1_get_input_graphs import (
+    get_input_graph,
+)
 
-from ..export_results.helper import run_config_to_filename
+from ..export_results.helper import (
+    get_expected_image_paths_stage_3,
+    run_config_to_filename,
+)
 from ..export_results.load_json_to_nx_graph import (
     load_verified_json_graphs_from_json,
 )
@@ -19,7 +25,7 @@ from ..helper import get_expected_stages
 
 
 @typechecked
-def has_outputted_stage(
+def has_outputted_stage_jsons(
     *,
     expected_stages: List[int],
     run_config: Run_config,
@@ -30,13 +36,12 @@ def has_outputted_stage(
         raise ValueError(
             f"Error, stage_index:{stage_index} was not in range:{[1,2,3,4,5]}"
         )
-    expected_filepaths = get_expected_files(
-        run_config=run_config, stage_index=stage_index
-    )
+    expected_filepaths = get_expected_files(run_config=run_config)
     # print(f'expected_filepaths=')
     # pprint(expected_filepaths)
 
     if not expected_files_exist(expected_filepaths=expected_filepaths):
+        print(f"files did not exist={expected_filepaths}")
         return False
 
     if not expected_jsons_are_valid(
@@ -45,23 +50,40 @@ def has_outputted_stage(
         run_config=run_config,
         stage_index=stage_index,
     ):
+        print(f"Json not valid.={expected_filepaths}")
         return False
     return True
 
 
 @typechecked
-def get_expected_files(
-    *, run_config: Run_config, stage_index: int
-) -> List[str]:
+def has_outputted_images(
+    *,
+    results_nx_graphs: Dict,
+    run_config: Run_config,
+) -> bool:
+    """Verifies whether the images of stage 3 have been outputted."""
+
+    expected_image_paths: List[str] = get_expected_image_paths_stage_3(
+        nx_graphs_dict=results_nx_graphs["graphs_dict"],
+        input_graph=get_input_graph(run_config=run_config),
+        run_config=run_config,
+        extensions=["png"],
+    )
+
+    if not expected_files_exist(expected_filepaths=expected_image_paths):
+        print(f"files did not exist={expected_image_paths}")
+        return False
+    return True
+
+
+@typechecked
+def get_expected_files(*, run_config: Run_config) -> List[str]:
     """Returns the list of expected files for a run configuration."""
     expected_filepaths = []
     filename = run_config_to_filename(run_config=run_config)
     relative_output_dir = "results/"
 
     output_file_extensions = [".json"]
-    if run_config.export_images:
-        if stage_index >= 3:
-            output_file_extensions.append(run_config.export_types)
 
     for extension in output_file_extensions:
         expected_filepaths.append(relative_output_dir + filename + extension)
