@@ -156,7 +156,7 @@ mdsa_long_no_overwrite --export-images png --output-json-stage-1 \
 or:
 
 ```bash
-python -m src.snncompare -e mdsa_long_no_overwrite
+python -m src.snncompare -e mdsa_size3_m0_adap_rad -x png -j1 -j2 -j4
 python -m src.snncompare -e boxplot -c
 python -m src.snncompare -e mdsa_size3_m0_adap_rad -c
 ```

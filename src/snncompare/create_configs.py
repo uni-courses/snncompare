@@ -8,8 +8,6 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.helper import dicts_are_equal
 from snncompare.run_config.Run_config import Run_config
-from snncompare.run_config.Supported_run_settings import Supported_run_settings
-from snncompare.run_config.verify_run_settings import verify_run_config
 
 # if TYPE_CHECKING:
 # from snncompare.exp_config.Exp_config import Exp_config
@@ -89,11 +87,6 @@ def exp_config_to_run_configs(
                     radiation=radiation,
                     run_configs=run_configs,
                 )
-
-    set_run_config_export_settings(
-        exp_config=exp_config,
-        run_configs=run_configs,
-    )
     return list(reversed(run_configs))
 
 
@@ -121,27 +114,6 @@ def fill_remaining_run_config_settings(
                         simulator=simulator,
                     )
                     run_configs.append(run_config)
-
-
-@typechecked
-def set_run_config_export_settings(
-    *,
-    exp_config: "Exp_config",
-    run_configs: List[Run_config],
-) -> None:
-    """Sets the export settings for run configs that are created based on an
-    experiment config."""
-    supp_run_setts = Supported_run_settings()
-    for run_config in run_configs:
-        verify_run_config(
-            supp_run_setts=supp_run_setts,
-            run_config=run_config,
-        )
-
-        # Append show_snns and export_images to run config.
-        supp_run_setts.assert_has_key(
-            exp_config.__dict__, "export_images", bool
-        )
 
 
 # pylint: disable=R0913

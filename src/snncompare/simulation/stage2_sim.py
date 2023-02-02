@@ -14,7 +14,7 @@ from ..helper import add_stage_completion_to_graph, get_max_sim_duration
 @typechecked
 def sim_graphs(
     *,
-    run_config: Run_config,
+    run_config: "Run_config",
     stage_1_graphs: Dict,
 ) -> None:
     """Simulates the snn graphs and makes a deep copy for each timestep.

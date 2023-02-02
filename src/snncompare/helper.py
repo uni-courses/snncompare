@@ -2,7 +2,7 @@
 import copy
 import random
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import networkx as nx
 import pylab as plt
@@ -14,7 +14,7 @@ from typeguard import typechecked
 from snncompare.export_plots.plot_graphs import export_plot
 
 if TYPE_CHECKING:
-    from snncompare.run_config.Run_config import Run_config
+    pass
 
 
 @typechecked
@@ -291,10 +291,10 @@ def add_stage_completion_to_graph(
 
 
 @typechecked
-def get_max_sim_duration(
+def get_max_sim_duration(  # type:ignore[misc]
     *,
     input_graph: nx.Graph,
-    run_config: "Run_config",
+    run_config: Any,
 ) -> int:
     """Compute the simulation duration for a given algorithm and graph."""
     for algo_name, algo_settings in run_config.algorithm.items():

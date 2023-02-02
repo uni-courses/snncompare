@@ -154,7 +154,7 @@ class Experiment_runner:
             not has_outputted_stage_jsons(
                 expected_stages=[1], run_config=run_config, stage_index=1
             )
-            or output_config.recreate_s1
+            or 1 in output_config.recreate_stages
         ):
             # Run first stage of experiment, get input graph.
             stage_1_graphs: Dict = get_used_graphs(run_config=run_config)
@@ -205,7 +205,7 @@ class Experiment_runner:
             not has_outputted_stage_jsons(
                 expected_stages=[1, 2], run_config=run_config, stage_index=2
             )
-            or output_config.recreate_s2
+            or 2 in output_config.recreate_stages
         ):
             # Only stage I should be loaded.
             results_nx_graphs = load_results_stage_1(run_config=run_config)
@@ -278,10 +278,12 @@ class Experiment_runner:
         that timestep.
         - A circular synapse: a recurrent connection of a neuron into itself.
         """
-        if output_config.export_images:
+        if not output_config.export_types:
             # Generate output json dicts (and plots) of propagated graphs.
             output_stage_files_3_and_4(
-                results_nx_graphs=results_nx_graphs, stage_index=3
+                output_config=output_config,
+                results_nx_graphs=results_nx_graphs,
+                stage_index=3,
             )
 
             # TODO: assert gif file exists
@@ -318,7 +320,9 @@ class Experiment_runner:
             stage_2_graphs=results_nx_graphs["graphs_dict"],
         ):
             export_results_to_json(
-                results_nx_graphs=results_nx_graphs, stage_index=4
+                output_config=output_config,
+                results_nx_graphs=results_nx_graphs,
+                stage_index=4,
             )
 
         assert_stage_is_completed(

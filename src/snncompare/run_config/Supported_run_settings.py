@@ -50,6 +50,6 @@ class Supported_run_settings:
         """
         if not isinstance(some_dict[key], some_type):
             raise Exception(
-                "Error, the dictionary:{some_dict} did not"
+                f"Error, the dictionary:{some_dict} did not"
                 + f"contain a key:{key} of type:{type}"
             )

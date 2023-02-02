@@ -28,6 +28,9 @@ def load_results_stage_1(
     stage_1_dict = load_results_from_json(
         json_filepath=json_filepath, run_config=run_config
     )
+    # Pop the unique_id if it was in.
+    pop_unique_id(config=stage_1_dict["run_config"])
+    # pop_unique_id(config=stage_1_dict["exp_config"])
 
     # Split the dictionary into three separate dicts.
     # The ** loads the dict into the object.
@@ -47,3 +50,16 @@ def load_results_stage_1(
     )
 
     return stage_1_dict
+
+
+@typechecked
+def pop_unique_id(
+    *,
+    config: Dict,
+) -> str:
+    """Removes unique_id, if it was in."""
+    if "unique_id" in config:
+        unique_id: str = config["unique_id"]
+        config.pop("unique_id")
+        return unique_id
+    return ""

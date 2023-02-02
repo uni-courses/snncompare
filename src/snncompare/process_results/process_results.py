@@ -70,7 +70,7 @@ def perform_mdsa_results_computation_if_needed(
     for nx_graph in stage_2_graphs.values():
         if (
             4 not in nx_graph.graph["completed_stages"]
-            or output_config.recreate_s4
+            or 4 in output_config.recreate_stages
         ):
             set_new_results = True
             set_mdsa_snn_results(
@@ -90,6 +90,7 @@ def perform_mdsa_results_computation_if_needed(
 @typechecked
 def export_results_to_json(
     *,
+    output_config: Output_config,
     results_nx_graphs: Dict,
     stage_index: int,
 ) -> None:
@@ -152,7 +153,9 @@ def export_results_to_json(
         )
 
     output_stage_files_3_and_4(
-        results_nx_graphs=results_nx_graphs, stage_index=4
+        output_config=output_config,
+        results_nx_graphs=results_nx_graphs,
+        stage_index=4,
     )
 
 
