@@ -50,7 +50,6 @@ def has_outputted_stage_jsons(
         run_config=run_config,
         stage_index=stage_index,
     ):
-        print(f"Json not valid.={expected_filepaths}")
         return False
     return True
 

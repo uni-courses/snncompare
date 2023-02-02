@@ -76,7 +76,12 @@ def manage_export_parsing(
     if args.delete_results and os.path.exists("results"):
         shutil.rmtree("results")
 
-    optional_config_args_dict["export_types"] = args.export_images.split(",")
+    if args.export_images is not None:
+        optional_config_args_dict["export_types"] = args.export_images.split(
+            ","
+        )
+    else:
+        optional_config_args_dict["export_types"] = []
     optional_config_args_dict["zoom"] = parse_zoom_arg(args=args)
     optional_config_args_dict["recreate_stages"] = parse_recreate_stages(
         args=args

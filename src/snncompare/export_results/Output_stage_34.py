@@ -46,16 +46,18 @@ def output_stage_files_3_and_4(
         filename = run_config_to_filename(
             run_config_dict=results_nx_graphs["run_config"].__dict__
         )
-
         if stage_index == 3:
-            # TODO: verify it works.
-            if any(i in output_config.export_types for i in ["png", "pdf"]):
+            if (
+                "png" in output_config.export_types
+                or "pdf" in output_config.export_types
+            ):
 
                 # TODO: Check if plots are already generated and if they must
                 # be overwritten.
                 # Output graph behaviour for stage stage_index.
                 plot_graph_behaviours(
                     filepath=filename,
+                    output_config=output_config,
                     stage_2_graphs=results_nx_graphs["graphs_dict"],
                     run_config=results_nx_graphs["run_config"],
                 )

@@ -3,15 +3,12 @@ import collections
 import copy
 import hashlib
 import json
-from typing import TYPE_CHECKING, Any, Dict, List, Union
+from typing import Any, Dict, List, Union
 
 import networkx as nx
 from typeguard import typechecked
 
 from ..helper import get_actual_duration
-
-if TYPE_CHECKING:
-    from snncompare.run_config.Run_config import Run_config
 
 
 @typechecked
@@ -46,6 +43,7 @@ def run_config_to_filename(
 
     # stripped_run_config:Dict = copy.deepcopy(run_config).__dict__
     stripped_run_config: Dict = copy.deepcopy(run_config_dict)
+
     # instead (To reduce filename length).
     filename = str(flatten(d=stripped_run_config))
 
@@ -56,6 +54,11 @@ def run_config_to_filename(
     # Don't, that makes it more difficult to load the dict again.
     # Remove the spaces.
     filename = filename.replace(" ", "")
+    filename = filename.replace("adaptation_", "")
+    filename = filename.replace("algorithm_", "")
+    filename = filename.replace("graph_", "")
+    filename = filename.replace("radiation_", "")
+    filename = filename.replace("unique_", "")
 
     if len(filename) > 256:
         raise Exception(f"Filename={filename} is too long:{len(filename)}")
@@ -63,11 +66,11 @@ def run_config_to_filename(
 
 
 @typechecked
-def get_expected_image_paths_stage_3(
+def get_expected_image_paths_stage_3(  # type:ignore[misc]
     *,
     nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph]],
     input_graph: nx.Graph,
-    run_config: "Run_config",
+    run_config: Any,
     extensions: List[str],
 ) -> List[str]:
     """Returns the expected image filepaths for stage 3.

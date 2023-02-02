@@ -101,28 +101,24 @@ class Experiment_runner:
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
 
-            print("\nstart stage I:  ")
-
             results_nx_graphs = self.__perform_run_stage_1(
                 exp_config=exp_config,
                 output_config=output_config,
                 run_config=run_config,
             )
-            print("Start stage II  ")
+
             results_nx_graphs = self.__perform_run_stage_2(
                 results_nx_graphs=results_nx_graphs,
                 output_config=output_config,
                 run_config=run_config,
             )
 
-            print("Start stage III ")
             self.__perform_run_stage_3(
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,
                 run_config=run_config,
             )
 
-            print("Start stage IV  ")
             self.__perform_run_stage_4(
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,
@@ -278,7 +274,8 @@ class Experiment_runner:
         that timestep.
         - A circular synapse: a recurrent connection of a neuron into itself.
         """
-        if not output_config.export_types:
+
+        if output_config.export_types:
             # Generate output json dicts (and plots) of propagated graphs.
             output_stage_files_3_and_4(
                 output_config=output_config,

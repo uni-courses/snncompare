@@ -21,6 +21,8 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_plots.create_png_plot import plot_coordinated_graph
 from snncompare.export_plots.plot_graphs import plot_uncoordinated_graph
+from snncompare.helper import file_exists
+from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
 from .export_json_results import write_dict_to_json
@@ -208,6 +210,7 @@ def output_stage_json(
 def plot_graph_behaviours(
     *,
     filepath: str,
+    output_config: Output_config,
     stage_2_graphs: Dict,
     run_config: Run_config,
 ) -> None:
@@ -224,30 +227,53 @@ def plot_graph_behaviours(
                 0,
                 sim_duration,
             ):
-                print(f"Plotting:{graph_name}, t={t}/{sim_duration}")
-                # TODO: Include verify that graph len remains unmodified.
-                # pylint: disable=R0913
-                # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-                # TODO: make plot dimensions etc. function of algorithm.
-                plot_coordinated_graph(
-                    extensions=run_config.export_types,
-                    desired_properties=desired_props,
-                    G=snn_graph,
-                    height=(len(stage_2_graphs["input_graph"]) - 1) ** 2,
-                    t=t,
-                    filename=f"{graph_name}_{filepath}_{t}",
-                    show=False,
-                    title=None,
-                    width=(run_config.algorithm["MDSA"]["m_val"] + 1) * 2.5,
-                    zoom=run_config.zoom,
-                )
+                filename: str = f"{graph_name}_{filepath}_{t}"
+                if not desired_image_exist_for_timestep(
+                    filename=filename,
+                    extensions=output_config.export_types,
+                ):
+                    print(f"Plotting:{graph_name}, t={t}/{sim_duration}")
+                    # TODO: Include verify that graph len remains unmodified.
+                    # pylint: disable=R0913
+                    # TODO: make plot dimensions etc. function of algorithm.
+                    plot_coordinated_graph(
+                        extensions=output_config.export_types,
+                        desired_properties=desired_props,
+                        G=snn_graph,
+                        height=(len(stage_2_graphs["input_graph"]) - 1) ** 2,
+                        t=t,
+                        filename=filename,
+                        show=False,
+                        zoom=output_config.zoom,
+                        title=None,
+                        width=(run_config.algorithm["MDSA"]["m_val"] + 1)
+                        * 2.5,
+                    )
         else:
             plot_uncoordinated_graph(
-                extensions=run_config.export_types,
+                extensions=output_config.export_types,
                 G=snn_graph,
                 filename=f"{graph_name}_{filepath}.png",
                 show=False,
             )
+
+
+@typechecked
+def desired_image_exist_for_timestep(
+    filename: str,
+    extensions: List[str],
+) -> bool:
+    """Returns true if the non-gif output image files exist already.
+
+    False otherwise.
+    """
+    for extension in extensions:
+
+        if extension != "gif":  # TODO: check if necessary.
+            filepath = f"latex/Images/graphs/{filename}.{extension}"
+            if not file_exists(filepath=filepath):
+                return False
+    return True
 
 
 @typechecked

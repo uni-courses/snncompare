@@ -15,6 +15,7 @@ from snncompare.export_plots.plot_graphs import (
     create_target_dir_if_not_exists,
     export_plot,
 )
+from snncompare.optional_config.Output_config import Zoom
 
 
 # pylint: disable=R0913
@@ -29,9 +30,9 @@ def plot_coordinated_graph(
     t: int,
     width: float,
     filename: str = "no_filename",
+    zoom: Zoom,
     show: Optional[bool] = False,
     title: Optional[str] = None,
-    zoom: Optional[bool] = False,
 ) -> None:
     """Some documentation.
 
@@ -118,14 +119,14 @@ def plot_coordinated_graph(
 
     export_plot(some_plt=plt, filename=filename, extensions=extensions)
 
-    if zoom:
+    if zoom.create_zoomed_image:
         create_target_dir_if_not_exists(some_path="latex/Images/graphs/zoom")
         if "png" in extensions:
             copy_region_of_img(
                 src_path="latex/Images/graphs/" + filename + ".png",
                 dst_dir="latex/Images/graphs/zoom",
-                x_coords=(0.0, 1.0),
-                y_coords=(0.3, 0.6),
+                x_coords=zoom.left_right,
+                y_coords=zoom.bottom_top,
             )
 
     # plt.savefig()
