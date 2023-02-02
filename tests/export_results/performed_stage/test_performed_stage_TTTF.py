@@ -63,8 +63,11 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.export_images = False  # Expect the test to export snn pictures.
         # Instead of the Experiment_runner.
 
+        # TODO: create dummy output_config.
+        output_config = None
         self.experiment_runner = Experiment_runner(
             exp_config=self.exp_config,
+            output_config=output_config,
             specific_run_config=None,
             perform_run=True,
         )

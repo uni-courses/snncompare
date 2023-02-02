@@ -27,6 +27,7 @@ from snncompare.export_results.verify_stage_1_graphs import (
 from snncompare.import_results.check_completed_stages import (
     has_outputted_stage_jsons,
 )
+from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
 
@@ -57,7 +58,9 @@ class Boxplot_data:
 # pylint: disable=R0912
 # pylint: disable=R0914
 @typechecked
-def create_performance_plots(*, exp_config: Exp_config) -> None:
+def create_performance_plots(
+    *, exp_config: Exp_config, output_config: Output_config
+) -> None:
     """Ensures all performance boxplots are created."""
 
     pickle_run_configs_filepath: str = (
@@ -86,6 +89,7 @@ def create_performance_plots(*, exp_config: Exp_config) -> None:
             # Execute those run_configs
             Experiment_runner(
                 exp_config=exp_config,
+                output_config=output_config,
                 specific_run_config=missing_run_config,
                 perform_run=True,
             )

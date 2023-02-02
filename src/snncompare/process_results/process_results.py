@@ -18,6 +18,7 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
+from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
 from ..export_results.Output_stage_34 import output_stage_files_3_and_4
@@ -30,6 +31,7 @@ from ..import_results.check_completed_stages import (
 @typechecked
 def set_results(
     *,
+    output_config: Output_config,
     run_config: Run_config,
     stage_2_graphs: Dict,
 ) -> bool:
@@ -39,6 +41,7 @@ def set_results(
             if isinstance(algo_settings["m_val"], int):
                 return perform_mdsa_results_computation_if_needed(
                     m_val=algo_settings["m_val"],
+                    output_config=output_config,
                     run_config=run_config,
                     stage_2_graphs=stage_2_graphs,
                 )
@@ -58,6 +61,7 @@ def set_results(
 def perform_mdsa_results_computation_if_needed(
     *,
     m_val: int,
+    output_config: Output_config,
     run_config: Run_config,
     stage_2_graphs: Dict,
 ) -> bool:
@@ -66,7 +70,7 @@ def perform_mdsa_results_computation_if_needed(
     for nx_graph in stage_2_graphs.values():
         if (
             4 not in nx_graph.graph["completed_stages"]
-            or run_config.recreate_s4
+            or output_config.recreate_s4
         ):
             set_new_results = True
             set_mdsa_snn_results(

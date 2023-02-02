@@ -23,6 +23,7 @@ from snncompare.exp_config.Exp_config import (
 )
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.helper import dicts_are_equal
+from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
@@ -55,6 +56,7 @@ class Experiment_runner:
     def __init__(
         self,
         exp_config: Exp_config,
+        output_config: Output_config,
         perform_run: bool = True,
         specific_run_config: Optional[Run_config] = None,
     ) -> None:
@@ -73,12 +75,19 @@ class Experiment_runner:
         )
 
         if perform_run:  # Used to get quick Experiment_runner for testing.
-            self.__perform_run(self.exp_config, self.run_configs)
+            self.__perform_run(
+                exp_config=self.exp_config,
+                output_config=output_config,
+                run_configs=self.run_configs,
+            )
 
     # pylint: disable=W0238
     @typechecked
     def __perform_run(
-        self, exp_config: Exp_config, run_configs: List[Run_config]
+        self,
+        exp_config: Exp_config,
+        output_config: Output_config,
+        run_configs: List[Run_config],
     ) -> None:
         """Private method that performs a run of the experiment.
 
@@ -96,22 +105,28 @@ class Experiment_runner:
 
             results_nx_graphs = self.__perform_run_stage_1(
                 exp_config=exp_config,
+                output_config=output_config,
                 run_config=run_config,
             )
             print("Start stage II  ")
             results_nx_graphs = self.__perform_run_stage_2(
                 results_nx_graphs=results_nx_graphs,
+                output_config=output_config,
                 run_config=run_config,
             )
 
             print("Start stage III ")
             self.__perform_run_stage_3(
-                results_nx_graphs=results_nx_graphs, run_config=run_config
+                output_config=output_config,
+                results_nx_graphs=results_nx_graphs,
+                run_config=run_config,
             )
 
             print("Start stage IV  ")
             self.__perform_run_stage_4(
-                results_nx_graphs=results_nx_graphs, run_config=run_config
+                output_config=output_config,
+                results_nx_graphs=results_nx_graphs,
+                run_config=run_config,
             )
             # Store run results in dict of Experiment_runner.
             self.results_nx_graphs: Dict = {
@@ -123,6 +138,7 @@ class Experiment_runner:
     def __perform_run_stage_1(
         self,
         exp_config: Exp_config,
+        output_config: Output_config,
         run_config: Run_config,
     ) -> Dict:
         """Performs the run for stage 1 or loads the data from file depending
@@ -138,7 +154,7 @@ class Experiment_runner:
             not has_outputted_stage_jsons(
                 expected_stages=[1], run_config=run_config, stage_index=1
             )
-            or run_config.recreate_s1
+            or output_config.recreate_s1
         ):
             # Run first stage of experiment, get input graph.
             stage_1_graphs: Dict = get_used_graphs(run_config=run_config)
@@ -170,6 +186,7 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_2(
         self,
+        output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
     ) -> Dict:
@@ -188,7 +205,7 @@ class Experiment_runner:
             not has_outputted_stage_jsons(
                 expected_stages=[1, 2], run_config=run_config, stage_index=2
             )
-            or run_config.recreate_s2
+            or output_config.recreate_s2
         ):
             # Only stage I should be loaded.
             results_nx_graphs = load_results_stage_1(run_config=run_config)
@@ -243,6 +260,7 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_3(
         self,
+        output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
     ) -> None:
@@ -260,7 +278,7 @@ class Experiment_runner:
         that timestep.
         - A circular synapse: a recurrent connection of a neuron into itself.
         """
-        if run_config.export_images:
+        if output_config.export_images:
             # Generate output json dicts (and plots) of propagated graphs.
             output_stage_files_3_and_4(
                 results_nx_graphs=results_nx_graphs, stage_index=3
@@ -275,6 +293,7 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_4(
         self,
+        output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
     ) -> None:
@@ -294,6 +313,7 @@ class Experiment_runner:
         )
 
         if set_results(
+            output_config=output_config,
             run_config=run_config,
             stage_2_graphs=results_nx_graphs["graphs_dict"],
         ):

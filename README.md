@@ -141,14 +141,16 @@ ulimit -n 800000
 You can run the experiment with command:
 
 ```bash
-python -m src.snncompare -e mdsa_long_no_overwrite -v -x png
+(snncompare) name@name ~/git/snn/snncompare
+python -m src.snncompare -e mdsa_long_no_overwrite -x png -j1 -j2 -j4
 ```
 
 which is the same as:
 
 ```bash
 python -m src.snncompare --experiment-settings-name \
-mdsa_size3_m1 -visualise-snn --export-images png
+mdsa_long_no_overwrite --export-images png --output-json-stage-1 \
+ --output-json-stage-2 --output-json-stage-4
 ```
 
 or:
