@@ -29,9 +29,6 @@ class Output_config:
             param_name="recreate_stages",
         )
 
-        self.verify_output_json_stages(
-            output_json_stages=output_json_stages,
-        )
         self.output_json_stages = output_json_stages
 
         self.verify_int_list_values(
@@ -81,29 +78,6 @@ class Output_config:
                     f"Error, export_type:{export_type} not in supported"
                     + f" export types:{supp_setts.export_types}."
                 )
-
-    @typechecked
-    def verify_output_json_stages(
-        self,
-        output_json_stages: list[int],
-    ) -> None:
-        """TODO: remove this checks and implement the functionalities."""
-        if 1 not in output_json_stages:
-            raise Exception(
-                "Error, not outputting inititial_graphs yet implemented."
-            )
-        if 2 not in output_json_stages:
-            raise Exception(
-                "Error, not outputting propagated_graphs yet implemented."
-            )
-
-        if 4 not in output_json_stages:
-            raise Exception(
-                "Error, not outputting results not yet implemented."
-            )
-
-        if 5 in output_json_stages:
-            raise Exception("Error, boxplot not yet implemented.")
 
 
 class Zoom:

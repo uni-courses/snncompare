@@ -5,6 +5,7 @@ setting of the experiment configuration settings.
 """
 
 # import showme
+import copy
 from pprint import pprint
 from typing import Dict, List, Optional
 
@@ -22,8 +23,13 @@ from snncompare.exp_config.Exp_config import (
     Supported_experiment_settings,
 )
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
+from snncompare.export_results.analysis.create_performance_plots import (
+    create_performance_plots,
+    get_completed_and_missing_run_configs,
+    store_pickle,
+)
 from snncompare.helper import dicts_are_equal
-from snncompare.optional_config.Output_config import Output_config
+from snncompare.optional_config.Output_config import Output_config, Zoom
 from snncompare.run_config.Run_config import Run_config
 
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
@@ -79,6 +85,19 @@ class Experiment_runner:
                 exp_config=self.exp_config,
                 output_config=output_config,
                 run_configs=self.run_configs,
+            )
+
+        if 5 in output_config.output_json_stages:
+            self.load_pickled_boxplot_data(
+                exp_config=self.exp_config,
+                run_configs=self.run_configs,
+                output_config=output_config,
+            )
+
+            create_performance_plots(
+                completed_run_configs=self.run_configs,
+                exp_config=exp_config,
+                output_config=output_config,
             )
 
     # pylint: disable=W0238
@@ -350,3 +369,53 @@ class Experiment_runner:
             raise AttributeError(
                 "Run_config and loaded run_config from json are not equal."
             )
+
+    def load_pickled_boxplot_data(
+        self,
+        exp_config: Exp_config,
+        output_config: Output_config,
+        run_configs: List[Run_config],
+    ) -> None:
+        """Loads the data that is needed for a boxplot for the given experiment
+        config, from a pickled file."""
+        pickle_run_configs_filepath: str = (
+            "latex/Images/completed_run_configs.pickle"
+        )
+
+        # Get list of missing run_configs based on the incoming run_configs.
+        (
+            _,
+            missing_run_configs,
+        ) = get_completed_and_missing_run_configs(run_configs=run_configs)
+
+        # Create duplicate Output_config that is used to generate the data
+        # belonging to each run config, using the Experiment runner.
+        boxplot_output_config = Output_config(
+            recreate_stages=[],
+            export_types=[],
+            zoom=Zoom(
+                create_zoomed_image=False,
+                left_right=None,
+                bottom_top=None,
+            ),
+            output_json_stages=[1, 2, 4],
+            extra_storing_config=copy.deepcopy(
+                output_config.extra_storing_config
+            ),
+        )
+
+        # Generate the data/run the experiments for the missing run_configs.
+        for missing_run_config in missing_run_configs:
+            # Execute those run_configs
+            Experiment_runner(
+                exp_config=exp_config,
+                output_config=boxplot_output_config,
+                specific_run_config=missing_run_config,
+                perform_run=True,
+            )
+
+        # Store the run configs into a file to save them as being "completed."
+        store_pickle(
+            run_configs=run_configs,
+            filepath=pickle_run_configs_filepath,
+        )

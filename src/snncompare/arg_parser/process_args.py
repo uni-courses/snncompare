@@ -2,7 +2,6 @@
 import argparse
 import os
 import shutil
-import sys
 from typing import List
 
 from typeguard import typechecked
@@ -10,9 +9,6 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
-from snncompare.export_results.analysis.create_performance_plots import (
-    create_performance_plots,
-)
 from snncompare.optional_config.Output_config import (
     Extra_storing_config,
     Output_config,
@@ -45,16 +41,16 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
         filename=args.experiment_settings_name,
     )
 
-    output_config: Output_config = manage_export_parsing(
-        args=args, exp_config=exp_config
-    )
+    output_config: Output_config = manage_export_parsing(args=args)
 
     # python -m src.snncompare -e mdsa_creation_only_size_3_4 -v
     Experiment_runner(
         exp_config=exp_config,
         output_config=output_config,
         specific_run_config=None,
-        perform_run=True,
+        perform_run=any(
+            x in output_config.output_json_stages for x in [1, 2, 3, 4]
+        ),
     )
     # TODO: verify expected output results have been generated successfully.
     print("Done")
@@ -62,9 +58,7 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
 
 # pylint: disable=R0912
 @typechecked
-def manage_export_parsing(
-    *, args: argparse.Namespace, exp_config: Exp_config
-) -> Output_config:
+def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
     """Performs the argument parsing related to data export settings."""
     create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
     optional_config_args_dict = {}
@@ -98,13 +92,7 @@ def manage_export_parsing(
     )
 
     output_config: Output_config = Output_config(**optional_config_args_dict)
-    if args.create_boxplots:
-        create_performance_plots(
-            exp_config=exp_config,
-            output_config=output_config,
-        )
-        print("Created boxplots.")
-        sys.exit()
+
     return output_config
 
 
