@@ -10,6 +10,8 @@ import plotly.graph_objs as go
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
+pixel_width = 1000
+pixel_height = 1000
 # Create graph G
 G = nx.DiGraph()
 G.add_nodes_from([0, 1, 2])
@@ -129,7 +131,9 @@ def get_edge_labels(G: nx.DiGraph) -> List[Dict]:
                 align="center",
                 showarrow=False,
                 yanchor="bottom",
-                textangle=get_edge_angle(edge),
+                textangle=get_stretched_edge_angle(
+                    edge, pixel_height=pixel_height, pixel_width=pixel_width
+                ),
             )
         )
     return annotations
@@ -150,7 +154,30 @@ def get_edge_mid_point(
     return mid_x, mid_y
 
 
-def get_edge_angle(
+def get_stretched_edge_angle(
+    edge: Tuple[Tuple[int, int], Tuple[int, int]],
+    pixel_height: int,
+    pixel_width: int,
+) -> Tuple[int, int]:
+    """Returns the ccw+ mid point of an edge and adjusts for stretching of the
+    image."""
+    left_node_name = edge[0]
+    right_node_name = edge[1]
+    left_x = G.nodes[left_node_name]["pos"][0]
+    left_y = G.nodes[left_node_name]["pos"][1]
+    right_x = G.nodes[right_node_name]["pos"][0]
+    right_y = G.nodes[right_node_name]["pos"][1]
+    dx = (right_x - left_x) * (
+        1 - ((pixel_height - pixel_width) / pixel_height)
+    )
+    # dx =
+    dy = right_y - left_y
+    angle = np.arctan2(dy, dx)
+    # return -np.rad2deg((angle) % (2 * np.pi))
+    return -np.rad2deg(angle)
+
+
+def get_pure_edge_angle(
     edge: Tuple[Tuple[int, int], Tuple[int, int]]
 ) -> Tuple[int, int]:
     """Returns the ccw+ mid point of an edge."""
@@ -199,9 +226,8 @@ fig = go.Figure(
     # data=[edge_trace, node_trace],
     data=[node_trace],
     layout=go.Layout(
-        # height=700,  # height of image in pixels.
-        height=1000,  # height of image in pixels.
-        width=1000,  # Width of image in pixels.
+        height=pixel_height,  # height of image in pixels.
+        width=pixel_width,  # Width of image in pixels.
         annotations=get_annotations(G),
     ),
 )
