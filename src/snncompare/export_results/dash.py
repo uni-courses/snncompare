@@ -280,6 +280,18 @@ fig = go.Figure(
         height=pixel_height,  # height of image in pixels.
         width=pixel_width,  # Width of image in pixels.
         annotations=get_annotations(G),
+        xaxis=go.layout.XAxis(
+            tickmode="array",
+            tickvals=[0, 0.1, 0.5, 1, 2.0],
+            ticktext=["origin", "r1", "r2", "MID", "end"],
+            tickangle=-45,
+        ),
+        yaxis=go.layout.YAxis(
+            tickmode="array",
+            tickvals=[0, 0.1, 0.5, 0.9, 1.0],
+            ticktext=["yorigin", "yr1", "yr2", "yMID", "yend"],
+            tickangle=0,
+        ),
     ),
 )
 add_recursive_edges(G=G, fig=fig, radius=recursive_edge_radius)
