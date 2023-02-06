@@ -12,6 +12,7 @@ from dash.dependencies import Input, Output
 
 pixel_width = 1000
 pixel_height = 1000
+recursive_edge_radius = 0.1
 # Create graph G
 G = nx.DiGraph()
 G.add_nodes_from([0, 1, 2])
@@ -139,6 +140,32 @@ def get_edge_labels(G: nx.DiGraph) -> List[Dict]:
     return annotations
 
 
+# pylint: disable = W0621
+def get_recursive_edge_labels(G: nx.DiGraph, radius: float) -> List[Dict]:
+    """Returns the annotation dictionaries representing the labels of the
+    recursive edge circles above the nodes. Note, only place 1 radius above
+    pos, because recursive edge circles are.
+
+    actually ovals with height: radius, width:2 * radius.
+    """
+    annotations = []
+    for node in G.nodes:
+        x, y = G.nodes[node]["pos"]
+        annotations.append(
+            go.layout.Annotation(
+                x=x,
+                y=y + 1 * radius,
+                xref="x",
+                yref="y",
+                text="recur",
+                align="center",
+                showarrow=False,
+                yanchor="bottom",
+            )
+        )
+    return annotations
+
+
 def get_edge_mid_point(
     edge: Tuple[Tuple[int, int], Tuple[int, int]]
 ) -> Tuple[int, int]:
@@ -199,7 +226,31 @@ def get_annotations(G: nx.DiGraph) -> List[Dict]:
     annotations = []
     annotations.extend(get_edge_arrows(G))
     annotations.extend(get_edge_labels(G))
+    annotations.extend(
+        get_recursive_edge_labels(G, radius=recursive_edge_radius)
+    )
+
     return annotations
+
+
+def add_recursive_edges(G: nx.DiGraph, fig: go.Figure, radius: float) -> None:
+    """Adds a circle, representing a recursive edge, above a node.
+
+    The circle line/edge colour is updated along with the node colour.
+    """
+    for node in G.nodes:
+        x, y = G.nodes[node]["pos"]
+        # Add circles
+        fig.add_shape(
+            type="circle",
+            xref="x",
+            yref="y",
+            x0=x - radius,
+            y0=y,
+            x1=x + radius,
+            y1=y + radius,
+            line_color=colour_set_I[node],
+        )
 
 
 # Load edge colour list.
@@ -231,7 +282,7 @@ fig = go.Figure(
         annotations=get_annotations(G),
     ),
 )
-
+add_recursive_edges(G=G, fig=fig, radius=recursive_edge_radius)
 
 # Start Dash app.
 app = dash.Dash(__name__)
@@ -261,6 +312,13 @@ def update_color(color_set_index: int) -> go.Figure:
 
     # Update the node colour.
     fig.data[0]["marker"]["color"] = color_sets[color_set_index]  # nodes
+
+    # Update the recursive edge node colour.
+    for node_name in G.nodes:
+        fig.layout.shapes[node_name]["line"]["color"] = color_sets[
+            color_set_index
+        ][node_name]
+
     return fig
 
 
