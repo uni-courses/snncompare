@@ -8,6 +8,7 @@ SubInput: Run configuration within an experiment.
     Stage 4: Post-processed performance data of algorithm and adaptation
     mechanism.
 """
+import copy
 import pathlib
 from typing import Dict, List
 
@@ -19,7 +20,6 @@ from snnbackends.verify_nx_graphs import (
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.export_plots.create_png_plot import plot_coordinated_graph
 from snncompare.export_plots.plot_graphs import plot_uncoordinated_graph
 from snncompare.helper import file_exists
 from snncompare.optional_config.Output_config import Output_config
@@ -188,11 +188,18 @@ def output_stage_json(
         results_nx_graphs=results_nx_graphs, stage_index=stage_index
     )
 
-    # TODO: Optional: ensure output files exists.
+    # Convert Run_config and Exp_config into dicts before jsons.dump. Done to
+    # elope warning on Exp_config.adaptations = None (optional argument), which
+    # cannot be dumped into dict.
+    exported_dict = copy.deepcopy(results_json_graphs)
+    for key, val in exported_dict.items():
+        if not isinstance(val, Dict):
+            exported_dict[key] = val.__dict__
+
     output_filepath = f"results/{filename}.json"
     write_dict_to_json(
         output_filepath=output_filepath,
-        some_dict=jsons.dump(results_json_graphs),
+        some_dict=jsons.dump(exported_dict),
     )
 
     # Ensure output file exists.
@@ -212,44 +219,13 @@ def plot_graph_behaviours(
     filepath: str,
     output_config: Output_config,
     stage_2_graphs: Dict,
-    run_config: Run_config,
 ) -> None:
     """Exports the plots of the graphs per time step of the run
     configuration."""
-    # TODO: get this from the experiment settings/run configuration.
-    desired_props = get_desired_properties_for_graph_printing()
 
     # Loop over the graph types
     for graph_name, snn_graph in stage_2_graphs.items():
-        if graph_name != "input_graph":
-            sim_duration = snn_graph.graph["sim_duration"]
-            for t in range(
-                0,
-                sim_duration,
-            ):
-                filename: str = f"{graph_name}_{filepath}_{t}"
-                if not desired_image_exist_for_timestep(
-                    filename=filename,
-                    extensions=output_config.export_types,
-                ):
-                    print(f"Plotting:{graph_name}, t={t}/{sim_duration}")
-                    # TODO: Include verify that graph len remains unmodified.
-                    # pylint: disable=R0913
-                    # TODO: make plot dimensions etc. function of algorithm.
-                    plot_coordinated_graph(
-                        extensions=output_config.export_types,
-                        desired_properties=desired_props,
-                        G=snn_graph,
-                        height=(len(stage_2_graphs["input_graph"]) - 1) ** 2,
-                        t=t,
-                        filename=filename,
-                        show=False,
-                        zoom=output_config.zoom,
-                        title=None,
-                        width=(run_config.algorithm["MDSA"]["m_val"] + 1)
-                        * 2.5,
-                    )
-        else:
+        if graph_name == "input_graph":
             plot_uncoordinated_graph(
                 extensions=output_config.export_types,
                 G=snn_graph,

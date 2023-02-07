@@ -124,7 +124,7 @@ class Supported_experiment_settings:
         self.specify_supported_radiations_settings()
 
         # Specify the supported image export file extensions.
-        self.export_types = ["pdf", "png", "gif"]
+        self.export_types = ["gif", "pdf", "png", "svg"]
 
     @typechecked
     def specify_supported_radiations_settings(self) -> None:

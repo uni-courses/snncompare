@@ -3,6 +3,7 @@ from typing import Dict
 
 from typeguard import typechecked
 
+from snncompare.export_plots.create_dash_plot import create_svg_plot
 from snncompare.export_plots.create_snn_gif import create_gif_of_run_config
 from snncompare.helper import add_stage_completion_to_graph
 from snncompare.optional_config.Output_config import Output_config
@@ -47,11 +48,7 @@ def output_stage_files_3_and_4(
             run_config_dict=results_nx_graphs["run_config"].__dict__
         )
         if stage_index == 3:
-            if (
-                "png" in output_config.export_types
-                or "pdf" in output_config.export_types
-            ):
-
+            if "pdf" in output_config.export_types:
                 # TODO: Check if plots are already generated and if they must
                 # be overwritten.
                 # Output graph behaviour for stage stage_index.
@@ -59,8 +56,15 @@ def output_stage_files_3_and_4(
                     filepath=filename,
                     output_config=output_config,
                     stage_2_graphs=results_nx_graphs["graphs_dict"],
+                )
+            if "svg" in output_config.export_types:
+                create_svg_plot(
+                    filepath=filename,
+                    graphs=results_nx_graphs["graphs_dict"],
                     run_config=results_nx_graphs["run_config"],
                 )
+            elif "pdf" in output_config.export_types:
+                pass
             if "gif" in output_config.export_types:
                 create_gif_of_run_config(results_nx_graphs=results_nx_graphs)
                 for nx_graph in results_nx_graphs["graphs_dict"].values():

@@ -142,21 +142,22 @@ You can run the experiment with command:
 
 ```bash
 (snncompare) name@name ~/git/snn/snncompare
-python -m src.snncompare -e mdsa_long_no_overwrite -x png -j1 -j2 -j4
+python -m src.snncompare -e mdsa_long_no_overwrite -x svg -j1 -j2 -j4
+python -m src.snncompare -e mdsa_size3_m0_adap_rad -x svg -j1 -j2 -j4
 ```
 
 which is the same as:
 
 ```bash
 python -m src.snncompare --experiment-settings-name \
-mdsa_long_no_overwrite --export-images png --output-json-stage-1 \
+mdsa_long_no_overwrite --export-images svg --output-json-stage-1 \
  --output-json-stage-2 --output-json-stage-4
 ```
 
 or:
 
 ```bash
-python -m src.snncompare -e mdsa_size3_m0_adap_rad -x png -j1 -j2 -j4
+python -m src.snncompare -e mdsa_size3_m0_adap_rad -x svg -j1 -j2 -j4
 python -m src.snncompare -e boxplot -c
 python -m src.snncompare -e mdsa_size3_m0_adap_rad -c
 ```
