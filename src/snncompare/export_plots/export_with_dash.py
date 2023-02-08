@@ -1,26 +1,16 @@
 """Generates a graph in dash."""
 
+from pprint import pprint
 from typing import Dict, List, Tuple
 
-import dash
 import networkx as nx
 import numpy as np
 import plotly
 import plotly.graph_objs as go
-from dash import dcc, html
-from dash.dependencies import Input, Output
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
-
-# TODO: compute x-tick labels.
-# TODO: compute y-tick labels.
-# TODO: compute node position.
-# TODO: compute node colour.
-# TODO: compute node labels.
-# TODO: compute edge colour.
-# TODO: compute edge labels.
 
 # TODO:
 # Get Graph
@@ -50,7 +40,7 @@ def xy_max(
 
 
 def add_recursive_edges(
-    *, G: nx.DiGraph, fig: go.Figure, radius: float
+    *, G: nx.DiGraph, fig: go.Figure, plot_config: Plot_config, radius: float
 ) -> None:
     """Adds a circle, representing a recursive edge, above a node.
 
@@ -68,11 +58,12 @@ def add_recursive_edges(
             x1=x + radius,
             y1=y + radius,
             line_color=G.nodes[node_name]["colour"],
+            line=go.layout.shape.Line(width=plot_config.edge_width),
         )
 
 
 # pylint: disable = W0621
-def get_edge_arrows(*, G: nx.DiGraph) -> List[Dict]:
+def get_edge_arrows(*, G: nx.DiGraph, plot_config: Plot_config) -> List[Dict]:
     """Returns the annotation dictionaries representing the directed edge
     arrows."""
     annotations: List[Dict] = []
@@ -96,7 +87,7 @@ def get_edge_arrows(*, G: nx.DiGraph) -> List[Dict]:
                 y=right_y,
                 xref="x",
                 yref="y",
-                arrowwidth=5,  # Width of arrow.
+                arrowwidth=plot_config.edge_width,  # Width of arrow.
                 arrowcolor="red",  # Overwrite in update/using user input.
                 arrowsize=0.8,  # (1 gives head 3 times as wide as arrow line)
                 showarrow=True,
@@ -104,12 +95,6 @@ def get_edge_arrows(*, G: nx.DiGraph) -> List[Dict]:
                 hoverlabel=plotly.graph_objs.layout.annotation.Hoverlabel(
                     bordercolor="red"
                 ),
-                hovertext="sometext",
-                text="sometext",
-                # textangle=-45,
-                # xanchor='center',
-                # xanchor='right',
-                # swag=120,
             )
         )
     return annotations
@@ -117,37 +102,17 @@ def get_edge_arrows(*, G: nx.DiGraph) -> List[Dict]:
 
 # pylint: disable = W0621
 def get_edge_labels(
-    *, G: nx.DiGraph, pixel_height: int, pixel_width: int
+    *,
+    G: nx.DiGraph,
+    pixel_height: int,
+    pixel_width: int,
+    plot_config: Plot_config,
+    radius: float,
 ) -> List[Dict]:
     """Returns the annotation dictionaries representing the labels of the
-    directed edge arrows."""
-    annotations = []
-    for edge in G.edges:
-        mid_x, mid_y = get_edge_mid_point(G=G, edge=edge)
-        annotations.append(
-            go.layout.Annotation(
-                x=mid_x,
-                y=mid_y,
-                xref="x",
-                yref="y",
-                text="dict Text",
-                align="center",
-                showarrow=False,
-                yanchor="bottom",
-                textangle=get_stretched_edge_angle(
-                    G=G,
-                    edge=edge,
-                    pixel_height=pixel_height,
-                    pixel_width=pixel_width,
-                ),
-            )
-        )
-    return annotations
+    directed edge arrows.
 
-
-# pylint: disable = W0621
-def get_recursive_edge_labels(G: nx.DiGraph, radius: float) -> List[Dict]:
-    """Returns the annotation dictionaries representing the labels of the
+    Returns the annotation dictionaries representing the labels of the
     recursive edge circles above the nodes. Note, only place 0.25 radius above
     pos, because recursive edge circles are actually ovals.
 
@@ -155,20 +120,44 @@ def get_recursive_edge_labels(G: nx.DiGraph, radius: float) -> List[Dict]:
     recursive edge label in the center of the oval.
     """
     annotations = []
-    for node in G.nodes:
-        x, y = G.nodes[node]["pos"]
-        annotations.append(
-            go.layout.Annotation(
-                x=x,
-                y=y + 0.25 * radius,
-                xref="x",
-                yref="y",
-                text="recur",
-                align="center",
-                showarrow=False,
-                yanchor="bottom",
+    for edge in G.edges:
+        if edge[0] != edge[1]:  # For non recursive edges
+            mid_x, mid_y = get_edge_mid_point(G=G, edge=edge)
+            annotations.append(
+                go.layout.Annotation(
+                    x=mid_x,
+                    y=mid_y,
+                    xref="x",
+                    yref="y",
+                    text=G.edges[edge]["label"],
+                    font={"size": plot_config.neuron_text_size},
+                    align="center",
+                    showarrow=False,
+                    yanchor="bottom",
+                    textangle=get_stretched_edge_angle(
+                        G=G,
+                        edge=edge,
+                        pixel_height=pixel_height,
+                        pixel_width=pixel_width,
+                    ),
+                )
             )
-        )
+        else:  # Recursive edge.
+
+            x, y = G.nodes[edge[0]]["pos"]
+            annotations.append(
+                go.layout.Annotation(
+                    x=x,
+                    y=y + 0.25 * radius,
+                    xref="x",
+                    yref="y",
+                    text=G.edges[edge]["label"],
+                    font={"size": plot_config.neuron_text_size},
+                    align="center",
+                    showarrow=False,
+                    yanchor="bottom",
+                )
+            )
     return annotations
 
 
@@ -234,18 +223,20 @@ def get_annotations(
     G: nx.DiGraph,
     pixel_height: int,
     pixel_width: int,
+    plot_config: Plot_config,
     recursive_edge_radius: float,
 ) -> List[Dict]:
     """Returns the annotations for this graph."""
     annotations = []
-    annotations.extend(get_edge_arrows(G=G))
+    annotations.extend(get_edge_arrows(G=G, plot_config=plot_config))
     annotations.extend(
         get_edge_labels(
-            G=G, pixel_height=pixel_height, pixel_width=pixel_width
+            G=G,
+            pixel_height=pixel_height,
+            pixel_width=pixel_width,
+            plot_config=plot_config,
+            radius=recursive_edge_radius,
         )
-    )
-    annotations.extend(
-        get_recursive_edge_labels(G, radius=recursive_edge_radius)
     )
 
     return annotations
@@ -254,13 +245,14 @@ def get_annotations(
 # Build image from incoming graph and positioning parameters
 # pylint: disable=R0914
 def create_svg_with_dash(
-    filename: str, graphs: List[nx.DiGraph], plot_config: Plot_config
+    filename: str, graphs: List[nx.DiGraph], plot_config: Plot_config, t: int
 ) -> None:
     """Creates an .svg plot of the incoming networkx graph."""
-
-    t = 0
-    print(f'node={graphs[0].nodes["spike_once_0"]["nx_lif"]}')
-    pixel_width = plot_config.base_pixel_height * xy_max(G=graphs[t])[0]
+    pprint(plot_config.__dict__)
+    for node_name in graphs[t].nodes():
+        if "spike_once_" == node_name[:11] or "rand_" == node_name[:5]:
+            print(f'{node_name}:{graphs[t].nodes[node_name]["pos"]}')
+    pixel_width = plot_config.base_pixel_width * xy_max(G=graphs[t])[0]
     pixel_height = plot_config.base_pixel_height * xy_max(G=graphs[t])[1]
     recursive_edge_radius = plot_config.recursive_edge_radius
 
@@ -272,32 +264,37 @@ def create_svg_with_dash(
         colour_list.append(graphs[t].nodes[node_name]["colour"])
 
     # Load edge colour list.
-    # edge_colours: List[Dict[str,str]] = set_edge_colours()
-    # TODO: change into list of dicts with one dict per timestep.
     edge_colours: List[Dict[Tuple[str, str], str]] = [{}] * len(graphs)
     for edge in graphs[t].edges():
         edge_colours[t][edge] = graphs[t].edges[edge]["colour"]
 
+    node_labels = []
+    for node_name in graphs[t].nodes():
+        node_labels.append(graphs[t].nodes[node_name]["label"])
+
+    x_pos: List[float] = []
+    y_pos: List[float] = []
+    text_array = []
+    for node_name in graphs[t].nodes():
+        x, y = graphs[t].nodes[node_name]["pos"]
+        x_pos.append(x)
+        y_pos.append(y)
+        text_array.append(graphs[t].nodes[node_name]["label"])
+
     # Create nodes
     node_trace = go.Scatter(
-        x=[],
-        y=[],
-        text=[],
-        mode="markers",
-        hoverinfo="text",
+        x=x_pos,
+        y=y_pos,
+        text=text_array,
+        mode="markers+text",
+        hoverinfo="none",
         marker=dict(
-            size=30,
+            size=plot_config.node_size,
             color=colour_list,
-        )
-        # marker=dict(size=30, color=graphs[t].nodes[:]["colour"]),
+        ),
+        textfont={"size": plot_config.neuron_text_size},
+        # textposition="bottom right",
     )
-
-    for i, node_name in enumerate(graphs[t].nodes()):
-        x, y = graphs[t].nodes[node_name]["pos"]
-        node_trace["x"] += tuple([x])
-        node_trace["y"] += tuple([y])
-
-        # node_trace["marker"]["color"][i] = colour_set[node_name]
 
     # Create figure
     fig = go.Figure(
@@ -310,80 +307,33 @@ def create_svg_with_dash(
                 G=graphs[t],
                 pixel_height=pixel_height,
                 pixel_width=pixel_width,
+                plot_config=plot_config,
                 recursive_edge_radius=plot_config.recursive_edge_radius,
             ),
             xaxis=go.layout.XAxis(
                 tickmode="array",
-                tickvals=[0, 0.1, 0.5, 1, 2.0],
-                ticktext=["origin", "r1", "r2", "MID", "end"],
+                tickvals=list(graphs[t].graph["x_tics"].keys()),
+                ticktext=list(graphs[t].graph["x_tics"].values()),
+                tickfont={"size": plot_config.x_tick_size},
                 tickangle=-45,
             ),
             yaxis=go.layout.YAxis(
                 tickmode="array",
-                tickvals=[0, 0.1, 0.5, 0.9, 1.0],
-                ticktext=["yorigin", "yr1", "yr2", "yMID", "yend"],
+                tickvals=list(graphs[t].graph["y_tics"].keys()),
+                ticktext=list(graphs[t].graph["y_tics"].values()),
+                tickfont={"size": plot_config.y_tick_size},
                 tickangle=0,
             ),
         ),
     )
-    add_recursive_edges(G=graphs[t], fig=fig, radius=recursive_edge_radius)
-
-    # Start Dash app.
-    app = dash.Dash(__name__)
-
-    @app.callback(
-        Output("Graph", "figure"), [Input("color-set-slider", "value")]
+    add_recursive_edges(
+        G=graphs[t],
+        fig=fig,
+        plot_config=plot_config,
+        radius=recursive_edge_radius,
     )
-    def update_color(color_set_index: int) -> go.Figure:
-        """Updates the colour of the nodes and edges based on user input."""
-        # Update the annotation colour.
-        def annotation_colour(
-            some_val: int,
-            edge_colours: List[Dict[Tuple[str, str], str]],
-            edge: Tuple[str, str],
-        ) -> str:
-            """Updates the colour of the edges based on user input."""
-            return edge_colours[some_val][edge]
-
-        # Overwrite annotation with function instead of value.
-        for i, edge in enumerate(graphs[t].edges()):
-
-            some_annotation_colour = annotation_colour(
-                color_set_index, edge_colours=edge_colours, edge=edge
-            )
-            fig.layout.annotations[i].arrowcolor = some_annotation_colour
-
-        # Update the node colour.
-        fig.data[0]["marker"]["color"] = color_sets[color_set_index]  # nodes
-
-        # Update the recursive edge node colour.
-        for i, _ in enumerate(graphs[t].nodes):
-            fig.layout.shapes[i]["line"]["color"] = color_sets[
-                color_set_index
-            ][i]
-        create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
-        fig.write_image(f"latex/Images/graphs/{filename}_{t}.svg")
-        return fig
-
-    # State variable to keep track of current color set
-    initial_color_set_index = 0
-    color_sets = [colour_list, colour_list]
-    fig = update_color(initial_color_set_index)
-
-    app.layout = html.Div(
-        [
-            dcc.Slider(
-                id="color-set-slider",
-                min=0,
-                max=len(color_sets) - 1,
-                value=0,
-                marks={i: str(i) for i in range(len(color_sets))},
-                step=None,
-            ),
-            html.Div(dcc.Graph(id="Graph", figure=fig)),
-        ]
-    )
-
-    # app.run_server(debug=True)
-    # if __name__ == "__main__":
-    #    app.run_server(debug=True)
+    create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
+    fig.write_image(f"latex/Images/graphs/{filename}_{t}.svg")
+    # fig.show()
+    # os.system("nemo /home/name/git/snn/snncompare/latex/Images/graphs")
+    return fig

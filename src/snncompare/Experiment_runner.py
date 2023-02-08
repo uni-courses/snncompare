@@ -22,6 +22,10 @@ from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
 )
+from snncompare.export_plots.Plot_config import (
+    Plot_config,
+    get_default_plot_config,
+)
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
@@ -113,16 +117,16 @@ class Experiment_runner:
         The 2 underscores indicate it is private. This method executes
         the run in the way the processed configuration settings specify.
         """
-
+        plot_config = get_default_plot_config()
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
 
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
-
             results_nx_graphs = self.__perform_run_stage_1(
                 exp_config=exp_config,
                 output_config=output_config,
+                plot_config=plot_config,
                 run_config=run_config,
             )
 
@@ -154,6 +158,7 @@ class Experiment_runner:
         self,
         exp_config: Exp_config,
         output_config: Output_config,
+        plot_config: Plot_config,
         run_config: Run_config,
     ) -> Dict:
         """Performs the run for stage 1 or loads the data from file depending
@@ -172,7 +177,9 @@ class Experiment_runner:
             or 1 in output_config.recreate_stages
         ):
             # Run first stage of experiment, get input graph.
-            stage_1_graphs: Dict = get_used_graphs(run_config=run_config)
+            stage_1_graphs: Dict = get_used_graphs(
+                plot_config=plot_config, run_config=run_config
+            )
             results_nx_graphs = {
                 "exp_config": exp_config,
                 "run_config": run_config,

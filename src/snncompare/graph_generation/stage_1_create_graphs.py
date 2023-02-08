@@ -25,6 +25,7 @@ from snnradiation.Radiation_damage import (
 )
 from typeguard import typechecked
 
+from snncompare.export_plots.Plot_config import Plot_config
 from snncompare.run_config.Run_config import Run_config
 
 from ..helper import add_stage_completion_to_graph
@@ -33,6 +34,7 @@ from ..helper import add_stage_completion_to_graph
 @typechecked
 def get_used_graphs(
     *,
+    plot_config: Plot_config,
     run_config: Run_config,
 ) -> Dict:
     """First gets the input graph.
@@ -55,7 +57,9 @@ def get_used_graphs(
     # MDSA SNN.
     if has_adaptation(run_config=run_config):
         graphs["adapted_snn_graph"] = get_adapted_graph(
-            snn_algo_graph=graphs["snn_algo_graph"], run_config=run_config
+            snn_algo_graph=graphs["snn_algo_graph"],
+            plot_config=plot_config,
+            run_config=run_config,
         )
 
     if has_radiation(run_config=run_config):
@@ -135,6 +139,7 @@ def get_input_graphs(
 def get_adapted_graph(
     *,
     snn_algo_graph: nx.DiGraph,
+    plot_config: Plot_config,
     run_config: Run_config,
 ) -> nx.DiGraph:
     """Converts an input graph of stage 1 and applies a form of brain-inspired
@@ -152,7 +157,9 @@ def get_adapted_graph(
                 adaptation=run_config.adaptation
             )
             adaptation_graph: nx.DiGraph = get_redundant_graph(
-                snn_algo_graph=snn_algo_graph, red_lev=adaptation_setting
+                snn_algo_graph=snn_algo_graph,
+                plot_config=plot_config,
+                red_lev=adaptation_setting,
             )
             return adaptation_graph
         raise Exception(
@@ -200,11 +207,15 @@ def has_radiation(
 
 @typechecked
 def get_redundant_graph(
-    *, snn_algo_graph: nx.DiGraph, red_lev: int
+    *, snn_algo_graph: nx.DiGraph, plot_config: Plot_config, red_lev: int
 ) -> nx.DiGraph:
     """Returns a networkx graph that has a form of adaptation added."""
     adaptation_graph = copy.deepcopy(snn_algo_graph)
-    apply_redundancy(adaptation_graph=adaptation_graph, redundancy=red_lev)
+    apply_redundancy(
+        adaptation_graph=adaptation_graph,
+        plot_config=plot_config,
+        redundancy=red_lev,
+    )
     return adaptation_graph
 
 

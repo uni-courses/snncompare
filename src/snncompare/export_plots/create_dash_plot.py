@@ -1,5 +1,6 @@
 """Generates interactive view of graph."""
 
+import sys
 from typing import Dict, List, Tuple, Union
 
 import networkx as nx
@@ -33,14 +34,10 @@ def create_svg_plot(
     # pylint: disable=R1702
     for graph_name, snn_graph in graphs.items():
         if graph_name != "input_graph":
+            print("")
+            print("")
+            # if graph_name == "rad_snn_algo_graph":
             sim_duration = snn_graph.graph["sim_duration"]
-
-            # Get the layout of the graph.
-            # Get the x-ticks.
-            # Get the y-ticks.
-            # Compute image width.
-            # Compute image height.
-
             for alg_name, _ in run_config.algorithm.items():
                 if alg_name == "MDSA":
                     for (
@@ -59,16 +56,19 @@ def create_svg_plot(
                                         snn_graph=snn_graph, t=t
                                     )
                                 )
+                                create_svg_with_dash(
+                                    filename=filename,
+                                    graphs=sub_graphs,
+                                    plot_config=plot_config,
+                                    t=t,
+                                )
                             else:
                                 raise Exception(
                                     f"Error, adaptation:{adaptation_name} not "
                                     + "yet supported."
                                 )
-                        create_svg_with_dash(
-                            filename=filename,
-                            graphs=sub_graphs,
-                            plot_config=plot_config,
-                        )
+                            sys.exit()
+
                 else:
                     raise Exception(
                         f"Error, algorithm:{alg_name} not yet supported."
@@ -114,10 +114,29 @@ def get_xy_tick_labels(
         lif_neurons=lif_neurons
     )
     for neuron_type, neurons in sorted_neurons.items():
-        x = min(list(map(lambda a: a.pos[0], neurons)))
-        x_tick_labels[x] = neuron_type
-        y = min(list(map(lambda a: a.pos[1], neurons)))
-        y_tick_labels[y] = neuron_type
+        if neuron_type in ["connector_node", "counter", "terminator_node"]:
+            x_tick_labels[neurons[0].pos[0]] = neuron_type
+        if neuron_type in ["degree_receiver", "selector"]:
+            for neuron in neurons:
+                # pylint: disable=C0201
+                if neuron.pos[0] not in x_tick_labels.keys():
+
+                    if neuron_type == "degree_receiver":
+                        m_val_identifier_index = 2
+                    elif neuron_type == "selector":
+                        m_val_identifier_index = 1
+                    identifier = neuron.identifiers[m_val_identifier_index]
+                    print(neuron.identifiers)
+                    print(neuron.full_name)
+                    x_tick_labels[neuron.pos[0]] = (
+                        f"{neuron_type}, "
+                        + f"{identifier['description']}="
+                        + f"{identifier['value']}"
+                    )
+        if neuron_type in ["rand", "spike_once"]:
+            for neuron in neurons:
+                y_tick_labels[neuron.pos[1]] = neuron.full_name
+
     return x_tick_labels, y_tick_labels
 
 
@@ -136,7 +155,7 @@ def get_sorted_neurons(
             "selector",
             "counter",
             "next_round",
-            "connecting_node",
+            "connector_node",
             "terminator_node",
         ]:
             put_neuron_into_sorted_dict(
@@ -161,6 +180,7 @@ def put_neuron_into_sorted_dict(
             sorted_neurons[neuron_name] = [lif_neuron]
 
 
+# pylint: disable=R0912
 def get_graph_plot_parameters(snn_graph: nx.DiGraph, t: int) -> nx.DiGraph:
     """Stores the graph plot parameters such as colours, labels and x/y-ticks
     into the networkx graph."""
@@ -173,11 +193,14 @@ def get_graph_plot_parameters(snn_graph: nx.DiGraph, t: int) -> nx.DiGraph:
     # TODO: remove making a duplicate graph.
     G = nx.DiGraph()
     for neuron in lif_neurons:
-        G.add_node(neuron.full_name)
-        G.nodes[neuron.full_name]["nx_lif"] = neuron
+        if "connector" not in neuron.full_name:
+            G.add_node(neuron.full_name)
+            G.nodes[neuron.full_name]["nx_lif"] = neuron
     for edge in snn_graph.edges():
-        G.add_edge(edge[0], edge[1])
-        G.edges[edge]["synapse"] = snn_graph.edges[edge]["synapse"]
+        if "connector" not in edge[0] and "connector" not in edge[1]:
+            # if "connector" not in G.nodes() and "connector" not in G.nodes():
+            G.add_edge(edge[0], edge[1])
+            G.edges[edge]["synapse"] = snn_graph.edges[edge]["synapse"]
 
     # TODO: compute x-tick labels.
     # TODO: compute y-tick labels.
@@ -192,7 +215,8 @@ def get_graph_plot_parameters(snn_graph: nx.DiGraph, t: int) -> nx.DiGraph:
         spiking_edges,
     ) = set_nx_node_colours(G=snn_graph, t=t)
     for node_name, colour in colour_dict.items():
-        G.nodes[node_name]["colour"] = colour
+        if "connector" not in node_name:
+            G.nodes[node_name]["colour"] = colour
     # print(f"color_map={color_map}")
     # print(f"spiking_edges={spiking_edges}")
 
@@ -201,19 +225,27 @@ def get_graph_plot_parameters(snn_graph: nx.DiGraph, t: int) -> nx.DiGraph:
         G=snn_graph, spiking_edges=spiking_edges
     )
     for edge, colour in edge_color_dict.items():
-        G.edges[edge]["colour"] = colour
+        if "connector" not in edge[0] and "connector" not in edge[1]:
+            G.edges[edge]["colour"] = colour
 
     # Compute node labels.
     for neuron in lif_neurons:
-        G.nodes[neuron.full_name][
-            "label"
-        ] = f"V:{neuron.u.get()}/{neuron.vth.get()}"
+        if "connector" not in neuron.full_name:
+            G.nodes[neuron.full_name][
+                "label"
+            ] = f"V:{neuron.u.get()}/{neuron.vth.get()}"
 
     # TODO: compute node position.
     for node_name in G.nodes():
-        G.nodes[node_name]["pos"] = snn_graph.nodes[node_name]["nx_lif"][t].pos
+        if "connector" not in node_name:
+            G.nodes[node_name]["pos"] = snn_graph.nodes[node_name]["nx_lif"][
+                t
+            ].pos
 
     # Compute edge labels.
     for edge in snn_graph.edges():
-        G.edges[edge]["label"] = f"W:{snn_graph.edges[edge]['synapse'].weight}"
+        if "connector" not in edge[0] and "connector" not in edge[1]:
+            G.edges[edge][
+                "label"
+            ] = f"W:{snn_graph.edges[edge]['synapse'].weight}"
     return G
