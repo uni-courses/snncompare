@@ -66,8 +66,6 @@ def create_svg_plot(
                                     f"Error, adaptation:{adaptation_name} not "
                                     + "yet supported."
                                 )
-                            # sys.exit()
-
                 else:
                     raise Exception(
                         f"Error, algorithm:{alg_name} not yet supported."
