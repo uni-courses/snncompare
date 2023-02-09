@@ -48,6 +48,7 @@ def output_stage_files_3_and_4(
             run_config_dict=results_nx_graphs["run_config"].__dict__
         )
         if stage_index == 3:
+            print(f"output_config.export_types={output_config.export_types}")
             if "pdf" in output_config.export_types:
                 # TODO: Check if plots are already generated and if they must
                 # be overwritten.

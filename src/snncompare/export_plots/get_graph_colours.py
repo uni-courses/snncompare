@@ -60,27 +60,3 @@ def set_node_colours_with_redundancy(
     else:
         # colour_dict[node_name] = ["yellow",1]
         colour_dict[node_name] = "rgb(255, 255, 0)"
-
-
-@typechecked
-def create_edge_colours(
-    *, G: nx.DiGraph, spiking_edges: List
-) -> Dict[Tuple[str, str], str]:
-    """
-    TODO: map edge colour based on node colour, so also include radiation
-    death colour and yellow etc.
-
-
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param spiking_edges:
-    """
-    # edge_color_map = []
-    edge_color_dict: Dict[Tuple[str, str], str] = {}
-    for edge in G.edges:
-        if edge in spiking_edges:
-            # edge_color_map.append("green")
-            edge_color_dict[edge] = "green"
-        else:
-            # edge_color_map.append("black")
-            edge_color_dict[edge] = "black"
-    return edge_color_dict

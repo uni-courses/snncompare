@@ -1,5 +1,6 @@
 """Generates interactive view of graph."""
 
+from pprint import pprint
 from typing import Dict, List, Tuple, Union
 
 import networkx as nx
@@ -7,10 +8,7 @@ from snnbackends.networkx.LIF_neuron import LIF_neuron
 from typeguard import typechecked
 
 from snncompare.export_plots.export_with_dash import create_svg_with_dash
-from snncompare.export_plots.get_graph_colours import (
-    create_edge_colours,
-    set_nx_node_colours,
-)
+from snncompare.export_plots.get_graph_colours import set_nx_node_colours
 from snncompare.export_plots.Plot_config import (
     Plot_config,
     get_default_plot_config,
@@ -29,13 +27,13 @@ def create_svg_plot(
 ) -> None:
     """Creates the svg plots."""
     plot_config: Plot_config = get_default_plot_config()
+    pprint(plot_config.__dict__)
 
     # pylint: disable=R1702
     for graph_name, snn_graph in graphs.items():
         if graph_name != "input_graph":
             print("")
             print("")
-            # if graph_name == "rad_snn_algo_graph":
             sim_duration = snn_graph.graph["sim_duration"]
             for alg_name, _ in run_config.algorithm.items():
                 if alg_name == "MDSA":
@@ -214,16 +212,21 @@ def get_graph_plot_parameters(snn_graph: nx.DiGraph, t: int) -> nx.DiGraph:
     for node_name, colour in colour_dict.items():
         if "connector" not in node_name:
             G.nodes[node_name]["colour"] = colour
+            if G.nodes[node_name]["nx_lif"].spikes:
+                G.nodes[node_name]["opacity"] = 0.8
+            else:
+                G.nodes[node_name]["opacity"] = 0.1
     # print(f"color_map={color_map}")
     # print(f"spiking_edges={spiking_edges}")
 
     # Compute edge colour.
-    edge_color_dict = create_edge_colours(
-        G=snn_graph, spiking_edges=spiking_edges
-    )
-    for edge, colour in edge_color_dict.items():
+    for edge in snn_graph.edges():
         if "connector" not in edge[0] and "connector" not in edge[1]:
-            G.edges[edge]["colour"] = colour
+            G.edges[edge]["colour"] = G.nodes[edge[0]]["colour"]
+            if edge in spiking_edges:
+                G.edges[edge]["opacity"] = 0.99
+            else:
+                G.edges[edge]["opacity"] = 0.1
 
     # Compute node labels.
     for neuron in lif_neurons:

@@ -1,6 +1,5 @@
 """Generates a graph in dash."""
 
-from pprint import pprint
 from typing import Dict, List, Tuple
 
 import networkx as nx
@@ -58,6 +57,7 @@ def add_recursive_edges(
             x1=x + radius,
             y1=y + radius,
             line_color=G.nodes[node_name]["colour"],
+            opacity=G.nodes[node_name]["opacity"],
             line=go.layout.shape.Line(width=plot_config.edge_width),
         )
 
@@ -83,12 +83,13 @@ def get_edge_arrows(*, G: nx.DiGraph, plot_config: Plot_config) -> List[Dict]:
                 ay=left_y,
                 axref="x",
                 ayref="y",
+                opacity=G.edges[edge]["opacity"],
                 x=right_x,
                 y=right_y,
                 xref="x",
                 yref="y",
                 arrowwidth=plot_config.edge_width,  # Width of arrow.
-                arrowcolor="red",  # Overwrite in update/using user input.
+                arrowcolor=G.nodes[edge[0]]["colour"],
                 arrowsize=0.8,  # (1 gives head 3 times as wide as arrow line)
                 showarrow=True,
                 arrowhead=1,  # the arrowshape (index).
@@ -248,10 +249,9 @@ def create_svg_with_dash(
     filename: str, graphs: List[nx.DiGraph], plot_config: Plot_config, t: int
 ) -> None:
     """Creates an .svg plot of the incoming networkx graph."""
-    pprint(plot_config.__dict__)
-    for node_name in graphs[t].nodes():
-        if "spike_once_" == node_name[:11] or "rand_" == node_name[:5]:
-            print(f'{node_name}:{graphs[t].nodes[node_name]["pos"]}')
+    # for node_name in graphs[t].nodes():
+    # if "spike_once_" == node_name[:11] or "rand_" == node_name[:5]:
+    # print(f'{node_name}:{graphs[t].nodes[node_name]["pos"]}')
     pixel_width = plot_config.base_pixel_width * xy_max(G=graphs[t])[0]
     pixel_height = plot_config.base_pixel_height * xy_max(G=graphs[t])[1]
     recursive_edge_radius = plot_config.recursive_edge_radius
@@ -333,7 +333,7 @@ def create_svg_with_dash(
         radius=recursive_edge_radius,
     )
     create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
-    fig.write_image(f"latex/Images/graphs/{filename}_{t}.svg")
+    fig.write_image(f"latex/Images/graphs/{filename}.svg")
     # fig.show()
     # os.system("nemo /home/name/git/snn/snncompare/latex/Images/graphs")
     return fig
