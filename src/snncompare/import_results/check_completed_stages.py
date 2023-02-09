@@ -65,7 +65,7 @@ def has_outputted_images(
         nx_graphs_dict=results_nx_graphs["graphs_dict"],
         input_graph=get_input_graph_of_run_config(run_config=run_config),
         run_config=run_config,
-        extensions=["png"],
+        extensions=["svg"],
     )
 
     if not expected_files_exist(expected_filepaths=expected_image_paths):
