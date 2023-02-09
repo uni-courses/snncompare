@@ -1,6 +1,5 @@
 """Generates interactive view of graph."""
 
-import sys
 from typing import Dict, List, Tuple, Union
 
 import networkx as nx
@@ -67,7 +66,7 @@ def create_svg_plot(
                                     f"Error, adaptation:{adaptation_name} not "
                                     + "yet supported."
                                 )
-                            sys.exit()
+                            # sys.exit()
 
                 else:
                     raise Exception(
@@ -125,13 +124,13 @@ def get_xy_tick_labels(
                         m_val_identifier_index = 2
                     elif neuron_type == "selector":
                         m_val_identifier_index = 1
-                    identifier = neuron.identifiers[m_val_identifier_index]
-                    print(neuron.identifiers)
-                    print(neuron.full_name)
+                    some_identifier = neuron.identifiers[
+                        m_val_identifier_index
+                    ]
                     x_tick_labels[neuron.pos[0]] = (
                         f"{neuron_type}, "
-                        + f"{identifier['description']}="
-                        + f"{identifier['value']}"
+                        + f"{some_identifier.description}="
+                        + f"{some_identifier.value}"
                     )
         if neuron_type in ["rand", "spike_once"]:
             for neuron in neurons:

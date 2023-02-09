@@ -190,6 +190,7 @@ class Experiment_runner:
             output_files_stage_1_and_2(
                 results_nx_graphs=results_nx_graphs, stage_index=1
             )
+
         else:
             results_nx_graphs = load_results_stage_1(run_config=run_config)
         self.equalise_loaded_run_config(
@@ -227,10 +228,11 @@ class Experiment_runner:
             not has_outputted_stage_jsons(
                 expected_stages=[1, 2], run_config=run_config, stage_index=2
             )
+            # Only stage I should be loaded.
             or 2 in output_config.recreate_stages
         ):
-            # Only stage I should be loaded.
             results_nx_graphs = load_results_stage_1(run_config=run_config)
+
             self.equalise_loaded_run_config(
                 loaded_from_json=results_nx_graphs["run_config"],
                 incoming=run_config,

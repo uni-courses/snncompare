@@ -68,13 +68,13 @@ def get_used_graphs(
             run_config=run_config,
             seed=run_config.seed,
         )
+
         if has_adaptation(run_config=run_config):
             graphs["rad_adapted_snn_graph"] = get_radiation_graph(
                 snn_graph=graphs["adapted_snn_graph"],
                 run_config=run_config,
                 seed=run_config.seed,
             )
-
     # TODO: move this into a separate location/function.
     # Indicate the graphs have completed stage 1.
     for graph in graphs.values():
