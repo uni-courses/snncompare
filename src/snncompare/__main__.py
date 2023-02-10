@@ -1,9 +1,6 @@
 """Entry point for this project, runs the project code based on the cli command
 that invokes this script."""
 
-# Import code belonging to this project.
-
-
 from snncompare.arg_parser.arg_verification import verify_args
 from snncompare.json_configurations.create_custom_setts import (
     create_basic_test_config,

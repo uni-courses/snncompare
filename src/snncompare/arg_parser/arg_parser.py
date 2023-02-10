@@ -214,6 +214,17 @@ def parse_cli_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "-si",
+        "--show-images",
+        action="store_true",
+        default=False,
+        help=(
+            "Show images in dash app/browser. (Automatically sets export"
+            + "images to svg)."
+        ),
+    )
+
+    parser.add_argument(
         "-sdn",
         "--store-died-neurons",
         action="store_true",

@@ -166,7 +166,7 @@ class Stage_4_graphs:
 
 @typechecked
 def output_stage_json(
-    *, results_nx_graphs: Dict, filename: str, stage_index: int
+    *, results_nx_graphs: Dict, run_config_filename: str, stage_index: int
 ) -> None:
     """Exports results dict to a json file."""
 
@@ -196,7 +196,7 @@ def output_stage_json(
         if not isinstance(val, Dict):
             exported_dict[key] = val.__dict__
 
-    output_filepath = f"results/{filename}.json"
+    output_filepath = f"results/{run_config_filename}.json"
     write_dict_to_json(
         output_filepath=output_filepath,
         some_dict=jsons.dump(exported_dict),
@@ -216,7 +216,7 @@ def output_stage_json(
 @typechecked
 def plot_graph_behaviours(
     *,
-    filepath: str,
+    run_config_filename: str,
     output_config: Output_config,
     stage_2_graphs: Dict,
 ) -> None:
@@ -229,7 +229,7 @@ def plot_graph_behaviours(
             plot_uncoordinated_graph(
                 extensions=output_config.export_types,
                 G=snn_graph,
-                filename=f"{graph_name}_{filepath}.png",
+                filename=f"{graph_name}_{run_config_filename}.png",
                 show=False,
             )
 

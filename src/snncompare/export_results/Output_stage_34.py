@@ -44,7 +44,7 @@ def output_stage_files_3_and_4(
     # TODO: merge experiment config, results_nx_graphs['run_config'] into
     # single dict.
     if results_nx_graphs["run_config"].simulator == "nx":
-        filename = run_config_to_filename(
+        run_config_filename = run_config_to_filename(
             run_config_dict=results_nx_graphs["run_config"].__dict__
         )
         if stage_index == 3:
@@ -54,15 +54,15 @@ def output_stage_files_3_and_4(
                 # be overwritten.
                 # Output graph behaviour for stage stage_index.
                 plot_graph_behaviours(
-                    filepath=filename,
+                    run_config_filename=run_config_filename,
                     output_config=output_config,
                     stage_2_graphs=results_nx_graphs["graphs_dict"],
                 )
             if "svg" in output_config.export_types:
                 create_svg_plot(
-                    filepath=filename,
+                    run_config_filename=run_config_filename,
                     graphs=results_nx_graphs["graphs_dict"],
-                    run_config=results_nx_graphs["run_config"],
+                    output_config=output_config,
                 )
             elif "pdf" in output_config.export_types:
                 pass
@@ -81,7 +81,7 @@ def output_stage_files_3_and_4(
             # Output the json dictionary of the files.
             output_stage_json(
                 results_nx_graphs=results_nx_graphs,
-                filename=filename,
+                run_config_filename=run_config_filename,
                 stage_index=stage_index,
             )
 

@@ -32,7 +32,7 @@ def output_files_stage_1_and_2(
     )
     output_stage_json(
         results_nx_graphs=results_nx_graphs,
-        filename=json_filename,
+        run_config_filename=json_filename,
         stage_index=stage_index,
     )
     # Verifies while loading that the output dict contains the expected

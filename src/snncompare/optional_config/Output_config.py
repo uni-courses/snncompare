@@ -153,6 +153,7 @@ class Extra_storing_config:
         count_spikes: bool,
         count_neurons: bool,
         count_synapses: bool,
+        show_images: bool,
         store_died_neurons: bool,  # Does this say dead neuron storage?
     ):
         self.count_spikes: bool = count_spikes
@@ -164,6 +165,7 @@ class Extra_storing_config:
         self.count_synapses: bool = count_synapses
         if self.count_synapses:
             raise Exception("Error, count_synapses not yet implemented.")
+        self.show_images: bool = show_images
         self.store_died_neurons: bool = store_died_neurons
         if self.count_spikes:
             raise Exception("Error, count_spikes not yet implemented.")

@@ -70,6 +70,14 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
     if args.delete_results and os.path.exists("results"):
         shutil.rmtree("results")
 
+    # To show figures, they need to be (created), (and hence) exported.
+    if args.show_images:
+        if args.export_images is None:
+            args.export_images = ["svg"]
+        else:
+            if "svg" not in args.export_images:
+                args.export_images.append("svg")
+
     if args.export_images is not None:
         optional_config_args_dict["export_types"] = args.export_images.split(
             ","
@@ -86,6 +94,7 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
     extra_storing_config_dict["count_spikes"] = args.count_fires
     extra_storing_config_dict["count_neurons"] = args.count_neurons
     extra_storing_config_dict["count_synapses"] = args.count_synapses
+    extra_storing_config_dict["show_images"] = args.show_images
     extra_storing_config_dict["store_died_neurons"] = args.store_died_neurons
     optional_config_args_dict["extra_storing_config"] = Extra_storing_config(
         **extra_storing_config_dict
