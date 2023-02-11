@@ -10,21 +10,35 @@ class Plot_config:
 
     # pylint: disable=R0903
     # pylint: disable=R0913
+    # pylint: disable=R0914
     @typechecked
     def __init__(
         self,
         base_pixel_width: int,
         base_pixel_height: int,
-        node_size: float,
-        edge_width_factor: float,
-        recursive_edge_radius_factor: float,
         dx_redundant_factor: float,
         dy_redundant_factor: float,
-        x_node_spacer_factor: float,
-        y_node_spacer_factor: float,
-        neuron_text_size_factor: float,
+        edge_width_factor: float,
         edge_label_size_factor: float,
+        neuron_text_size_factor: float,
+        node_size: float,
+        recursive_edge_radius_factor: float,
+        show_nodes: bool,
+        show_node_colours: bool,
+        show_node_labels: bool,
+        show_node_opacity: bool,
+        show_edge_colours: bool,
+        show_edge_labels: bool,
+        show_edge_opacity: bool,
+        update_node_colours: bool,
+        update_node_labels: bool,
+        update_node_opacity: bool,
+        update_edge_colours: bool,
+        update_edge_labels: bool,
+        update_edge_opacity: bool,
+        x_node_spacer_factor: float,
         x_tick_size_factor: float,
+        y_node_spacer_factor: float,
         y_tick_size_factor: float,
     ) -> None:
         """Creates the plot configuration to generate the svg files."""
@@ -56,6 +70,20 @@ class Plot_config:
         self.x_tick_size: float = x_tick_size_factor
         self.y_tick_size: float = y_tick_size_factor
 
+        self.show_nodes: bool = show_nodes
+        self.show_node_colours: bool = show_node_colours
+        self.show_node_labels: bool = show_node_labels
+        self.show_node_opacity: bool = show_node_opacity
+        self.show_edge_colours: bool = show_edge_colours
+        self.show_edge_labels: bool = show_edge_labels
+        self.show_edge_opacity: bool = show_edge_opacity
+        self.update_node_colours: bool = update_node_colours
+        self.update_node_labels: bool = update_node_labels
+        self.update_node_opacity: bool = update_node_opacity
+        self.update_edge_colours: bool = update_edge_colours
+        self.update_edge_labels: bool = update_edge_labels
+        self.update_edge_opacity: bool = update_edge_opacity
+
 
 def get_default_plot_config() -> Plot_config:
     """Returns a default Plot_config object."""
@@ -65,13 +93,26 @@ def get_default_plot_config() -> Plot_config:
         node_size=5,
         edge_width_factor=0.2,
         recursive_edge_radius_factor=0.02,
+        show_nodes=False,
+        show_node_colours=False,
+        show_node_labels=False,
+        show_node_opacity=False,
+        show_edge_colours=True,
+        show_edge_labels=False,
+        show_edge_opacity=True,
+        update_node_colours=False,
+        update_node_labels=False,
+        update_node_opacity=False,
+        update_edge_colours=True,
+        update_edge_labels=False,
+        update_edge_opacity=True,
         dx_redundant_factor=0.05,
         dy_redundant_factor=0.05,
         x_node_spacer_factor=0.15,
         y_node_spacer_factor=0.15,
         neuron_text_size_factor=0.8,
         edge_label_size_factor=0.8,
-        x_tick_size_factor=4,
-        y_tick_size_factor=4,
+        x_tick_size_factor=15,
+        y_tick_size_factor=15,
     )
     return plot_config

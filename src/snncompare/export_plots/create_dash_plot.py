@@ -1,6 +1,5 @@
 """Generates interactive view of graph."""
 from pathlib import Path
-from pprint import pprint
 from typing import Dict, List, Optional, Union
 
 import dash
@@ -20,7 +19,7 @@ from snncompare.export_plots.show_dash_plot import (
     show_svg_image_in_dash_III,
 )
 from snncompare.export_plots.store_plot_data_in_graph import (
-    get_graph_plot_parameters,
+    store_plot_params_in_graph,
 )
 from snncompare.optional_config.Output_config import Output_config
 
@@ -38,7 +37,7 @@ def create_svg_plot(
 ) -> None:
     """Creates the svg plots."""
     plot_config: Plot_config = get_default_plot_config()
-    pprint(plot_config.__dict__)
+
     app = dash.Dash(__name__)
     # pylint: disable=R1702
     for graph_name, snn_graph in graphs.items():
@@ -103,7 +102,7 @@ def create_and_store_dash_figures(
     t: int,
 ) -> go.Figure:
     """Creates and stores a dash figure object as .svg."""
-    get_graph_plot_parameters(
+    store_plot_params_in_graph(
         plotted_graph=plotted_graph, snn_graph=snn_graph, t=t
     )
     dash_figure: go.Figure = create_svg_with_dash(

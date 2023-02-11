@@ -27,7 +27,7 @@ def get_neurons_in_graph(
 
 # pylint: disable=R0912
 @typechecked
-def get_graph_plot_parameters(
+def store_plot_params_in_graph(
     plotted_graph: nx.DiGraph, snn_graph: nx.DiGraph, t: int
 ) -> None:
     """Stores the graph plot parameters such as colours, labels and x/y-ticks

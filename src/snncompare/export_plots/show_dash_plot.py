@@ -147,13 +147,21 @@ def show_dash_figures(
             raise Exception(f"Error, node_name:{node_name} not found.")
 
         # Overwrite annotation with function instead of value.
-        for i, edge in enumerate(plotted_graph.edges()):
-            the_edge_annotation_colour = edge_annotation_colour(
-                t, temporal_node_colours=temporal_node_colours, edge=edge
-            )
-            dash_figure.layout.annotations[
-                i
-            ].arrowcolor = the_edge_annotation_colour
+        if plot_config.update_edge_colours:
+            for i, edge in enumerate(plotted_graph.edges()):
+                # TODO: remove this check and require all nodes, edges and
+                # annotations to be accepted.
+                if i < len(dash_figure.layout.annotations):
+                    print(f"i={i}")
+                    the_edge_annotation_colour = edge_annotation_colour(
+                        t,
+                        temporal_node_colours=temporal_node_colours,
+                        edge=edge,
+                    )
+                    dash_figure.layout.annotations[
+                        i
+                    ].arrowcolor = the_edge_annotation_colour
+        return dash_figure
 
         # Update the node colour.
         # dash_figure.data[0]["marker"]["color"] = list(
@@ -167,16 +175,25 @@ def show_dash_figures(
     # State variable to keep track of current color set
     initial_t = 0
     # color_sets = [colour_list, colour_list]
+    # TODO: ensure the colours are initiated at least once regardless of
+    # plot_config.update_..
     dash_figure = update_color(initial_t)
 
+    if len(temporal_node_colours[0]) == 0:
+        raise ValueError(
+            "Not enough timesteps were found. probably took timestep of "
+            + "ignored node."
+        )
     app.layout = html.Div(
         [
             dcc.Slider(
                 id="color-set-slider",
                 min=0,
-                max=len(temporal_node_colours) - 1,
+                max=len(temporal_node_colours[0]) - 1,
                 value=0,
-                marks={i: str(i) for i in range(len(temporal_node_colours))},
+                marks={
+                    i: str(i) for i in range(len(temporal_node_colours[0]))
+                },
                 step=None,
             ),
             html.Div(dcc.Graph(id="Graph", figure=dash_figure)),

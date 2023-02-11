@@ -26,12 +26,16 @@ def create_svg_with_dash(
     node_trace = go.Scatter(
         x=list(graph.nodes[n]["pos"][0] for n in graph.nodes()),
         y=list(graph.nodes[n]["pos"][1] for n in graph.nodes()),
-        text=list(graph.nodes[n]["label"] for n in graph.nodes()),
+        text=list(graph.nodes[n]["label"] for n in graph.nodes())
+        if plot_config.show_node_labels
+        else None,
         mode="markers+text",
-        hoverinfo="none",
+        # hoverinfo="none",
         marker=dict(
             size=plot_config.node_size,
-            color=list(graph.nodes[n]["colour"] for n in graph.nodes()),
+            color=list(graph.nodes[n]["colour"] for n in graph.nodes())
+            if plot_config.show_node_colours
+            else None,
         ),
         textfont={"size": plot_config.neuron_text_size},
     )
@@ -65,6 +69,7 @@ def create_svg_with_dash(
             ),
         ),
     )
+
     add_recursive_edges(
         G=graph,
         fig=fig,
@@ -132,8 +137,12 @@ def add_recursive_edges(
             y0=y,
             x1=x + radius,
             y1=y + radius,
-            line_color=G.nodes[node_name]["colour"],
-            opacity=G.nodes[node_name]["opacity"],
+            line_color=G.nodes[node_name]["colour"]
+            if plot_config.show_edge_colours
+            else None,
+            opacity=G.nodes[node_name]["opacity"]
+            if plot_config.show_edge_opacity
+            else None,
             line=go.layout.shape.Line(width=plot_config.edge_width),
         )
 
@@ -148,7 +157,7 @@ def get_regular_edge_arrows(
     annotations: List[go.layout.Annotation] = []
     for edge in G.edges:
         left_x, left_y, right_x, right_y = get_edge_xys(G=G, edge=edge)
-
+        print(f'G.edges[edge]["opacity"]={G.edges[edge]["opacity"]}')
         if edge[0] != edge[1]:
             annotations.append(
                 go.layout.Annotation(
@@ -156,13 +165,17 @@ def get_regular_edge_arrows(
                     ay=left_y,
                     axref="x",
                     ayref="y",
-                    opacity=G.edges[edge]["opacity"],
+                    opacity=G.edges[edge]["opacity"]
+                    if plot_config.show_edge_opacity
+                    else None,
                     x=right_x,
                     y=right_y,
                     xref="x",
                     yref="y",
                     arrowwidth=plot_config.edge_width,  # Width of arrow.
-                    arrowcolor=G.nodes[edge[0]]["colour"],
+                    arrowcolor=G.nodes[edge[0]]["colour"]
+                    if plot_config.show_edge_colours
+                    else None,
                     arrowsize=0.8,  # (1 gives head 3x wider than arrow line)
                     showarrow=True,
                     arrowhead=1,  # the arrowshape (index).
@@ -214,43 +227,44 @@ def get_regular_and_recursive_edge_labels(
     recursive edge label in the center of the oval.
     """
     annotations = []
-    for edge in G.edges:
-        if edge[0] != edge[1]:  # For non recursive edges
-            mid_x, mid_y = get_edge_mid_point(G=G, edge=edge)
-            annotations.append(
-                go.layout.Annotation(
-                    x=mid_x,
-                    y=mid_y,
-                    xref="x",
-                    yref="y",
-                    text=G.edges[edge]["label"],
-                    font={"size": plot_config.neuron_text_size},
-                    align="center",
-                    showarrow=False,
-                    yanchor="bottom",
-                    textangle=get_stretched_edge_angle(
-                        G=G,
-                        edge=edge,
-                        pixel_height=pixel_height,
-                        pixel_width=pixel_width,
-                    ),
+    if plot_config.show_edge_labels:
+        for edge in G.edges:
+            if edge[0] != edge[1]:  # For non recursive edges
+                mid_x, mid_y = get_edge_mid_point(G=G, edge=edge)
+                annotations.append(
+                    go.layout.Annotation(
+                        x=mid_x,
+                        y=mid_y,
+                        xref="x",
+                        yref="y",
+                        text=G.edges[edge]["label"],
+                        font={"size": plot_config.neuron_text_size},
+                        align="center",
+                        showarrow=False,
+                        yanchor="bottom",
+                        textangle=get_stretched_edge_angle(
+                            G=G,
+                            edge=edge,
+                            pixel_height=pixel_height,
+                            pixel_width=pixel_width,
+                        ),
+                    )
                 )
-            )
-        else:  # Recursive edge.
-            x, y = G.nodes[edge[0]]["pos"]
-            annotations.append(
-                go.layout.Annotation(
-                    x=x,
-                    y=y + 0.25 * radius,
-                    xref="x",
-                    yref="y",
-                    text=G.edges[edge]["label"],
-                    font={"size": plot_config.neuron_text_size},
-                    align="center",
-                    showarrow=False,
-                    yanchor="bottom",
+            else:  # Recursive edge.
+                x, y = G.nodes[edge[0]]["pos"]
+                annotations.append(
+                    go.layout.Annotation(
+                        x=x,
+                        y=y + 0.25 * radius,
+                        xref="x",
+                        yref="y",
+                        text=G.edges[edge]["label"],
+                        font={"size": plot_config.neuron_text_size},
+                        align="center",
+                        showarrow=False,
+                        yanchor="bottom",
+                    )
                 )
-            )
     return annotations
 
 
