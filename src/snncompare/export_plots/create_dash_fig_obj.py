@@ -1,14 +1,58 @@
 """Generates a graph in dash."""
 
 
-from typing import List, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 import networkx as nx
 import numpy as np
 import plotly.graph_objs as go
+from plotly.graph_objs.layout import Annotation
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
+
+
+class NamedAnnotation:
+    """Object for an annotation with some identification."""
+
+    def __init__(  # type:ignore[misc]
+        self,
+        category: str,
+        edge: Optional[Tuple[str, str]] = None,
+        node_name: Optional[str] = None,
+        **kwargs: Any,
+    ):
+        self.annotation = Annotation(**kwargs)
+        self.edge: Union[Tuple[str, str], None] = edge
+        # if edge is not None:
+        # print(f'edge={self.edge}')
+        self.node_name: Union[str, None] = node_name
+        self.category: str = category
+        self.supported_categories: List[str] = [
+            "non_recur_edge_label",
+            "non_recur_edge",
+            "recur_edge_label",
+            "recur_edge",
+            "node_label",
+            "node",
+        ]
+        if category not in self.supported_categories:
+            raise ValueError(f"Error, category:{category} not supported.")
+
+    @typechecked
+    def get_node_name(self) -> Union[str, None]:
+        """returns the node_name of the annotation if not None."""
+        return self.node_name
+
+    @typechecked
+    def get_edge(self) -> Union[Tuple[str, str], None]:
+        """returns the edge of the annotation if not None."""
+        return self.edge
+
+    @typechecked
+    def get_category(self) -> str:
+        """Returns the category of the annotation."""
+        return self.category
 
 
 # Build image from incoming graph and positioning parameters
@@ -16,7 +60,7 @@ from snncompare.export_plots.Plot_config import Plot_config
 @typechecked
 def create_svg_with_dash(
     graph: nx.DiGraph, plot_config: Plot_config
-) -> go.Figure:
+) -> Tuple[go.Figure, List[NamedAnnotation]]:
     """Creates an .svg plot of the incoming networkx graph."""
     pixel_width: int = int(plot_config.base_pixel_width * xy_max(G=graph)[0])
     pixel_height: int = int(plot_config.base_pixel_height * xy_max(G=graph)[1])
@@ -41,17 +85,20 @@ def create_svg_with_dash(
     )
 
     # Create figure
+    identified_annotations = get_annotations(
+        G=graph,
+        pixel_height=pixel_height,
+        pixel_width=pixel_width,
+        plot_config=plot_config,
+        recursive_edge_radius=plot_config.recursive_edge_radius,
+    )
     fig = go.Figure(
         data=[node_trace],
         layout=go.Layout(
             height=pixel_height,  # height of image in pixels.
             width=pixel_width,  # Width of image in pixels.
-            annotations=get_annotations(
-                G=graph,
-                pixel_height=pixel_height,
-                pixel_width=pixel_width,
-                plot_config=plot_config,
-                recursive_edge_radius=plot_config.recursive_edge_radius,
+            annotations=list(
+                map(lambda x: x.annotation, identified_annotations)
             ),
             xaxis=go.layout.XAxis(
                 tickmode="array",
@@ -76,7 +123,7 @@ def create_svg_with_dash(
         plot_config=plot_config,
         radius=recursive_edge_radius,
     )
-    return fig
+    return fig, identified_annotations
 
 
 @typechecked
@@ -86,9 +133,9 @@ def get_annotations(
     pixel_width: int,
     plot_config: Plot_config,
     recursive_edge_radius: float,
-) -> List[go.layout.Annotation]:
+) -> List[NamedAnnotation]:
     """Returns the annotations for this graph."""
-    annotations: List[go.layout.Annotation] = []
+    annotations: List[NamedAnnotation] = []
     annotations.extend(get_regular_edge_arrows(G=G, plot_config=plot_config))
     annotations.extend(
         get_regular_and_recursive_edge_labels(
@@ -151,16 +198,17 @@ def add_recursive_edges(
 @typechecked
 def get_regular_edge_arrows(
     *, G: nx.DiGraph, plot_config: Plot_config
-) -> List[go.layout.Annotation]:
+) -> List[NamedAnnotation]:
     """Returns the annotation dictionaries representing the directed edge
     arrows."""
-    annotations: List[go.layout.Annotation] = []
+    annotations: List[NamedAnnotation] = []
     for edge in G.edges:
         left_x, left_y, right_x, right_y = get_edge_xys(G=G, edge=edge)
-        print(f'G.edges[edge]["opacity"]={G.edges[edge]["opacity"]}')
         if edge[0] != edge[1]:
             annotations.append(
-                go.layout.Annotation(
+                NamedAnnotation(
+                    category="non_recur_edge",
+                    edge=edge,
                     ax=left_x,
                     ay=left_y,
                     axref="x",
@@ -215,7 +263,7 @@ def get_regular_and_recursive_edge_labels(
     pixel_width: int,
     plot_config: Plot_config,
     radius: float,
-) -> List[go.layout.Annotation]:
+) -> List[NamedAnnotation]:
     """Returns the annotation dictionaries representing the labels of the
     directed edge arrows.
 
@@ -232,7 +280,9 @@ def get_regular_and_recursive_edge_labels(
             if edge[0] != edge[1]:  # For non recursive edges
                 mid_x, mid_y = get_edge_mid_point(G=G, edge=edge)
                 annotations.append(
-                    go.layout.Annotation(
+                    NamedAnnotation(
+                        category="non_recur_edge_label",
+                        edge=edge,
                         x=mid_x,
                         y=mid_y,
                         xref="x",
@@ -253,7 +303,9 @@ def get_regular_and_recursive_edge_labels(
             else:  # Recursive edge.
                 x, y = G.nodes[edge[0]]["pos"]
                 annotations.append(
-                    go.layout.Annotation(
+                    NamedAnnotation(
+                        category="recur_edge_label",
+                        edge=edge,
                         x=x,
                         y=y + 0.25 * radius,
                         xref="x",

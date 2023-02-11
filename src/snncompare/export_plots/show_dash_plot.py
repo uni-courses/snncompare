@@ -113,12 +113,16 @@ def show_dash_figures(
     """Shows a figure in dash using browser."""
     print("SHOWING DASH APP.")
     # Start Dash app.
-    dash_figure: go.Figure = create_svg_with_dash(
+    dash_figure, identified_annotations = create_svg_with_dash(
         graph=plotted_graph,
         plot_config=plot_config,
     )
     temporal_node_colours = list(
         plotted_graph.nodes[n]["temporal_colour"]
+        for n in plotted_graph.nodes()
+    )
+    temporal_node_opacity = list(
+        plotted_graph.nodes[n]["temporal_opacity"]
         for n in plotted_graph.nodes()
     )
 
@@ -128,49 +132,108 @@ def show_dash_figures(
     def update_color(t: int) -> go.Figure:
         """Updates the colour of the nodes and edges based on user input."""
 
-        # Update the annotation colour.
-        def edge_annotation_colour(
+        def update_node_colour(
+            dash_figure: go.Figure,
+            t: int,
+            temporal_node_colours: List,
+        ) -> None:
+            """Updates the colour of the non-recursive edges."""
+            if plot_config.update_node_colours:
+                dash_figure.data[0]["marker"]["color"] = list(
+                    temporal_node_colours[:][t]
+                )
+
+        def update_non_recursive_edge_colour(
+            dash_figure: go.Figure,
+            edge: Tuple[str, str],
+            t: int,
+            temporal_node_colours: List,
+            temporal_node_opacity: List,
+        ) -> None:
+            """Updates the colour of the non-recursive edges."""
+            edge_annotation_colour = get_edge_colour(
+                t,
+                temporal_node_colours=temporal_node_colours,
+                edge=edge,
+            )
+            edge_opacity = get_edge_opacity(
+                t,
+                temporal_node_opacity=temporal_node_opacity,
+                edge=edge,
+            )
+
+            for i, id_anno in enumerate(identified_annotations):
+                if id_anno.edge == edge:
+                    # TODO: determine why this does not update the dash plt.
+                    # id_anno.arrowcolor = the_edge_annotation_colour
+                    # id_anno.arrowcolor = the_edge_annotation_colour
+
+                    if plot_config.update_edge_colours:
+                        # TODO: find method to be sure the annotation
+                        dash_figure.layout.annotations[
+                            i
+                        ].arrowcolor = edge_annotation_colour
+                    if plot_config.update_edge_opacity:
+                        dash_figure.layout.annotations[
+                            i
+                        ].opacity = edge_opacity
+
+        def get_edge_colour(
             t: int,
             temporal_node_colours: List,
             edge: Tuple[str, str],
         ) -> str:
-            """Updates the colour of the edges based on user input."""
+            """Returns the color of an edge arrow at time t."""
             for i, node_name in enumerate(
                 list(
                     some_node_name for some_node_name in plotted_graph.nodes()
                 )
             ):
-                if "connector" not in node_name:
-                    if node_name == edge[0]:
-                        return temporal_node_colours[i][t]
+                if node_name == edge[0]:
+                    return temporal_node_colours[i][t]
+            # pylint: disable=W0631
+            raise Exception(f"Error, node_name:{node_name} not found.")
+
+        # Update the annotation colour.
+        def get_edge_opacity(
+            t: int,
+            temporal_node_opacity: List,
+            edge: Tuple[str, str],
+        ) -> str:
+            """Returns the opacity of an edge arrow at time t."""
+            for i, node_name in enumerate(
+                list(
+                    some_node_name for some_node_name in plotted_graph.nodes()
+                )
+            ):
+                if node_name == edge[0]:
+                    return temporal_node_opacity[i][t]
             # pylint: disable=W0631
             raise Exception(f"Error, node_name:{node_name} not found.")
 
         # Overwrite annotation with function instead of value.
         if plot_config.update_edge_colours:
-            for i, edge in enumerate(plotted_graph.edges()):
-                # TODO: remove this check and require all nodes, edges and
-                # annotations to be accepted.
-                if i < len(dash_figure.layout.annotations):
-                    print(f"i={i}")
-                    the_edge_annotation_colour = edge_annotation_colour(
-                        t,
-                        temporal_node_colours=temporal_node_colours,
+            for edge in plotted_graph.edges():
+                if edge[0] != edge[1]:
+                    update_non_recursive_edge_colour(
+                        dash_figure=dash_figure,
                         edge=edge,
+                        t=t,
+                        temporal_node_colours=temporal_node_colours,
+                        temporal_node_opacity=temporal_node_opacity,
                     )
-                    dash_figure.layout.annotations[
-                        i
-                    ].arrowcolor = the_edge_annotation_colour
-        return dash_figure
 
         # Update the node colour.
-        # dash_figure.data[0]["marker"]["color"] = list(
-        # temporal_node_colours[t].values()
-        # )
+        update_node_colour(
+            dash_figure=dash_figure,
+            t=t,
+            temporal_node_colours=temporal_node_colours,
+        )
 
         # Update the recursive edge node colour.
         # for i, _ in enumerate(graphs[t].nodes):
         #    fig.layout.shapes[i]["line"]["color"] = color_sets[t][i]
+        return dash_figure
 
     # State variable to keep track of current color set
     initial_t = 0

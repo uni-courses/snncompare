@@ -105,7 +105,9 @@ def create_and_store_dash_figures(
     store_plot_params_in_graph(
         plotted_graph=plotted_graph, snn_graph=snn_graph, t=t
     )
-    dash_figure: go.Figure = create_svg_with_dash(
+
+    # TODO: determine whether identified_annotations are needed lateron.
+    dash_figure, _ = create_svg_with_dash(
         graph=plotted_graph,
         plot_config=plot_config,
     )
