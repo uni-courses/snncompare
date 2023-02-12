@@ -14,9 +14,11 @@ from snncompare.optional_config.Output_config import (
     Output_config,
     Zoom,
 )
+from snncompare.run_config.Run_config import Run_config
 
-from ..json_configurations.run_configs.algo_test import (
+from ..json_configurations.algo_test import (
     load_exp_config_from_file,
+    load_run_config_from_file,
 )
 
 
@@ -30,16 +32,19 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     TODO: list existing exp_configs
     """
 
-    # mdsa_creation_only_size_3_4
-    # mdsa_size3_5_m_0_5
-    # mdsa_size3_m1
-    # mdsa_size3_m0
-    # mdsa_size5_m4
-    # mdsa_size4_m0
+    # if args.experiment_settings_name is not None:
     exp_config: Exp_config = load_exp_config_from_file(
         custom_config_path=custom_config_path,
         filename=args.experiment_settings_name,
     )
+
+    if args.run_config_path is not None:
+        specific_run_config: Run_config = load_run_config_from_file(
+            custom_config_path=custom_config_path,
+            filename=f"{args.run_config_path}",
+        )
+    else:
+        specific_run_config = None
 
     output_config: Output_config = manage_export_parsing(args=args)
 
@@ -47,7 +52,7 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     Experiment_runner(
         exp_config=exp_config,
         output_config=output_config,
-        specific_run_config=None,
+        specific_run_config=specific_run_config,
         perform_run=any(
             x in output_config.output_json_stages for x in [1, 2, 3, 4]
         ),

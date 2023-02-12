@@ -35,7 +35,7 @@ def load_exp_config_from_file(
     *, custom_config_path: str, filename: str
 ) -> "Exp_config":
     """Loads an experiment config from file, then verifies and returns it."""
-    filepath = f"{custom_config_path}{filename}.json"
+    filepath = f"{custom_config_path}/exp_config/{filename}.json"
     if file_exists(filepath=filepath):
         with open(filepath, encoding="utf-8") as json_file:
             encoded_exp_config = json.load(json_file)
@@ -48,6 +48,28 @@ def load_exp_config_from_file(
         if "unique_id" in exp_config_dict:
             exp_config_dict.pop("unique_id")
         exp_config = Exp_config(**exp_config_dict)
+        return exp_config
+    raise FileNotFoundError(f"Error, {filepath} was not found.")
+
+
+@typechecked
+def load_run_config_from_file(
+    *, custom_config_path: str, filename: str
+) -> "Run_config":
+    """Loads a run config from file, then verifies and returns it."""
+    filepath = f"{custom_config_path}run_configs/{filename}.json"
+    if file_exists(filepath=filepath):
+        with open(filepath, encoding="utf-8") as json_file:
+            encoded_exp_config = json.load(json_file)
+            run_config_dict = encode_tuples(
+                some_dict=encoded_exp_config, decode=True
+            )
+            json_file.close()
+
+        # The ** loads the dict into the object.
+        if "unique_id" in run_config_dict:
+            run_config_dict.pop("unique_id")
+        exp_config = Run_config(**run_config_dict)
         return exp_config
     raise FileNotFoundError(f"Error, {filepath} was not found.")
 

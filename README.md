@@ -144,6 +144,7 @@ You can run the experiment with command:
 (snncompare) name@name ~/git/snn/snncompare
 python -m src.snncompare -e mdsa_long_no_overwrite -x svg -j1 -j2 -j4
 python -m src.snncompare -e mdsa_size3_m0_adap_rad -x svg -j1 -j2 -j4
+python -m src.snncompare -e mdsa_long_no_overwrite -r run_config -j1 -j2 -j4
 ```
 
 which is the same as:
