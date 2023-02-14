@@ -53,6 +53,7 @@ def create_svg_plot(
             for t in range(
                 0,
                 sim_duration,
+                # 1,
             ):
                 print(f"t={t}")
                 # if t == 5:
