@@ -59,7 +59,9 @@ class NamedAnnotation:
 # pylint: disable=R0914
 @typechecked
 def create_svg_with_dash(
-    graph: nx.DiGraph, plot_config: Plot_config
+    graph: nx.DiGraph,
+    plot_config: Plot_config,
+    hover_info: Optional[str] = "node_name_and_edges",
 ) -> Tuple[go.Figure, List[NamedAnnotation]]:
     """Creates an .svg plot of the incoming networkx graph."""
     pixel_width: int = int(plot_config.base_pixel_width * xy_max(G=graph)[0])
@@ -74,7 +76,11 @@ def create_svg_with_dash(
         if plot_config.show_node_labels
         else None,
         mode="markers+text",
-        # hoverinfo="none",
+        hovertext=get_hover_text(
+            graph,
+            hover_info,
+        ),
+        hoverinfo="text",
         marker=dict(
             size=plot_config.node_size,
             color=list(graph.nodes[n]["colour"] for n in graph.nodes())
@@ -124,6 +130,51 @@ def create_svg_with_dash(
         radius=recursive_edge_radius,
     )
     return fig, identified_annotations
+
+
+@typechecked
+def get_hover_text(
+    graph: nx.DiGraph,
+    hover_info: Optional[str] = None,
+) -> Union[None, List[str]]:
+    """Returns the node hover text, if any."""
+    if hover_info == "node_name":
+        hovertext = list(
+            graph.nodes[n]["nx_lif"].full_name for n in graph.nodes()
+        )
+    elif hover_info == "node_name_and_edges":
+        hovertext = list(
+            f"{n} - {get_edges_of_node(graph=graph,node_name=n,outgoing=True)}"
+            for n in graph.nodes()
+        )
+    else:
+        hovertext = None
+    return hovertext
+
+
+@typechecked
+def get_edges_of_node(
+    graph: nx.DiGraph,
+    node_name: str,
+    outgoing: bool,
+) -> List[str]:
+    """Returns (the other) nodenames of the edges of a node."""
+    node_edges: List[str] = []
+    if outgoing:
+        node_edges.append("outgoing:<br />")
+    else:
+        node_edges.append("incoming:<br />")
+
+    for edge in graph.edges():
+        if edge[0] == node_name and outgoing:
+            # node_edges.append(f'{edge[1]}<br> ')
+            node_edges.append(f"{edge[1]}<br /> ")
+        elif edge[1] == node_name and not outgoing:
+            # node_edges.append(f'{edge[0]}<br> ')
+            node_edges.append(f"{edge[0]}<br /> ")
+            # node_edges.append(f'{edge[0]}<br> ')
+
+    return node_edges
 
 
 @typechecked

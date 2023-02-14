@@ -52,8 +52,15 @@ def create_svg_plot(
             print(f"sim_duration={sim_duration}")
             for t in range(
                 0,
-                sim_duration,
+                # sim_duration,
+                3,
             ):
+                print(f"t={t}")
+                # if t == 5:
+                # for edge in snn_graph.edges():
+                # if "selector" in edge[0] or "selector" in edge[1]:
+                # print(edge)
+
                 # Create and store the svg images per timestep.
                 filename: str = f"{graph_name}_{run_config_filename}_{t}"
                 svg_filepath: str = f"latex/Images/graphs/{filename}.svg"
@@ -61,14 +68,19 @@ def create_svg_plot(
                     output_config.extra_storing_config.show_images
                     and single_timestep is None
                 ):
-                    dash_figure: go.Figure = create_and_store_dash_figures(
-                        svg_filepath=svg_filepath,
+                    dash_figure: go.Figure = create_dash_figure(
                         plot_config=plot_config,
                         plotted_graph=plotted_graph,
                         snn_graph=snn_graph,
                         t=t,
                     )
                     dash_figures.append(dash_figure)
+                if not Path(svg_filepath).is_file():
+                    # TODO move storing into separate function.
+                    create_root_dir_if_not_exists(
+                        root_dir_name="latex/Images/graphs"
+                    )
+                    dash_figure.write_image(svg_filepath)
             # Show the images
             if output_config.extra_storing_config.show_images:
                 if single_timestep is not None:
@@ -94,8 +106,7 @@ def create_svg_plot(
                     )
 
 
-def create_and_store_dash_figures(
-    svg_filepath: str,
+def create_dash_figure(
     plot_config: Plot_config,
     plotted_graph: nx.DiGraph,
     snn_graph: nx.DiGraph,
@@ -111,8 +122,4 @@ def create_and_store_dash_figures(
         graph=plotted_graph,
         plot_config=plot_config,
     )
-
-    # TODO move storing into separate function.
-    create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
-    dash_figure.write_image(svg_filepath)
     return dash_figure

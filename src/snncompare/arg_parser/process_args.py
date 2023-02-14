@@ -52,10 +52,11 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     Experiment_runner(
         exp_config=exp_config,
         output_config=output_config,
-        specific_run_config=specific_run_config,
         perform_run=any(
             x in output_config.output_json_stages for x in [1, 2, 3, 4]
         ),
+        reverse=args.reverse,
+        specific_run_config=specific_run_config,
     )
     # TODO: verify expected output results have been generated successfully.
     print("Done")

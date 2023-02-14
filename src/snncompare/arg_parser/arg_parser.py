@@ -213,6 +213,15 @@ def parse_cli_args() -> argparse.Namespace:
         help=("Rereate boxplots with adaptation effectivity."),
     )
 
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-rev",
+        "--reverse",
+        action="store_true",
+        default=False,
+        help=("Run experiment config from small/fast to large/slow."),
+    )
+
     parser.add_argument(
         "-si",
         "--show-images",

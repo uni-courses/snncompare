@@ -61,13 +61,14 @@ class Experiment_runner:
     """
 
     # pylint: disable=R0903
-
+    # pylint: disable=R0913
     @typechecked
     def __init__(
         self,
         exp_config: Exp_config,
         output_config: Output_config,
-        perform_run: bool = True,
+        reverse: bool,
+        perform_run: Optional[bool] = True,
         specific_run_config: Optional[Run_config] = None,
     ) -> None:
 
@@ -83,6 +84,11 @@ class Experiment_runner:
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config
         )
+
+        if reverse:
+            # print(f'self.run_configs={self.run_configs}')
+            self.run_configs.reverse()
+            # print(f'REVERSED')
 
         if perform_run:  # Used to get quick Experiment_runner for testing.
             self.__perform_run(
@@ -419,6 +425,7 @@ class Experiment_runner:
             Experiment_runner(
                 exp_config=exp_config,
                 output_config=boxplot_output_config,
+                reverse=True,
                 specific_run_config=missing_run_config,
                 perform_run=True,
             )

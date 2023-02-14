@@ -56,7 +56,10 @@ def load_exp_config_from_file(
 def load_run_config_from_file(
     *, custom_config_path: str, filename: str
 ) -> "Run_config":
-    """Loads a run config from file, then verifies and returns it."""
+    """Loads a run config from file, then verifies and returns it.
+
+    TODO: Remove duplicate code with load_exp_config_from_file().
+    """
     filepath = f"{custom_config_path}run_configs/{filename}.json"
     if file_exists(filepath=filepath):
         with open(filepath, encoding="utf-8") as json_file:
