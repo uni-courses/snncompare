@@ -30,6 +30,8 @@ class Plot_config:
         show_edge_colours: bool,
         show_edge_labels: bool,
         show_edge_opacity: bool,
+        show_x_ticks: bool,
+        show_y_ticks: bool,
         update_node_colours: bool,
         update_node_labels: bool,
         update_node_opacity: bool,
@@ -77,6 +79,8 @@ class Plot_config:
         self.show_edge_colours: bool = show_edge_colours
         self.show_edge_labels: bool = show_edge_labels
         self.show_edge_opacity: bool = show_edge_opacity
+        self.show_x_ticks: bool = show_x_ticks
+        self.show_y_ticks: bool = show_y_ticks
         self.update_node_colours: bool = update_node_colours
         self.update_node_labels: bool = update_node_labels
         self.update_node_opacity: bool = update_node_opacity
@@ -100,6 +104,8 @@ def get_default_plot_config() -> Plot_config:
         show_edge_colours=True,
         show_edge_labels=False,
         show_edge_opacity=True,
+        show_x_ticks=False,
+        show_y_ticks=False,
         update_node_colours=False,
         update_node_labels=False,
         update_node_opacity=False,

@@ -98,6 +98,26 @@ def create_svg_with_dash(
         plot_config=plot_config,
         recursive_edge_radius=plot_config.recursive_edge_radius,
     )
+    if plot_config.show_x_ticks:
+        x_axis = go.layout.XAxis(
+            tickmode="array",
+            tickvals=list(graph.graph["x_tics"].keys()),
+            ticktext=list(graph.graph["x_tics"].values()),
+            tickfont={"size": plot_config.x_tick_size},
+            tickangle=-45,
+        )
+    else:
+        x_axis = None
+    if plot_config.show_y_ticks:
+        y_axis = go.layout.YAxis(
+            tickmode="array",
+            tickvals=list(graph.graph["y_tics"].keys()),
+            ticktext=list(graph.graph["y_tics"].values()),
+            tickfont={"size": plot_config.y_tick_size},
+            tickangle=0,
+        )
+    else:
+        y_axis = None
     fig = go.Figure(
         data=[node_trace],
         layout=go.Layout(
@@ -106,20 +126,8 @@ def create_svg_with_dash(
             annotations=list(
                 map(lambda x: x.annotation, identified_annotations)
             ),
-            xaxis=go.layout.XAxis(
-                tickmode="array",
-                tickvals=list(graph.graph["x_tics"].keys()),
-                ticktext=list(graph.graph["x_tics"].values()),
-                tickfont={"size": plot_config.x_tick_size},
-                tickangle=-45,
-            ),
-            yaxis=go.layout.YAxis(
-                tickmode="array",
-                tickvals=list(graph.graph["y_tics"].keys()),
-                ticktext=list(graph.graph["y_tics"].values()),
-                tickfont={"size": plot_config.y_tick_size},
-                tickangle=0,
-            ),
+            xaxis=x_axis,
+            yaxis=y_axis,
         ),
     )
 
