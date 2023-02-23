@@ -50,7 +50,6 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                 self.test_scope.max_edge_density,
                 self.test_scope.edge_density_stepsize,
             ):
-
                 recurrent_edge_density = 0
                 # Only generate graphs that have at least 1 edge.
                 if math.floor(size * density) > 1:
@@ -104,7 +103,6 @@ class Test_networkx_and_lava_snn_simulation_produce_identical_results(
                 self.test_scope.max_edge_density,
                 self.test_scope.edge_density_stepsize,
             ):
-
                 recurrent_edge_density = 0
                 # Only generate graphs that have at least 1 edge.
                 if math.floor(size * density) > 1:

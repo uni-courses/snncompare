@@ -78,7 +78,6 @@ class Supported_experiment_settings:
     def __init__(
         self,
     ) -> None:
-
         self.seed = 5
 
         # Create dictionary with algorithm name as key, and algorithm settings
@@ -292,7 +291,7 @@ def verify_list_element_types_and_list_len(  # type:ignore[misc]
         obj=list_setting, expected_type=list, element_type=element_type
     )
     if len(list_setting) < 1:
-        raise Exception(
+        raise ValueError(
             "Error, list was expected contain at least 1 integer."
             + f" Instead, it has length:{len(list_setting)}"
         )
@@ -327,7 +326,7 @@ def verify_list_setting(  # type:ignore[misc]
     )
     for element in setting:
         if element not in expected_range:
-            raise Exception(
+            raise ValueError(
                 f"Error, {setting_name} was expected to be in range:"
                 + f"{expected_range}. Instead, it"
                 + f" contains:{element}."
@@ -351,7 +350,9 @@ def get_expected_range(
         return supp_exp_config.seeds
 
     # TODO: test this is raised.
-    raise Exception(f"Error, unsupported parameter requested:{setting_name}")
+    raise NotImplementedError(
+        f"Error, unsupported parameter requested:{setting_name}"
+    )
 
 
 def verify_size_and_max_graphs_settings(
@@ -405,20 +406,19 @@ def verify_integer_settings(
     :param max_val:
     """
     if (min_val is not None) and (max_val is not None):
-
         if integer_setting < min_val:
-            raise Exception(
+            raise ValueError(
                 f"Error, setting expected to be at least {min_val}. "
                 + f"Instead, it is:{integer_setting}"
             )
         if integer_setting > max_val:
-            raise Exception(
+            raise ValueError(
                 "Error, setting expected to be at most"
                 + f" {max_val}. Instead, it is:"
                 + f"{integer_setting}"
             )
     else:
-        raise Exception("Error, meaningless verification.")
+        raise SyntaxError("Error, meaningless verification.")
 
 
 @typechecked
@@ -429,7 +429,7 @@ def verify_min_max(*, min_val: int, max_val: int) -> None:
     Also verifies the values are either of type integer or float.
     """
     if min_val > max_val:
-        raise Exception(
+        raise ValueError(
             f"Lower bound:{min_val} is larger than upper bound:"
             + f"{max_val}."
         )
@@ -453,23 +453,21 @@ def verify_object_type(
 
     # Verify the object type is as expected.
     if not isinstance(obj, expected_type):
-        raise Exception(
+        raise TypeError(
             f"Error, expected type:{expected_type}, yet it was:{type(obj)}"
             + f" for:{obj}"
         )
 
     # If object is of type list or tuple, verify the element types.
     if isinstance(obj, (list, tuple)):
-
         # Verify user passed the expected element types.
         if element_type is None:
-            raise Exception("Expected a type to check list element types.")
+            raise TypeError("Expected a type to check list element types.")
 
         # Verify the element types.
         if not all(isinstance(n, element_type) for n in obj):
-
             # if list(map(type, obj)) != element_type:
-            raise Exception(
+            raise TypeError(
                 f"Error, obj={obj}, its type is:{list(map(type, obj))},"
                 + f" expected type:{element_type}"
             )
@@ -497,17 +495,16 @@ def verify_adap_and_rad_settings(
     elif check_type == "radiations":
         reference_object = supp_exp_config.radiations
     else:
-        raise Exception(f"Check type:{check_type} not supported.")
+        raise TypeError(f"Check type:{check_type} not supported.")
 
     # Verify object is a dictionary.
     if isinstance(some_dict, Dict):
         if some_dict == {}:
-            raise Exception(f"Error, property Dict: {check_type} was empty.")
+            raise TypeError(f"Error, property Dict: {check_type} was empty.")
         for key in some_dict:
-
             # Verify the keys are within the supported dictionary keys.
             if key not in reference_object:
-                raise Exception(
+                raise TypeError(
                     f"Error, property.key:{key} is not in the supported "
                     + f"property keys:{reference_object.keys()}."
                 )
@@ -523,7 +520,7 @@ def verify_adap_and_rad_settings(
                     key=key,
                 )
         return some_dict
-    raise Exception(
+    raise TypeError(
         "Error, property is expected to be a Dict, yet"
         + f" it was of type: {type(some_dict)}."
     )
@@ -567,8 +564,7 @@ def verify_radiations_values(
     if not isinstance(
         radiations[key], type(supp_exp_config.radiations[key])
     ) or (not isinstance(radiations[key], list)):
-
-        raise Exception(
+        raise TypeError(
             "Error, the radiations value is of type:"
             + f"{type(radiations[key])}, yet it was expected to be"
             + " float or dict."
@@ -577,7 +573,6 @@ def verify_radiations_values(
     # Verify radiations setting types.
     if isinstance(radiations[key], list):
         for setting in radiations[key]:
-
             # Verify radiations setting can be of type float.
             if isinstance(setting, float):
                 # TODO: superfluous check.
@@ -598,7 +593,7 @@ def verify_radiations_values(
             else:
                 # Throw error if the radiations setting is something other
                 # than a float or tuple of floats.
-                raise Exception(
+                raise TypeError(
                     f"Unexpected setting type:{type(setting)} for:"
                     + f" {setting}."
                 )

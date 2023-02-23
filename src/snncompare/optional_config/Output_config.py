@@ -136,7 +136,6 @@ class Zoom_coords:
         y_bottom: float,
         y_top: float,
     ):
-
         self.x_left: float = x_left
         self.x_right: float = x_right
         self.y_bottom: float = y_bottom
@@ -158,14 +157,22 @@ class Extra_storing_config:
     ):
         self.count_spikes: bool = count_spikes
         if self.count_spikes:
-            raise Exception("Error, count_spikes not yet implemented.")
+            raise NotImplementedError(
+                "Error, count_spikes not yet implemented."
+            )
         self.count_neurons: bool = count_neurons
         if self.count_neurons:
-            raise Exception("Error, count_neurons not yet implemented.")
+            raise NotImplementedError(
+                "Error, count_neurons not yet implemented."
+            )
         self.count_synapses: bool = count_synapses
         if self.count_synapses:
-            raise Exception("Error, count_synapses not yet implemented.")
+            raise NotImplementedError(
+                "Error, count_synapses not yet implemented."
+            )
         self.show_images: bool = show_images
         self.store_died_neurons: bool = store_died_neurons
         if self.count_spikes:
-            raise Exception("Error, count_spikes not yet implemented.")
+            raise NotImplementedError(
+                "Error, count_spikes not yet implemented."
+            )

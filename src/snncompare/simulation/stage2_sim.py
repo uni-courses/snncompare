@@ -28,16 +28,15 @@ def sim_graphs(
             input_graph=stage_1_graphs["input_graph"], run_config=run_config
         )
         if graph_name != "input_graph":
-
             if not isinstance(snn_graph, nx.DiGraph):
-                raise Exception(
+                raise TypeError(
                     "Error, snn_graph:{graph_name} was not of the"
                     f"expected type, it was of:{type(snn_graph)}"
                 )
             # TODO: add lava neurons if run config demands lava.
 
             if not isinstance(snn_graph, nx.DiGraph):
-                raise Exception(
+                raise TypeError(
                     "Error, snn_graph:{graph_name} was not of the"
                     "expected type after conversion, it was of type:"
                     f"{type(snn_graph)}"

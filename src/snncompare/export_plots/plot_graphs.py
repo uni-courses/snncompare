@@ -40,7 +40,6 @@ def plot_circular_graph(
     )
     nx.draw(G, npos, labels=the_labels, with_labels=True)
     if test_scope.export:
-
         create_target_dir_if_not_exists(some_path="latex/Images/graphs")
         plt.savefig(
             f"latex/Images/graphs/graph_{test_scope.seed}_size{len(G)}_"
@@ -100,7 +99,9 @@ def create_root_dir_if_not_exists(*, root_dir_name: str) -> None:
     if not os.path.exists(root_dir_name):
         os.makedirs(f"{root_dir_name}")
     if not os.path.exists(root_dir_name):
-        raise Exception(f"Error, root_dir_name={root_dir_name} did not exist.")
+        raise FileNotFoundError(
+            f"Error, root_dir_name={root_dir_name} did not exist."
+        )
 
 
 @typechecked

@@ -223,7 +223,7 @@ python -m twine upload dist/\*
 
 ```bash
 mkdir -p ~/bin
-cp snn_rebuild.sh ~/bin/snnrb
+cp snn_rebuild.sh ~/.local/bin/snnrb
 chmod +x ~/bin/snnrb
 ```
 

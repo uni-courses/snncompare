@@ -193,7 +193,7 @@ def nx_graphs_have_completed_stage(
             graph.graph["completed_stages"],
             List,
         ):
-            raise Exception(
+            raise TypeError(
                 "Error, completed stages parameter type is not a list."
             )
         if stage_index not in graph.graph["completed_stages"]:
@@ -233,7 +233,6 @@ def has_valid_json_results(
 
                 for graph_name, json_graph in json_graphs.items():
                     if graph_name in graphnames_with_results:
-
                         if expected_stages[-1] == 1:
                             graph_properties = json_graph["graph"]
 
@@ -244,20 +243,20 @@ def has_valid_json_results(
                             # timestep of the graph.
                             graph_properties = json_graph["graph"]
                         else:
-                            raise Exception(
-                                "Error, stage:{expected_stages[-1]} is "
+                            raise NotImplementedError(
+                                f"Error, stage:{expected_stages[-1]} is "
                                 "not yet supported in this check."
                             )
                         if "results" not in graph_properties.keys():
                             return False
                 return True
-            raise Exception(
+            raise TypeError(
                 "Error, m_val setting is not of type int:"
                 f'{type(algo_settings["m_val"])}'
                 f'm_val={algo_settings["m_val"]}'
             )
 
-        raise Exception(
+        raise NotImplementedError(
             f"Error, algo_name:{algo_name} is not (yet) supported."
         )
     return True

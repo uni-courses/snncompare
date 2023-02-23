@@ -35,7 +35,6 @@ class Boxplot_x_val:
         correct_results: int,
         wrong_results: int,
     ) -> None:
-
         self.correct_results: int = correct_results
         self.wrong_results: int = wrong_results
 
@@ -183,7 +182,6 @@ def get_boxplot_datapoints(
         # Get the results per x-axis category per graph type.
         for algo_name in wanted_run_config.algorithm.keys():
             if algo_name == "MDSA":
-
                 graph_names = get_expected_stage_1_graph_names(
                     run_config=wanted_run_config
                 )

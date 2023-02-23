@@ -46,12 +46,12 @@ def set_results(
                     stage_2_graphs=stage_2_graphs,
                 )
             # pylint: disable=R0801
-            raise Exception(
+            raise TypeError(
                 "Error, m_val setting is not of type int:"
                 f'{type(algo_settings["m_val"])}'
                 f'm_val={algo_settings["m_val"]}'
             )
-        raise Exception(
+        raise NotImplementedError(
             f"Error, algo_name:{algo_name} is not (yet) supported."
         )
     return False
@@ -124,7 +124,6 @@ def export_results_to_json(
                 ].graph["results"],
             )
         elif graph_name == "rad_adapted_snn_graph":
-
             add_result_to_last_graph(
                 snn_graphs=stage_4_graphs[graph_name],
                 result_per_type=results_nx_graphs["graphs_dict"][
@@ -173,6 +172,6 @@ def add_result_to_last_graph(
     if isinstance(snn_graphs, nx.DiGraph):
         snn_graphs.graph["results"] = result_per_type
     else:
-        raise Exception(
+        raise TypeError(
             "Error, unsupported snn graph type:" + f"{type(snn_graphs)}"
         )

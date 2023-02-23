@@ -121,13 +121,13 @@ def get_input_graphs(
                 ).__dict__
 
             if not isinstance(input_graph, nx.Graph):
-                raise Exception(
+                raise TypeError(
                     "Error, the input graph is not a networkx graph:"
                     + f"{type(input_graph)}"
                 )
 
         return input_graphs
-    raise Exception(
+    raise ValueError(
         f"For input_graph of size:{run_config.graph_size}, I found:"
         + f"{len(input_graphs)} graphs, yet expected graph_nr:"
         + f"{run_config.graph_nr}. Please lower the max_graphs setting in:"
@@ -146,9 +146,8 @@ def get_adapted_graph(
     adaptation to it."""
 
     for adaptation_name, adaptation_setting in run_config.adaptation.items():
-
         if adaptation_name is None:
-            raise Exception(
+            raise ValueError(
                 "Error, if no adaptation is selected, this method should not"
                 + " be reached."
             )
@@ -162,7 +161,7 @@ def get_adapted_graph(
                 red_lev=adaptation_setting,
             )
             return adaptation_graph
-        raise Exception(
+        raise NotImplementedError(
             f"Error, adaptation_name:{adaptation_name} is not" + " supported."
         )
 
@@ -241,15 +240,14 @@ def get_radiation_graph(
     # Apply radiation simulation.
 
     for radiation_name, radiation_setting in run_config.radiation.items():
-
         if radiation_name is None:
-            raise Exception(
+            raise SystemError(
                 "Error, if no radiation is selected, this method should not"
                 + " be reached."
             )
         if radiation_name == "neuron_death":
             if not isinstance(radiation_setting, float):
-                raise Exception(
+                raise TypeError(
                     f"Error, radiation_setting={radiation_setting},"
                     + "which is not an int."
                 )
@@ -269,6 +267,6 @@ def get_radiation_graph(
             )
 
             return radiation_graph
-        raise Exception(
+        raise NotImplementedError(
             f"Error, radiation_name:{radiation_name} is not supported."
         )

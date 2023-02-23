@@ -40,7 +40,7 @@ def generate_list_of_n_random_nrs(
         if seed is not None:
             random.seed(seed)
         return random.sample(large_list, len(G))
-    raise Exception(
+    raise ValueError(
         f"The max_val={max_val} is smaller than the graph size:{len(G)}."
     )
 
@@ -64,7 +64,6 @@ def compute_mark(*, input_graph: nx.Graph, rand_ceil: float) -> None:
             if (
                 input_graph.nodes[n]["weight"] == max_weight
             ):  # should all max weight neurons be marked or only one of them?
-
                 # Read of the score from countermarks, not marks.
                 input_graph.nodes[n]["marks"] += rand_ceil + 1
                 input_graph.nodes[n]["countermarks"] += 1
@@ -72,7 +71,7 @@ def compute_mark(*, input_graph: nx.Graph, rand_ceil: float) -> None:
 
                 # Verify there is only one max weight neuron.
                 if nr_of_max_weights > 1:
-                    raise Exception("Two numbers with identical max weight.")
+                    raise ValueError("Two numbers with identical max weight.")
 
 
 @typechecked
@@ -142,7 +141,7 @@ def get_alipour_labels(*, G: nx.DiGraph, configuration: str) -> Dict[str, str]:
                 node_name
             ] = f'{node_name}, W:{G.nodes[node_name]["weight"]}'
         else:
-            raise Exception("Unsupported configuration.")
+            raise NotImplementedError("Unsupported configuration.")
 
     return labels
 
@@ -178,7 +177,6 @@ def compute_marks_for_m_larger_than_one(
     # Don't compute for m=0
     for loop in range(1, m + 1):
         for node in input_graph.nodes:
-
             # Compute the weights for this round of m.
             input_graph.nodes[node]["weight"] = (
                 input_graph.nodes[node]["marks"]
@@ -196,7 +194,6 @@ def compute_marks_for_m_larger_than_one(
             )
             for n in nx.all_neighbors(input_graph, node):
                 if input_graph.nodes[n]["weight"] == max_weight:
-
                     # Always raise mark always by (rand_ceil + 1) * delta
                     # (not by 1).
                     input_graph.nodes[n]["marks"] += rand_ceil + 1
@@ -264,7 +261,7 @@ def add_stage_completion_to_graph(
     # Initialise the completed_stages key.
     if stage_index == 1:
         if "completed_stages" in input_graph.graph:
-            raise Exception(
+            raise ValueError(
                 "Error, the completed_stages parameter is"
                 + f"already created for stage 1{input_graph.graph}:"
             )
@@ -272,7 +269,7 @@ def add_stage_completion_to_graph(
 
     # After stage 1, the completed_stages key should already be a list.
     elif not isinstance(input_graph.graph["completed_stages"], list):
-        raise Exception(
+        raise TypeError(
             "Error, the completed_stages parameter is not of type"
             + "list. instead, it is of type:"
             + f'{type(input_graph.graph["completed_stages"])}'
@@ -281,7 +278,7 @@ def add_stage_completion_to_graph(
     # At this point, the completed_stages key should not contain the current
     # stage index already..
     if stage_index in input_graph.graph["completed_stages"]:
-        raise Exception(
+        raise ValueError(
             f"Error, the stage:{stage_index} is already in the completed_stage"
             f's: {input_graph.graph["completed_stages"]}'
         )
@@ -299,7 +296,6 @@ def get_max_sim_duration(  # type:ignore[misc]
     """Compute the simulation duration for a given algorithm and graph."""
     for algo_name, algo_settings in run_config.algorithm.items():
         if algo_name == "MDSA":
-
             # TODO: Move into stage_1 get input graphs.
             sim_time: int = int(
                 len(input_graph)
@@ -307,10 +303,10 @@ def get_max_sim_duration(  # type:ignore[misc]
                 * ((algo_settings["m_val"]) + 1)  # +_6 for delay
             )
             return sim_time
-        raise Exception(
+        raise NotImplementedError(
             f"Error, algo_name:{algo_name} is not (yet) supported."
         )
-    raise Exception("Error, the simulation time was not found.")
+    raise ValueError("Error, the simulation time was not found.")
 
 
 @typechecked

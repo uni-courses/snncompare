@@ -81,7 +81,6 @@ def store_node_colours_and_opacity(
     colour_dict = get_nx_node_colours(G=snn_graph, t=t)
     for node_name, colour in colour_dict.items():
         if "connector" not in node_name:
-
             # Store colours over time.
             if "temporal_colour" not in plotted_graph.nodes[node_name].keys():
                 plotted_graph.nodes[node_name]["temporal_colour"] = []

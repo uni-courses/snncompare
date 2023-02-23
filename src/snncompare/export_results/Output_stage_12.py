@@ -11,7 +11,6 @@ from .Output import output_stage_json
 def output_files_stage_1_and_2(
     *, results_nx_graphs: Dict, stage_index: int
 ) -> None:
-
     """Converts the graphs of the incoming results dict into json dict graphs,
 
     , replaces the incoming graphs with the json dict graphs, and then exports

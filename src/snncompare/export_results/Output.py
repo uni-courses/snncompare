@@ -171,7 +171,7 @@ def output_stage_json(
     """Exports results dict to a json file."""
 
     if results_nx_graphs["graphs_dict"] == {}:
-        raise Exception(
+        raise ValueError(
             "Error, the graphs_of_stage of stage_index="
             + f"{stage_index} was an empty dict."
         )
@@ -179,7 +179,7 @@ def output_stage_json(
         results_nx_graphs=results_nx_graphs,
         run_config=results_nx_graphs["run_config"],
     )
-    print(f"stage_index={stage_index}")
+
     verify_results_nx_graphs_contain_expected_stages(
         results_nx_graphs=results_nx_graphs, stage_index=stage_index
     )
@@ -204,7 +204,7 @@ def output_stage_json(
 
     # Ensure output file exists.
     if not pathlib.Path(pathlib.Path(output_filepath)).resolve().is_file():
-        raise Exception(f"Error:{output_filepath} does not exist.")
+        raise FileNotFoundError(f"Error:{output_filepath} does not exist.")
     # TODO: Verify the correct graphs is passed by checking the graph tag.
     # TODO: merge experiment config, run_config and graphs into single dict.
     # TODO: Write exp_config to file (pprint(dict), or json)
@@ -244,7 +244,6 @@ def desired_image_exist_for_timestep(
     False otherwise.
     """
     for extension in extensions:
-
         if extension != "gif":  # TODO: check if necessary.
             filepath = f"latex/Images/graphs/{filename}.{extension}"
             if not file_exists(filepath=filepath):

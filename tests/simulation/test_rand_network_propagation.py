@@ -46,7 +46,6 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                 self.test_scope.max_edge_density,
                 self.test_scope.edge_density_stepsize,
             ):
-
                 for recurrent_density in np.arange(
                     self.test_scope.min_recurrent_edge_density,
                     self.test_scope.max_recurrent_edge_density,

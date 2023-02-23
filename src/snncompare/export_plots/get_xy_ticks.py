@@ -39,7 +39,6 @@ def get_xy_tick_labels(
             for neuron in neurons:
                 # pylint: disable=C0201
                 if neuron.pos[0] not in x_tick_labels.keys():
-
                     if neuron_type == "degree_receiver":
                         m_val_identifier_index = 2
                     elif neuron_type == "selector":
@@ -66,7 +65,6 @@ def get_sorted_neurons(
     """Sorts the LIF_neurons on neuron name."""
     sorted_neurons: Dict[str, List[LIF_neuron]] = {}
     for lif_neuron in lif_neurons:
-
         for neuron_name in [
             "spike_once",
             "rand",

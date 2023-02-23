@@ -84,7 +84,6 @@ def create_svg_plot(
             # Show the images
             if output_config.extra_storing_config.show_images:
                 if single_timestep is not None:
-
                     # Show only a single timestep from dash object or svg file.
                     if len(dash_figures) >= single_timestep:
                         # TODO: This can be done faster, not complete .svg arr.
@@ -93,7 +92,9 @@ def create_svg_plot(
                             app=app, fig=dash_figures[single_timestep]
                         )
                     else:
-                        raise Exception("Showing svgs not yet supported.")
+                        raise NotImplementedError(
+                            "Showing svgs not yet supported."
+                        )
                         # pylint: disable=W0101
                         show_svg_image_in_dash_III(app=app, path=svg_filepath)
                 else:

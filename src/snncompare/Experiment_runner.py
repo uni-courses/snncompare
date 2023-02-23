@@ -71,7 +71,6 @@ class Experiment_runner:
         perform_run: Optional[bool] = True,
         specific_run_config: Optional[Run_config] = None,
     ) -> None:
-
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists(root_dir_name="results")
 
@@ -126,7 +125,6 @@ class Experiment_runner:
         plot_config = get_default_plot_config()
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
-
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
             results_nx_graphs = self.__perform_run_stage_1(
@@ -371,7 +369,6 @@ class Experiment_runner:
         """Ensures the non-impactfull run config that is loaded from json are
         identical to those of the  incoming run_config."""
         for key, val in incoming.__dict__.items():
-
             if loaded_from_json.__dict__[key] != val:
                 loaded_from_json.__dict__[key] = val
         if not dicts_are_equal(
