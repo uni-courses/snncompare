@@ -1,0 +1,18 @@
+{
+  "adaptation": {
+    "redundancy": 2
+  },
+  "algorithm": {
+    "MDSA": {
+      "m_val": 1
+    }
+  },
+  "graph_nr": 0,
+  "graph_size": 3,
+  "max_duration": null,
+  "radiation": {
+    "neuron_death": 0.0
+  },
+  "seed": 7,
+  "simulator": "nx"
+}

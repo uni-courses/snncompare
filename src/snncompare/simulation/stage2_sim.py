@@ -6,7 +6,7 @@ import networkx as nx
 from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config
 
 from ..helper import add_stage_completion_to_graph, get_max_sim_duration
 
@@ -14,7 +14,7 @@ from ..helper import add_stage_completion_to_graph, get_max_sim_duration
 @typechecked
 def sim_graphs(
     *,
-    run_config: Run_config,
+    run_config: "Run_config",
     stage_1_graphs: Dict,
 ) -> None:
     """Simulates the snn graphs and makes a deep copy for each timestep.
@@ -42,12 +42,13 @@ def sim_graphs(
                     "expected type after conversion, it was of type:"
                     f"{type(snn_graph)}"
                 )
-
+            print(f"graph_name={graph_name}")
             run_snn_on_networkx(
                 run_config=run_config,
                 snn_graph=snn_graph,
                 sim_duration=stage_1_graphs[graph_name].graph["sim_duration"],
             )
+            print("")
         add_stage_completion_to_graph(
             input_graph=stage_1_graphs[graph_name], stage_index=2
         )

@@ -1,0 +1,31 @@
+{
+  "adaptations": null,
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 4
+      }
+    ]
+  },
+  "max_graph_size": 5,
+  "max_max_graphs": 2,
+  "min_graph_size": 3,
+  "min_max_graphs": 1,
+  "neuron_models": [
+    "LIF"
+  ],
+  "radiations": {},
+  "seeds": [
+    7
+  ],
+  "simulators": [
+    "nx"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [5, 1]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ],
+  "unique_id": "da469e25672303d06778ef8d0d67a37dd410c0989a59c883f3f8db5d708a0877"
+}

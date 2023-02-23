@@ -8,8 +8,9 @@ SubInput: Run configuration within an experiment.
     Stage 4: Post-processed performance data of algorithm and adaptation
     mechanism.
 """
+import copy
 import pathlib
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import jsons
 from snnbackends.verify_nx_graphs import (
@@ -19,9 +20,10 @@ from snnbackends.verify_nx_graphs import (
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.export_plots.create_png_plot import plot_coordinated_graph
 from snncompare.export_plots.plot_graphs import plot_uncoordinated_graph
+from snncompare.helper import file_exists
+from snncompare.optional_config.Output_config import Output_config
+from snncompare.run_config.Run_config import Run_config
 
 from .export_json_results import write_dict_to_json
 from .export_nx_graph_to_json import convert_digraphs_to_json
@@ -44,7 +46,7 @@ with_adaptation_with_radiation = {
     "graph_nr": 5,
     "iteration": 4,
     "recreate_s4": True,
-    "overwrite_images_only": True,
+    "recreate_s3": True,
     "radiation": {
         "delta_synaptic_w": (0.05, 0.4),
     },
@@ -63,7 +65,7 @@ with_adaptation_with_radiation = {
 # :param graphs_stage_3:
 # :param run_config:
 # """
-# run_config_to_filename(run_config)
+# run_config_to_filename(run_config_dict)
 # TODO: Optional: ensure output files exists.
 
 # TODO: loop through graphs and create visualisation.
@@ -164,7 +166,7 @@ class Stage_4_graphs:
 
 @typechecked
 def output_stage_json(
-    *, results_nx_graphs: Dict, filename: str, stage_index: int
+    *, results_nx_graphs: Dict, run_config_filename: str, stage_index: int
 ) -> None:
     """Exports results dict to a json file."""
 
@@ -186,11 +188,18 @@ def output_stage_json(
         results_nx_graphs=results_nx_graphs, stage_index=stage_index
     )
 
-    # TODO: Optional: ensure output files exists.
-    output_filepath = f"results/{filename}.json"
+    # Convert Run_config and Exp_config into dicts before jsons.dump. Done to
+    # elope warning on Exp_config.adaptations = None (optional argument), which
+    # cannot be dumped into dict.
+    exported_dict = copy.deepcopy(results_json_graphs)
+    for key, val in exported_dict.items():
+        if not isinstance(val, Dict):
+            exported_dict[key] = val.__dict__
+
+    output_filepath = f"results/{run_config_filename}.json"
     write_dict_to_json(
         output_filepath=output_filepath,
-        some_dict=jsons.dump(results_json_graphs),
+        some_dict=jsons.dump(exported_dict),
     )
 
     # Ensure output file exists.
@@ -207,156 +216,40 @@ def output_stage_json(
 @typechecked
 def plot_graph_behaviours(
     *,
-    filepath: str,
+    run_config_filename: str,
+    output_config: Output_config,
     stage_2_graphs: Dict,
-    run_config: Run_config,
 ) -> None:
     """Exports the plots of the graphs per time step of the run
     configuration."""
-    # TODO: get this from the experiment settings/run configuration.
-    desired_props = get_desired_properties_for_graph_printing()
 
     # Loop over the graph types
     for graph_name, snn_graph in stage_2_graphs.items():
-        if graph_name != "input_graph":
-            sim_duration = snn_graph.graph["sim_duration"]
-            for t in range(
-                0,
-                sim_duration,
-            ):
-                print(f"Plotting:{graph_name}, t={t}/{sim_duration}")
-                # TODO: Include verify that graph len remains unmodified.
-                # pylint: disable=R0913
-                # TODO: reduce the amount of arguments from 6/5 to at most 5/5.
-                # TODO: make plot dimensions etc. function of algorithm.
-                plot_coordinated_graph(
-                    extensions=run_config.export_types,
-                    desired_properties=desired_props,
-                    G=snn_graph,
-                    height=(len(stage_2_graphs["input_graph"]) - 1) ** 2,
-                    t=t,
-                    filename=f"{graph_name}_{filepath}_{t}",
-                    show=False,
-                    title=None,
-                    width=(run_config.algorithm["MDSA"]["m_val"] + 1) * 2.5,
-                    zoom=run_config.zoom,
-                    # title=create_custom_plot_titles(
-                    #    graph_name, t, run_config.seed
-                    # ),
-                )
-        else:
+        if graph_name == "input_graph":
             plot_uncoordinated_graph(
-                extensions=run_config.export_types,
+                extensions=output_config.export_types,
                 G=snn_graph,
-                filename=f"{graph_name}_{filepath}.png",
+                filename=f"{graph_name}_{run_config_filename}.png",
                 show=False,
             )
 
 
-# pylint: disable=R0912
-# pylint: disable=R0915
 @typechecked
-def create_custom_plot_titles(
-    *, graph_name: str, t: int, seed: int
-) -> Optional[str]:
-    """Creates custom titles for the SNN graphs for seed = 42."""
-    # TODO: update to specify specific run_config instead of seed, to ensure
-    #  the description is accurate/consistent with the SNN propagation.
-    if seed == 42:
-        title = None
-        if graph_name == "snn_algo_graph":
-            if t == 0:
-                title = (
-                    "Initialisation:\n spike_once and random neurons spike, "
-                    + "selector starts."
-                )
-            if t == 1:
-                title = (
-                    "Selector neurons continue exciting\n degree_receivers "
-                    + "(WTA-circuits)."
-                )
-            if t == 21:
-                title = "Selector about to create degree_receiver winner."
-            if t == 22:
-                title = (
-                    "Degree_receiver neurons spike and inhibit selector,\n"
-                    + " excite counter neuron."
-                )
-            if t == 23:
-                title = "WTA circuits completed, score stored in counter."
-            if t == 24:
-                title = "Remaining WTA circuit being completed."
-            if t == 25:
-                title = (
-                    "Algorithm completed, counter neuron amperage read out."
-                )
-            if t == 26:
-                title = "."
+def desired_image_exist_for_timestep(
+    filename: str,
+    extensions: List[str],
+) -> bool:
+    """Returns true if the non-gif output image files exist already.
 
-        if graph_name == "adapted_snn_graph":
-            if t == 0:
-                title = (
-                    "Initialisation Adapted SNN:\n All neurons have a "
-                    + "redundant neuron."
-                )
-            if t == 1:
-                title = (
-                    "Selector neurons have inhibited redundant selector"
-                    + " neurons."
-                )
-            if t == 21:
-                title = "Selector about to create degree_receiver winner."
-            if t == 22:
-                title = (
-                    "Degree_receiver neurons spike and inhibit selector,\n"
-                    + "excite counter neuron."
-                )
-            if t == 23:
-                title = "WTA circuits completed, score stored in counter."
-            if t == 24:
-                title = "Remaining WTA circuit being completed."
-            if t == 25:
-                title = (
-                    "Algorithm completed, counter neuron amperage read out."
-                )
-            if t == 26:
-                title = "."
+    False otherwise.
+    """
+    for extension in extensions:
 
-        if graph_name == "rad_adapted_snn_graph":
-            if t == 0:
-                title = (
-                    "Simulated Radiation Damage:\n Red neurons died, "
-                    + "(don't spike)."
-                )
-            if t == 1:
-                title = (
-                    "Redundant spike_once and selector neurons take over.\n "
-                    + "Working neurons inhibited redundant neurons (having "
-                    + "delay=1)."
-                )
-            if t == 20:
-                title = "Selector_2_0 about to create degree_receiver winner."
-            if t == 21:
-                title = (
-                    "Degree_receiver_2_1_0 neuron spike and inhibits selector"
-                    + ",\n excites counter neuron."
-                )
-            if t == 22:
-                title = (
-                    "First WTA circuits completed, score stored in counter. "
-                    + "2nd WTA\n circuit is has winner, inhibits selectors, "
-                    + "stores result in counter."
-                )
-            if t == 23:
-                title = "Third WTA circuit has winner."
-            if t == 24:
-                title = (
-                    "Algorithm completed, counter neuron amperage read out.\n"
-                    + " Redundancy saved the day."
-                )
-            if t == 25:
-                title = "."
-    return title
+        if extension != "gif":  # TODO: check if necessary.
+            filepath = f"latex/Images/graphs/{filename}.{extension}"
+            if not file_exists(filepath=filepath):
+                return False
+    return True
 
 
 @typechecked

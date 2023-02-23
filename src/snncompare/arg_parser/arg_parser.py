@@ -22,7 +22,34 @@ def parse_cli_args() -> argparse.Namespace:
         "--create-boxplots",
         action="store_true",
         default=False,
-        help=("Create boxplots with adaptation effectivity."),
+        help=(""),
+    )
+
+    parser.add_argument(
+        "-cf",
+        "--count-fires",
+        action="store_true",
+        default=False,
+        help=(
+            'Store how many "spikes=neuron firing events" were registered in '
+            + "each graph propagation."
+        ),
+    )
+
+    parser.add_argument(
+        "-cs",
+        "--count-synapses",
+        action="store_true",
+        default=False,
+        help=("Store how many synapses were created in each SNN."),
+    )
+
+    parser.add_argument(
+        "-cn",
+        "--count-neurons",
+        action="store_true",
+        default=False,
+        help=("Store how many neurons were created in each SNN."),
     )
 
     parser.add_argument(
@@ -73,68 +100,46 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
-    # Allow user to set graph size.
+    # Run run on a particular run_settings json file.
     parser.add_argument(
-        "-m",
-        "--m_val",
-        nargs="?",
-        type=int,
-        dest="m_val",
-        const="m_val",
-        help=("Specify the m_val on which to run the MDSA algorithm."),
-    )
-
-    # Create argument parsers to allow user to overwrite pre-existing output.
-    # Ensure new SNN graphs are created.
-    parser.add_argument(
-        "-oc",
-        "--overwrite-creation",
+        "-j1",
+        "--output-json-stage-1",
         action="store_true",
         default=False,
         help=(
-            "Ensures new SNN graph is created, even if it already existed."
-            + "use this to only overwrite specific runs without deleting the"
-            + "entire results jsons."
+            "Store the json output for stage 1: initialised graphs that are "
+            + "to be propagated in stage 2."
         ),
     )
 
-    # Ensure new SNN graph propagation is performed.
+    # Run run on a particular run_settings json file.
     parser.add_argument(
-        "-op",
-        "--overwrite-propagation",
+        "-j2",
+        "--output-json-stage-2",
         action="store_true",
         default=False,
         help=(
-            "Ensures new SNN graph propagation is performed, even if it "
-            + "already existed. Use this to only overwrite specific runs "
-            + "without deleting the entire results jsons."
+            "Store the json output for stage 2: networkx graphs that are "
+            + "propagated in stage 2."
         ),
     )
 
-    # Ensure new SNN graph propagation is performed.
     parser.add_argument(
-        "-or",
-        "--overwrite-results",
+        "-j4",
+        "--output-json-stage-4",
         action="store_true",
         default=False,
         help=(
-            "Ensures new SNN algorithm results are computed, even if they "
-            + "already existed. Use this to only overwrite specific runs "
-            + "without deleting the entire results jsons."
+            "Store the json output for stage 4: the results of the SNN graphs."
         ),
     )
 
-    # Ensure new SNN graph behaviour visualistation is created.
     parser.add_argument(
-        "-ov",
-        "--overwrite-visualisation",
+        "-j5",
+        "--output-json-stage-5",
         action="store_true",
         default=False,
-        help=(
-            "Ensures new SNN graph behaviour is visualised, even if it "
-            + "already existed. Use this to only overwrite specific runs "
-            + "without deleting the entire image section."
-        ),
+        help=("Store a compact json output with the boxplot data."),
     )
 
     # Run run on a particular run_settings json file.
@@ -148,65 +153,92 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
-    # Run run on a particular run_settings json file.
     parser.add_argument(
         "-r1",
-        "--recreate_stage_1",
+        "--recreate-stage-1",
         action="store_true",
         default=False,
-        help=("Recreate results up to stage 1."),
+        help=(
+            "Ensures new SNN graph is created, even if it already existed."
+            + "use this to only overwrite specific runs without deleting the"
+            + "entire results jsons."
+        ),
     )
 
     # Run run on a particular run_settings json file.
     parser.add_argument(
         "-r2",
-        "--recreate_stage_2",
+        "--recreate-stage-2",
         action="store_true",
         default=False,
-        help=("Recreate results up to stage 2."),
+        help=(
+            "Ensures new SNN graph propagation is performed, even if it "
+            + "already existed. Use this to only overwrite specific runs "
+            + "without deleting the entire results jsons."
+        ),
+    )
+
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-r3",
+        "--recreate-stage-3",
+        action="store_true",
+        default=False,
+        help=(
+            "Ensures new SNN graph behaviour is visualised, even if it "
+            + "already existed. Use this to only overwrite specific runs "
+            + "without deleting the entire image section. You also have to"
+            + " specify the image export types with: -x png,gif,svg etc."
+        ),
     )
 
     # Run run on a particular run_settings json file.
     parser.add_argument(
         "-r4",
-        "--recreate_stage_4",
+        "--recreate-stage-4",
         action="store_true",
         default=False,
-        help=("Recreate results up to stage 4."),
-    )
-
-    # Allow user to set a neuron redundancy value.
-    parser.add_argument(
-        "-rd",
-        "--redundancy",
-        nargs="?",
-        type=int,
-        dest="redundancy",
-        const="redundancy",
-        help=("Specify the redundancy used as adaptation mechanism."),
-    )
-
-    # Allow user to set graph size.
-    parser.add_argument(
-        "-s",
-        "--graph-size",
-        nargs="?",
-        type=int,
-        dest="graph_size",
-        const="graph_size",
         help=(
-            "Specify the graph size on which to run algorithm. Performs a "
-            "single run by default. Assume you want to run a single iteration."
+            "Ensures new SNN algorithm results are computed, even if they "
+            + "already existed. Use this to only overwrite specific runs "
+            + "without deleting the entire results jsons."
         ),
     )
 
-    # Ensure SNN behaviour is visualised in stage 3.
     parser.add_argument(
-        "-v",
-        "--visualise-snn",
+        "-r5",
+        "--recreate-stage-5",
         action="store_true",
         default=False,
-        help=("Pause computation, show you each plot of the SNN behaviour."),
+        help=("Rereate boxplots with adaptation effectivity."),
+    )
+
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-rev",
+        "--reverse",
+        action="store_true",
+        default=False,
+        help=("Run experiment config from small/fast to large/slow."),
+    )
+
+    parser.add_argument(
+        "-si",
+        "--show-images",
+        action="store_true",
+        default=False,
+        help=(
+            "Show images in dash app/browser. (Automatically sets export"
+            + "images to svg)."
+        ),
+    )
+
+    parser.add_argument(
+        "-sdn",
+        "--store-died-neurons",
+        action="store_true",
+        default=False,
+        help=("Store which neurons died due to radiation."),
     )
 
     # Ensure SNN behaviour visualisation in stage 3 is exported to images.
@@ -220,18 +252,29 @@ def parse_cli_args() -> argparse.Namespace:
         help=(
             "Ensures the SNN behaviour visualisation is exported, as pdf by "
             + "default. Supported are:"
-            + f"{supp_setts.export_types.extend(['gif','zoom'])}. Usage:"
-            + f'-x {",".join(supp_setts.export_types+["gif","zoom"])} '
+            + f"{supp_setts.export_types.extend(['gif'])}. Usage:"
+            + f'-x {",".join(supp_setts.export_types+["gif"])} '
             + "or:\n"
             + f"--export_images {supp_setts.export_types[0]}"
         ),
     )
 
-    # Create argument parsers to allow user to overwrite pre-existing output.
-
-    # Create argument parsers to allow user specify experiment config in CLI.
-    # TODO
+    # Ensure SNN behaviour visualisation in stage 3 is exported to images.
+    parser.add_argument(
+        "-z",
+        "--zoom",
+        nargs="?",
+        type=str,
+        dest="zoom",
+        const="zoom",
+        help=(
+            "Create zoomed images for output png files of SNN behaviour. "
+            + "Give the left, right, bottom and top fraction of the image you "
+            + "want to see like: -z 0.1,0.5,0.7,0.9 to see the top left part.:"
+        ),
+    )
 
     # Load the arguments that are given.
     args = parser.parse_args()
+    print(f"args={args.__dict__}")
     return args

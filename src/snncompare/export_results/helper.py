@@ -1,12 +1,12 @@
 """Contains helper functions for exporting simulation results."""
 import collections
 import copy
-from typing import Dict, List, Union
+import hashlib
+import json
+from typing import Any, Dict, List, Union
 
 import networkx as nx
 from typeguard import typechecked
-
-from snncompare.exp_config.run_config.Run_config import Run_config
 
 from ..helper import get_actual_duration
 
@@ -28,14 +28,10 @@ def flatten(
     return dict(items)
 
 
-# >>> flatten({'a': 1, 'c': {'a': 2, 'b': {'x': 5, 'y' : 10}}, 'd': [1, 2, 3]})
-# {'a': 1, 'c_a': 2, 'c_b_x': 5, 'd': [1, 2, 3], 'c_b_y': 10}
-
-
 @typechecked
 def run_config_to_filename(
     *,
-    run_config: Run_config,
+    run_config_dict: Dict,
 ) -> str:
     """Converts a run_config dictionary into a filename.
 
@@ -45,16 +41,9 @@ def run_config_to_filename(
     # TODO: order dictionaries by alphabetical order by default.
     # TODO: allow user to specify a custom order of parameters.
 
-    stripped_run_config = copy.deepcopy(run_config).__dict__
-    stripped_run_config.pop("unique_id")  # Unique Id will be added as tag
-    stripped_run_config.pop("max_duration")  # Empty
-    stripped_run_config.pop("recreate_s4")  # Irrellevant
-    stripped_run_config.pop("overwrite_images_only")  # Irrellevant
-    stripped_run_config.pop("recreate_s1")  # Irrellevant
-    stripped_run_config.pop("recreate_s2")  # Irrellevant
-    stripped_run_config.pop("export_images")  # Irrellevant
-    if "export_types" in stripped_run_config.keys():
-        stripped_run_config.pop("export_types")  # Irrellevant
+    # stripped_run_config:Dict = copy.deepcopy(run_config).__dict__
+    stripped_run_config: Dict = copy.deepcopy(run_config_dict)
+
     # instead (To reduce filename length).
     filename = str(flatten(d=stripped_run_config))
 
@@ -65,6 +54,11 @@ def run_config_to_filename(
     # Don't, that makes it more difficult to load the dict again.
     # Remove the spaces.
     filename = filename.replace(" ", "")
+    filename = filename.replace("adaptation_", "")
+    filename = filename.replace("algorithm_", "")
+    filename = filename.replace("graph_", "")
+    filename = filename.replace("radiation_", "")
+    filename = filename.replace("unique_", "")
 
     if len(filename) > 256:
         raise Exception(f"Filename={filename} is too long:{len(filename)}")
@@ -72,11 +66,11 @@ def run_config_to_filename(
 
 
 @typechecked
-def get_expected_image_paths_stage_3(
+def get_expected_image_paths_stage_3(  # type:ignore[misc]
     *,
     nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph]],
     input_graph: nx.Graph,
-    run_config: Run_config,
+    run_config: Any,
     extensions: List[str],
 ) -> List[str]:
     """Returns the expected image filepaths for stage 3.
@@ -84,7 +78,7 @@ def get_expected_image_paths_stage_3(
     (If export is on).
     """
     image_filepaths = []
-    filename: str = run_config_to_filename(run_config=run_config)
+    filename: str = run_config_to_filename(run_config_dict=run_config.__dict__)
 
     if "alg_props" not in input_graph.graph.keys():
         raise Exception("Error, algo_props is not set.")
@@ -100,3 +94,32 @@ def get_expected_image_paths_stage_3(
                         image_dir + f"{graph_name}_{filename}_{t}.{extension}"
                     )
     return image_filepaths
+
+
+@typechecked
+def get_unique_id(  # type:ignore[misc]
+    *,
+    some_config: Any,
+) -> str:
+    """Checks if an experiment configuration dictionary already has a unique
+    identifier, and if not it computes and appends it.
+
+    If it does, throws an error.
+    TODO: move into helper
+
+    :param exp_config: Exp_config:
+    """
+    if "unique_id" in some_config.__dict__.keys():
+        raise Exception(
+            f"Error, the exp_config:{some_config}\n"
+            + "already contains a unique identifier."
+        )
+
+    # Compute a unique code belonging to this particular experiment
+    # configuration.
+    unique_id = str(
+        hashlib.sha256(
+            json.dumps(some_config.__dict__).encode("utf-8")
+        ).hexdigest()
+    )
+    return unique_id

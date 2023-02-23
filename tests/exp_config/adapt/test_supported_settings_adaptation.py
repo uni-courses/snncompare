@@ -52,8 +52,6 @@ class Test_adaptation_settings(unittest.TestCase):
             verify_exp_config(
                 supp_exp_config=self.supp_exp_config,
                 exp_config=exp_config,
-                has_unique_id=False,
-                allow_optional=False,
             )
 
         self.assertEqual(

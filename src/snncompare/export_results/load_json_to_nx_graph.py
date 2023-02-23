@@ -9,11 +9,8 @@ from snnbackends.verify_nx_graphs import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.exp_config.run_config.Supported_run_settings import (
-    Supported_run_settings,
-)
 from snncompare.helper import dicts_are_equal, file_exists
+from snncompare.run_config.Run_config import Run_config
 
 from .helper import run_config_to_filename
 from .verify_json_graphs import (
@@ -91,7 +88,7 @@ def load_json_results(
 ) -> Dict:
     """Loads results from json file."""
     results_json_graphs = {}
-    filename: str = run_config_to_filename(run_config=run_config)
+    filename: str = run_config_to_filename(run_config_dict=run_config.__dict__)
     json_filepath = f"results/{filename}.json"
 
     if not file_exists(filepath=json_filepath):
@@ -107,25 +104,4 @@ def load_json_results(
         expected_stages=expected_stages,
     )
 
-    copy_export_settings(
-        original=run_config, loaded=results_json_graphs["run_config"]
-    )
     return results_json_graphs
-
-
-@typechecked
-def copy_export_settings(*, original: Run_config, loaded: Run_config) -> None:
-    """Copies the non essential parameters from the original into the loaded
-    run_config."""
-
-    supp_run_setts = Supported_run_settings()
-
-    # minimal_run_config: Run_config = supp_run_setts.remove_optional_args(
-    # copy.deepcopy(original)
-    # )
-
-    for key, value in original.__dict__.items():
-        if key in supp_run_setts.optional_parameters:
-
-            # if key not in minimal_run_config.__dict__.keys():
-            setattr(loaded, key, value)

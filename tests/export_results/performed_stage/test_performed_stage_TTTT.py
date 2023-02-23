@@ -12,9 +12,6 @@ import unittest
 import networkx as nx
 from typeguard import typechecked
 
-from snncompare.exp_config.default_setts.create_default_settings import (
-    default_exp_config,
-)
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
@@ -29,6 +26,9 @@ from snncompare.import_results.check_completed_stages import (
     has_outputted_stage_jsons,
 )
 from snncompare.import_results.read_json import load_results_from_json
+from snncompare.json_configurations.create_default_settings import (
+    default_exp_config,
+)
 from tests.tests_helper import (
     create_dummy_output_images_stage_3,
     create_result_file_for_testing,
@@ -63,8 +63,13 @@ class Test_stage_1_output_json(unittest.TestCase):
         # Expect the test to export snn pictures.
         self.exp_config.export_images = False
         # Instead of the Experiment_runner.
+        # TODO: create dummy output_config.
+        output_config = None
         self.experiment_runner = Experiment_runner(
             exp_config=self.exp_config,
+            output_config=output_config,
+            specific_run_config=None,
+            perform_run=True,
         )
 
         # Pick (first) run config and get the output locations for testing.
@@ -86,9 +91,10 @@ class Test_stage_1_output_json(unittest.TestCase):
         completed."""
 
         for run_config in self.experiment_runner.run_configs:
-            json_filepath = (
-                f"results/{run_config_to_filename(run_config=run_config)}.json"
+            filename: str = run_config_to_filename(
+                run_config_dict=run_config.__dict__
             )
+            json_filepath = "results/" + f"{filename}" + ".json"
 
             # TODO: determine per stage per run config which graph names are
             # expected.

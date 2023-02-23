@@ -5,29 +5,24 @@ the performance of the SNNs."""
 # If exp_config, get run_configs
 import copy
 import pickle  # nosec
-from pathlib import Path
-from pprint import pprint
 from typing import Dict, List, Tuple
 
 from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
+from snncompare.create_configs import get_adaptation_and_radiations
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.exp_config.run_config.Run_config import Run_config
-from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_results.load_json_to_nx_graph import (
     load_verified_json_graphs_from_json,
 )
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from snncompare.helper import (
-    generate_run_configs,
-    get_adaptation_and_radiations,
-)
 from snncompare.import_results.check_completed_stages import (
     has_outputted_stage_jsons,
 )
+from snncompare.optional_config.Output_config import Output_config
+from snncompare.run_config.Run_config import Run_config
 
 
 # pylint: disable = R0903
@@ -57,44 +52,14 @@ class Boxplot_data:
 # pylint: disable=R0912
 # pylint: disable=R0914
 @typechecked
-def create_performance_plots(*, exp_config: Exp_config) -> None:
+def create_performance_plots(
+    *,
+    completed_run_configs: List[Run_config],
+    exp_config: Exp_config,
+    output_config: Output_config,
+) -> None:
     """Ensures all performance boxplots are created."""
-
-    pickle_run_configs_filepath: str = (
-        "latex/Images/completed_run_configs.pickle"
-    )
-    run_configs: List[Run_config]
-
-    # Get run_configs
-    if Path(pickle_run_configs_filepath).is_file():
-        completed_run_configs = load_pickle(
-            filepath=pickle_run_configs_filepath
-        )
-    else:
-        run_configs = generate_run_configs(
-            exp_config=exp_config, specific_run_config=None
-        )
-        # Get list of required run_configs.
-        (
-            completed_run_configs,
-            missing_run_configs,
-        ) = get_completed_and_missing_run_configs(run_configs=run_configs)
-
-        # Create a list of run_configs that still need to be completed.
-        # prompt user whether user wants to complete these run_configs.
-        for missing_run_config in missing_run_configs:
-            # Execute those run_configs
-            Experiment_runner(
-                exp_config=exp_config,
-                specific_run_config=missing_run_config,
-                perform_run=True,
-            )
-
-        store_pickle(
-            run_configs=completed_run_configs,
-            filepath=pickle_run_configs_filepath,
-        )
-    print("Loaded run_configs")
+    print(output_config.extra_storing_config)
 
     count: int = 0
     adaptations_radiations = get_adaptation_and_radiations(
@@ -112,13 +77,10 @@ def create_performance_plots(*, exp_config: Exp_config) -> None:
         for adaptation, radiation in adaptations_radiations:
             if unique_rad == radiation:
                 adaptations_per_radiation[i].append(adaptation)
-    rad_adap_dict: Dict = {}
-    print(f"adaptations_per_radiation={adaptations_per_radiation}")
-    pprint(rad_adap_dict)
 
     # Sort the unique_radiations.
     keys = list(map(lambda x: list(x.keys()), unique_radiations))
-    print(keys)
+
     unique_keys = []
     for elem in keys:
         for key in elem:
@@ -130,7 +92,7 @@ def create_performance_plots(*, exp_config: Exp_config) -> None:
         sorted_radiations = sorted(
             unique_radiations, key=lambda d: d[unique_key]
         )
-    print(f"sorted_radiations={sorted_radiations}")
+
     original_order = []
     for radiation in sorted_radiations:
         for value in radiation.values():
@@ -138,14 +100,11 @@ def create_performance_plots(*, exp_config: Exp_config) -> None:
                 for key, val in original_radiation.items():
                     if value == val:
                         original_order.append(i)
-    print(f"original_order={original_order}")
 
     for i in original_order:
         radiation = unique_radiations[i]
         for radiation_name, radiation_value in reversed(radiation.items()):
             count = count + 1
-
-            print(f"radiation={radiation}")
 
             # Get run configs belonging to this radiation type/level.
             wanted_run_configs: List[Run_config] = []

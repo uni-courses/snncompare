@@ -1,0 +1,38 @@
+{
+  "adaptations": {
+    "redundancy": [
+      1
+    ]
+  },
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 3
+      }
+    ]
+  },
+  "max_graph_size": 4,
+  "max_max_graphs": 2,
+  "min_graph_size": 3,
+  "min_max_graphs": 1,
+  "neuron_models": [
+    "LIF"
+  ],
+  "radiations": {
+    "neuron_death": [
+      0.25
+    ]
+  },
+  "seeds": [
+    7
+  ],
+  "simulators": [
+    "nx"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [5, 1]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ]
+}

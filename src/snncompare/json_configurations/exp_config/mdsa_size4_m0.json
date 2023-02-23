@@ -1,0 +1,30 @@
+{
+  "adaptations": null,
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 0
+      }
+    ]
+  },
+  "max_graph_size": 5,
+  "max_max_graphs": 2,
+  "min_graph_size": 3,
+  "min_max_graphs": 1,
+  "neuron_models": [
+    "LIF"
+  ],
+  "radiations": null,
+  "seeds": [
+    7
+  ],
+  "simulators": [
+    "nx"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [4, 1]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ]
+}

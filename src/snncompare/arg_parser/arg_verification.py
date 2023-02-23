@@ -54,7 +54,7 @@ def verify_experiment_settings(
     """Verifies the filepath for the input graph exists and contains a valid
     networkx graph."""
     # Assert graph file exists.
-    exp_config_path = f"{custom_config_path}{exp_config_name}.json"
+    exp_config_path = f"{custom_config_path}/exp_config/{exp_config_name}.json"
     if not file_exists(filepath=exp_config_path):
         raise FileNotFoundError(
             "Input experiment settings path was invalid: "

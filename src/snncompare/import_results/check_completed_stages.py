@@ -6,10 +6,10 @@ from typing import Dict, List, Optional
 from snnbackends.verify_nx_graphs import verify_completed_stages_list
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.graph_generation.stage_1_create_graphs import (
     get_input_graph_of_run_config,
 )
+from snncompare.run_config.Run_config import Run_config
 
 from ..export_results.helper import (
     get_expected_image_paths_stage_3,
@@ -41,7 +41,6 @@ def has_outputted_stage_jsons(
     # pprint(expected_filepaths)
 
     if not expected_files_exist(expected_filepaths=expected_filepaths):
-        print(f"files did not exist={expected_filepaths}")
         return False
 
     if not expected_jsons_are_valid(
@@ -50,7 +49,6 @@ def has_outputted_stage_jsons(
         run_config=run_config,
         stage_index=stage_index,
     ):
-        print(f"Json not valid.={expected_filepaths}")
         return False
     return True
 
@@ -67,11 +65,10 @@ def has_outputted_images(
         nx_graphs_dict=results_nx_graphs["graphs_dict"],
         input_graph=get_input_graph_of_run_config(run_config=run_config),
         run_config=run_config,
-        extensions=["png"],
+        extensions=["svg"],
     )
 
     if not expected_files_exist(expected_filepaths=expected_image_paths):
-        print(f"files did not exist={expected_image_paths}")
         return False
     return True
 
@@ -80,7 +77,7 @@ def has_outputted_images(
 def get_expected_files(*, run_config: Run_config) -> List[str]:
     """Returns the list of expected files for a run configuration."""
     expected_filepaths = []
-    filename = run_config_to_filename(run_config=run_config)
+    filename = run_config_to_filename(run_config_dict=run_config.__dict__)
     relative_output_dir = "results/"
 
     output_file_extensions = [".json"]

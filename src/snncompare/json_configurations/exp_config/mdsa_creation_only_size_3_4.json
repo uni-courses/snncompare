@@ -1,0 +1,48 @@
+{
+  "adaptations": null,
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 0
+      },
+      {
+        "m_val": 1
+      },
+      {
+        "m_val": 2
+      },
+      {
+        "m_val": 3
+      },
+      {
+        "m_val": 4
+      },
+      {
+        "m_val": 5
+      }
+    ]
+  },
+  "max_graph_size": 5,
+  "max_max_graphs": 2,
+  "min_graph_size": 3,
+  "min_max_graphs": 1,
+  "neuron_models": [
+    "LIF"
+  ],
+  "radiations": {},
+  "seeds": [
+    7
+  ],
+  "simulators": [
+    "nx"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [3, 1]}",
+    "{\"__tuple__\": true, \"items\": [4, 3]}",
+    "{\"__tuple__\": true, \"items\": [5, 6]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ],
+  "unique_id": "da469e25672303d06778ef8d0d67a37dd410c0989a59c883f3f8db5d708a0877"
+}

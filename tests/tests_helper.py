@@ -15,9 +15,9 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
 )
 from typeguard import typechecked
 
-from snncompare.exp_config.run_config.Run_config import Run_config
 from snncompare.export_results.export_json_results import write_dict_to_json
 from snncompare.export_results.helper import get_expected_image_paths_stage_3
+from snncompare.run_config.Run_config import Run_config
 
 if TYPE_CHECKING:
     from tests.simulation.test_cyclic_graph_propagation import (

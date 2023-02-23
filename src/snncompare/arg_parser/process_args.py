@@ -2,22 +2,23 @@
 import argparse
 import os
 import shutil
-import sys
+from typing import List
 
 from typeguard import typechecked
 
-from snncompare.exp_config.Exp_config import (
-    Exp_config,
-    Supported_experiment_settings,
-)
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
-from snncompare.export_results.analysis.create_performance_plots import (
-    create_performance_plots,
+from snncompare.optional_config.Output_config import (
+    Extra_storing_config,
+    Output_config,
+    Zoom,
 )
+from snncompare.run_config.Run_config import Run_config
 
-from ..exp_config.custom_setts.run_configs.algo_test import (
+from ..json_configurations.algo_test import (
     load_exp_config_from_file,
+    load_run_config_from_file,
 )
 
 
@@ -31,45 +32,43 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     TODO: list existing exp_configs
     """
 
-    # mdsa_creation_only_size_3_4
-    # mdsa_size3_5_m_0_5
-    # mdsa_size3_m1
-    # mdsa_size3_m0
-    # mdsa_size5_m4
-    # mdsa_size4_m0
+    # if args.experiment_settings_name is not None:
     exp_config: Exp_config = load_exp_config_from_file(
         custom_config_path=custom_config_path,
         filename=args.experiment_settings_name,
     )
 
-    manage_export_parsing(args=args, exp_config=exp_config)
-    manage_exp_config_parsing(args=args, exp_config=exp_config)
+    if args.run_config_path is not None:
+        specific_run_config: Run_config = load_run_config_from_file(
+            custom_config_path=custom_config_path,
+            filename=f"{args.run_config_path}",
+        )
+    else:
+        specific_run_config = None
 
-    # if not args.overwrite_images_only:
-    #    exp_config.export_images = True
-    #    exp_config.overwrite_images = True
-
-    # verify_exp_config(
-    #    Supported_experiment_settings(),
-    #    exp_config,
-    #    has_unique_id=False,
-    #    allow_optional=True,
-    # )
+    output_config: Output_config = manage_export_parsing(args=args)
 
     # python -m src.snncompare -e mdsa_creation_only_size_3_4 -v
-    Experiment_runner(exp_config)
+    Experiment_runner(
+        exp_config=exp_config,
+        output_config=output_config,
+        perform_run=any(
+            x in output_config.output_json_stages for x in [1, 2, 3, 4]
+        ),
+        reverse=args.reverse,
+        specific_run_config=specific_run_config,
+    )
     # TODO: verify expected output results have been generated successfully.
     print("Done")
 
 
 # pylint: disable=R0912
 @typechecked
-def manage_export_parsing(
-    *, args: argparse.Namespace, exp_config: Exp_config
-) -> None:
+def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
     """Performs the argument parsing related to data export settings."""
     create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
-    supp_setts = Supported_experiment_settings()
+    optional_config_args_dict = {}
+    extra_storing_config_dict = {}
 
     if args.delete_images and os.path.exists("latex"):
         shutil.rmtree("latex")
@@ -77,72 +76,97 @@ def manage_export_parsing(
     if args.delete_results and os.path.exists("results"):
         shutil.rmtree("results")
 
-    # Don't export if it is not wanted.
-    if args.export_images is None:
-        exp_config.export_images = False
-        if args.overwrite_visualisation:
-            raise ValueError(
-                "Overwrite images is not allowed without export_images."
-            )
-    # Allow user to specify image export types (and verify them).
-    else:
-        if args.overwrite_visualisation:
-            exp_config.overwrite_images_only = args.overwrite_visualisation
+    # To show figures, they need to be (created), (and hence) exported.
+    if args.show_images:
+        if args.export_images is None:
+            args.export_images = ["svg"]
         else:
-            exp_config.overwrite_images_only = False
-        extensions = args.export_images.split(",")
-        for extension in extensions:
-            if extension in supp_setts.export_types:
-                print(f"extensions={extensions}")
-            elif extension == "gif":
-                exp_config.gif = True
-                extensions.remove("gif")
-            elif extension == "zoom":
-                exp_config.zoom = True
-                extensions.remove("zoom")
-            else:
-                raise Exception(
-                    f"Error, image output extension:{extension} is"
-                    " not supported."
-                )
-        exp_config.export_images = True
-        exp_config.export_types = extensions
+            if "svg" not in args.export_images:
+                args.export_images.append("svg")
 
-    if args.create_boxplots:
-        create_performance_plots(exp_config=exp_config)
-        print("Created boxplots.")
-        sys.exit()
+    if args.export_images is not None:
+        optional_config_args_dict["export_types"] = args.export_images.split(
+            ","
+        )
+    else:
+        optional_config_args_dict["export_types"] = []
+    optional_config_args_dict["zoom"] = parse_zoom_arg(args=args)
+    optional_config_args_dict["recreate_stages"] = parse_recreate_stages(
+        args=args
+    )
+    optional_config_args_dict["output_json_stages"] = parse_output_json_stages(
+        args=args
+    )
+    extra_storing_config_dict["count_spikes"] = args.count_fires
+    extra_storing_config_dict["count_neurons"] = args.count_neurons
+    extra_storing_config_dict["count_synapses"] = args.count_synapses
+    extra_storing_config_dict["show_images"] = args.show_images
+    extra_storing_config_dict["store_died_neurons"] = args.store_died_neurons
+    optional_config_args_dict["extra_storing_config"] = Extra_storing_config(
+        **extra_storing_config_dict
+    )
+
+    output_config: Output_config = Output_config(**optional_config_args_dict)
+
+    return output_config
 
 
 @typechecked
-def manage_exp_config_parsing(
-    *, args: argparse.Namespace, exp_config: Exp_config
-) -> None:
+def parse_zoom_arg(
+    *,
+    args: argparse.Namespace,
+) -> Zoom:
+    """Processeses the zoom argument and returns Zoom object."""
+    if args.zoom is None:
+        zoom = Zoom(
+            create_zoomed_image=False,
+            left_right=None,
+            bottom_top=None,
+        )
+    else:
+        coords = args.zoom.split(",")
+        zoom = Zoom(
+            create_zoomed_image=True,
+            left_right=(coords[0], coords[1]),
+            bottom_top=(coords[2], coords[3]),
+        )
+    return zoom
+
+
+@typechecked
+def parse_recreate_stages(
+    *,
+    args: argparse.Namespace,
+) -> List[int]:
     """Performs the argument parsing related to experiment settings."""
-    # Process the graph_size argument.
-    if args.graph_size is not None:
-        if not isinstance(args.graph_size, int):
-            raise TypeError("args.graphs_size should be int.")
-        # Assume only one iteration is used if graph size is specified.
-        exp_config.size_and_max_graphs = [(args.graph_size, 1)]
-
-    # Process the m_val argument.
-    if args.m_val is not None:
-        if not isinstance(args.m_val, int):
-            raise TypeError("args.m_val should be int.")
-        # Assume only one iteration is used if graph size is specified.
-        exp_config.algorithms["MDSA"] = [{"m_val": args.m_val}]
-
-    # Process the m_val argument.
-    if args.redundancy is not None:
-        if not isinstance(args.redundancy, int):
-            raise TypeError("args.redundancy should be int.")
-        # Assume only one iteration is used if graph size is specified.
-        exp_config.adaptations = {"redundancy": [args.redundancy]}
-
+    recreate_stages = []
     if args.recreate_stage_1:
-        exp_config.recreate_s1 = True
+        recreate_stages.append(1)
     if args.recreate_stage_2:
-        exp_config.recreate_s2 = True
+        recreate_stages.append(2)
+    if args.recreate_stage_3:
+        recreate_stages.append(3)
     if args.recreate_stage_4:
-        exp_config.recreate_s4 = True
+        recreate_stages.append(4)
+    if args.recreate_stage_5:
+        recreate_stages.append(5)
+    return recreate_stages
+
+
+@typechecked
+def parse_output_json_stages(
+    *,
+    args: argparse.Namespace,
+) -> List[int]:
+    """Performs the argument parsing related to experiment settings."""
+    output_json_stages = []
+    if args.output_json_stage_1:
+        output_json_stages.append(1)
+    if args.output_json_stage_2:
+        output_json_stages.append(2)
+    # No json outputted at stage 3, only images.
+    if args.output_json_stage_4:
+        output_json_stages.append(4)
+    if args.output_json_stage_5:
+        output_json_stages.append(5)
+    return output_json_stages

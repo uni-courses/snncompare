@@ -3,8 +3,10 @@ from typing import Dict
 
 from typeguard import typechecked
 
+from snncompare.export_plots.create_dash_plot import create_svg_plot
 from snncompare.export_plots.create_snn_gif import create_gif_of_run_config
 from snncompare.helper import add_stage_completion_to_graph
+from snncompare.optional_config.Output_config import Output_config
 
 from .helper import run_config_to_filename
 from .Output import output_stage_json, plot_graph_behaviours
@@ -12,7 +14,7 @@ from .Output import output_stage_json, plot_graph_behaviours
 
 @typechecked
 def output_stage_files_3_and_4(
-    *, results_nx_graphs: Dict, stage_index: int
+    *, output_config: Output_config, results_nx_graphs: Dict, stage_index: int
 ) -> None:
     """Merges the experiment configuration Dict, run configuration dict into a
     single dict. This method assumes only the graphs that are to be exported
@@ -42,25 +44,34 @@ def output_stage_files_3_and_4(
     # TODO: merge experiment config, results_nx_graphs['run_config'] into
     # single dict.
     if results_nx_graphs["run_config"].simulator == "nx":
-        filename = run_config_to_filename(
-            run_config=results_nx_graphs["run_config"]
+        run_config_filename = run_config_to_filename(
+            run_config_dict=results_nx_graphs["run_config"].__dict__
         )
-        # TODO: Check if plots are already generated and if they must be
-        # overwritten.
-        # TODO: Distinguish between showing snns and outputting snns.
-        if results_nx_graphs["run_config"].export_images and stage_index == 3:
-            # Output graph behaviour for stage stage_index.
-            plot_graph_behaviours(
-                filepath=filename,
-                stage_2_graphs=results_nx_graphs["graphs_dict"],
-                run_config=results_nx_graphs["run_config"],
-            )
-
-            create_gif_of_run_config(results_nx_graphs=results_nx_graphs)
-            for nx_graph in results_nx_graphs["graphs_dict"].values():
-                add_stage_completion_to_graph(
-                    input_graph=nx_graph, stage_index=3
+        if stage_index == 3:
+            print(f"output_config.export_types={output_config.export_types}")
+            if "pdf" in output_config.export_types:
+                # TODO: Check if plots are already generated and if they must
+                # be overwritten.
+                # Output graph behaviour for stage stage_index.
+                plot_graph_behaviours(
+                    run_config_filename=run_config_filename,
+                    output_config=output_config,
+                    stage_2_graphs=results_nx_graphs["graphs_dict"],
                 )
+            if "svg" in output_config.export_types:
+                create_svg_plot(
+                    run_config_filename=run_config_filename,
+                    graphs=results_nx_graphs["graphs_dict"],
+                    output_config=output_config,
+                )
+            elif "pdf" in output_config.export_types:
+                pass
+            if "gif" in output_config.export_types:
+                create_gif_of_run_config(results_nx_graphs=results_nx_graphs)
+                for nx_graph in results_nx_graphs["graphs_dict"].values():
+                    add_stage_completion_to_graph(
+                        input_graph=nx_graph, stage_index=3
+                    )
 
         if (
             # results_nx_graphs["run_config"].export_images or
@@ -70,7 +81,7 @@ def output_stage_files_3_and_4(
             # Output the json dictionary of the files.
             output_stage_json(
                 results_nx_graphs=results_nx_graphs,
-                filename=filename,
+                run_config_filename=run_config_filename,
                 stage_index=stage_index,
             )
 
