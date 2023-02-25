@@ -192,7 +192,7 @@ def show_dash_figures(
                 if node_name == edge[0]:
                     return temporal_node_colours[i][t]
             # pylint: disable=W0631
-            raise Exception(f"Error, node_name:{node_name} not found.")
+            raise ValueError(f"Error, node_name:{node_name} not found.")
 
         # Update the annotation colour.
         def get_edge_opacity(
@@ -209,7 +209,7 @@ def show_dash_figures(
                 if node_name == edge[0]:
                     return temporal_node_opacity[i][t]
             # pylint: disable=W0631
-            raise Exception(f"Error, node_name:{node_name} not found.")
+            raise ValueError(f"Error, node_name:{node_name} not found.")
 
         # Overwrite annotation with function instead of value.
         if plot_config.update_edge_colours:

@@ -178,7 +178,7 @@ def create_results_dict_for_testing_stage_2(
                     i
                 ].__dict__
         else:
-            raise Exception("Error, graph for stage 2 is a list.")
+            raise TypeError("Error, graph for stage 2 is a list.")
 
     # Merge graph and experiment and run config into a single result dict.
     dummy_result = {

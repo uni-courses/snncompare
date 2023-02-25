@@ -127,6 +127,7 @@ Stage 2: Create propagated networkx graphs (at least one per timestep).
 Stage 3: Visaualisation of the networkx graphs over time.
 Stage 4: Post-processed performance data of algorithm and adaptation
 mechanism.
+Stage 5: Create box plot with network performances.
 
 ## Running Experiment
 
@@ -138,29 +139,35 @@ pip install https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
 ulimit -n 800000
 ```
 
-You can run the experiment with command:
+You can run the experiment (stage 1,2,4) with command:
 
 ```bash
-(snncompare) name@name ~/git/snn/snncompare
-python -m src.snncompare -e mdsa_long_no_overwrite -x svg -j1 -j2 -j4
-python -m src.snncompare -e mdsa_size3_m0_adap_rad -x svg -j1 -j2 -j4
-python -m src.snncompare -e mdsa_long_no_overwrite -r run_config -j1 -j2 -j4
+python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4
 ```
 
-which is the same as:
+This generates the graphs from the default experiment configurations, and
+outputs the graphs in json format to the `results/` directory, and outputs
+the graph behaviour to: `latex/Images/graphs/`.
+
+## Additional Options
+
+You can run the experiment (stage 1,2,4) in reverse (from small to large
+graphs) with command:
 
 ```bash
-python -m src.snncompare --experiment-settings-name \
-mdsa_long_no_overwrite --export-images svg --output-json-stage-1 \
- --output-json-stage-2 --output-json-stage-4
+python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -rev
 ```
 
-or:
+You can output images with:
 
 ```bash
-python -m src.snncompare -e mdsa_size3_m0_adap_rad -x svg -j1 -j2 -j4
-python -m src.snncompare -e boxplot -c
-python -m src.snncompare -e mdsa_size3_m0_adap_rad -c
+python -m src.snncompare -e mdsa_size3_m0_adap_rad -j1 -j2 -j4 -x svg
+```
+
+You can run a single `run_config` with:
+
+```bash
+python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r run_config_file_name
 ```
 
 For more info, run:
@@ -179,12 +186,8 @@ or to see live output, on any tests filenames containing substring: `results`:
 
 ```bash
 python -m pytest tests/sparse/MDSA/test_snn_results_with_adaptation.py --capture=tee-sys
-
+python -m pytest tests/sparse/MDSA/adaptation/test_spike_once_adaptation.py --capture=tee-sys
 ```
-
-This generates the graphs from the default experiment configurations, and
-outputs the graphs in json format to the `results/` directory, and outputs
-the graph behaviour to: `latex/Images/graphs/`.
 
 ## Test Coverage
 
@@ -227,20 +230,29 @@ cp snn_rebuild.sh ~/.local/bin/snnrb
 chmod +x ~/bin/snnrb
 ```
 
-Then you can rebuild and locally re-install all 5 repositories with the command:
+### Updating
+
+Build the pip package with:
 
 ```bash
-snnrb
+pip install --upgrade pip setuptools wheel
+pip install twine
 ```
 
-If you want to quickly test if your changes work, you can go into the root dir
-of this project and run:
+Install the pip package locally with:
 
 ```bash
+rm -r dist
+rm -r build
+python3 setup.py sdist bdist_wheel
 pip install -e .
 ```
 
-that installs the latest changes into the pip package locally (into your conda
-environment).
+Upload the pip package to the world with:
 
-<!-- Un-wrapped URL's (Badges and Hyperlinks) -->
+```bash
+rm -r dist
+rm -r build
+python3 setup.py sdist bdist_wheel
+python3 -m twine upload dist/\*
+```

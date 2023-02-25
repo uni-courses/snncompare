@@ -49,7 +49,7 @@ class Supported_run_settings:
         invalid type.
         """
         if not isinstance(some_dict[key], some_type):
-            raise Exception(
+            raise TypeError(
                 f"Error, the dictionary:{some_dict} did not"
                 + f"contain a key:{key} of type:{type}"
             )

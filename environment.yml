@@ -41,6 +41,8 @@ dependencies:
   - codespell
 # Verify percentage of code that has at least 1 test.
   - coverage
+# Show graph plots live in browser.
+  - dash
 # Auto formats the Python documentation written in the code.
   - docformatter
 # Auto generate docstrings.

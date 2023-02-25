@@ -88,9 +88,9 @@ def output_stage_files_3_and_4(
     elif results_nx_graphs["run_config"].simulator == "lava":
         # TODO: terminate simulation.
         # TODO: write simulated lava graphs to pickle.
-        raise Exception("Error, lava export method not yet implemented.")
+        raise ValueError("Error, lava export method not yet implemented.")
     else:
-        raise Exception("Simulator not supported.")
+        raise ValueError("Simulator not supported.")
     # TODO: write merged dict to file.
 
     # TODO: append tags to output file(s).

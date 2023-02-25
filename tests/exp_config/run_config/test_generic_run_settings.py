@@ -108,7 +108,7 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
     if not isinstance(actual_type, type) and not isinstance(
         expected_type, type
     ):
-        raise Exception(
+        raise TypeError(
             "Error this method requires two types. You gave:"
             + f"{actual_type},{expected_type}"
         )

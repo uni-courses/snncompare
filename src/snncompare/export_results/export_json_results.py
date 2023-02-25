@@ -18,7 +18,9 @@ def write_dict_to_json(*, output_filepath: str, some_dict: Dict) -> None:
 
     # Verify the file exists.
     if not Path(output_filepath).is_file():
-        raise Exception(f"Error, filepath:{output_filepath} was not created.")
+        raise FileExistsError(
+            f"Error, filepath:{output_filepath} was not created."
+        )
 
     # TODO: verify the file content is valid.
     if "graph" in some_dict.keys():

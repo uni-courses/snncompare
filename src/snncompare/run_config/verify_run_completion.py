@@ -24,7 +24,7 @@ def assert_stage_is_completed(
         run_config=run_config,
         stage_index=stage_index,
     ):
-        raise Exception(f"Error, stage {stage_index} was not completed.")
+        raise ValueError(f"Error, stage {stage_index} was not completed.")
 
 
 @typechecked
@@ -47,4 +47,4 @@ def assert_stage_3_is_completed(
         results_nx_graphs=results_nx_graphs,
         run_config=run_config,
     ):
-        raise Exception("Error, stage 3 images were not outputted.")
+        raise ValueError("Error, stage 3 images were not outputted.")

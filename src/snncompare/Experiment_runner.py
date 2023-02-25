@@ -127,7 +127,7 @@ class Experiment_runner:
         for i, run_config in enumerate(run_configs):
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
-            results_nx_graphs = self.__perform_run_stage_1(
+            results_nx_graphs = self.perform_run_stage_1(
                 exp_config=exp_config,
                 output_config=output_config,
                 plot_config=plot_config,
@@ -158,7 +158,7 @@ class Experiment_runner:
 
     @customshowme.time
     @typechecked
-    def __perform_run_stage_1(
+    def perform_run_stage_1(
         self,
         exp_config: Exp_config,
         output_config: Output_config,

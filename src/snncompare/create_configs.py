@@ -40,14 +40,14 @@ def generate_run_configs(
             ):
                 found_run_config = True
                 if gen_run_config.unique_id != specific_run_config.unique_id:
-                    raise Exception(
+                    raise ValueError(
                         "Error, equal dict but unequal unique_ids."
                     )
                 break
 
         if not found_run_config:
             pprint(run_configs)
-            raise Exception(
+            raise ValueError(
                 f"The expected run config:{specific_run_config} was not"
                 "found."
             )

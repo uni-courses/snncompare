@@ -80,7 +80,7 @@ def expected_graphs_are_in_dict(
         )
     else:
         # TODO: implement.
-        raise Exception(f"Stage {stage} not yet implemented.")
+        raise NotImplementedError(f"Stage {stage} not yet implemented.")
 
     for expected_graph_name in expected_graphs:
         if expected_graph_name not in graphs:
@@ -100,4 +100,4 @@ def assert_graphs_are_in_dict(
     if not expected_graphs_are_in_dict(
         run_config=run_config, graphs=graphs, stage=stage
     ):
-        raise Exception(f"Error, graph is missing:{graphs},stage:{stage}")
+        raise ValueError(f"Error, graph is missing:{graphs},stage:{stage}")

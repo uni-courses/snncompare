@@ -61,7 +61,7 @@ def run_config_to_filename(
     filename = filename.replace("unique_", "")
 
     if len(filename) > 256:
-        raise Exception(f"Filename={filename} is too long:{len(filename)}")
+        raise NameError(f"Filename={filename} is too long:{len(filename)}")
     return filename
 
 
@@ -81,7 +81,7 @@ def get_expected_image_paths_stage_3(  # type:ignore[misc]
     filename: str = run_config_to_filename(run_config_dict=run_config.__dict__)
 
     if "alg_props" not in input_graph.graph.keys():
-        raise Exception("Error, algo_props is not set.")
+        raise KeyError("Error, algo_props is not set.")
 
     # TODO: move this into hardcoded setting.
     image_dir = "latex/Images/graphs/"
@@ -110,7 +110,7 @@ def get_unique_id(  # type:ignore[misc]
     :param exp_config: Exp_config:
     """
     if "unique_id" in some_config.__dict__.keys():
-        raise Exception(
+        raise KeyError(
             f"Error, the exp_config:{some_config}\n"
             + "already contains a unique identifier."
         )

@@ -41,7 +41,7 @@ def verify_input_graph_path(*, graph_path: str) -> None:
 
     # Assert graph file contains a valid networkx graph.
     if not isinstance(nx_graph, (nx.Graph, nx.DiGraph)):
-        raise Exception(
+        raise TypeError(
             "Error, the loaded graph is not of type nx.DiGraph. "
             + f"Instead, it is of type:{type(nx_graph)}"
         )

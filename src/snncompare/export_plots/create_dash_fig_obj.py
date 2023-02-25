@@ -81,12 +81,12 @@ def create_svg_with_dash(
             hover_info,
         ),
         hoverinfo="text",
-        marker=dict(
-            size=plot_config.node_size,
-            color=list(graph.nodes[n]["colour"] for n in graph.nodes())
+        marker={
+            "size": plot_config.node_size,
+            "color": list(graph.nodes[n]["colour"] for n in graph.nodes())
             if plot_config.show_node_colours
             else None,
-        ),
+        },
         textfont={"size": plot_config.neuron_text_size},
     )
 

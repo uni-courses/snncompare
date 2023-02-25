@@ -31,7 +31,7 @@ def verify_run_config(
     :param supp_exp_config:
     """
     if not isinstance(run_config, Run_config):
-        raise Exception(
+        raise TypeError(
             "Error, the run_config is of type:"
             + f"{type(run_config)}, yet it was expected to be of"
             + " type dict."
@@ -61,7 +61,7 @@ def verify_run_config_dict_is_complete(
             "adaptation",
             "radiation",
         ]:
-            raise Exception(
+            raise KeyError(
                 f"Error:{expected_key} is not in the configuration"
                 + f" settings:{run_config.__dict__.keys()}"
             )

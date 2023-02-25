@@ -65,6 +65,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         self.experiment_runner = Experiment_runner(
             exp_config=self.exp_config,
             output_config=output_config,
+            reverse=False,
             specific_run_config=None,
             perform_run=True,
         )

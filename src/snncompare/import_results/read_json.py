@@ -32,14 +32,14 @@ def load_results_from_json(
 
     # Verify the dict contains a key for the graph dict.
     if "graphs_dict" not in results_loaded_graphs:
-        raise Exception(
+        raise KeyError(
             "Error, the graphs dict key was not in the stage_1_Dict:"
             + f"{results_loaded_graphs}"
         )
 
     # Verify the graphs dict is of type dict.
     if results_loaded_graphs["graphs_dict"] == {}:
-        raise Exception("Error, the graphs dict was an empty dict.")
+        raise ValueError("Error, the graphs dict was an empty dict.")
 
     for graph_name in results_loaded_graphs["graphs_dict"].keys():
         results_loaded_graphs["graphs_dict"][
@@ -87,7 +87,7 @@ def load_json_file_into_dict(
     any other object than some results loader.
     Loads a json file into dict from a filepath."""
     if not Path(json_filepath).is_file():
-        raise Exception("Error, filepath does not exist:{filepath}")
+        raise FileNotFoundError("Error, filepath does not exist:{filepath}")
     # TODO: verify extension.
     # TODO: verify json formatting is valid.
     with open(json_filepath, encoding="utf-8") as json_file:

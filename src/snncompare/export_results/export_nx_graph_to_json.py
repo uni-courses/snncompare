@@ -24,7 +24,7 @@ def digraph_to_json(*, G: nx.Graph) -> Dict:
             )
         return some_json_graph
         # return json_graph.dumps(G)
-    raise Exception("Error, incoming graph was None.")
+    raise ValueError("Error, incoming graph was None.")
 
 
 @typechecked
@@ -57,14 +57,14 @@ def convert_stage_1_digraphs_to_json(*, graphs: Dict) -> Dict:
     graphs_dict_stage_1 = {}
     for graph_name, graph_container in graphs.items():
         if not isinstance(graph_container, (nx.DiGraph, nx.Graph)):
-            raise Exception(
+            raise TypeError(
                 "stage_index=1, Error, for graph:"
                 + f"{graph_name}, the graph is not a"
                 + f"nx.DiGraph(). Instead, it is:{type(graph_container)}"
             )
         graphs_dict_stage_1[graph_name] = digraph_to_json(G=graph_container)
     if not graphs_dict_stage_1:  # checks if dict not empty like: {}
-        raise Exception(
+        raise ValueError(
             f"Error, len(graphs)={len(graphs)} stage=1, graphs_dict_stage_1"
             + " is empty."
         )
@@ -83,9 +83,9 @@ def convert_stage_2_digraphs_to_json(
                 G=graph_container
             )
         else:
-            raise Exception(f"Error, unsupported type:{type(graph_container)}")
+            raise TypeError(f"Error, unsupported type:{type(graph_container)}")
     if not graphs_dict_stage_2:  # checks if dict not empty like: {}
-        raise Exception(
+        raise ValueError(
             f"Error, len(graphs)={len(graphs)} stage=2, graphs_dict_stage_2"
             + " is empty."
         )

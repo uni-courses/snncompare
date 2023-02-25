@@ -42,7 +42,7 @@ def load_results_stage_1(
         pprint(run_config.__dict__)
         print("Loaded run_config:")
         pprint(stage_1_dict["run_config"].__dict__)
-        raise Exception("Error, difference in run configs, see above.")
+        raise ValueError("Error, difference in run configs, see above.")
 
     # Verify the graph names are as expected for the graph name.
     assert_graphs_are_in_dict(
