@@ -21,7 +21,6 @@ from typeguard import typechecked
 from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
-from ..export_results.Output_stage_34 import output_stage_files_3_and_4
 from ..helper import add_stage_completion_to_graph, get_expected_stages
 from ..import_results.check_completed_stages import (
     nx_graphs_have_completed_stage,
@@ -88,9 +87,8 @@ def perform_mdsa_results_computation_if_needed(
 
 
 @typechecked
-def export_results_to_json(
+def compute_results(
     *,
-    output_config: Output_config,
     results_nx_graphs: Dict,
     stage_index: int,
 ) -> None:
@@ -150,12 +148,6 @@ def export_results_to_json(
                 stage_index=stage_index,
             ),
         )
-
-    output_stage_files_3_and_4(
-        output_config=output_config,
-        results_nx_graphs=results_nx_graphs,
-        stage_index=4,
-    )
 
 
 @typechecked

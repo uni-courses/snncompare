@@ -61,6 +61,7 @@ def output_stage_files_3_and_4(
             if "svg" in output_config.export_types:
                 create_svg_plot(
                     run_config_filename=run_config_filename,
+                    graph_names=["rad_adapted_snn_graph"],
                     graphs=results_nx_graphs["graphs_dict"],
                     output_config=output_config,
                 )

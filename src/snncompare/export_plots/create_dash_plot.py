@@ -27,9 +27,11 @@ from snncompare.optional_config.Output_config import Output_config
 # Determine which graph(s) the user would like to see.
 # If no specific preference specified, show all 4.
 # pylint: disable=R0903
+# pylint: disable=R0914
 @typechecked
 def create_svg_plot(
     run_config_filename: str,
+    graph_names: List[str],
     graphs: Dict[str, Union[nx.Graph, nx.DiGraph]],
     output_config: Output_config,
     # single_timestep: Optional[int] = 5,
@@ -41,7 +43,7 @@ def create_svg_plot(
     app = dash.Dash(__name__)
     # pylint: disable=R1702
     for graph_name, snn_graph in graphs.items():
-        if graph_name != "input_graph":
+        if graph_name in graph_names:
             plotted_graph: nx.DiGraph = nx.DiGraph()
 
             dash_figures: List[go.Figure] = []

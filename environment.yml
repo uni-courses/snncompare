@@ -88,6 +88,8 @@ dependencies:
     - imageio
     # Support parsing Json files.
     - jsons
+    # Visualise dash plots.
+    - kaleido
     # Seems to be an autoformatter like black, but installed using npm instead of pip.
     - prettier
     # Tag files using Python.

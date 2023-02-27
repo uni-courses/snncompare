@@ -41,10 +41,7 @@ from .export_results.Output_stage_34 import output_stage_files_3_and_4
 from .graph_generation.stage_1_create_graphs import get_used_graphs
 from .import_results.check_completed_stages import has_outputted_stage_jsons
 from .import_results.stage_1_load_input_graphs import load_results_stage_1
-from .process_results.process_results import (
-    export_results_to_json,
-    set_results,
-)
+from .process_results.process_results import compute_results, set_results
 from .run_config.verify_run_completion import (
     assert_stage_3_is_completed,
     assert_stage_is_completed,
@@ -348,7 +345,12 @@ class Experiment_runner:
             run_config=run_config,
             stage_2_graphs=results_nx_graphs["graphs_dict"],
         ):
-            export_results_to_json(
+            compute_results(
+                results_nx_graphs=results_nx_graphs,
+                stage_index=4,
+            )
+
+            output_stage_files_3_and_4(
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,
                 stage_index=4,
