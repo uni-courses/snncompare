@@ -143,6 +143,8 @@ def show_dash_figures(
                     temporal_node_colours[:][t]
                 )
 
+        # TODO: update node hovertext.
+
         def update_non_recursive_edge_colour(
             dash_figure: go.Figure,
             edge: Tuple[str, str],

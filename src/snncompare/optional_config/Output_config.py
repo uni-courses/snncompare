@@ -1,6 +1,7 @@
 """"Stores the run config Dict type."""
 from __future__ import annotations
 
+from snnbackends.networkx.LIF_neuron import LIF_neuron, Synapse
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Supported_experiment_settings
@@ -21,6 +22,7 @@ class Output_config:
         zoom: Zoom,
         output_json_stages: list[int],
         extra_storing_config: Extra_storing_config,
+        hover_info: Hover_info,
     ):
         """Stores run configuration settings for the exp_configriment."""
         self.verify_int_list_values(
@@ -40,6 +42,8 @@ class Output_config:
 
         self.verify_export_types(export_types)
         self.export_types: list[str] = export_types
+
+        self.hover_info: Hover_info = hover_info
 
         self.zoom: Zoom = zoom
         if self.zoom.create_zoomed_image and "png" not in self.export_types:
@@ -176,3 +180,119 @@ class Extra_storing_config:
             raise NotImplementedError(
                 "Error, count_spikes not yet implemented."
             )
+
+
+class Hover_info:
+    """Specify what information is shown in dash when your mouse hovers over a
+    node or synapse."""
+
+    # pylint: disable=R0913
+    @typechecked
+    def __init__(
+        self,
+        incoming_synapses: bool,
+        neuron_models: list[str],
+        neuron_properties: list[str],
+        node_names: bool,
+        outgoing_synapses: bool,
+        synaptic_models: list[str],
+        synapse_properties: list[str],
+    ):
+        self.incoming_synapses: bool = incoming_synapses
+        self.node_names: bool = node_names
+        self.outgoing_synapses: bool = outgoing_synapses
+
+        self.neuron_properties: list[str] = neuron_properties
+        self.synapse_properties: list[str] = synapse_properties
+
+        self.verify_requested_neuron_properties_exist(
+            neuron_models=neuron_models,
+            neuron_properties=neuron_properties,
+        )
+        self.verify_requested_synapse_properties_exist(
+            synaptic_models=synaptic_models,
+            synapse_properties=synapse_properties,
+        )
+
+    @typechecked
+    def verify_requested_neuron_properties_exist(
+        self,
+        neuron_models: list[str],
+        neuron_properties: list[str],
+    ) -> None:
+        """Verifies for each neuron model that the requested properties can be
+        printed."""
+        for neuron_model in neuron_models:
+            if neuron_model == "LIF":
+                sample_neuron: LIF_neuron = LIF_neuron(
+                    name="dummy",
+                    bias=0.1,
+                    du=0.1,
+                    dv=0.1,
+                    vth=0.1,
+                )
+            else:
+                raise NotImplementedError(
+                    f"Error, showing neuron properties of type:{neuron_model} "
+                    + "is not yet supported."
+                )
+            self.verify_neuron_has_properties_as_attributes(
+                neuron_properties=neuron_properties,
+                sample_neuron=sample_neuron,
+            )
+
+    @typechecked
+    def verify_requested_synapse_properties_exist(
+        self,
+        synaptic_models: list[str],
+        synapse_properties: list[str],
+    ) -> None:
+        """Verifies for each synaptic model that the requested properties can
+        be printed."""
+        for synaptic_model in synaptic_models:
+            if synaptic_model == "LIF":
+                sample_synapse: LIF_neuron.Synapse = Synapse(
+                    weight=1,
+                    delay=1,
+                    change_per_t=1,
+                )
+            else:
+                raise NotImplementedError(
+                    "Error, showing synapse properties of type: "
+                    + f"{synaptic_model} is not yet supported."
+                )
+
+            self.verify_synaptse_has_properties_as_attributes(
+                synapse_properties=synapse_properties,
+                sample_synapse=sample_synapse,
+            )
+
+    @typechecked
+    def verify_neuron_has_properties_as_attributes(
+        self,
+        neuron_properties: list[str],
+        sample_neuron: LIF_neuron,
+    ) -> None:
+        """Throws an error if the user asks to show neuron properties in dash
+        that are not in the neuron attributes."""
+        for neuron_property in neuron_properties:
+            if neuron_property not in sample_neuron.__dict__.keys():
+                raise KeyError(
+                    f"Error, {neuron_property} does not exist in neuron "
+                    f"attributes:{sample_neuron.__dict__.keys()}"
+                )
+
+    @typechecked
+    def verify_synaptse_has_properties_as_attributes(
+        self,
+        synapse_properties: list[str],
+        sample_synapse: Synapse,
+    ) -> None:
+        """Throws an error if the user asks to show synapse properties in dash
+        that are not in the synapse attributes."""
+        for synapse_property in synapse_properties:
+            if synapse_property not in sample_synapse.__dict__.keys():
+                raise KeyError(
+                    f"Error, {synapse_property} does not exist in synapse "
+                    f"attributes:{sample_synapse.__dict__.keys()}"
+                )

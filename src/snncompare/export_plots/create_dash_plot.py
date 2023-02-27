@@ -70,7 +70,9 @@ def create_svg_plot(
                     output_config.extra_storing_config.show_images
                     and single_timestep is None
                 ):
+                    print(f"Creating:graph_name={graph_name}")
                     dash_figure: go.Figure = create_dash_figure(
+                        output_config=output_config,
                         plot_config=plot_config,
                         plotted_graph=plotted_graph,
                         snn_graph=snn_graph,
@@ -110,6 +112,7 @@ def create_svg_plot(
 
 
 def create_dash_figure(
+    output_config: Output_config,
     plot_config: Plot_config,
     plotted_graph: nx.DiGraph,
     snn_graph: nx.DiGraph,
@@ -117,7 +120,10 @@ def create_dash_figure(
 ) -> go.Figure:
     """Creates and stores a dash figure object as .svg."""
     store_plot_params_in_graph(
-        plotted_graph=plotted_graph, snn_graph=snn_graph, t=t
+        hover_info=output_config.hover_info,
+        plotted_graph=plotted_graph,
+        snn_graph=snn_graph,
+        t=t,
     )
 
     # TODO: determine whether identified_annotations are needed lateron.

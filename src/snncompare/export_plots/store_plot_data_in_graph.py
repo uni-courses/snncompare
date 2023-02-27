@@ -7,6 +7,7 @@ from typeguard import typechecked
 
 from snncompare.export_plots.get_graph_colours import get_nx_node_colours
 from snncompare.export_plots.get_xy_ticks import store_xy_ticks
+from snncompare.optional_config.Output_config import Hover_info
 
 
 @typechecked
@@ -28,7 +29,10 @@ def get_neurons_in_graph(
 # pylint: disable=R0912
 @typechecked
 def store_plot_params_in_graph(
-    plotted_graph: nx.DiGraph, snn_graph: nx.DiGraph, t: int
+    hover_info: Hover_info,
+    plotted_graph: nx.DiGraph,
+    snn_graph: nx.DiGraph,
+    t: int,
 ) -> None:
     """Stores the graph plot parameters such as colours, labels and x/y-ticks
     into the networkx graph."""
@@ -45,7 +49,13 @@ def store_plot_params_in_graph(
     store_xy_ticks(lif_neurons=lif_neurons, plotted_graph=plotted_graph)
 
     store_node_position(plotted_graph=plotted_graph, snn_graph=snn_graph, t=t)
-    store_node_labels(lif_neurons=lif_neurons, plotted_graph=plotted_graph)
+    store_node_labels(
+        hover_info=hover_info,
+        lif_neurons=lif_neurons,
+        plotted_graph=plotted_graph,
+        snn_graph=snn_graph,
+        t=t,
+    )
     store_node_colours_and_opacity(
         plotted_graph=plotted_graph, snn_graph=snn_graph, t=t
     )
@@ -119,15 +129,101 @@ def store_edge_colour_and_opacity(
 # pylint: disable=R0912
 @typechecked
 def store_node_labels(
+    hover_info: Hover_info,
     lif_neurons: List[LIF_neuron],
     plotted_graph: nx.DiGraph,
+    snn_graph: nx.DiGraph,
+    t: int,
 ) -> None:
     """stores the node labels into the plotted graph."""
+    used_node_names: List[str] = []
     for neuron in lif_neurons:
         if "connector" not in neuron.full_name:
-            plotted_graph.nodes[neuron.full_name][
-                "label"
-            ] = f"V:{neuron.u.get()}/{neuron.vth.get()}"
+            # Assert no duplicate node_names exist.
+            if neuron.full_name in used_node_names:
+                raise ValueError(
+                    f"Error, duplicate node_names:{neuron.full_name} not "
+                    + " supported."
+                )
+            used_node_names.append(neuron.full_name)
+
+    hovertext: Dict[str, str] = {
+        node_name: "" for node_name in used_node_names
+    }
+
+    if hover_info.node_names:
+        for node_name in used_node_names:
+            hovertext[node_name] = hovertext[node_name] + node_name
+    if hover_info.neuron_properties:
+        for node_name in used_node_names:
+            hovertext[node_name] = hovertext[
+                node_name
+            ] + get_desired_neuron_properties(
+                snn_graph=snn_graph,
+                neuron_properties=hover_info.neuron_properties,
+                node_name=node_name,
+                t=t,
+            )
+    if hover_info.incoming_synapses:
+        for node_name in used_node_names:
+            hovertext[node_name] = hovertext["node_name"] + get_edges_of_node(
+                snn_graph=snn_graph, node_name=node_name, outgoing=False
+            )
+    if hover_info.outgoing_synapses:
+        for node_name in used_node_names:
+            hovertext[node_name] = hovertext[node_name] + get_edges_of_node(
+                snn_graph=snn_graph, node_name=node_name, outgoing=True
+            )
+
+    for neuron in lif_neurons:
+        if neuron.full_name in used_node_names:
+            plotted_graph.nodes[neuron.full_name]["label"] = hovertext[
+                neuron.full_name
+            ]
+        # else:
+        # plotted_graph.nodes[neuron.full_name]["label"] = ""
+
+
+@typechecked
+def get_desired_neuron_properties(
+    snn_graph: nx.DiGraph,
+    neuron_properties: List[str],
+    node_name: str,
+    t: int,
+) -> str:
+    """Returns a list with one string per node."""
+    properties: List[str] = ["<br />"]
+    for neuron_property_name in neuron_properties:
+        neuron_property_obj = getattr(
+            snn_graph.nodes[node_name]["nx_lif"][t], neuron_property_name
+        )
+        neuron_property = getattr(neuron_property_obj, neuron_property_name)
+
+        properties.append(f"{neuron_property_name}:{neuron_property}<br />")
+    return "".join(properties)
+
+
+@typechecked
+def get_edges_of_node(
+    snn_graph: nx.DiGraph,
+    node_name: str,
+    outgoing: bool,
+) -> str:
+    """Returns (the other) nodenames of the edges of a node."""
+    node_edges: List[str] = ["<br />"]
+    if outgoing:
+        node_edges.append("outgoing:<br />")
+    else:
+        node_edges.append("incoming:<br />")
+
+    for edge in snn_graph.edges():
+        if edge[0] == node_name and outgoing:
+            node_edges.append(f"{edge[1]}<br /> ")
+        elif edge[1] == node_name and not outgoing:
+            node_edges.append(f"{edge[0]}<br /> ")
+
+    node_edge_str = "".join(node_edges)
+    return node_edge_str
 
 
 # pylint: disable=R0912

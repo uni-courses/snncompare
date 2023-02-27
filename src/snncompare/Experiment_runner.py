@@ -33,7 +33,11 @@ from snncompare.export_results.analysis.create_performance_plots import (
     store_pickle,
 )
 from snncompare.helper import dicts_are_equal
-from snncompare.optional_config.Output_config import Output_config, Zoom
+from snncompare.optional_config.Output_config import (
+    Hover_info,
+    Output_config,
+    Zoom,
+)
 from snncompare.run_config.Run_config import Run_config
 
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
@@ -407,6 +411,15 @@ class Experiment_runner:
         boxplot_output_config = Output_config(
             recreate_stages=[],
             export_types=[],
+            hover_info=Hover_info(
+                node_names=True,
+                outgoing_synapses=True,
+                incoming_synapses=False,
+                neuron_properties=["v", "vth"],
+                synapse_properties=["weight"],
+                neuron_models=exp_config.neuron_models,
+                synaptic_models=exp_config.synaptic_models,
+            ),
             zoom=Zoom(
                 create_zoomed_image=False,
                 left_right=None,
