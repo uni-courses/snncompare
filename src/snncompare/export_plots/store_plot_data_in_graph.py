@@ -83,6 +83,65 @@ def add_nodes_and_edges(
 
 # pylint: disable=R0912
 @typechecked
+def store_node_labels(
+    hover_info: Hover_info,
+    lif_neurons: List[LIF_neuron],
+    plotted_graph: nx.DiGraph,
+    snn_graph: nx.DiGraph,
+    t: int,
+) -> None:
+    """stores the node labels into the plotted graph."""
+
+    # TODO: move into separate function.
+    used_node_names: List[str] = []
+    for neuron in lif_neurons:
+        if "connector" not in neuron.full_name:
+            # Assert no duplicate node_names exist.
+            if neuron.full_name in used_node_names:
+                raise ValueError(
+                    f"Error, duplicate node_names:{neuron.full_name} not "
+                    + " supported."
+                )
+            used_node_names.append(neuron.full_name)
+
+    hovertext: Dict[str, str] = {
+        node_name: "" for node_name in used_node_names
+    }
+    for node_name in used_node_names:
+        if (
+            "temporal_node_hovertext"
+            not in plotted_graph.nodes[node_name].keys()
+        ):
+            plotted_graph.nodes[node_name]["temporal_node_hovertext"] = []
+
+        if hover_info.node_names:
+            hovertext[node_name] = hovertext[node_name] + node_name
+        if hover_info.neuron_properties:
+            hovertext[node_name] = hovertext[
+                node_name
+            ] + get_desired_neuron_properties(
+                snn_graph=snn_graph,
+                neuron_properties=hover_info.neuron_properties,
+                node_name=node_name,
+                t=t,
+            )
+        if hover_info.incoming_synapses:
+            hovertext[node_name] = hovertext["node_name"] + get_edges_of_node(
+                snn_graph=snn_graph, node_name=node_name, outgoing=False
+            )
+        if hover_info.outgoing_synapses:
+            hovertext[node_name] = hovertext[node_name] + get_edges_of_node(
+                snn_graph=snn_graph, node_name=node_name, outgoing=True
+            )
+
+        # plotted_graph.nodes[node_name]["label"] = hovertext[node_name]
+        plotted_graph.nodes[node_name]["temporal_node_hovertext"].append(
+            hovertext[node_name]
+        )
+
+
+# pylint: disable=R0912
+@typechecked
 def store_node_colours_and_opacity(
     plotted_graph: nx.DiGraph, snn_graph: nx.DiGraph, t: int
 ) -> None:
@@ -126,64 +185,6 @@ def store_edge_colour_and_opacity(
             ]["opacity"]
 
 
-# pylint: disable=R0912
-@typechecked
-def store_node_labels(
-    hover_info: Hover_info,
-    lif_neurons: List[LIF_neuron],
-    plotted_graph: nx.DiGraph,
-    snn_graph: nx.DiGraph,
-    t: int,
-) -> None:
-    """stores the node labels into the plotted graph."""
-    used_node_names: List[str] = []
-    for neuron in lif_neurons:
-        if "connector" not in neuron.full_name:
-            # Assert no duplicate node_names exist.
-            if neuron.full_name in used_node_names:
-                raise ValueError(
-                    f"Error, duplicate node_names:{neuron.full_name} not "
-                    + " supported."
-                )
-            used_node_names.append(neuron.full_name)
-
-    hovertext: Dict[str, str] = {
-        node_name: "" for node_name in used_node_names
-    }
-
-    if hover_info.node_names:
-        for node_name in used_node_names:
-            hovertext[node_name] = hovertext[node_name] + node_name
-    if hover_info.neuron_properties:
-        for node_name in used_node_names:
-            hovertext[node_name] = hovertext[
-                node_name
-            ] + get_desired_neuron_properties(
-                snn_graph=snn_graph,
-                neuron_properties=hover_info.neuron_properties,
-                node_name=node_name,
-                t=t,
-            )
-    if hover_info.incoming_synapses:
-        for node_name in used_node_names:
-            hovertext[node_name] = hovertext["node_name"] + get_edges_of_node(
-                snn_graph=snn_graph, node_name=node_name, outgoing=False
-            )
-    if hover_info.outgoing_synapses:
-        for node_name in used_node_names:
-            hovertext[node_name] = hovertext[node_name] + get_edges_of_node(
-                snn_graph=snn_graph, node_name=node_name, outgoing=True
-            )
-
-    for neuron in lif_neurons:
-        if neuron.full_name in used_node_names:
-            plotted_graph.nodes[neuron.full_name]["label"] = hovertext[
-                neuron.full_name
-            ]
-        # else:
-        # plotted_graph.nodes[neuron.full_name]["label"] = ""
-
-
 @typechecked
 def get_desired_neuron_properties(
     snn_graph: nx.DiGraph,
@@ -223,6 +224,7 @@ def get_edges_of_node(
             node_edges.append(f"{edge[0]}<br /> ")
 
     node_edge_str = "".join(node_edges)
+
     return node_edge_str
 
 

@@ -107,7 +107,7 @@ def get_default_plot_config() -> Plot_config:
         show_x_ticks=False,
         show_y_ticks=False,
         update_node_colours=False,
-        update_node_labels=False,
+        update_node_labels=True,
         update_node_opacity=False,
         update_edge_colours=True,
         update_edge_labels=False,

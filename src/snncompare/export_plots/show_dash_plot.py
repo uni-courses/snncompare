@@ -121,6 +121,10 @@ def show_dash_figures(
         plotted_graph.nodes[n]["temporal_colour"]
         for n in plotted_graph.nodes()
     )
+    temporal_node_hovertext = list(
+        plotted_graph.nodes[n]["temporal_node_hovertext"]
+        for n in plotted_graph.nodes()
+    )
     temporal_node_opacity = list(
         plotted_graph.nodes[n]["temporal_opacity"]
         for n in plotted_graph.nodes()
@@ -144,6 +148,16 @@ def show_dash_figures(
                 )
 
         # TODO: update node hovertext.
+        def update_node_hovertext(
+            dash_figure: go.Figure,
+            t: int,
+            temporal_node_hovertext: List,
+        ) -> None:
+            """Updates the colour of the non-recursive edges."""
+            if plot_config.update_node_labels:
+                dash_figure.data[0].update(
+                    hovertext=temporal_node_hovertext[:][t]
+                )
 
         def update_non_recursive_edge_colour(
             dash_figure: go.Figure,
@@ -225,11 +239,15 @@ def show_dash_figures(
                         temporal_node_opacity=temporal_node_opacity,
                     )
 
-        # Update the node colour.
         update_node_colour(
             dash_figure=dash_figure,
             t=t,
             temporal_node_colours=temporal_node_colours,
+        )
+        update_node_hovertext(
+            dash_figure=dash_figure,
+            t=t,
+            temporal_node_hovertext=temporal_node_hovertext,
         )
 
         # Update the recursive edge node colour.

@@ -142,10 +142,10 @@ def create_svg_with_dash(
 def get_hover_text(
     graph: nx.DiGraph,
 ) -> Union[None, List[str]]:
-    """Returns the node hover text, if any."""
+    """Returns the node hover text for t=0, if any."""
     labels: List[str] = []
     for node_name in graph.nodes():
-        labels.append(graph.nodes[node_name]["label"])
+        labels.append(graph.nodes[node_name]["temporal_node_hovertext"][0])
     return labels
 
 

@@ -51,13 +51,13 @@ def create_svg_plot(
             print("")
 
             sim_duration = snn_graph.graph["sim_duration"]
-            print(f"sim_duration={sim_duration}")
+            print(f"Creating:graph_name={graph_name}")
             for t in range(
                 0,
                 sim_duration,
                 # 1,
             ):
-                print(f"t={t}")
+                print(f"t={t}/{sim_duration}")
                 # if t == 5:
                 # for edge in snn_graph.edges():
                 # if "selector" in edge[0] or "selector" in edge[1]:
@@ -70,7 +70,6 @@ def create_svg_plot(
                     output_config.extra_storing_config.show_images
                     and single_timestep is None
                 ):
-                    print(f"Creating:graph_name={graph_name}")
                     dash_figure: go.Figure = create_dash_figure(
                         output_config=output_config,
                         plot_config=plot_config,
