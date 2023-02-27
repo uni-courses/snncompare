@@ -128,7 +128,7 @@ def store_node_labels(
                 t=t,
             )
         if hover_info.incoming_synapses:
-            hovertext[node_name] = hovertext["node_name"] + get_edges_of_node(
+            hovertext[node_name] = hovertext[node_name] + get_edges_of_node(
                 snn_graph=snn_graph, node_name=node_name, outgoing=False
             )
         if hover_info.outgoing_synapses:

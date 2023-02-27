@@ -32,6 +32,7 @@ class Plot_config:
         show_edge_opacity: bool,
         show_x_ticks: bool,
         show_y_ticks: bool,
+        redundant_curve_factor: float,
         update_node_colours: bool,
         update_node_labels: bool,
         update_node_opacity: bool,
@@ -71,6 +72,11 @@ class Plot_config:
         self.edge_label_size: float = edge_label_size_factor * self.edge_width
         self.x_tick_size: float = x_tick_size_factor
         self.y_tick_size: float = y_tick_size_factor
+
+        # How far the redundant neuron position curves as a function of
+        # redundancy (to prevent edge overlap if all redundant neurons in
+        # straight line).
+        self.redundant_curve_factor = redundant_curve_factor
 
         self.show_nodes: bool = show_nodes
         self.show_node_colours: bool = show_node_colours
@@ -114,6 +120,7 @@ def get_default_plot_config() -> Plot_config:
         update_edge_opacity=True,
         dx_redundant_factor=0.05,
         dy_redundant_factor=0.05,
+        redundant_curve_factor=0.2,
         x_node_spacer_factor=0.15,
         y_node_spacer_factor=0.15,
         neuron_text_size_factor=0.8,

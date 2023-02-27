@@ -41,13 +41,11 @@ def sim_graphs(
                     "expected type after conversion, it was of type:"
                     f"{type(snn_graph)}"
                 )
-            print(f"graph_name={graph_name}")
             run_snn_on_networkx(
                 run_config=run_config,
                 snn_graph=snn_graph,
                 sim_duration=stage_1_graphs[graph_name].graph["sim_duration"],
             )
-            print("")
         add_stage_completion_to_graph(
             input_graph=stage_1_graphs[graph_name], stage_index=2
         )
