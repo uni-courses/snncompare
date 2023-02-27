@@ -200,7 +200,15 @@ def get_desired_neuron_properties(
         neuron_property_obj = getattr(
             snn_graph.nodes[node_name]["nx_lif"][t], neuron_property_name
         )
-        neuron_property = getattr(neuron_property_obj, neuron_property_name)
+
+        # Boilerplate because LIF_neuron attributes are objects instead of
+        # values.
+        if not isinstance(neuron_property_obj, (float, int)):
+            neuron_property = getattr(
+                neuron_property_obj, neuron_property_name
+            )
+        else:
+            neuron_property = neuron_property_obj
 
         properties.append(f"{neuron_property_name}:{neuron_property}<br />")
     return "".join(properties)
