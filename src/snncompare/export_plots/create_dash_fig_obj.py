@@ -24,8 +24,6 @@ class NamedAnnotation:
     ):
         self.annotation = Annotation(**kwargs)
         self.edge: Union[Tuple[str, str], None] = edge
-        # if edge is not None:
-        # print(f'edge={self.edge}')
         self.node_name: Union[str, None] = node_name
         self.category: str = category
         self.supported_categories: List[str] = [
@@ -75,8 +73,9 @@ def create_svg_with_dash(
         if plot_config.show_node_labels
         else None,
         mode="markers+text",
-        hovertext=get_hover_text(
-            graph=graph,
+        hovertext=list(
+            f'{graph.nodes[n]["temporal_node_hovertext"][0]}'
+            for i, n in enumerate(graph.nodes())
         ),
         hoverinfo="text",
         marker={

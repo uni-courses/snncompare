@@ -20,8 +20,8 @@ def get_neurons_in_graph(
     TODO: support different neuron types.
     """
     neurons: List[LIF_neuron] = []
-    for node in snn_graph.nodes():
-        nx_lifs: Dict[str, List[LIF_neuron]] = snn_graph.nodes[node]
+    for node_name in snn_graph.nodes():
+        nx_lifs: Dict[str, List[LIF_neuron]] = snn_graph.nodes[node_name]
         neurons.append(nx_lifs["nx_lif"][t])
     return neurons
 
@@ -108,12 +108,14 @@ def store_node_labels(
         node_name: "" for node_name in used_node_names
     }
     for node_name in used_node_names:
+        # Initialise the list of node hovertexts, per node.
         if (
             "temporal_node_hovertext"
             not in plotted_graph.nodes[node_name].keys()
         ):
             plotted_graph.nodes[node_name]["temporal_node_hovertext"] = []
 
+        # Add node hovertext data per node
         if hover_info.node_names:
             hovertext[node_name] = hovertext[node_name] + node_name
         if hover_info.neuron_properties:
