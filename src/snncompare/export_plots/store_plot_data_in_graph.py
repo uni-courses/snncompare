@@ -203,7 +203,7 @@ def get_desired_neuron_properties(
 
         # Boilerplate because LIF_neuron attributes are objects instead of
         # values.
-        if not isinstance(neuron_property_obj, (float, int)):
+        if not isinstance(neuron_property_obj, (bool, float, int)):
             neuron_property = getattr(
                 neuron_property_obj, neuron_property_name
             )
