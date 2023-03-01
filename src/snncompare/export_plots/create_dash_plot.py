@@ -16,7 +16,6 @@ from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_plots.show_dash_plot import (
     show_dash_figures,
     show_fig_in_dash,
-    show_svg_image_in_dash_III,
 )
 from snncompare.export_plots.store_plot_data_in_graph import (
     store_plot_params_in_graph,
@@ -41,73 +40,109 @@ def create_svg_plot(
     plot_config: Plot_config = get_default_plot_config()
 
     app = dash.Dash(__name__)
+
     # pylint: disable=R1702
-    for graph_name, snn_graph in graphs.items():
+    for i, (graph_name, snn_graph) in enumerate(graphs.items()):
+        print(f"i={i}")
         if graph_name in graph_names:
             plotted_graph: nx.DiGraph = nx.DiGraph()
-
             dash_figures: List[go.Figure] = []
             print("")
             print("")
 
             sim_duration = snn_graph.graph["sim_duration"]
             print(f"Creating:graph_name={graph_name}")
-            for t in range(
-                0,
-                sim_duration,
-                # 1,
-            ):
-                print(f"t={t}/{sim_duration}")
-                # if t == 5:
-                # for edge in snn_graph.edges():
-                # if "selector" in edge[0] or "selector" in edge[1]:
-                # print(edge)
+            create_figures(
+                dash_figures=dash_figures,
+                graph_name=graph_name,
+                run_config_filename=run_config_filename,
+                output_config=output_config,
+                plot_config=plot_config,
+                plotted_graph=plotted_graph,
+                sim_duration=sim_duration,
+                snn_graph=snn_graph,
+                single_timestep=single_timestep,
+            )
 
-                # Create and store the svg images per timestep.
-                filename: str = f"{graph_name}_{run_config_filename}_{t}"
-                svg_filepath: str = f"latex/Images/graphs/{filename}.svg"
-                if not Path(svg_filepath).is_file() or (
-                    output_config.extra_storing_config.show_images
-                    and single_timestep is None
-                ):
-                    dash_figure: go.Figure = create_dash_figure(
-                        output_config=output_config,
-                        plot_config=plot_config,
-                        plotted_graph=plotted_graph,
-                        snn_graph=snn_graph,
-                        t=t,
-                    )
-                    dash_figures.append(dash_figure)
-                if not Path(svg_filepath).is_file():
-                    # TODO move storing into separate function.
-                    create_root_dir_if_not_exists(
-                        root_dir_name="latex/Images/graphs"
-                    )
-                    dash_figure.write_image(svg_filepath)
-            # Show the images
-            if output_config.extra_storing_config.show_images:
-                if single_timestep is not None:
-                    # Show only a single timestep from dash object or svg file.
-                    if len(dash_figures) >= single_timestep:
-                        # TODO: This can be done faster, not complete .svg arr.
-                        # needs to be created.
-                        show_fig_in_dash(
-                            app=app, fig=dash_figures[single_timestep]
-                        )
-                    else:
-                        raise NotImplementedError(
-                            "Showing svgs not yet supported."
-                        )
-                        # pylint: disable=W0101
-                        show_svg_image_in_dash_III(app=app, path=svg_filepath)
-                else:
-                    # Show a whole timeseries of bash figures.
-                    # TODO: allow showing multiple graphs.
-                    show_dash_figures(
-                        app=app,
-                        plot_config=plot_config,
-                        plotted_graph=plotted_graph,
-                    )
+            show_figures(
+                app=app,
+                dash_figures=dash_figures,
+                output_config=output_config,
+                plot_config=plot_config,
+                plotted_graph=plotted_graph,
+                single_timestep=single_timestep,
+            )
+
+
+# pylint: disable=R0913
+@typechecked
+def create_figures(
+    dash_figures: List[go.Figure],
+    graph_name: str,
+    run_config_filename: str,
+    output_config: Output_config,
+    plot_config: Plot_config,
+    plotted_graph: nx.DiGraph,
+    sim_duration: int,
+    snn_graph: nx.DiGraph,
+    single_timestep: Optional[bool],
+) -> None:
+    """Creates the dash figures."""
+    for t in range(
+        0,
+        sim_duration,
+        # 1,
+    ):
+        print(f"t={t}/{sim_duration}")
+
+        # Create and store the svg images per timestep.
+        filename: str = f"{graph_name}_{run_config_filename}_{t}"
+        svg_filepath: str = f"latex/Images/graphs/{filename}.svg"
+        if not Path(svg_filepath).is_file() or (
+            output_config.extra_storing_config.show_images
+            and single_timestep is None
+        ):
+            dash_figure: go.Figure = create_dash_figure(
+                output_config=output_config,
+                plot_config=plot_config,
+                plotted_graph=plotted_graph,
+                snn_graph=snn_graph,
+                t=t,
+            )
+            dash_figures.append(dash_figure)
+        if not Path(svg_filepath).is_file():
+            # TODO move storing into separate function.
+            create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
+            dash_figure.write_image(svg_filepath)
+
+
+# pylint: disable=R0913
+@typechecked
+def show_figures(
+    app: int,
+    dash_figures: List[go.Figure],
+    output_config: Output_config,
+    plot_config: Plot_config,
+    plotted_graph: nx.DiGraph,
+    single_timestep: bool,
+) -> None:
+    """Shows the dash figures."""
+    # Show the images
+    if output_config.extra_storing_config.show_images:
+        if single_timestep is not None:
+            # Show only a single timestep from dash object or svg file.
+            if len(dash_figures) >= single_timestep:
+                # TODO: This can be done faster, not complete .svg arr.
+                # needs to be created.
+                show_fig_in_dash(app=app, fig=dash_figures[single_timestep])
+        else:
+            # Show a whole timeseries of bash figures.
+            # TODO: allow showing multiple graphs.
+            show_dash_figures(
+                app=app,
+                plot_config=plot_config,
+                plotted_graph=plotted_graph,
+            )
 
 
 def create_dash_figure(
