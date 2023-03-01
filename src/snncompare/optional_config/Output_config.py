@@ -22,7 +22,7 @@ class Output_config:
         zoom: Zoom,
         output_json_stages: list[int],
         extra_storing_config: Extra_storing_config,
-        hover_info: Hover_info,
+        hover_info: Hover_info | None = None,
     ):
         """Stores run configuration settings for the exp_configriment."""
         self.verify_int_list_values(
@@ -43,7 +43,8 @@ class Output_config:
         self.verify_export_types(export_types)
         self.export_types: list[str] = export_types
 
-        self.hover_info: Hover_info = hover_info
+        if hover_info is not None:
+            self.hover_info: Hover_info = hover_info
 
         self.zoom: Zoom = zoom
         if self.zoom.create_zoomed_image and "png" not in self.export_types:

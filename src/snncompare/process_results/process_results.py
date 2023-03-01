@@ -79,10 +79,8 @@ def perform_mdsa_results_computation_if_needed(
             )
 
             # Indicate the graphs have completed stage 1.
-            for nx_graph in stage_2_graphs.values():
-                add_stage_completion_to_graph(
-                    input_graph=nx_graph, stage_index=4
-                )
+
+            add_stage_completion_to_graph(input_graph=nx_graph, stage_index=4)
     return set_new_results
 
 

@@ -170,6 +170,12 @@ You can run a single `run_config` with:
 python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r run_config_file_name
 ```
 
+Typical run:
+
+```bash
+python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r1 -r2 -r4
+```
+
 For more info, run:
 
 ```bash
