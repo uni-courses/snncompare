@@ -2,17 +2,20 @@
 
 import base64
 import os
-from typing import List, Tuple
+from typing import Dict, List
 
 import dash
 import networkx as nx
 import plotly.graph_objs as go
 from dash import dcc, html
-from dash.dependencies import Input, Output
 from flask import Response, send_from_directory
 from typeguard import typechecked
 
 from snncompare.export_plots.create_dash_fig_obj import create_svg_with_dash
+from snncompare.export_plots.dash_plot_updaters import (
+    create_app_layout,
+    support_updates,
+)
 from snncompare.export_plots.Plot_config import Plot_config
 
 
@@ -23,26 +26,6 @@ def show_svg_image_in_dash_I(*, svg_filepath: str) -> None:
     app = dash.Dash(__name__)
     app.layout = html.Div([html.Img(src=svg_filepath)])
     app.run_server(debug=True)
-
-
-@typechecked
-def limit_line_length(
-    *, line_separation_chars: str, some_str: str, limit: int
-) -> str:
-    """Returns first <limit> lines of a string. Assumes new line character is:
-
-     \n
-    .
-    """
-    if some_str.count(line_separation_chars) <= limit:
-        return some_str
-    split_lines: List[str] = some_str.split(line_separation_chars)
-    merged_lines: List[str] = []
-    for i in range(0, min(limit, len(split_lines))):
-        merged_lines.append(
-            os.linesep.join([split_lines[i], line_separation_chars])
-        )
-    return os.linesep.join(merged_lines)
 
 
 @typechecked
@@ -128,190 +111,51 @@ def show_dash_figures(
     *,
     app: dash.Dash,
     plot_config: Plot_config,
-    plotted_graph: nx.DiGraph,
+    plotted_graphs: Dict[str, nx.DiGraph],
 ) -> None:
     """Shows a figure in dash using browser."""
     print("SHOWING DASH APP.")
-    # Start Dash app.
-    dash_figure, identified_annotations = create_svg_with_dash(
-        graph=plotted_graph,
+    dash_figures: Dict[str, go.Figure] = {}
+    identified_annotations_dict: Dict[str, List] = {}
+    temporal_node_colours_dict: Dict[str, List] = {}
+    temporal_node_opacity_dict: Dict[str, List] = {}
+    for graph_name, plotted_graph in plotted_graphs.items():
+        print(f"graph_name={graph_name}")
+        # Start Dash app.
+        (
+            dash_figures[graph_name],
+            identified_annotations_dict[graph_name],
+        ) = create_svg_with_dash(
+            graph=plotted_graph,
+            plot_config=plot_config,
+        )
+
+        temporal_node_colours_dict[graph_name] = list(
+            plotted_graph.nodes[n]["temporal_colour"]
+            for n in plotted_graph.nodes()
+        )
+        temporal_node_opacity_dict[graph_name] = list(
+            plotted_graph.nodes[n]["temporal_opacity"]
+            for n in plotted_graph.nodes()
+        )
+
+    app = create_app_layout(
+        app=app,
+        dash_figures=dash_figures,
+        plotted_graphs=plotted_graphs,
+        temporal_node_colours_dict=temporal_node_colours_dict,
+    )
+
+    support_updates(
+        app=app,
+        dash_figures=dash_figures,
+        identified_annotations_dict=identified_annotations_dict,
         plot_config=plot_config,
-    )
-    temporal_node_colours = list(
-        plotted_graph.nodes[n]["temporal_colour"]
-        for n in plotted_graph.nodes()
-    )
-    temporal_node_opacity = list(
-        plotted_graph.nodes[n]["temporal_opacity"]
-        for n in plotted_graph.nodes()
+        plotted_graphs=plotted_graphs,
+        temporal_node_colours_dict=temporal_node_colours_dict,
+        temporal_node_opacity_dict=temporal_node_opacity_dict,
     )
 
-    @app.callback(
-        Output("Graph", "figure"), [Input("color-set-slider", "value")]
-    )
-    def update_color(t: int) -> go.Figure:
-        """Updates the colour of the nodes and edges based on user input."""
-
-        def update_node_colour(
-            dash_figure: go.Figure,
-            t: int,
-        ) -> None:
-            """Updates the colour of the non-recursive edges."""
-            if plot_config.update_node_colours:
-                dash_figure.data[0]["marker"]["color"] = list(
-                    f'{plotted_graph.nodes[n]["temporal_node_colours"][t]}'
-                    for n in plotted_graph.nodes()
-                )
-
-        # TODO: update node hovertext.
-        def update_node_hovertext(
-            dash_figure: go.Figure,
-            t: int,
-        ) -> None:
-            """Updates the colour of the non-recursive edges."""
-            if plot_config.update_node_labels:
-                hovertexts: List[str] = []
-                for n in plotted_graph.nodes():
-                    # Specify the text that is shown when mouse hovers over
-                    # node.
-                    hovertext: str = plotted_graph.nodes[n][
-                        "temporal_node_hovertext"
-                    ][t]
-
-                    limited_hovertext = limit_line_length(
-                        line_separation_chars="<br />",
-                        some_str=hovertext,
-                        limit=25,
-                    )
-
-                    # Add hovertext per node to hovertext list.
-                    hovertexts.append(limited_hovertext)
-
-                dash_figure.data[0].update(
-                    hovertext=hovertexts,  # hoverlabel=dict(namelength=-1)
-                )
-
-        def update_non_recursive_edge_colour(
-            dash_figure: go.Figure,
-            edge: Tuple[str, str],
-            t: int,
-            temporal_node_colours: List,
-            temporal_node_opacity: List,
-        ) -> None:
-            """Updates the colour of the non-recursive edges."""
-            edge_annotation_colour = get_edge_colour(
-                t,
-                temporal_node_colours=temporal_node_colours,
-                edge=edge,
-            )
-            edge_opacity = get_edge_opacity(
-                t,
-                temporal_node_opacity=temporal_node_opacity,
-                edge=edge,
-            )
-
-            for i, id_anno in enumerate(identified_annotations):
-                if id_anno.edge == edge:
-                    # TODO: determine why this does not update the dash plt.
-                    # id_anno.arrowcolor = the_edge_annotation_colour
-                    # id_anno.arrowcolor = the_edge_annotation_colour
-
-                    if plot_config.update_edge_colours:
-                        # TODO: find method to be sure the annotation
-                        dash_figure.layout.annotations[
-                            i
-                        ].arrowcolor = edge_annotation_colour
-                    if plot_config.update_edge_opacity:
-                        dash_figure.layout.annotations[
-                            i
-                        ].opacity = edge_opacity
-
-        def get_edge_colour(
-            t: int,
-            temporal_node_colours: List,
-            edge: Tuple[str, str],
-        ) -> str:
-            """Returns the color of an edge arrow at time t."""
-            for i, node_name in enumerate(
-                list(
-                    some_node_name for some_node_name in plotted_graph.nodes()
-                )
-            ):
-                if node_name == edge[0]:
-                    return temporal_node_colours[i][t]
-            # pylint: disable=W0631
-            raise ValueError(f"Error, node_name:{node_name} not found.")
-
-        # Update the annotation colour.
-        def get_edge_opacity(
-            t: int,
-            temporal_node_opacity: List,
-            edge: Tuple[str, str],
-        ) -> str:
-            """Returns the opacity of an edge arrow at time t."""
-            for i, node_name in enumerate(
-                list(
-                    some_node_name for some_node_name in plotted_graph.nodes()
-                )
-            ):
-                if node_name == edge[0]:
-                    return temporal_node_opacity[i][t]
-            # pylint: disable=W0631
-            raise ValueError(f"Error, node_name:{node_name} not found.")
-
-        # Overwrite annotation with function instead of value.
-        if plot_config.update_edge_colours:
-            for edge in plotted_graph.edges():
-                if edge[0] != edge[1]:
-                    update_non_recursive_edge_colour(
-                        dash_figure=dash_figure,
-                        edge=edge,
-                        t=t,
-                        temporal_node_colours=temporal_node_colours,
-                        temporal_node_opacity=temporal_node_opacity,
-                    )
-
-        update_node_colour(
-            dash_figure=dash_figure,
-            t=t,
-        )
-        update_node_hovertext(
-            dash_figure=dash_figure,
-            t=t,
-        )
-
-        # Update the recursive edge node colour.
-        # for i, _ in enumerate(graphs[t].nodes):
-        #    fig.layout.shapes[i]["line"]["color"] = color_sets[t][i]
-        return dash_figure
-
-    # State variable to keep track of current color set
-    initial_t = 0
-    # color_sets = [colour_list, colour_list]
-    # TODO: ensure the colours are initiated at least once regardless of
-    # plot_config.update_..
-    dash_figure = update_color(initial_t)
-
-    if len(temporal_node_colours[0]) == 0:
-        raise ValueError(
-            "Not enough timesteps were found. probably took timestep of "
-            + "ignored node."
-        )
-    app.layout = html.Div(
-        [
-            dcc.Slider(
-                id="color-set-slider",
-                min=0,
-                max=len(temporal_node_colours[0]) - 1,
-                value=0,
-                marks={
-                    i: str(i) for i in range(len(temporal_node_colours[0]))
-                },
-                step=None,
-            ),
-            html.Div(dcc.Graph(id="Graph", figure=dash_figure)),
-        ]
-    )
     app.run_server()
     print("done running surver")
     # app.run_server(debug=True)
