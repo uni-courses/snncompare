@@ -110,7 +110,7 @@ class Test_propagation_with_recurrent_edges(unittest.TestCase):
                             )
 
                             print_neuron_properties_per_graph(
-                                G=G, static=True, t=0
+                                G=G, static=True, t=0, neuron_type="lava_LIF"
                             )
 
                             # TODO: determine why you can't make a deep copy

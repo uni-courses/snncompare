@@ -106,7 +106,9 @@ class Test_cyclic_propagation_with_recurrent_edges(unittest.TestCase):
                 # neuron properties.
                 compare_static_snn_properties(test_object=self, G=G, t=0)
 
-                print_neuron_properties_per_graph(G=G, static=True, t=0)
+                print_neuron_properties_per_graph(
+                    G=G, static=True, t=0, neuron_type="lava_LIF"
+                )
 
                 # plot_circular_graph(
                 #    -1,
@@ -161,7 +163,9 @@ def run_simulation_for_t_steps(
         simulate_snn_on_lava(G=G, starter_node_name=starter_neuron, t=t)
 
         print(f"After t={t+1} simulation steps.")
-        print_neuron_properties_per_graph(G=G, static=False, t=t)
+        print_neuron_properties_per_graph(
+            G=G, static=False, t=t, neuron_type="lava_LIF"
+        )
         # Verify dynamic neuron properties.
         test_object.compare_dynamic_snn_properties(G=G, t=t)
 

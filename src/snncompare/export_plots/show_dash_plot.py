@@ -26,6 +26,26 @@ def show_svg_image_in_dash_I(*, svg_filepath: str) -> None:
 
 
 @typechecked
+def limit_line_length(
+    *, line_separation_chars: str, some_str: str, limit: int
+) -> str:
+    """Returns first <limit> lines of a string. Assumes new line character is:
+
+     \n
+    .
+    """
+    if some_str.count(line_separation_chars) <= limit:
+        return some_str
+    split_lines: List[str] = some_str.split(line_separation_chars)
+    merged_lines: List[str] = []
+    for i in range(0, min(limit, len(split_lines))):
+        merged_lines.append(
+            os.linesep.join([split_lines[i], line_separation_chars])
+        )
+    return os.linesep.join(merged_lines)
+
+
+@typechecked
 def show_svg_image_in_dash_II(*, svg_filepath: str) -> None:
     """Shows a svg file in dash using browser."""
     # Start Dash app.
@@ -152,15 +172,23 @@ def show_dash_figures(
             if plot_config.update_node_labels:
                 hovertexts: List[str] = []
                 for n in plotted_graph.nodes():
-                    # Prevent line exceeding 80 characters.
-                    node_obj = plotted_graph.nodes[n]
+                    # Specify the text that is shown when mouse hovers over
+                    # node.
+                    hovertext: str = plotted_graph.nodes[n][
+                        "temporal_node_hovertext"
+                    ][t]
+
+                    limited_hovertext = limit_line_length(
+                        line_separation_chars="<br />",
+                        some_str=hovertext,
+                        limit=25,
+                    )
 
                     # Add hovertext per node to hovertext list.
-                    hovertexts.append(
-                        f'{node_obj["temporal_node_hovertext"][t]}'
-                    )
+                    hovertexts.append(limited_hovertext)
+
                 dash_figure.data[0].update(
-                    hovertext=hovertexts,
+                    hovertext=hovertexts,  # hoverlabel=dict(namelength=-1)
                 )
 
         def update_non_recursive_edge_colour(
