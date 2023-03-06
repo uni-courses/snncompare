@@ -12,6 +12,7 @@ from typeguard import typechecked
 from snncompare.export_plots.Plot_config import Plot_config
 
 
+# pylint: disable=R0903
 class NamedAnnotation:
     """Object for an annotation with some identification."""
 
@@ -41,16 +42,6 @@ class NamedAnnotation:
     def get_node_name(self) -> Union[str, None]:
         """returns the node_name of the annotation if not None."""
         return self.node_name
-
-    @typechecked
-    def get_edge(self) -> Union[Tuple[str, str], None]:
-        """returns the edge of the annotation if not None."""
-        return self.edge
-
-    @typechecked
-    def get_category(self) -> str:
-        """Returns the category of the annotation."""
-        return self.category
 
 
 # Build image from incoming graph and positioning parameters
@@ -136,17 +127,6 @@ def create_svg_with_dash(
         radius=recursive_edge_radius,
     )
     return fig, identified_annotations
-
-
-@typechecked
-def get_hover_text(
-    graph: nx.DiGraph,
-) -> Union[None, List[str]]:
-    """Returns the node hover text for t=0, if any."""
-    labels: List[str] = []
-    for node_name in graph.nodes():
-        labels.append(graph.nodes[node_name]["temporal_node_hovertext"][0])
-    return labels
 
 
 @typechecked

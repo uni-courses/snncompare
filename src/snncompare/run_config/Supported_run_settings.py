@@ -38,18 +38,3 @@ class Supported_run_settings:
             "seed": int,
             "simulator": str,
         }
-
-    @typechecked
-    def assert_has_key(
-        self, some_dict: Dict, key: str, some_type: type
-    ) -> None:
-        """Asserts a dictionary has some key with a value of a certain type.
-
-        Throws error if the key does not exist, or if the value is of an
-        invalid type.
-        """
-        if not isinstance(some_dict[key], some_type):
-            raise TypeError(
-                f"Error, the dictionary:{some_dict} did not"
-                + f"contain a key:{key} of type:{type}"
-            )

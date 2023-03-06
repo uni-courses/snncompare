@@ -10,7 +10,7 @@ SubInput: Run configuration within an experiment.
 """
 import copy
 import pathlib
-from typing import Dict, List
+from typing import Dict
 
 import jsons
 from snnbackends.verify_nx_graphs import (
@@ -21,7 +21,6 @@ from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_plots.plot_graphs import plot_uncoordinated_graph
-from snncompare.helper import file_exists
 from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
@@ -232,35 +231,3 @@ def plot_graph_behaviours(
                 filename=f"{graph_name}_{run_config_filename}.png",
                 show=False,
             )
-
-
-@typechecked
-def desired_image_exist_for_timestep(
-    filename: str,
-    extensions: List[str],
-) -> bool:
-    """Returns true if the non-gif output image files exist already.
-
-    False otherwise.
-    """
-    for extension in extensions:
-        if extension != "gif":  # TODO: check if necessary.
-            filepath = f"latex/Images/graphs/{filename}.{extension}"
-            if not file_exists(filepath=filepath):
-                return False
-    return True
-
-
-@typechecked
-def get_desired_properties_for_graph_printing() -> List[str]:
-    """Returns the properties that are to be printed to CLI."""
-    desired_properties = [
-        "bias",
-        # "du",
-        # "dv",
-        "u",
-        "v",
-        "vth",
-        "a_in_next",
-    ]
-    return desired_properties

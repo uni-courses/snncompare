@@ -78,7 +78,7 @@ def load_run_config_from_file(
 
 
 @typechecked
-def long_exp_config_for_mdsa_testing() -> "Exp_config":
+def long_exp_config_for_mdsa_testing_without_adaptation() -> "Exp_config":
     """Contains a default experiment configuration used to test the MDSA
     algorithm."""
 
@@ -86,7 +86,6 @@ def long_exp_config_for_mdsa_testing() -> "Exp_config":
     # and with radiation.
     long_mdsa_testing: Dict = {
         "adaptations": None,
-        # TODO: set using a verification setting.
         "algorithms": {
             "MDSA": get_algo_configs(
                 algo_spec=MDSA(list(range(0, 6, 1))).__dict__
@@ -138,7 +137,7 @@ def run_config_with_error() -> Run_config:
 def get_exp_config_mdsa_size5_m4() -> "Exp_config":
     """Returns a default experiment setting with  graph size 7, m=4."""
     mdsa_creation_only_size_7_m_4: "Exp_config" = (
-        long_exp_config_for_mdsa_testing()
+        long_exp_config_for_mdsa_testing_without_adaptation()
     )
     mdsa_creation_only_size_7_m_4.algorithms = {
         "MDSA": get_algo_configs(algo_spec=MDSA(list(range(4, 5, 1))).__dict__)

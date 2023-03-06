@@ -10,7 +10,6 @@ from typing import Dict, List, Tuple
 from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
-from snncompare.create_configs import get_adaptation_and_radiations
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_results.load_json_to_nx_graph import (
     load_verified_json_graphs_from_json,
@@ -61,9 +60,9 @@ def create_performance_plots(
     print(output_config.extra_storing_config)
 
     count: int = 0
-    adaptations_radiations = get_adaptation_and_radiations(
-        exp_config=exp_config
-    )
+
+    adaptations_radiations: List = []
+    # TODO: git from:get_adaptations_simplified etc
     radiations = list(map(lambda x: x[1], adaptations_radiations))
 
     unique_radiations = [

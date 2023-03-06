@@ -26,7 +26,6 @@ def generate_run_configs(
     run configs.
     """
     found_run_config = False
-    pprint(exp_config.__dict__)
     # Generate run configurations.
     run_configs: List[Run_config] = exp_config_to_run_configs(
         exp_config=exp_config
@@ -76,17 +75,21 @@ def exp_config_to_run_configs(
     for algorithm_name, algo_specs in exp_config.algorithms.items():
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
-
-            for adaptation, radiation in get_adaptation_and_radiations(
-                exp_config=exp_config
+            for run_config_adaptation in get_adaptations_or_radiations(
+                exp_config=exp_config,
+                adaptations_or_radiations=exp_config.adaptations,
             ):
-                fill_remaining_run_config_settings(
-                    adaptation=adaptation,
-                    algorithm=algorithm,
+                for run_config_radiation in get_adaptations_or_radiations(
                     exp_config=exp_config,
-                    radiation=radiation,
-                    run_configs=run_configs,
-                )
+                    adaptations_or_radiations=exp_config.radiations,
+                ):
+                    fill_remaining_run_config_settings(
+                        adaptation=run_config_adaptation,
+                        algorithm=algorithm,
+                        exp_config=exp_config,
+                        radiation=run_config_radiation,
+                        run_configs=run_configs,
+                    )
     return list(reversed(run_configs))
 
 
@@ -146,54 +149,20 @@ def run_parameters_to_dict(
     return run_config
 
 
-def get_adaptation_and_radiations(
+@typechecked
+def get_adaptations_or_radiations(
     *,
     exp_config: "Exp_config",
-) -> List[tuple]:
-    """Returns a list of adaptations and radiations that will be used for the
-    experiment."""
-
-    adaptations_radiations: List[tuple] = []
-    if exp_config.adaptations is None:
-        adaptation = None
-        adaptations_radiations.extend(
-            get_radiations(exp_config=exp_config, adaptation=adaptation)
-        )
-    else:
-        for (
-            adaptation_name,
-            adaptation_setts_list,
-        ) in exp_config.adaptations.items():
-            for adaptation_config in adaptation_setts_list:
-                adaptation = {adaptation_name: adaptation_config}
-                adaptations_radiations.extend(
-                    get_radiations(
-                        exp_config=exp_config, adaptation=adaptation
-                    )
-                )
-
-    # Make sure it contains at least 1 empty entry:
-    if not adaptations_radiations:  # Empty list evaluates to False.
-        return [(None, None)]
-    return adaptations_radiations
-
-
-def get_radiations(
-    *, exp_config: "Exp_config", adaptation: Union[None, Dict[str, int]]
-) -> List[Tuple[Union[None, Dict], Union[None, Dict]]]:
-    """Returns the radiations."""
-    adaptation_and_radiations: List[
-        Tuple[Union[None, Dict], Union[None, Dict]]
-    ] = []
-    if exp_config.radiations is None:
-        adaptation_and_radiations.append((adaptation, None))
-    else:
-        for (
-            radiation_name,
-            radiation_setts_list,
-        ) in exp_config.radiations.items():
-            # TODO: verify it is of type list.
-            for rad_config in radiation_setts_list:
-                radiation = {radiation_name: rad_config}
-                adaptation_and_radiations.append((adaptation, radiation))
-    return adaptation_and_radiations
+    adaptations_or_radiations: Dict[str, List[int]],
+) -> List:
+    """Returns the adaptations of the experiment config."""
+    adaptation_list: List = []
+    if exp_config.adaptations == {}:
+        return [None]
+    for (
+        adaptation_name,
+        adaptation_values,
+    ) in adaptations_or_radiations.items():
+        for adaptation_value in adaptation_values:
+            adaptation_list.append({adaptation_name: adaptation_value})
+    return adaptation_list
