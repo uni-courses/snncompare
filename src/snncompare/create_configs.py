@@ -76,11 +76,9 @@ def exp_config_to_run_configs(
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
             for run_config_adaptation in get_adaptations_or_radiations(
-                exp_config=exp_config,
                 adaptations_or_radiations=exp_config.adaptations,
             ):
                 for run_config_radiation in get_adaptations_or_radiations(
-                    exp_config=exp_config,
                     adaptations_or_radiations=exp_config.radiations,
                 ):
                     fill_remaining_run_config_settings(
@@ -152,12 +150,11 @@ def run_parameters_to_dict(
 @typechecked
 def get_adaptations_or_radiations(
     *,
-    exp_config: "Exp_config",
     adaptations_or_radiations: Dict[str, List[int]],
 ) -> List:
     """Returns the adaptations of the experiment config."""
     adaptation_list: List = []
-    if exp_config.adaptations == {}:
+    if adaptations_or_radiations == {}:
         return [None]
     for (
         adaptation_name,

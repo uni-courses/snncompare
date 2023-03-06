@@ -86,9 +86,7 @@ class Experiment_runner:
         )
 
         if reverse:
-            # print(f'self.run_configs={self.run_configs}')
             self.run_configs.reverse()
-            # print(f'REVERSED')
 
         if perform_run:  # Used to get quick Experiment_runner for testing.
             self.__perform_run(
