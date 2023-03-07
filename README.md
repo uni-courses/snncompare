@@ -197,6 +197,10 @@ python -m pytest tests/sparse/MDSA/adaptation/test_redundancy_2.py --capture=tee
 python -m pytest \
   tests/sparse/MDSA/adaptation/test_redundancy_doesnt_spike_with_adaptation.py \
   --capture=tee-sys
+  python -m pytest \
+  tests/sparse/MDSA/adaptation/test_adaptation_passes.py \
+  --capture=tee-sys
+
 
 ```
 
