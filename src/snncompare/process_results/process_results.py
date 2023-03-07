@@ -138,6 +138,7 @@ def compute_results(
     )
 
     # Export graphs with embedded results to json.
+    # TODO: move export into separate function.
     for graph_name, nx_graph in stage_4_graphs.items():
         verify_nx_graph_contains_correct_stages(
             graph_name=graph_name,

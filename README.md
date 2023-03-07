@@ -193,6 +193,11 @@ or to see live output, on any tests filenames containing substring: `results`:
 ```bash
 python -m pytest tests/sparse/MDSA/test_snn_results_with_adaptation.py --capture=tee-sys
 python -m pytest tests/sparse/MDSA/adaptation/test_redundancy_1.py --capture=tee-sys
+python -m pytest tests/sparse/MDSA/adaptation/test_redundancy_2.py --capture=tee-sys
+python -m pytest \
+  tests/sparse/MDSA/adaptation/test_redundancy_doesnt_spike_with_adaptation.py \
+  --capture=tee-sys
+
 ```
 
 ## Test Coverage
