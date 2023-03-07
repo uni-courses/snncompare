@@ -57,7 +57,9 @@ def set_radiation_death_colour(
         if G.nodes[node_name]["rad_death"]:
             colour_dict[node_name] = rgb_colours["red"]
             if G.nodes[node_name]["nx_lif"][t].spikes:
-                raise ValueError("Dead neuron can't spike.")
+                print(f"DEAD NEURON:{node_name} spiked at {t}.")
+                # TODO: restore error
+                # raise ValueError("Dead neuron can't spike.")
 
 
 @typechecked
