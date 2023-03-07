@@ -244,92 +244,108 @@ def support_updates(
     initial_t = 0
 
     graph_name_one = "adapted_snn_graph"
+    if graph_name_one in plotted_graphs.keys():
 
-    @app.callback(
-        Output(f"Graph{graph_name_one}", "figure"),
-        [Input(f"color-set-slider{graph_name_one}", "value")],
-    )
-    def update_color_one(
-        t: int,
-    ) -> go.Figure:
-        # ) -> None:
-        """Updates the colour of the nodes and edges based on user input."""
-        if len(temporal_node_colours_dict[graph_name_one][0]) == 0:
-            raise ValueError(
-                "Not enough timesteps were found. probably took timestep "
-                + "of ignored node."
+        @app.callback(
+            Output(f"Graph{graph_name_one}", "figure"),
+            [Input(f"color-set-slider{graph_name_one}", "value")],
+        )
+        def update_color_one(
+            t: int,
+        ) -> go.Figure:
+            # ) -> None:
+            """Updates the colour of the nodes and edges based on user
+            input."""
+            if len(temporal_node_colours_dict[graph_name_one][0]) == 0:
+                raise ValueError(
+                    "Not enough timesteps were found. probably took timestep "
+                    + "of ignored node."
+                )
+
+            update_node_colour_and_opacity(
+                dash_figure=dash_figures[graph_name_one],
+                identified_annotations=identified_annotations_dict[
+                    graph_name_one
+                ],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_one],
+                t=t,
+                temporal_node_colours=temporal_node_colours_dict[
+                    graph_name_one
+                ],
+                temporal_node_opacity=temporal_node_opacity_dict[
+                    graph_name_one
+                ],
             )
 
-        update_node_colour_and_opacity(
-            dash_figure=dash_figures[graph_name_one],
-            identified_annotations=identified_annotations_dict[graph_name_one],
-            plot_config=plot_config,
-            plotted_graph=plotted_graphs[graph_name_one],
-            t=t,
-            temporal_node_colours=temporal_node_colours_dict[graph_name_one],
-            temporal_node_opacity=temporal_node_opacity_dict[graph_name_one],
-        )
+            update_node_colour(
+                dash_figure=dash_figures[graph_name_one],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_one],
+                t=t,
+            )
+            update_node_hovertext(
+                dash_figure=dash_figures[graph_name_one],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_one],
+                t=t,
+            )
+            return dash_figures[graph_name_one]
 
-        update_node_colour(
-            dash_figure=dash_figures[graph_name_one],
-            plot_config=plot_config,
-            plotted_graph=plotted_graphs[graph_name_one],
-            t=t,
+        update_color_one(
+            t=initial_t,
         )
-        update_node_hovertext(
-            dash_figure=dash_figures[graph_name_one],
-            plot_config=plot_config,
-            plotted_graph=plotted_graphs[graph_name_one],
-            t=t,
-        )
-        return dash_figures[graph_name_one]
-
-    update_color_one(
-        t=initial_t,
-    )
 
     # Manual copy
     graph_name_two = "rad_adapted_snn_graph"
+    if graph_name_two in plotted_graphs.keys():
 
-    @app.callback(
-        Output(f"Graph{graph_name_two}", "figure"),
-        [Input(f"color-set-slider{graph_name_two}", "value")],
-    )
-    def update_color_two(
-        t: int,
-    ) -> go.Figure:
-        # ) -> None:
-        """Updates the colour of the nodes and edges based on user input."""
-        if len(temporal_node_colours_dict[graph_name_two][0]) == 0:
-            raise ValueError(
-                "Not enough timesteps were found. probably took timestep "
-                + "of ignored node."
+        @app.callback(
+            Output(f"Graph{graph_name_two}", "figure"),
+            [Input(f"color-set-slider{graph_name_two}", "value")],
+        )
+        def update_color_two(
+            t: int,
+        ) -> go.Figure:
+            # ) -> None:
+            """Updates the colour of the nodes and edges based on user
+            input."""
+            if len(temporal_node_colours_dict[graph_name_two][0]) == 0:
+                raise ValueError(
+                    "Not enough timesteps were found. probably took timestep "
+                    + "of ignored node."
+                )
+
+            update_node_colour_and_opacity(
+                dash_figure=dash_figures[graph_name_two],
+                identified_annotations=identified_annotations_dict[
+                    graph_name_two
+                ],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_two],
+                t=t,
+                temporal_node_colours=temporal_node_colours_dict[
+                    graph_name_two
+                ],
+                temporal_node_opacity=temporal_node_opacity_dict[
+                    graph_name_two
+                ],
             )
 
-        update_node_colour_and_opacity(
-            dash_figure=dash_figures[graph_name_two],
-            identified_annotations=identified_annotations_dict[graph_name_two],
-            plot_config=plot_config,
-            plotted_graph=plotted_graphs[graph_name_two],
-            t=t,
-            temporal_node_colours=temporal_node_colours_dict[graph_name_two],
-            temporal_node_opacity=temporal_node_opacity_dict[graph_name_two],
-        )
+            update_node_colour(
+                dash_figure=dash_figures[graph_name_two],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_two],
+                t=t,
+            )
+            update_node_hovertext(
+                dash_figure=dash_figures[graph_name_two],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_two],
+                t=t,
+            )
+            return dash_figures[graph_name_two]
 
-        update_node_colour(
-            dash_figure=dash_figures[graph_name_two],
-            plot_config=plot_config,
-            plotted_graph=plotted_graphs[graph_name_two],
-            t=t,
+        update_color_two(
+            t=initial_t,
         )
-        update_node_hovertext(
-            dash_figure=dash_figures[graph_name_two],
-            plot_config=plot_config,
-            plotted_graph=plotted_graphs[graph_name_two],
-            t=t,
-        )
-        return dash_figures[graph_name_two]
-
-    update_color_two(
-        t=initial_t,
-    )
