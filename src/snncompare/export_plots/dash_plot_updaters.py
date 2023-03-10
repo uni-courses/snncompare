@@ -243,7 +243,7 @@ def support_updates(
     # State variable to keep track of current color set
     initial_t = 0
 
-    graph_name_one = "adapted_snn_graph"
+    graph_name_one = "snn_algo_graph"
     if graph_name_one in plotted_graphs.keys():
 
         @app.callback(
@@ -296,8 +296,7 @@ def support_updates(
             t=initial_t,
         )
 
-    # Manual copy
-    graph_name_two = "rad_adapted_snn_graph"
+    graph_name_two = "adapted_snn_graph"
     if graph_name_two in plotted_graphs.keys():
 
         @app.callback(
@@ -347,5 +346,59 @@ def support_updates(
             return dash_figures[graph_name_two]
 
         update_color_two(
+            t=initial_t,
+        )
+
+    # Manual copy
+    graph_name_four = "rad_adapted_snn_graph"
+    if graph_name_four in plotted_graphs.keys():
+
+        @app.callback(
+            Output(f"Graph{graph_name_four}", "figure"),
+            [Input(f"color-set-slider{graph_name_four}", "value")],
+        )
+        def update_color_four(
+            t: int,
+        ) -> go.Figure:
+            # ) -> None:
+            """Updates the colour of the nodes and edges based on user
+            input."""
+            if len(temporal_node_colours_dict[graph_name_four][0]) == 0:
+                raise ValueError(
+                    "Not enough timesteps were found. probably took timestep "
+                    + "of ignored node."
+                )
+
+            update_node_colour_and_opacity(
+                dash_figure=dash_figures[graph_name_four],
+                identified_annotations=identified_annotations_dict[
+                    graph_name_four
+                ],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_four],
+                t=t,
+                temporal_node_colours=temporal_node_colours_dict[
+                    graph_name_four
+                ],
+                temporal_node_opacity=temporal_node_opacity_dict[
+                    graph_name_four
+                ],
+            )
+
+            update_node_colour(
+                dash_figure=dash_figures[graph_name_four],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_four],
+                t=t,
+            )
+            update_node_hovertext(
+                dash_figure=dash_figures[graph_name_four],
+                plot_config=plot_config,
+                plotted_graph=plotted_graphs[graph_name_four],
+                t=t,
+            )
+            return dash_figures[graph_name_four]
+
+        update_color_four(
             t=initial_t,
         )

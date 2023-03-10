@@ -30,6 +30,7 @@ def generate_run_configs(
     run_configs: List[Run_config] = exp_config_to_run_configs(
         exp_config=exp_config
     )
+    # run_configs = run_configs[:3]  # TODO: comment out.
     if specific_run_config is not None:
         for gen_run_config in run_configs:
             if dicts_are_equal(
@@ -150,7 +151,7 @@ def run_parameters_to_dict(
 @typechecked
 def get_adaptations_or_radiations(
     *,
-    adaptations_or_radiations: Dict[str, List[int]],
+    adaptations_or_radiations: Dict[str, List[Union[float, int]]],
 ) -> List:
     """Returns the adaptations of the experiment config."""
     adaptation_list: List = []

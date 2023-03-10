@@ -74,6 +74,7 @@ def perform_mdsa_results_computation_if_needed(
             set_new_results = True
             set_mdsa_snn_results(
                 m_val=m_val,
+                output_config=output_config,
                 run_config=run_config,
                 stage_2_graphs=stage_2_graphs,
             )
