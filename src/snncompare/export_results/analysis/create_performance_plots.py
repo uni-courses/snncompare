@@ -189,6 +189,9 @@ def get_completed_and_missing_run_configs(
             expected_stages=[1, 2, 4],  # Assume results have been created.
             run_config=run_config,
             stage_index=4,
+        ) and run_config.unique_id == (
+            "752982085123c331d81d5fddab7d2f1"
+            + "346d083a0f074f5cea25c0f860270aa10"
         ):
             missing_run_configs.append(run_config)
         else:

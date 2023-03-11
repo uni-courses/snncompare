@@ -6,7 +6,6 @@ from snnbackends.networkx.LIF_neuron import LIF_neuron
 from typeguard import typechecked
 
 from snncompare.export_plots.get_graph_colours import get_nx_node_colours
-from snncompare.export_plots.get_xy_ticks import store_xy_ticks
 from snncompare.optional_config.Output_config import Hover_info
 
 
@@ -46,7 +45,7 @@ def store_plot_params_in_graph(
         plotted_graph=plotted_graph,
         snn_graph=snn_graph,
     )
-    store_xy_ticks(lif_neurons=lif_neurons, plotted_graph=plotted_graph)
+    # store_xy_ticks(lif_neurons=lif_neurons, plotted_graph=plotted_graph)
 
     store_node_position(plotted_graph=plotted_graph, snn_graph=snn_graph, t=t)
     store_node_labels(

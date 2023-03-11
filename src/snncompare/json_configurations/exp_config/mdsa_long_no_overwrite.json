@@ -2,8 +2,7 @@
   "adaptations": {
     "redundancy": [
       2,
-      4,
-      6
+      4
     ]
   },
   "algorithms": {
@@ -16,12 +15,6 @@
       },
       {
         "m_val": 2
-      },
-      {
-        "m_val": 3
-      },
-      {
-        "m_val": 4
       }
     ]
   },
@@ -35,6 +28,7 @@
   "radiations": {
     "neuron_death": [
       0.0,
+      0.01,
       0.05,
       0.1,
       0.25
