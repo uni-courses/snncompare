@@ -96,11 +96,11 @@ class Experiment_runner:
             )
 
         if 5 in output_config.output_json_stages:
-            # self.load_pickled_boxplot_data(
-            # exp_config=self.exp_config,
-            # run_configs=self.run_configs,
-            # output_config=output_config,
-            # )
+            self.load_pickled_boxplot_data(
+                exp_config=self.exp_config,
+                run_configs=self.run_configs,
+                output_config=output_config,
+            )
 
             create_performance_plots(
                 completed_run_configs=self.run_configs,
