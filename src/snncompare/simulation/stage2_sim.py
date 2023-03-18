@@ -47,5 +47,5 @@ def sim_graphs(
                 sim_duration=stage_1_graphs[graph_name].graph["sim_duration"],
             )
         add_stage_completion_to_graph(
-            input_graph=stage_1_graphs[graph_name], stage_index=2
+            snn=stage_1_graphs[graph_name], stage_index=2
         )

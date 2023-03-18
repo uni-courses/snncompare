@@ -177,7 +177,7 @@ def output_stage_json(
 
     input_graph: nx.Graph = results_nx_graphs["graphs_dict"]["input_graph"]
     if results_nx_graphs["run_config"].simulator == "nx":
-        results_nx_graphs["graphs_dict"] = prepare_stage_1_and_2_nx_lif_output(
+        results_nx_graphs = prepare_stage_1_and_2_nx_lif_output(
             results_nx_graphs=results_nx_graphs,
             stage_index=stage_index,
         )

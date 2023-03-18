@@ -98,7 +98,6 @@ def load_json_results(
     with open(json_filepath, encoding="utf-8") as json_file:
         results_json_graphs = json.load(json_file)
         json_file.close()
-
     verify_results_safely_check_json_graphs_contain_expected_stages(
         results_json_graphs=results_json_graphs,
         expected_stages=expected_stages,

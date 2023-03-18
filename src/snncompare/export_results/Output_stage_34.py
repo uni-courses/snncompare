@@ -70,9 +70,7 @@ def output_stage_files_3_and_4(
             if "gif" in output_config.export_types:
                 create_gif_of_run_config(results_nx_graphs=results_nx_graphs)
                 for nx_graph in results_nx_graphs["graphs_dict"].values():
-                    add_stage_completion_to_graph(
-                        input_graph=nx_graph, stage_index=3
-                    )
+                    add_stage_completion_to_graph(snn=nx_graph, stage_index=3)
 
         if (
             # results_nx_graphs["run_config"].export_images or

@@ -3,8 +3,7 @@ from typing import Dict, Union
 
 import networkx as nx
 from networkx.readwrite import json_graph
-from simsnn.core.connections import Synapse
-from snnbackends.networkx.LIF_neuron import manually_create_lif_neuron
+from snnbackends.networkx.LIF_neuron import Synapse, manually_create_lif_neuron
 from snnbackends.simsnn.export import json_to_simsnn
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
@@ -22,7 +21,7 @@ def load_json_graph_to_snn(
     if run_config.simulator == "nx":
         json_graph_to_nx_snn(json_graphs=json_graphs, run_config=run_config)
     elif run_config.simulator == "simsnn":
-        raise NotImplementedError("Error, simsnn not yet implemented.")
+        json_graph_to_simsnn_snn(json_graphs=json_graphs)
     else:
         raise NotImplementedError(
             "Error, did not yet implement simsnn to nx_lif converter."
@@ -40,7 +39,12 @@ def json_graph_to_nx_snn(*, json_graphs: Dict, run_config: Run_config) -> None:
 
     # TODO: Verify node and edge attributes are of valid object type.
     verify_results_nx_graphs(
-        results_nx_graphs=json_graphs, run_config=run_config
+        results_nx_graphs={
+            "exp_config": None,
+            "run_config": run_config,
+            "graphs_dict": json_graphs,
+        },
+        run_config=run_config,
     )
 
 
@@ -51,9 +55,12 @@ def json_graph_to_simsnn_snn(*, json_graphs: Dict) -> None:
     TODO: rename this file and docstring.
     """
     for graph_name in json_graphs.keys():
-        json_graphs[graph_name] = json_to_simsnn(
-            json_simsnn=json_graphs[graph_name]
-        )
+        if graph_name != "input_graph":
+            print(json_graphs[graph_name].keys())
+            json_graphs[graph_name] = json_to_simsnn(
+                json_simsnn=json_graphs[graph_name]
+            )
+    # TODO: verify loaded graphs.
 
 
 @typechecked
