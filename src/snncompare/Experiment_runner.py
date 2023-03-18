@@ -32,7 +32,7 @@ from snncompare.export_results.analysis.create_performance_plots import (
     get_completed_and_missing_run_configs,
     store_pickle,
 )
-from snncompare.helper import dicts_are_equal
+from snncompare.helper import add_stage_completion_to_graph, dicts_are_equal
 from snncompare.optional_config.Output_config import (
     Hover_info,
     Output_config,
@@ -42,7 +42,7 @@ from snncompare.run_config.Run_config import Run_config
 
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
-from .graph_generation.stage_1_create_graphs import get_used_graphs
+from .graph_generation.stage_1_create_graphs import get_graphs_stage_1
 from .import_results.check_completed_stages import has_outputted_stage_jsons
 from .import_results.stage_1_load_input_graphs import load_results_stage_1
 from .process_results.process_results import compute_results, set_results
@@ -179,9 +179,15 @@ class Experiment_runner:
             or 1 in output_config.recreate_stages
         ):
             # Run first stage of experiment, get input graph.
-            stage_1_graphs: Dict = get_used_graphs(
+            stage_1_graphs: Dict = get_graphs_stage_1(
                 plot_config=plot_config, run_config=run_config
             )
+
+            # TODO: move this into a separate location/function.
+            # Indicate the graphs have completed stage 1.
+            for snn in stage_1_graphs.values():
+                add_stage_completion_to_graph(snn=snn, stage_index=1)
+
             results_nx_graphs = {
                 "exp_config": exp_config,
                 "run_config": run_config,

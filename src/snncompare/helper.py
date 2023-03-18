@@ -2,13 +2,12 @@
 import copy
 import random
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import networkx as nx
 import pylab as plt
 from networkx.classes.graph import Graph
-
-# from snncompare.export_results.load_json_to_nx_graph import dicts_are_equal
+from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
 from snncompare.export_plots.plot_graphs import export_plot
@@ -254,37 +253,42 @@ def set_node_default_values(
 
 @typechecked
 def add_stage_completion_to_graph(
-    *, input_graph: nx.Graph, stage_index: int
+    *, snn: Union[nx.Graph, Simulator], stage_index: int
 ) -> None:
     """Adds the completed stage to the list of completed stages for the
     incoming graph."""
+    if isinstance(snn, Simulator):
+        graph = snn.network.graph
+    else:
+        graph = snn
+
     # Initialise the completed_stages key.
     if stage_index == 1:
-        if "completed_stages" in input_graph.graph:
+        if "completed_stages" in graph.graph:
             raise ValueError(
                 "Error, the completed_stages parameter is"
-                + f"already created for stage 1{input_graph.graph}:"
+                + f"already created for stage 1{graph.graph}:"
             )
-        input_graph.graph["completed_stages"] = []
+        graph.graph["completed_stages"] = []
 
     # After stage 1, the completed_stages key should already be a list.
-    elif not isinstance(input_graph.graph["completed_stages"], list):
+    elif not isinstance(graph.graph["completed_stages"], list):
         raise TypeError(
             "Error, the completed_stages parameter is not of type"
             + "list. instead, it is of type:"
-            + f'{type(input_graph.graph["completed_stages"])}'
+            + f'{type(graph.graph["completed_stages"])}'
         )
 
     # At this point, the completed_stages key should not contain the current
     # stage index already..
-    if stage_index in input_graph.graph["completed_stages"]:
+    if stage_index in graph.graph["completed_stages"]:
         raise ValueError(
             f"Error, the stage:{stage_index} is already in the completed_stage"
-            f's: {input_graph.graph["completed_stages"]}'
+            f's: {graph.graph["completed_stages"]}'
         )
 
     # Add the completed stages key to the snn graph.
-    input_graph.graph["completed_stages"].append(stage_index)
+    graph.graph["completed_stages"].append(stage_index)
 
 
 @typechecked

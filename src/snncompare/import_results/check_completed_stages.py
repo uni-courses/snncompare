@@ -37,8 +37,6 @@ def has_outputted_stage_jsons(
             f"Error, stage_index:{stage_index} was not in range:{[1,2,3,4,5]}"
         )
     expected_filepaths = get_expected_files(run_config=run_config)
-    # print(f'expected_filepaths=')
-    # pprint(expected_filepaths)
 
     if not expected_files_exist(expected_filepaths=expected_filepaths):
         return False
@@ -215,6 +213,7 @@ def has_valid_json_results(
 
     TODO: support different algorithms.
     """
+    print("HI")
     for algo_name, algo_settings in run_config.algorithm.items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):

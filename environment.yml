@@ -103,3 +103,5 @@ dependencies:
     - customshowme
     # Create boxplots.
     - simplt
+    # Support simsnn from Radboud University
+    - simsnn

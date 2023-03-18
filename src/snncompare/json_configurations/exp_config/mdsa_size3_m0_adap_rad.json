@@ -1,8 +1,7 @@
 {
   "adaptations": {
     "redundancy": [
-      2,
-      4
+      2
     ]
   },
   "algorithms": {
@@ -25,12 +24,10 @@
     ]
   },
   "seeds": [
-    7,
-    8,
-    9
+    7
   ],
   "simulators": [
-    "nx"
+    "simsnn"
   ],
   "size_and_max_graphs": [
     "{\"__tuple__\": true, \"items\": [3, 1]}"

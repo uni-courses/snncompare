@@ -6,14 +6,13 @@ graphs.
 """
 import json
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
-import networkx as nx
-from networkx.readwrite import json_graph
-from snnbackends.networkx.LIF_neuron import Synapse, manually_create_lif_neuron
-from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
+from snncompare.import_results.json_dict_into_nx_snn import (
+    load_json_graph_to_snn,
+)
 from snncompare.run_config.Run_config import Run_config
 
 
@@ -41,41 +40,11 @@ def load_results_from_json(
     if results_loaded_graphs["graphs_dict"] == {}:
         raise ValueError("Error, the graphs dict was an empty dict.")
 
-    for graph_name in results_loaded_graphs["graphs_dict"].keys():
-        results_loaded_graphs["graphs_dict"][
-            graph_name
-        ] = json_graph.node_link_graph(
-            results_loaded_graphs["graphs_dict"][graph_name]
-        )
-        set_graph_attributes(
-            graph=results_loaded_graphs["graphs_dict"][graph_name]
-        )
-
-    # TODO: Verify node and edge attributes are of valid object type.
-    verify_results_nx_graphs(
-        results_nx_graphs=results_loaded_graphs, run_config=run_config
+    # TODO: call load snn
+    load_json_graph_to_snn(
+        run_config=run_config, json_graphs=results_loaded_graphs["graphs_dict"]
     )
     return results_loaded_graphs
-
-
-@typechecked
-def set_graph_attributes(*, graph: Union[nx.Graph, nx.DiGraph]) -> None:
-    """Converts the edge and node attributes Synapse and nx_Lif back into their
-    respective objects."""
-    for edge in graph.edges:
-        if "synapse" in graph.edges[edge].keys():
-            graph.edges[edge]["synapse"] = Synapse(
-                **graph.edges[edge]["synapse"]
-            )
-    for node in graph.nodes:
-        if "nx_lif" in graph.nodes[node].keys():
-            # print(graph.nodes[node]["nx_lif"])
-            graph.nodes[node]["nx_lif"] = list(
-                map(
-                    manually_create_lif_neuron,
-                    graph.nodes[node]["nx_lif"],
-                )
-            )
 
 
 @typechecked

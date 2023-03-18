@@ -114,7 +114,7 @@ class Supported_experiment_settings:
         self.seeds = list(range(0, 1000))
 
         # The backend/type of simulator that is used.
-        self.simulators = ["nx", "lava"]
+        self.simulators = ["nx", "lava", "simsnn"]
 
         # Generate the supported adaptation settings.
         self.specify_supported_adaptation_settings()

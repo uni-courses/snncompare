@@ -5,9 +5,13 @@ networkx Graph.
 """
 
 import copy
+from math import inf
 from typing import Dict, List
 
 import networkx as nx
+from simsnn.core.networks import Network
+from simsnn.core.nodes import LIF
+from simsnn.core.simulators import Simulator
 from snnadaptation.redundancy.redundancy import apply_redundancy
 from snnadaptation.redundancy.verify_redundancy_settings import (
     verify_redundancy_settings_for_run_config,
@@ -19,6 +23,7 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
     SNN_initialisation_properties,
 )
 from snnalgorithms.Used_graphs import Used_graphs
+from snnbackends.networkx import LIF_neuron
 from snnradiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
@@ -28,11 +33,116 @@ from typeguard import typechecked
 from snncompare.export_plots.Plot_config import Plot_config
 from snncompare.run_config.Run_config import Run_config
 
-from ..helper import add_stage_completion_to_graph
+
+@typechecked
+def get_graphs_stage_1(
+    *,
+    plot_config: Plot_config,
+    run_config: Run_config,
+) -> Dict:
+    """Returns the initialised graphs for stage 1 for the different
+    simulators."""
+    stage_1_graphs: Dict = get_nx_lif_graphs(
+        plot_config=plot_config,
+        run_config=run_config,
+    )
+    if run_config.simulator == "nx":
+        return stage_1_graphs
+    if run_config.simulator == "simsnn":
+        return nx_lif_graphs_to_simsnn_graphs(
+            stage_1_graphs=stage_1_graphs,
+            reverse_conversion=False,
+        )
+    raise NotImplementedError(
+        "Error, did not yet implement simsnn to nx_lif converter."
+    )
 
 
 @typechecked
-def get_used_graphs(
+def nx_lif_graphs_to_simsnn_graphs(
+    *,
+    stage_1_graphs: Dict,
+    reverse_conversion: bool,
+) -> Dict:
+    """Converts nx_lif graphs to sim snn graphs."""
+    new_graphs: Dict = {}
+    new_graphs["input_graph"] = stage_1_graphs["input_graph"]
+    for graph_name in stage_1_graphs.keys():
+        if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
+            if reverse_conversion:
+                new_graphs[graph_name] = simsnn_graph_to_nx_lif_graph(
+                    simsnn=stage_1_graphs[graph_name]
+                )
+            else:
+                new_graphs[graph_name] = nx_lif_graph_to_simsnn_graph(
+                    snn_graph=stage_1_graphs[graph_name],
+                    add_to_multimeter=False,
+                    add_to_raster=False,
+                )
+    return new_graphs
+
+
+@typechecked
+def nx_lif_graph_to_simsnn_graph(
+    *,
+    snn_graph: nx.DiGraph,
+    add_to_multimeter: bool,
+    add_to_raster: bool,
+) -> Simulator:
+    """Converts an snn graph of type nx_LIF to sim snn graph."""
+    net = Network()
+    sim = Simulator(net)
+
+    simsnn: Dict[str, LIF] = {}
+    for node_name in snn_graph.nodes:
+        nx_lif: LIF_neuron = snn_graph.nodes[node_name]["nx_lif"][0]
+        # TODO: determine how to deal with: snnsim spikes if threshold is
+        # reached, instead of when it is exceeded.
+        simsnn[node_name] = net.createLIF(
+            m=0,
+            V_init=0,
+            V_reset=0,
+            V_min=-inf,
+            thr=nx_lif.vth.get(),
+            amplitude=0,
+            I_e=0,
+            noise=0,
+            rng=0,
+            ID=node_name,
+            increment_count=True,
+        )
+    for edge in snn_graph.edges():
+        synapse = snn_graph.edges[edge]["synapse"]
+        net.createSynapse(
+            pre=simsnn[edge[0]],
+            post=simsnn[edge[1]],
+            ID=edge,
+            w=synapse.weight,
+            d=1,
+        )
+
+    if add_to_raster:
+        # Add all neurons to the raster.
+        sim.raster.addTarget(list(simsnn.values()))
+    if add_to_multimeter:
+        # Add all neurons to the multimeter.
+        sim.multimeter.addTarget(list(simsnn.values()))
+    return sim
+
+
+@typechecked
+def simsnn_graph_to_nx_lif_graph(
+    *,
+    simsnn: Simulator,
+) -> nx.DiGraph:
+    """Converts sim snn graphs to nx_lif graphs."""
+    raise NotImplementedError(
+        "Error, did not yet implement simsnn to nx_lif converter."
+    )
+
+
+@typechecked
+def get_nx_lif_graphs(
     *,
     plot_config: Plot_config,
     run_config: Run_config,
@@ -75,10 +185,6 @@ def get_used_graphs(
                 run_config=run_config,
                 seed=run_config.seed,
             )
-    # TODO: move this into a separate location/function.
-    # Indicate the graphs have completed stage 1.
-    for graph in graphs.values():
-        add_stage_completion_to_graph(input_graph=graph, stage_index=1)
     return graphs
 
 

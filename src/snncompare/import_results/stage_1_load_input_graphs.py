@@ -30,7 +30,6 @@ def load_results_stage_1(
     )
     # Pop the unique_id if it was in.
     pop_unique_id(config=stage_1_dict["run_config"])
-    # pop_unique_id(config=stage_1_dict["exp_config"])
 
     # Split the dictionary into three separate dicts.
     # The ** loads the dict into the object.
