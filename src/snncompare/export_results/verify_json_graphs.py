@@ -31,7 +31,6 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
     results_json_graphs["run_config"] = dict_to_run_config(
         some_dict=results_json_graphs["run_config"]
     )
-    print("erraaaaaaaaaaaaaa")
     verify_json_graphs_dict_contain_correct_stages(
         json_graphs=results_json_graphs["graphs_dict"],
         expected_stages=expected_stages,
@@ -65,7 +64,6 @@ def verify_json_graphs_dict_contain_correct_stages(
                 completed_stages = json_graph["graph"]["completed_stages"]
 
             if expected_stage not in completed_stages:
-                print("ftoa")
                 raise ValueError(
                     "Error, for the above run_config, the expected stage:"
                     + f"{expected_stage}, in:"

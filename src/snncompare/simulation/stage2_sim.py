@@ -1,8 +1,11 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
-from typing import Dict
+import sys
+from pprint import pprint
+from typing import Dict, Union
 
 import networkx as nx
+from simsnn.core.simulators import Simulator
 from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
 from typeguard import typechecked
 
@@ -21,31 +24,59 @@ def sim_graphs(
 
     :param stage_1_graphs: Dict:
     """
-    for graph_name, snn_graph in stage_1_graphs.items():
-        stage_1_graphs[graph_name].graph[
-            "sim_duration"
-        ] = get_max_sim_duration(
-            input_graph=stage_1_graphs["input_graph"], run_config=run_config
-        )
+    for graph_name, snn in stage_1_graphs.items():
         if graph_name != "input_graph":
-            if not isinstance(snn_graph, nx.DiGraph):
-                raise TypeError(
-                    "Error, snn_graph:{graph_name} was not of the"
-                    f"expected type, it was of:{type(snn_graph)}"
-                )
-            # TODO: add lava neurons if run config demands lava.
-
-            if not isinstance(snn_graph, nx.DiGraph):
-                raise TypeError(
-                    "Error, snn_graph:{graph_name} was not of the"
-                    "expected type after conversion, it was of type:"
-                    f"{type(snn_graph)}"
-                )
-            run_snn_on_networkx(
+            sim_snn(
+                input_graph=stage_1_graphs["input_graph"],
+                snn=snn,
                 run_config=run_config,
-                snn_graph=snn_graph,
-                sim_duration=stage_1_graphs[graph_name].graph["sim_duration"],
             )
+
         add_stage_completion_to_graph(
             snn=stage_1_graphs[graph_name], stage_index=2
+        )
+
+
+@typechecked
+def sim_snn(
+    *,
+    input_graph: nx.Graph,
+    snn: Union[nx.DiGraph, Simulator],
+    run_config: "Run_config",
+) -> None:
+    """Simulates the snn graphs and makes a deep copy for each timestep.
+
+    :param stage_1_graphs: Dict:
+    """
+    sim_duration: int
+    if run_config.simulator == "nx":
+        sim_duration = get_max_sim_duration(
+            input_graph=input_graph,
+            run_config=run_config,
+        )
+        if not isinstance(snn, nx.DiGraph):
+            raise TypeError(
+                "Error, snn_graph:{graph_name} was not of the"
+                "expected type after conversion, it was of type:"
+                f"{type(snn)}"
+            )
+
+        run_snn_on_networkx(
+            run_config=run_config,
+            snn_graph=snn,
+            sim_duration=sim_duration,
+        )
+    elif run_config.simulator == "simsnn":
+        sim_duration = get_max_sim_duration(
+            input_graph=input_graph,
+            run_config=run_config,
+        )
+        snn.run(sim_duration, plotting=False)
+        for node in snn.network.nodes:
+            pprint(node.__dict__)
+        sys.exit()
+    else:
+        # TODO: add lava neurons if run config demands lava.
+        raise NotImplementedError(
+            "Error, did not yet implement simsnn to nx_lif converter."
         )

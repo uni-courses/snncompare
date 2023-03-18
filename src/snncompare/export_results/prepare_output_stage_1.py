@@ -36,16 +36,10 @@ def prepare_stage_1_and_2_simsnn_output(
     *,
     results_nx_graphs: Dict,
 ) -> Dict:
-    """Converts the Simulator object of the simsnn into a json dict."""
+    """Converts the Simulator object of the simsnn into a json dict.
 
-    # verify_results_simsnn_graphs(
-    #    results_nx_graphs=results_nx_graphs,
-    #    run_config=results_nx_graphs["run_config"],
-    # )
-
-    # verify_results_graphs_contain_expected_stages(
-    #    results_nx_graphs=results_nx_graphs, stage_index=stage_index
-    # )
+    TODO: Create verification for simsnn.
+    """
 
     json_simsnn_graphs: Dict = {}
     for graph_name, simulator in results_nx_graphs["graphs_dict"].items():

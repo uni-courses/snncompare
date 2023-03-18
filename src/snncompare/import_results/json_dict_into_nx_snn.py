@@ -32,6 +32,9 @@ def load_json_graph_to_snn(
 def json_graph_to_nx_snn(*, json_graphs: Dict, run_config: Run_config) -> None:
     """Converts the json snn into the nx snn."""
     for graph_name in json_graphs.keys():
+        if graph_name == "input_graph":
+            print(json_graphs[graph_name])
+            # exit()
         json_graphs[graph_name] = json_graph.node_link_graph(
             json_graphs[graph_name]
         )
@@ -56,10 +59,15 @@ def json_graph_to_simsnn_snn(*, json_graphs: Dict) -> None:
     """
     for graph_name in json_graphs.keys():
         if graph_name != "input_graph":
-            print(json_graphs[graph_name].keys())
             json_graphs[graph_name] = json_to_simsnn(
                 json_simsnn=json_graphs[graph_name]
             )
+        else:
+            # exit()
+            json_graphs[graph_name] = json_graph.node_link_graph(
+                json_graphs[graph_name]
+            )
+            set_graph_attributes(graph=json_graphs[graph_name])
     # TODO: verify loaded graphs.
 
 

@@ -140,11 +140,9 @@ def expected_json_content_is_valid(
         # Load the json graphs from json file to see if they exist.
         # TODO: separate loading and checking if it can be loaded.
         try:
-            print("LOADEomg")
             json_graphs = load_verified_json_graphs_from_json(
                 run_config=run_config, expected_stages=expected_stages
             )
-            print("LOADED")
         # pylint: disable=R0801
         except KeyError as k:
             if verbose:

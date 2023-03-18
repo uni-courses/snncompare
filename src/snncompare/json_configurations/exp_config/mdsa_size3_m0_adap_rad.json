@@ -27,7 +27,7 @@
     7
   ],
   "simulators": [
-    "nx"
+    "simsnn"
   ],
   "size_and_max_graphs": [
     "{\"__tuple__\": true, \"items\": [3, 1]}"

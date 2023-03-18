@@ -228,9 +228,11 @@ class Experiment_runner:
         exports each timestep of those SNN graphs to a json dictionary.
         """
         # Verify incoming results dict.
-        verify_results_nx_graphs(
-            results_nx_graphs=results_nx_graphs, run_config=run_config
-        )
+        if run_config.simulator == "nx":
+            verify_results_nx_graphs(
+                results_nx_graphs=results_nx_graphs, run_config=run_config
+            )
+        # TODO: also verify for simsnn
 
         if (
             not has_outputted_stage_jsons(

@@ -18,6 +18,7 @@ from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_plots.plot_graphs import plot_uncoordinated_graph
+from snncompare.export_results.export_nx_graph_to_json import digraph_to_json
 from snncompare.export_results.prepare_output_stage_1 import (
     prepare_stage_1_and_2_nx_lif_output,
     prepare_stage_1_and_2_simsnn_output,
@@ -187,7 +188,10 @@ def output_stage_json(
             results_nx_graphs=results_nx_graphs,
             # stage_index=stage_index,
         )
-        results_nx_graphs["graphs_dict"]["input_graph"] = input_graph
+        results_nx_graphs["graphs_dict"]["input_graph"] = digraph_to_json(
+            G=input_graph
+        )
+
     else:
         raise NotImplementedError(
             "Error, did not yet implement simsnn to nx_lif converter."
