@@ -77,7 +77,7 @@ def nx_lif_graphs_to_simsnn_graphs(
                 new_graphs[graph_name] = nx_lif_graph_to_simsnn_graph(
                     snn_graph=stage_1_graphs[graph_name],
                     add_to_multimeter=False,
-                    add_to_raster=False,
+                    add_to_raster=True,
                 )
     return new_graphs
 
@@ -99,7 +99,8 @@ def nx_lif_graph_to_simsnn_graph(
         # TODO: determine how to deal with: snnsim spikes if threshold is
         # reached, instead of when it is exceeded.
         simsnn[node_name] = net.createLIF(
-            m=0,
+            m=1,
+            bias=nx_lif.bias.get(),
             V_init=0,
             V_reset=0,
             V_min=-inf,
@@ -108,8 +109,10 @@ def nx_lif_graph_to_simsnn_graph(
             I_e=0,
             noise=0,
             rng=0,
-            ID=node_name,
-            increment_count=True,
+            ID=0,
+            name=node_name,
+            increment_count=False,
+            du=nx_lif.du.get(),
         )
     for edge in snn_graph.edges():
         synapse = snn_graph.edges[edge]["synapse"]

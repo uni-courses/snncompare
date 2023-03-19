@@ -1,12 +1,11 @@
 """Simulates the SNN graphs and returns a deep copy of the graph per
 timestep."""
-import sys
-from pprint import pprint
 from typing import Dict, Union
 
 import networkx as nx
 from simsnn.core.simulators import Simulator
 from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
+from snnbackends.simsnn.run_on_simsnn import run_snn_on_simsnn
 from typeguard import typechecked
 
 from snncompare.run_config.Run_config import Run_config
@@ -71,10 +70,17 @@ def sim_snn(
             input_graph=input_graph,
             run_config=run_config,
         )
-        snn.run(sim_duration, plotting=False)
-        for node in snn.network.nodes:
-            pprint(node.__dict__)
-        sys.exit()
+        if not isinstance(snn, Simulator):
+            raise TypeError(
+                "Error, snn should be of type Simulator, it was:"
+                + f"{type(snn)}"
+            )
+        run_snn_on_simsnn(
+            run_config=run_config,
+            snn=snn,
+            sim_duration=sim_duration,
+        )
+
     else:
         # TODO: add lava neurons if run config demands lava.
         raise NotImplementedError(
