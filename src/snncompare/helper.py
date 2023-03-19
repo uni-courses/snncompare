@@ -262,6 +262,7 @@ def add_stage_completion_to_graph(
     else:
         graph = snn
 
+    print(f"graph={graph}")
     # Initialise the completed_stages key.
     if stage_index == 1:
         if "completed_stages" in graph.graph:

@@ -38,7 +38,9 @@ def json_graph_to_nx_snn(*, json_graphs: Dict, run_config: Run_config) -> None:
         json_graphs[graph_name] = json_graph.node_link_graph(
             json_graphs[graph_name]
         )
-        set_graph_attributes(graph=json_graphs[graph_name])
+        restore_nx_lif_neuron_and_synapse_objects(
+            graph=json_graphs[graph_name]
+        )
 
     # TODO: Verify node and edge attributes are of valid object type.
     verify_results_nx_graphs(
@@ -62,17 +64,19 @@ def json_graph_to_simsnn_snn(*, json_graphs: Dict) -> None:
             json_graphs[graph_name] = json_to_simsnn(
                 json_simsnn=json_graphs[graph_name]
             )
+            # TODO: set completed_stages.
         else:
             # exit()
             json_graphs[graph_name] = json_graph.node_link_graph(
                 json_graphs[graph_name]
             )
-            set_graph_attributes(graph=json_graphs[graph_name])
     # TODO: verify loaded graphs.
 
 
 @typechecked
-def set_graph_attributes(*, graph: Union[nx.Graph, nx.DiGraph]) -> None:
+def restore_nx_lif_neuron_and_synapse_objects(
+    *, graph: Union[nx.Graph, nx.DiGraph]
+) -> None:
     """Converts the edge and node attributes Synapse and nx_Lif back into their
     respective objects."""
     for edge in graph.edges:

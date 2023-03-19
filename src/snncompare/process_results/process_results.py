@@ -13,9 +13,7 @@ import networkx as nx
 from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
     set_mdsa_snn_results,
 )
-from snnbackends.verify_nx_graphs import (
-    verify_nx_graph_contains_correct_stages,
-)
+from snnbackends.verify_nx_graphs import verify_snn_contains_correct_stages
 from typeguard import typechecked
 
 from snncompare.optional_config.Output_config import Output_config
@@ -140,9 +138,9 @@ def compute_results(
     # Export graphs with embedded results to json.
     # TODO: move export into separate function.
     for graph_name, nx_graph in stage_4_graphs.items():
-        verify_nx_graph_contains_correct_stages(
+        verify_snn_contains_correct_stages(
             graph_name=graph_name,
-            nx_graph=nx_graph,
+            snn=nx_graph,
             expected_stages=get_expected_stages(
                 stage_index=stage_index,
             ),

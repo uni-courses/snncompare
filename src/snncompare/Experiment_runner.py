@@ -183,7 +183,6 @@ class Experiment_runner:
                 plot_config=plot_config, run_config=run_config
             )
 
-            # TODO: move this into a separate location/function.
             # Indicate the graphs have completed stage 1.
             for snn in stage_1_graphs.values():
                 add_stage_completion_to_graph(snn=snn, stage_index=1)
@@ -273,14 +272,17 @@ class Experiment_runner:
                     loaded_from_json=results_nx_graphs["run_config"],
                     incoming=run_config,
                 )
-        verify_results_nx_graphs_contain_expected_stages(
-            results_nx_graphs=results_nx_graphs,
-            stage_index=2,
-            expected_stages=[
-                1,
-                2,
-            ],
-        )
+
+        if run_config.simulator == "nx":
+            verify_results_nx_graphs_contain_expected_stages(
+                results_nx_graphs=results_nx_graphs,
+                stage_index=2,
+                expected_stages=[
+                    1,
+                    2,
+                ],
+            )
+        # TODO: verify completed stages are contained in simsnn graphs as well.
 
         assert_stage_is_completed(
             expected_stages=[1, 2],
