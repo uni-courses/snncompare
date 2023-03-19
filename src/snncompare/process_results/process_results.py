@@ -10,6 +10,7 @@ import copy
 from typing import Dict
 
 import networkx as nx
+from simsnn.core.simulators import Simulator
 from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
     set_mdsa_snn_results,
 )
@@ -64,9 +65,15 @@ def perform_mdsa_results_computation_if_needed(
 ) -> bool:
     """Performs result computation if the results are not in the graph yet."""
     set_new_results: bool = False
-    for nx_graph in stage_2_graphs.values():
+
+    for snn in stage_2_graphs.values():
+        if isinstance(snn, Simulator):
+            graph = snn.network.graph
+        else:
+            graph = snn
+
         if (
-            4 not in nx_graph.graph["completed_stages"]
+            4 not in graph.graph["completed_stages"]
             or 4 in output_config.recreate_stages
         ):
             set_new_results = True
@@ -78,7 +85,7 @@ def perform_mdsa_results_computation_if_needed(
             )
 
             # Indicate the graphs have completed stage 1.
-            add_stage_completion_to_graph(snn=nx_graph, stage_index=4)
+            add_stage_completion_to_graph(snn=graph, stage_index=4)
     return set_new_results
 
 

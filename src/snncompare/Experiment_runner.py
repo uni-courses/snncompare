@@ -314,7 +314,6 @@ class Experiment_runner:
         that timestep.
         - A circular synapse: a recurrent connection of a neuron into itself.
         """
-
         if output_config.export_types:
             # Generate output json dicts (and plots) of propagated graphs.
             output_stage_files_3_and_4(

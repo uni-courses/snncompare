@@ -30,11 +30,7 @@ def sim_graphs(
                 snn=snn,
                 run_config=run_config,
             )
-
-        # Indicate the graphs have completed stage 1.
-        if graph_name != "input_graph":
-            print(f"graph_name={graph_name}")
-            add_stage_completion_to_graph(snn=snn, stage_index=2)
+        add_stage_completion_to_graph(snn=snn, stage_index=2)
 
 
 @typechecked
