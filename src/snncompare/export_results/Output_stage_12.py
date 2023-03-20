@@ -1,4 +1,5 @@
 """"Outputs the results for stage 1 and/or 2."""
+import copy
 from typing import Dict
 
 from typeguard import typechecked
@@ -29,11 +30,10 @@ def output_files_stage_1_and_2(
     json_filename = run_config_to_filename(
         run_config_dict=results_nx_graphs["run_config"].__dict__
     )
+    # TODO: output should not modify results_nx_graphs. Currently it does
+    # because it stores ..aphs[graph_name] = Json_dict_simsnn(simulator)
     output_stage_json(
-        results_nx_graphs=results_nx_graphs,
+        results_nx_graphs=copy.deepcopy(results_nx_graphs),
         run_config_filename=json_filename,
         stage_index=stage_index,
     )
-    # Verifies while loading that the output dict contains the expected
-    # completed stages.
-    # load_json_to_nx_graph_from_file(results_nx_graphs["run_config"], 1)

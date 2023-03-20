@@ -192,7 +192,7 @@ class Experiment_runner:
                 "run_config": run_config,
                 "graphs_dict": stage_1_graphs,
             }
-            # print(f'results_nx_graphs={results_nx_graphs.keys()}')
+
             # Exports results, including graphs as dict.
             output_files_stage_1_and_2(
                 results_nx_graphs=results_nx_graphs, stage_index=1
@@ -341,14 +341,15 @@ class Experiment_runner:
         default/Neumann implementation. Then stores this result in the
         last entry of each graph.
         """
-        verify_results_nx_graphs_contain_expected_stages(
-            results_nx_graphs=results_nx_graphs,
-            stage_index=2,
-            expected_stages=[
-                1,
-                2,
-            ],
-        )
+        if run_config.simulator == "nx":
+            verify_results_nx_graphs_contain_expected_stages(
+                results_nx_graphs=results_nx_graphs,
+                stage_index=2,
+                expected_stages=[
+                    1,
+                    2,
+                ],
+            )
 
         if set_results(
             output_config=output_config,

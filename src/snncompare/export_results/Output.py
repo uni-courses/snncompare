@@ -14,6 +14,7 @@ from typing import Dict
 
 import jsons
 import networkx as nx
+from networkx.readwrite import json_graph
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
@@ -220,6 +221,20 @@ def output_stage_json(
     # TODO: Write run_config to file (pprint(dict), or json)
     # TODO: Write graphs to file (pprint(dict), or json)
     # TODO: append tags to output file.
+
+    # Revert input graph back from json to dict.
+    results_nx_graphs["graphs_dict"][
+        "input_graph"
+    ] = json_graph.node_link_graph(
+        results_nx_graphs["graphs_dict"]["input_graph"]
+    )
+    if not isinstance(
+        results_nx_graphs["graphs_dict"]["input_graph"], nx.Graph
+    ):
+        raise TypeError(
+            "Error, input graph was not of type nx.DiGraph:"
+            + f'{type(results_nx_graphs["graphs_dict"]["input_graph"])}'
+        )
 
 
 @typechecked

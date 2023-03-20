@@ -52,6 +52,7 @@ def get_graphs_stage_1(
         return nx_lif_graphs_to_simsnn_graphs(
             stage_1_graphs=stage_1_graphs,
             reverse_conversion=False,
+            run_config=run_config,
         )
     raise NotImplementedError(
         "Error, did not yet implement simsnn to nx_lif converter."
@@ -63,10 +64,18 @@ def nx_lif_graphs_to_simsnn_graphs(
     *,
     stage_1_graphs: Dict,
     reverse_conversion: bool,
+    run_config: Run_config,
 ) -> Dict:
     """Converts nx_lif graphs to sim snn graphs."""
     new_graphs: Dict = {}
     new_graphs["input_graph"] = stage_1_graphs["input_graph"]
+    if "alg_props" not in new_graphs["input_graph"].graph.keys():
+        new_graphs["input_graph"].graph[
+            "alg_props"
+        ] = SNN_initialisation_properties(
+            G=new_graphs["input_graph"], seed=run_config.seed
+        ).__dict__
+
     for graph_name in stage_1_graphs.keys():
         if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
             if reverse_conversion:
@@ -79,6 +88,7 @@ def nx_lif_graphs_to_simsnn_graphs(
                     add_to_multimeter=False,
                     add_to_raster=True,
                 )
+
     return new_graphs
 
 
@@ -130,6 +140,9 @@ def nx_lif_graph_to_simsnn_graph(
     if add_to_multimeter:
         # Add all neurons to the multimeter.
         sim.multimeter.addTarget(list(simsnn.values()))
+
+    # Add (redundant) graph properties.
+    sim.network.graph.graph = snn_graph.graph
     return sim
 
 
