@@ -1,5 +1,4 @@
 """Converts json dict back into nx snns for the nx simulator."""
-from pprint import pprint
 from typing import Dict, Union
 
 import networkx as nx
@@ -33,7 +32,6 @@ def load_json_graph_to_snn(
 def json_graph_to_nx_snn(*, json_graphs: Dict, run_config: Run_config) -> None:
     """Converts the json snn into the nx snn."""
     for graph_name in json_graphs.keys():
-        pprint(json_graphs[graph_name].__dict__)
         json_graphs[graph_name] = json_graph.node_link_graph(
             json_graphs[graph_name]
         )

@@ -161,6 +161,8 @@ def xy_max(
     """Computes the max x- and y-positions found in the nodes."""
     positions: List[Tuple[float, float]] = []
     for node_name in G.nodes():
+        if G.nodes[node_name]["pos"] is None:
+            raise ValueError(f"Error, pos:{node_name} is None.")
         positions.append(G.nodes[node_name]["pos"])
 
     x = max(list(map(lambda a: a[0], positions)))

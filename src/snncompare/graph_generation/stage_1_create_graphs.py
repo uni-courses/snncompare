@@ -6,7 +6,6 @@ networkx Graph.
 
 import copy
 from math import inf
-from pprint import pprint
 from typing import Dict, List
 
 import networkx as nx
@@ -111,6 +110,7 @@ def nx_lif_graph_to_simsnn_graph(
         # reached, instead of when it is exceeded.
 
         # TODO: Include position as optional argument.
+        print(f"nx_lif.pos={nx_lif.pos}")
         simsnn[node_name] = net.createLIF(
             m=1,
             bias=nx_lif.bias.get(),
@@ -169,7 +169,7 @@ def simsnn_graph_to_nx_lif_graph(
             du=float(simsnn_lif.du),
             dv=float(simsnn_lif.m),
             vth=float(simsnn_lif.thr),
-            pos=simsnn_lif.pos,
+            pos=tuple(simsnn_lif.pos),
         )
         nx_snn.add_node(lif_neuron.full_name)
         nx_snn.nodes[lif_neuron.full_name]["nx_lif"] = [lif_neuron]
@@ -177,7 +177,6 @@ def simsnn_graph_to_nx_lif_graph(
     # Create nx_lif synapses.
 
     for simsnn_synapse in simsnn.network.synapses:
-        pprint(simsnn_synapse.__dict__)
         nx_snn.add_edges_from(
             [
                 (
