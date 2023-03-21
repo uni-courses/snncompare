@@ -6,6 +6,10 @@ import dash
 import networkx as nx
 import plotly.graph_objs as go
 from simsnn.core.simulators import Simulator
+from snnbackends.simsnn.simsnn_to_nx_lif import (
+    add_simsnn_simulation_data_to_reconstructed_nx_lif,
+    simsnn_graph_to_nx_lif_graph,
+)
 from typeguard import typechecked
 
 from snncompare.export_plots.create_dash_fig_obj import create_svg_with_dash
@@ -20,9 +24,6 @@ from snncompare.export_plots.show_dash_plot import (
 )
 from snncompare.export_plots.store_plot_data_in_graph import (
     store_plot_params_in_graph,
-)
-from snncompare.graph_generation.stage_1_create_graphs import (
-    simsnn_graph_to_nx_lif_graph,
 )
 from snncompare.helper import get_some_duration
 from snncompare.optional_config.Output_config import Output_config
@@ -59,8 +60,6 @@ def create_svg_plot(
             print("")
             print("")
 
-            # sim_duration = snn_graph.graph["sim_duration"]
-
             sim_duration = get_some_duration(
                 simulator=run_config.simulator,
                 snn_graph=snn_graph,
@@ -77,8 +76,12 @@ def create_svg_plot(
                 nx_snn: nx.DiGraph = simsnn_graph_to_nx_lif_graph(
                     simsnn=snn_graph
                 )
-                # print(f"snn_graph={snn_graph.__dict__}")
-                print(f"snn_graph={snn_graph.multimeter.__dict__}")
+
+                # Add time dimension to nx_snn that was created from simsnn.
+                add_simsnn_simulation_data_to_reconstructed_nx_lif(
+                    nx_snn=nx_snn,
+                    simsnn=snn_graph,
+                )
 
             else:
                 nx_snn = snn_graph

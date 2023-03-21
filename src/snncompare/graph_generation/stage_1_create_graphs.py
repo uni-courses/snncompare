@@ -23,7 +23,8 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
     SNN_initialisation_properties,
 )
 from snnalgorithms.Used_graphs import Used_graphs
-from snnbackends.networkx.LIF_neuron import LIF_neuron, Synapse
+from snnbackends.networkx.LIF_neuron import LIF_neuron
+from snnbackends.simsnn.simsnn_to_nx_lif import simsnn_graph_to_nx_lif_graph
 from snnradiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
@@ -103,7 +104,7 @@ def nx_lif_graph_to_simsnn_graph(
 ) -> Simulator:
     """Converts an snn graph of type nx_LIF to sim snn graph."""
     net = Network()
-    sim = Simulator(net)
+    sim = Simulator(net, monitor_I=True)
 
     simsnn: Dict[str, LIF] = {}
     for node_name in snn_graph.nodes:
@@ -146,53 +147,6 @@ def nx_lif_graph_to_simsnn_graph(
     # Add (redundant) graph properties.
     sim.network.graph.graph = snn_graph.graph
     return sim
-
-
-@typechecked
-def simsnn_graph_to_nx_lif_graph(
-    *,
-    simsnn: Simulator,
-) -> nx.DiGraph:
-    """Converts sim snn graphs to nx_lif graphs.
-
-    TODO: include timesteps.
-    """
-    nx_snn: nx.DiGraph = nx.DiGraph()
-
-    # Create nx_lif neurons.
-    for simsnn_lif in simsnn.network.nodes:
-        lif_neuron = LIF_neuron(
-            name=simsnn_lif.name,
-            bias=float(simsnn_lif.bias),
-            du=float(simsnn_lif.du),
-            dv=float(simsnn_lif.m),
-            vth=float(simsnn_lif.thr),
-            pos=tuple(simsnn_lif.pos),
-        )
-        nx_snn.add_node(lif_neuron.full_name)
-        nx_snn.nodes[lif_neuron.full_name]["nx_lif"] = [lif_neuron]
-
-    # Create nx_lif synapses.
-
-    for simsnn_synapse in simsnn.network.synapses:
-        nx_snn.add_edges_from(
-            [
-                (
-                    simsnn_synapse.ID[0],
-                    simsnn_synapse.ID[1],
-                )
-            ],
-            synapse=Synapse(
-                weight=simsnn_synapse.w,
-                delay=0,
-                change_per_t=0,
-            ),
-        )
-
-    # Copy graph attributes.
-    nx_snn.graph = simsnn.network.graph.graph
-
-    return nx_snn
 
 
 @typechecked
