@@ -43,7 +43,11 @@ def output_stage_files_3_and_4(
     """
     # TODO: merge experiment config, results_nx_graphs['run_config'] into
     # single dict.
-    if results_nx_graphs["run_config"].simulator == "nx":
+    # pylint: disable=R1714
+    if (
+        results_nx_graphs["run_config"].simulator == "nx"
+        or results_nx_graphs["run_config"].simulator == "simsnn"
+    ):
         run_config_filename = run_config_to_filename(
             run_config_dict=results_nx_graphs["run_config"].__dict__
         )
@@ -64,6 +68,7 @@ def output_stage_files_3_and_4(
                     graph_names=["rad_adapted_snn_graph"],
                     graphs=results_nx_graphs["graphs_dict"],
                     output_config=output_config,
+                    run_config=results_nx_graphs["run_config"],
                 )
             elif "pdf" in output_config.export_types:
                 pass

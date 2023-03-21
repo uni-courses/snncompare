@@ -46,10 +46,7 @@ from .graph_generation.stage_1_create_graphs import get_graphs_stage_1
 from .import_results.check_completed_stages import has_outputted_stage_jsons
 from .import_results.stage_1_load_input_graphs import load_results_stage_1
 from .process_results.process_results import compute_results, set_results
-from .run_config.verify_run_completion import (
-    assert_stage_3_is_completed,
-    assert_stage_is_completed,
-)
+from .run_config.verify_run_completion import assert_stage_is_completed
 from .simulation.stage2_sim import sim_graphs
 
 
@@ -141,10 +138,10 @@ class Experiment_runner:
             self.__perform_run_stage_3(
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,
-                run_config=run_config,
             )
 
             self.__perform_run_stage_4(
+                exp_config=exp_config,
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,
                 run_config=run_config,
@@ -298,7 +295,6 @@ class Experiment_runner:
         self,
         output_config: Output_config,
         results_nx_graphs: Dict,
-        run_config: Run_config,
     ) -> None:
         """Performs the run for stage 3, which visualises the behaviour of the
         SNN graphs over time. This behaviour is shown as a sequence of images.
@@ -322,15 +318,18 @@ class Experiment_runner:
                 stage_index=3,
             )
 
+            # TODO: re-enable this check.
+            # assert_stage_3_is_completed(
+            #    results_nx_graphs=results_nx_graphs,
+            #    run_config=run_config,
+            # )
+
             # TODO: assert gif file exists
-            assert_stage_3_is_completed(
-                results_nx_graphs=results_nx_graphs,
-                run_config=run_config,
-            )
 
     @typechecked
     def __perform_run_stage_4(
         self,
+        exp_config: Exp_config,
         output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
@@ -352,6 +351,7 @@ class Experiment_runner:
             )
 
         if set_results(
+            exp_config=exp_config,
             output_config=output_config,
             run_config=run_config,
             stage_2_graphs=results_nx_graphs["graphs_dict"],

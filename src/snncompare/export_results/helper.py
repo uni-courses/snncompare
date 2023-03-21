@@ -6,9 +6,10 @@ import json
 from typing import Any, Dict, List, Union
 
 import networkx as nx
+from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
-from ..helper import get_actual_duration
+from ..helper import get_some_duration
 
 
 @typechecked
@@ -68,7 +69,7 @@ def run_config_to_filename(
 @typechecked
 def get_expected_image_paths_stage_3(  # type:ignore[misc]
     *,
-    nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph]],
+    nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     input_graph: nx.Graph,
     run_config: Any,
     extensions: List[str],
@@ -88,8 +89,10 @@ def get_expected_image_paths_stage_3(  # type:ignore[misc]
     for extension in extensions:
         for graph_name, snn_graph in nx_graphs_dict.items():
             if graph_name != "input_graph":
-                sim_duration = get_actual_duration(
-                    simulator=run_config.simulator, snn_graph=snn_graph
+                sim_duration = get_some_duration(
+                    simulator=run_config.simulator,
+                    snn_graph=snn_graph,
+                    duration_name="actual_duration",
                 )
                 for t in range(0, sim_duration):
                     image_filepaths.append(

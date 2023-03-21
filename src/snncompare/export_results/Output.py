@@ -186,8 +186,7 @@ def output_stage_json(
 
     elif results_nx_graphs["run_config"].simulator == "simsnn":
         results_nx_graphs["graphs_dict"] = prepare_stage_1_and_2_simsnn_output(
-            results_nx_graphs=results_nx_graphs,
-            # stage_index=stage_index,
+            graphs_dict=results_nx_graphs["graphs_dict"],
         )
         results_nx_graphs["graphs_dict"]["input_graph"] = digraph_to_json(
             G=input_graph

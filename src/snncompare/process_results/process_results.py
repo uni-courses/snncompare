@@ -17,6 +17,7 @@ from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
 from snnbackends.verify_nx_graphs import verify_snn_contains_correct_stages
 from typeguard import typechecked
 
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
@@ -29,6 +30,7 @@ from ..import_results.check_completed_stages import (
 @typechecked
 def set_results(
     *,
+    exp_config: Exp_config,
     output_config: Output_config,
     run_config: Run_config,
     stage_2_graphs: Dict,
@@ -38,6 +40,7 @@ def set_results(
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
                 return perform_mdsa_results_computation_if_needed(
+                    exp_config=exp_config,
                     m_val=algo_settings["m_val"],
                     output_config=output_config,
                     run_config=run_config,
@@ -58,6 +61,7 @@ def set_results(
 @typechecked
 def perform_mdsa_results_computation_if_needed(
     *,
+    exp_config: Exp_config,
     m_val: int,
     output_config: Output_config,
     run_config: Run_config,
@@ -78,6 +82,7 @@ def perform_mdsa_results_computation_if_needed(
         ):
             set_new_results = True
             set_mdsa_snn_results(
+                exp_config=exp_config,
                 m_val=m_val,
                 output_config=output_config,
                 run_config=run_config,

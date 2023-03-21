@@ -34,7 +34,7 @@ def prepare_stage_1_and_2_nx_lif_output(
 @typechecked
 def prepare_stage_1_and_2_simsnn_output(
     *,
-    results_nx_graphs: Dict,
+    graphs_dict: Dict,
 ) -> Dict:
     """Converts the Simulator object of the simsnn into a json dict.
 
@@ -42,7 +42,7 @@ def prepare_stage_1_and_2_simsnn_output(
     """
 
     json_simsnn_graphs: Dict = {}
-    for graph_name, simulator in results_nx_graphs["graphs_dict"].items():
+    for graph_name, simulator in graphs_dict.items():
         print(f"graph_name={graph_name}")
 
         if graph_name != "input_graph":

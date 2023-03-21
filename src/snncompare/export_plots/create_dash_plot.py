@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Union
 import dash
 import networkx as nx
 import plotly.graph_objs as go
+from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
 from snncompare.export_plots.create_dash_fig_obj import create_svg_with_dash
@@ -20,19 +21,26 @@ from snncompare.export_plots.show_dash_plot import (
 from snncompare.export_plots.store_plot_data_in_graph import (
     store_plot_params_in_graph,
 )
+from snncompare.graph_generation.stage_1_create_graphs import (
+    simsnn_graph_to_nx_lif_graph,
+)
+from snncompare.helper import get_some_duration
 from snncompare.optional_config.Output_config import Output_config
+from snncompare.run_config.Run_config import Run_config
 
 
 # Determine which graph(s) the user would like to see.
 # If no specific preference specified, show all 4.
 # pylint: disable=R0903
+# pylint: disable=R0913
 # pylint: disable=R0914
 @typechecked
 def create_svg_plot(
     run_config_filename: str,
     graph_names: List[str],
-    graphs: Dict[str, Union[nx.Graph, nx.DiGraph]],
+    graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     output_config: Output_config,
+    run_config: Run_config,
     # single_timestep: Optional[int] = 5,
     single_timestep: Optional[int] = None,
 ) -> None:
@@ -44,21 +52,40 @@ def create_svg_plot(
     # pylint: disable=R1702
     dash_figures: Dict[str, List[go.Figure]] = {}
     plotted_graphs: Dict[str, nx.DiGraph] = {}
+
     for i, (graph_name, snn_graph) in enumerate(graphs.items()):
         print(f"i={i}")
         if graph_name in graph_names:
             print("")
             print("")
 
-            sim_duration = snn_graph.graph["sim_duration"]
+            # sim_duration = snn_graph.graph["sim_duration"]
+
+            sim_duration = get_some_duration(
+                simulator=run_config.simulator,
+                snn_graph=snn_graph,
+                duration_name="sim_duration",
+            )
+
             print(f"Creating:graph_name={graph_name}")
+
+            # Convert simsnn to nx_LIF
+            if (
+                run_config.simulator == "simsnn"
+                and graph_name != "input_graph"
+            ):
+                nx_snn: nx.DiGraph = simsnn_graph_to_nx_lif_graph(
+                    simsnn=snn_graph
+                )
+            else:
+                nx_snn = snn_graph
             create_figures(
                 graph_name=graph_name,
                 run_config_filename=run_config_filename,
                 output_config=output_config,
                 plot_config=plot_config,
                 sim_duration=sim_duration,
-                snn_graph=snn_graph,
+                snn_graph=nx_snn,
                 single_timestep=single_timestep,
                 dash_figures=dash_figures,
                 plotted_graphs=plotted_graphs,

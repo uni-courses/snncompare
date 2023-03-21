@@ -6,6 +6,7 @@ networkx Graph.
 
 import copy
 from math import inf
+from pprint import pprint
 from typing import Dict, List
 
 import networkx as nx
@@ -23,7 +24,7 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
     SNN_initialisation_properties,
 )
 from snnalgorithms.Used_graphs import Used_graphs
-from snnbackends.networkx import LIF_neuron
+from snnbackends.networkx.LIF_neuron import LIF_neuron, Synapse
 from snnradiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
@@ -108,6 +109,8 @@ def nx_lif_graph_to_simsnn_graph(
         nx_lif: LIF_neuron = snn_graph.nodes[node_name]["nx_lif"][0]
         # TODO: determine how to deal with: snnsim spikes if threshold is
         # reached, instead of when it is exceeded.
+
+        # TODO: Include position as optional argument.
         simsnn[node_name] = net.createLIF(
             m=1,
             bias=nx_lif.bias.get(),
@@ -123,6 +126,7 @@ def nx_lif_graph_to_simsnn_graph(
             name=node_name,
             increment_count=False,
             du=nx_lif.du.get(),
+            pos=nx_lif.pos,
         )
     for edge in snn_graph.edges():
         synapse = snn_graph.edges[edge]["synapse"]
@@ -151,10 +155,47 @@ def simsnn_graph_to_nx_lif_graph(
     *,
     simsnn: Simulator,
 ) -> nx.DiGraph:
-    """Converts sim snn graphs to nx_lif graphs."""
-    raise NotImplementedError(
-        "Error, did not yet implement simsnn to nx_lif converter."
-    )
+    """Converts sim snn graphs to nx_lif graphs.
+
+    TODO: include timesteps.
+    """
+    nx_snn: nx.DiGraph = nx.DiGraph()
+
+    # Create nx_lif neurons.
+    for simsnn_lif in simsnn.network.nodes:
+        lif_neuron = LIF_neuron(
+            name=simsnn_lif.name,
+            bias=float(simsnn_lif.bias),
+            du=float(simsnn_lif.du),
+            dv=float(simsnn_lif.m),
+            vth=float(simsnn_lif.thr),
+            pos=simsnn_lif.pos,
+        )
+        nx_snn.add_node(lif_neuron.full_name)
+        nx_snn.nodes[lif_neuron.full_name]["nx_lif"] = [lif_neuron]
+
+    # Create nx_lif synapses.
+
+    for simsnn_synapse in simsnn.network.synapses:
+        pprint(simsnn_synapse.__dict__)
+        nx_snn.add_edges_from(
+            [
+                (
+                    simsnn_synapse.ID[0],
+                    simsnn_synapse.ID[1],
+                )
+            ],
+            synapse=Synapse(
+                weight=simsnn_synapse.w,
+                delay=0,
+                change_per_t=0,
+            ),
+        )
+
+    # Copy graph attributes.
+    nx_snn.graph = simsnn.network.graph.graph
+
+    return nx_snn
 
 
 @typechecked

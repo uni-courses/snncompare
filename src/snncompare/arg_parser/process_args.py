@@ -85,9 +85,15 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
                 args.export_images.append("svg")
 
     if args.export_images is not None:
-        optional_config_args_dict["export_types"] = args.export_images.split(
-            ","
-        )
+        print(f"args.export_images={args.export_images}")
+        if isinstance(args.export_images, List):
+            optional_config_args_dict["export_types"] = args.export_images
+        elif isinstance(args.export_images, str):
+            optional_config_args_dict[
+                "export_types"
+            ] = args.export_images.split(",")
+        else:
+            raise TypeError(f"Error, args.export_images:{args.export_images}")
     else:
         optional_config_args_dict["export_types"] = []
     optional_config_args_dict["zoom"] = parse_zoom_arg(args=args)
