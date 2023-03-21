@@ -88,7 +88,9 @@ def get_expected_image_paths_stage_3(  # type:ignore[misc]
     for extension in extensions:
         for graph_name, snn_graph in nx_graphs_dict.items():
             if graph_name != "input_graph":
-                sim_duration = get_actual_duration(snn_graph=snn_graph)
+                sim_duration = get_actual_duration(
+                    simulator=run_config.simulator, snn_graph=snn_graph
+                )
                 for t in range(0, sim_duration):
                     image_filepaths.append(
                         image_dir + f"{graph_name}_{filename}_{t}.{extension}"

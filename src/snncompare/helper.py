@@ -314,9 +314,15 @@ def get_max_sim_duration(  # type:ignore[misc]
 
 
 @typechecked
-def get_actual_duration(*, snn_graph: nx.DiGraph) -> int:
+def get_actual_duration(
+    *, simulator: str, snn_graph: Union[nx.DiGraph, Simulator]
+) -> int:
     """Compute the simulation duration for a given algorithm and graph."""
-    return snn_graph.graph["sim_duration"]
+    if simulator == "simsnn":
+        return snn_graph.network.graph.graph["actual_duration"]
+    if simulator == "nx":
+        return snn_graph.graph["actual_duration"]
+    raise NotImplementedError(f"Error, simulator:{simulator} not implemented.")
 
 
 @typechecked
