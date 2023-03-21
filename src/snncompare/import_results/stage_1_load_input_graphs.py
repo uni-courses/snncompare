@@ -28,6 +28,7 @@ def load_results_stage_1(
     stage_1_dict = load_results_from_json(
         json_filepath=json_filepath, run_config=run_config
     )
+
     # Pop the unique_id if it was in.
     pop_unique_id(config=stage_1_dict["run_config"])
 

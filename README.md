@@ -203,7 +203,8 @@ python -m pytest \
 python -m pytest tests/sparse/MDSA/adaptation/test_redundancy_1.py --capture=tee-sys
 
 python -m src.snncompare -e mdsa_long_no_overwrite -j5 -rev
-python -m src.snncompare -e mdsa_size3_m0_adap_rad -j1 -rev
+python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -rev -dr
+python -m src.snncompare -e mdsa_size3_m0_adap_rad -j1 -j2 -j4 -rev -dr
 ```
 
 ## Test Coverage

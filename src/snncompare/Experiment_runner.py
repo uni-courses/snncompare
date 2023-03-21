@@ -7,9 +7,11 @@ setting of the experiment configuration settings.
 # import showme
 import copy
 from pprint import pprint
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import customshowme
+import networkx as nx
+from simsnn.core.simulators import Simulator
 from snnbackends.verify_nx_graphs import (
     results_nx_graphs_contain_expected_stages,
     verify_results_nx_graphs,
@@ -176,7 +178,9 @@ class Experiment_runner:
             or 1 in output_config.recreate_stages
         ):
             # Run first stage of experiment, get input graph.
-            stage_1_graphs: Dict = get_graphs_stage_1(
+            stage_1_graphs: Dict[
+                str, Union[nx.Graph, nx.DiGraph, Simulator]
+            ] = get_graphs_stage_1(
                 plot_config=plot_config, run_config=run_config
             )
 
@@ -237,13 +241,16 @@ class Experiment_runner:
             # Only stage I should be loaded.
             or 2 in output_config.recreate_stages
         ):
+            # TODO: include check on whether or not stage 1 data is already
+            # computed (to prevent loading from file).
             results_nx_graphs = load_results_stage_1(run_config=run_config)
+
+            # TODO: remove stage 2 artifacts from loaded data.
 
             self.equalise_loaded_run_config(
                 loaded_from_json=results_nx_graphs["run_config"],
                 incoming=run_config,
             )
-            # TODO: remove stage 2 artifacts from loaded data.
 
             # Run simulation on networkx or lava backend.
             sim_graphs(

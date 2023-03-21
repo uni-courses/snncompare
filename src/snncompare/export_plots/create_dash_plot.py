@@ -77,6 +77,9 @@ def create_svg_plot(
                 nx_snn: nx.DiGraph = simsnn_graph_to_nx_lif_graph(
                     simsnn=snn_graph
                 )
+                # print(f"snn_graph={snn_graph.__dict__}")
+                print(f"snn_graph={snn_graph.multimeter.__dict__}")
+
             else:
                 nx_snn = snn_graph
             create_figures(

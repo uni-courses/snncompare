@@ -6,7 +6,7 @@ networkx Graph.
 
 import copy
 from math import inf
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import networkx as nx
 from simsnn.core.networks import Network
@@ -39,10 +39,12 @@ def get_graphs_stage_1(
     *,
     plot_config: Plot_config,
     run_config: Run_config,
-) -> Dict:
+) -> Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]:
     """Returns the initialised graphs for stage 1 for the different
     simulators."""
-    stage_1_graphs: Dict = get_nx_lif_graphs(
+    stage_1_graphs: Dict[
+        str, Union[nx.Graph, nx.DiGraph, Simulator]
+    ] = get_nx_lif_graphs(
         plot_config=plot_config,
         run_config=run_config,
     )
@@ -65,7 +67,7 @@ def nx_lif_graphs_to_simsnn_graphs(
     stage_1_graphs: Dict,
     reverse_conversion: bool,
     run_config: Run_config,
-) -> Dict:
+) -> Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]:
     """Converts nx_lif graphs to sim snn graphs."""
     new_graphs: Dict = {}
     new_graphs["input_graph"] = stage_1_graphs["input_graph"]
@@ -85,7 +87,7 @@ def nx_lif_graphs_to_simsnn_graphs(
             else:
                 new_graphs[graph_name] = nx_lif_graph_to_simsnn_graph(
                     snn_graph=stage_1_graphs[graph_name],
-                    add_to_multimeter=False,
+                    add_to_multimeter=True,
                     add_to_raster=True,
                 )
 
@@ -106,11 +108,6 @@ def nx_lif_graph_to_simsnn_graph(
     simsnn: Dict[str, LIF] = {}
     for node_name in snn_graph.nodes:
         nx_lif: LIF_neuron = snn_graph.nodes[node_name]["nx_lif"][0]
-        # TODO: determine how to deal with: snnsim spikes if threshold is
-        # reached, instead of when it is exceeded.
-
-        # TODO: Include position as optional argument.
-        print(f"nx_lif.pos={nx_lif.pos}")
         simsnn[node_name] = net.createLIF(
             m=1,
             bias=nx_lif.bias.get(),
@@ -127,6 +124,7 @@ def nx_lif_graph_to_simsnn_graph(
             increment_count=False,
             du=nx_lif.du.get(),
             pos=nx_lif.pos,
+            spike_only_if_thr_exceeded=True,
         )
     for edge in snn_graph.edges():
         synapse = snn_graph.edges[edge]["synapse"]
@@ -140,10 +138,10 @@ def nx_lif_graph_to_simsnn_graph(
 
     if add_to_raster:
         # Add all neurons to the raster.
-        sim.raster.addTarget(list(simsnn.values()))
+        sim.raster.addTarget(net.nodes)
     if add_to_multimeter:
         # Add all neurons to the multimeter.
-        sim.multimeter.addTarget(list(simsnn.values()))
+        sim.multimeter.addTarget(net.nodes)
 
     # Add (redundant) graph properties.
     sim.network.graph.graph = snn_graph.graph

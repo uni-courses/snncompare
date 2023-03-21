@@ -47,7 +47,6 @@ def has_outputted_stage_jsons(
         run_config=run_config,
         stage_index=stage_index,
     ):
-        print("not valid json")
         return False
     return True
 
