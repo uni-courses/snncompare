@@ -29,6 +29,9 @@ from snncompare.export_plots.Plot_config import (
     get_default_plot_config,
 )
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
+from snncompare.export_plots.temp_default_output_creation import (
+    create_default_hover_info,
+)
 from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
     get_completed_and_missing_run_configs,
@@ -73,6 +76,10 @@ class Experiment_runner:
     ) -> None:
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists(root_dir_name="results")
+
+        output_config.hover_info = create_default_hover_info(
+            exp_config=exp_config
+        )
 
         # Store the experiment configuration settings.
         self.exp_config = exp_config
