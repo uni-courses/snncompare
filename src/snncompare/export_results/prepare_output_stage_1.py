@@ -45,9 +45,4 @@ def prepare_stage_1_and_2_simsnn_output(
     for graph_name, simulator in graphs_dict.items():
         if graph_name != "input_graph":
             json_simsnn_graphs[graph_name] = Json_dict_simsnn(simulator)
-
-            # TODO: move to load from file.
-            # json_to_simsnn(json_simsnn=json_simsnn)
-        # else:
-        # json_simsnn_graphs[graph_name]=simulator
     return json_simsnn_graphs

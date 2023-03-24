@@ -3,10 +3,12 @@ from typing import Dict
 
 from typeguard import typechecked
 
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_plots.create_dash_plot import create_svg_plot
 from snncompare.export_plots.create_snn_gif import create_gif_of_run_config
 from snncompare.helper import add_stage_completion_to_graph
 from snncompare.optional_config.Output_config import Output_config
+from snncompare.run_config.Run_config import Run_config
 
 from .helper import run_config_to_filename
 from .Output import output_stage_json, plot_graph_behaviours
@@ -15,6 +17,8 @@ from .Output import output_stage_json, plot_graph_behaviours
 @typechecked
 def output_stage_files_3_and_4(
     *,
+    exp_config: Exp_config,
+    run_config: Run_config,
     output_config: Output_config,
     results_nx_graphs: Dict,
     stage_index: int,
@@ -87,6 +91,8 @@ def output_stage_files_3_and_4(
         ):
             # Output the json dictionary of the files.
             output_stage_json(
+                exp_config=exp_config,
+                run_config=run_config,
                 results_nx_graphs=results_nx_graphs,
                 run_config_filename=run_config_filename,
                 stage_index=stage_index,

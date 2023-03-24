@@ -67,6 +67,49 @@ def run_config_to_filename(
 
 
 @typechecked
+def exp_config_to_filename(
+    *,
+    exp_config_dict: Dict,
+) -> str:
+    """Converts an Exp_config dictionary into a filename.
+
+    Does that by flattining the dictionary (and all its child-
+    dictionaries).
+    """
+    # TODO: order dictionaries by alphabetical order by default.
+    # TODO: allow user to specify a custom order of parameters.
+
+    # stripped_run_config:Dict = copy.deepcopy(run_config).__dict__
+    stripped_exp_config: Dict = copy.deepcopy(exp_config_dict)
+    stripped_exp_config.pop("unique_id")
+
+    # instead (To reduce filename length).
+    filename = str(flatten(d=stripped_exp_config))
+
+    # Remove the ' symbols.
+    # Don't, that makes it more difficult to load the dict again.
+    # filename=filename.replace("'","")
+
+    # Don't, that makes it more difficult to load the dict again.
+    # Remove the spaces.
+    filename = filename.replace(" ", "")
+    filename = filename.replace("'", "")
+    filename = filename.replace("[", "")
+    filename = filename.replace("]", "")
+    filename = filename.replace("{", "")
+    filename = filename.replace("}", "")
+    filename = filename.replace("adaptations_", "")
+    filename = filename.replace("algorithms_", "")
+    filename = filename.replace("graphs_", "")
+    filename = filename.replace("radiations_", "")
+    filename = filename.replace("unique_", "")
+
+    if len(filename) > 256:
+        raise NameError(f"Filename={filename} is too long:{len(filename)}")
+    return filename
+
+
+@typechecked
 def get_expected_image_paths_stage_3(  # type:ignore[misc]
     *,
     nx_graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],

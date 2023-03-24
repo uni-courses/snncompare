@@ -10,7 +10,8 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_results.export_json_results import (
     encode_tuples,
-    write_dict_to_json,
+    verify_loaded_json_content_is_nx_graph,
+    write_to_json,
 )
 from snncompare.helper import file_exists
 from snncompare.run_config.Run_config import Run_config
@@ -25,7 +26,8 @@ def store_exp_config_to_file(
     # epxort to file.
     filepath = f"{custom_config_path}{filename}.json"
     new_dict = encode_tuples(some_dict=exp_config.__dict__)
-    write_dict_to_json(
+    write_to_json(output_filepath=filepath, some_dict=jsons.dump(new_dict))
+    verify_loaded_json_content_is_nx_graph(
         output_filepath=filepath, some_dict=jsons.dump(new_dict)
     )
 

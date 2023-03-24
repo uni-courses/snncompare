@@ -9,7 +9,6 @@ SubInput: Run configuration within an experiment.
     mechanism.
 """
 import copy
-import pathlib
 from typing import Dict
 
 import jsons
@@ -27,7 +26,10 @@ from snncompare.export_results.prepare_output_stage_1 import (
 from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
-from .export_json_results import write_dict_to_json
+from .export_json_results import (
+    verify_loaded_json_content_is_nx_graph,
+    write_to_json,
+)
 from .verify_stage_1_graphs import verify_stage_1_graphs
 from .verify_stage_2_graphs import verify_stage_2_graphs
 from .verify_stage_3_graphs import verify_stage_3_graphs
@@ -167,7 +169,12 @@ class Stage_4_graphs:
 
 @typechecked
 def output_stage_json(
-    *, results_nx_graphs: Dict, run_config_filename: str, stage_index: int
+    *,
+    exp_config: Exp_config,
+    run_config: Run_config,
+    results_nx_graphs: Dict,
+    run_config_filename: str,
+    stage_index: int,
 ) -> None:
     """Exports results dict to a json file."""
 
@@ -188,6 +195,7 @@ def output_stage_json(
         results_nx_graphs["graphs_dict"] = prepare_stage_1_and_2_simsnn_output(
             graphs_dict=results_nx_graphs["graphs_dict"],
         )
+
         results_nx_graphs["graphs_dict"]["input_graph"] = digraph_to_json(
             G=input_graph
         )
@@ -206,27 +214,24 @@ def output_stage_json(
             exported_dict[key] = val.__dict__
 
     output_filepath = f"results/{run_config_filename}.json"
-    write_dict_to_json(
+    write_to_json(
+        output_filepath=output_filepath,
+        some_dict=jsons.dump(exported_dict),
+    )
+    verify_loaded_json_content_is_nx_graph(
         output_filepath=output_filepath,
         some_dict=jsons.dump(exported_dict),
     )
 
-    # Ensure output file exists.
-    if not pathlib.Path(pathlib.Path(output_filepath)).resolve().is_file():
-        raise FileNotFoundError(f"Error:{output_filepath} does not exist.")
-    # TODO: Verify the correct graphs is passed by checking the graph tag.
-    # TODO: merge experiment config, run_config and graphs into single dict.
-    # TODO: Write exp_config to file (pprint(dict), or json)
-    # TODO: Write run_config to file (pprint(dict), or json)
-    # TODO: Write graphs to file (pprint(dict), or json)
-    # TODO: append tags to output file.
-
     # Revert input graph back from json to dict.
-    results_nx_graphs["graphs_dict"][
-        "input_graph"
-    ] = json_graph.node_link_graph(
-        results_nx_graphs["graphs_dict"]["input_graph"]
-    )
+    if not isinstance(
+        results_nx_graphs["graphs_dict"]["input_graph"], nx.Graph
+    ):
+        results_nx_graphs["graphs_dict"][
+            "input_graph"
+        ] = json_graph.node_link_graph(
+            results_nx_graphs["graphs_dict"]["input_graph"]
+        )
     if not isinstance(
         results_nx_graphs["graphs_dict"]["input_graph"], nx.Graph
     ):

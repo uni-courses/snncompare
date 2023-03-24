@@ -20,7 +20,10 @@ from snncompare.exp_config.Exp_config import (
 )
 
 from ..arg_parser.arg_verification import verify_input_graph_path
-from ..export_results.export_json_results import write_dict_to_json
+from ..export_results.export_json_results import (
+    verify_loaded_json_content_is_nx_graph,
+    write_to_json,
+)
 from ..export_results.export_nx_graph_to_json import digraph_to_json
 
 
@@ -36,7 +39,11 @@ def create_default_graph_json() -> None:
     graphs_json_filepath = (
         "src/snncompare/json_configurations/default_graph_MDSA.json"
     )
-    write_dict_to_json(
+    write_to_json(
+        output_filepath=graphs_json_filepath,
+        some_dict=jsons.dump(default_json_graph),
+    )
+    verify_loaded_json_content_is_nx_graph(
         output_filepath=graphs_json_filepath,
         some_dict=jsons.dump(default_json_graph),
     )

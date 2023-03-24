@@ -80,7 +80,11 @@ def nx_lif_graphs_to_simsnn_graphs(
         ).__dict__
 
     for graph_name in stage_1_graphs.keys():
-        if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
+        # if graph_name in ["snn_algo_graph", "adapted_snn_graph",]:
+        if graph_name in [
+            "snn_algo_graph",
+            "adapted_snn_graph",
+        ]:
             if reverse_conversion:
                 new_graphs[graph_name] = simsnn_graph_to_nx_lif_graph(
                     simsnn=stage_1_graphs[graph_name]

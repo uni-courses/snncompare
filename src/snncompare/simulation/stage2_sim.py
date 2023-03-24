@@ -25,6 +25,7 @@ def sim_graphs(
     """
     for graph_name, snn in stage_1_graphs.items():
         if graph_name != "input_graph":
+            print(f"graph_name={graph_name}")
             sim_snn(
                 input_graph=stage_1_graphs["input_graph"],
                 snn=snn,

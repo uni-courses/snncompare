@@ -31,13 +31,18 @@ def generate_list_of_n_random_nrs(
     value = None)
     """
     if max_val is None:
+        # Return the consecutive numbers in len(G) by default.
         return list(range(0, len(G)))
     if max_val == len(G) - 1:
+        # TODO: remove this artifact.
         return list(range(0, len(G)))
     if max_val >= len(G):
+        # Generate a too large list with numbers in range 0 to max_val.
         large_list = list(range(0, max_val))
         if seed is not None:
             random.seed(seed)
+        # Return a random (with seed) sampling of len (G) from the previously
+        # created large range within [0, max_val).
         return random.sample(large_list, len(G))
     raise ValueError(
         f"The max_val={max_val} is smaller than the graph size:{len(G)}."
@@ -62,7 +67,7 @@ def compute_mark(*, input_graph: nx.Graph, rand_ceil: float) -> None:
         for n in nx.all_neighbors(input_graph, node):
             if (
                 input_graph.nodes[n]["weight"] == max_weight
-            ):  # should all max weight neurons be marked or only one of them?
+            ):  # Should all max weight neurons be marked or only one of them?
                 # Read of the score from countermarks, not marks.
                 input_graph.nodes[n]["marks"] += rand_ceil + 1
                 input_graph.nodes[n]["countermarks"] += 1

@@ -37,7 +37,14 @@ from snncompare.export_results.analysis.create_performance_plots import (
     get_completed_and_missing_run_configs,
     store_pickle,
 )
+from snncompare.export_results.output_stage1_configs_and_input_graph import (
+    output_stage_1_configs_and_input_graphs,
+)
+from snncompare.export_results.output_stage1_snn_graphs import (
+    output_stage_1_snns,
+)
 from snncompare.helper import add_stage_completion_to_graph, dicts_are_equal
+from snncompare.import_results.load_stage_1 import load_simsnn_graphs
 from snncompare.optional_config.Output_config import (
     Hover_info,
     Output_config,
@@ -139,6 +146,7 @@ class Experiment_runner:
             )
 
             results_nx_graphs = self.__perform_run_stage_2(
+                exp_config=exp_config,
                 results_nx_graphs=results_nx_graphs,
                 output_config=output_config,
                 run_config=run_config,
@@ -201,9 +209,32 @@ class Experiment_runner:
                 "graphs_dict": stage_1_graphs,
             }
 
+            output_stage_1_configs_and_input_graphs(
+                exp_config=exp_config,
+                run_config=run_config,
+                graphs_dict=results_nx_graphs["graphs_dict"],
+            )
+            for adaptation_boolean in [False, True]:
+                output_stage_1_snns(
+                    run_config=run_config,
+                    graphs_dict=results_nx_graphs["graphs_dict"],
+                    with_adaptation=adaptation_boolean,
+                )
+
+                load_simsnn_graphs(
+                    run_config=run_config,
+                    input_graph=results_nx_graphs["graphs_dict"][
+                        "input_graph"
+                    ],
+                    with_adaptation=adaptation_boolean,
+                )
+
             # Exports results, including graphs as dict.
             output_files_stage_1_and_2(
-                results_nx_graphs=results_nx_graphs, stage_index=1
+                exp_config=exp_config,
+                run_config=run_config,
+                results_nx_graphs=results_nx_graphs,
+                stage_index=1,
             )
 
         else:
@@ -224,6 +255,7 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_2(
         self,
+        exp_config: Exp_config,
         output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
@@ -265,7 +297,10 @@ class Experiment_runner:
                 stage_1_graphs=results_nx_graphs["graphs_dict"],
             )
             output_files_stage_1_and_2(
-                results_nx_graphs=results_nx_graphs, stage_index=2
+                exp_config=exp_config,
+                run_config=run_config,
+                results_nx_graphs=results_nx_graphs,
+                stage_index=2,
             )
         else:
             # TODO: verify loading is required.
@@ -326,6 +361,7 @@ class Experiment_runner:
         """
         if output_config.export_types:
             # Generate output json dicts (and plots) of propagated graphs.
+            # pylint: disable=E1125
             output_stage_files_3_and_4(
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,
@@ -375,6 +411,7 @@ class Experiment_runner:
                 stage_index=4,
             )
 
+            # pylint: disable=E1125
             output_stage_files_3_and_4(
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,

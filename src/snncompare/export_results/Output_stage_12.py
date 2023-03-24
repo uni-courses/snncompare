@@ -4,13 +4,20 @@ from typing import Dict
 
 from typeguard import typechecked
 
+from snncompare.exp_config.Exp_config import Exp_config
+from snncompare.run_config.Run_config import Run_config
+
 from .helper import run_config_to_filename
 from .Output import output_stage_json
 
 
 @typechecked
 def output_files_stage_1_and_2(
-    *, results_nx_graphs: Dict, stage_index: int
+    *,
+    exp_config: Exp_config,
+    run_config: Run_config,
+    results_nx_graphs: Dict,
+    stage_index: int,
 ) -> None:
     """Converts the graphs of the incoming results dict into json dict graphs,
 
@@ -30,9 +37,12 @@ def output_files_stage_1_and_2(
     json_filename = run_config_to_filename(
         run_config_dict=results_nx_graphs["run_config"].__dict__
     )
+
     # TODO: output should not modify results_nx_graphs. Currently it does
     # because it stores ..aphs[graph_name] = Json_dict_simsnn(simulator)
     output_stage_json(
+        exp_config=exp_config,
+        run_config=run_config,
         results_nx_graphs=copy.deepcopy(results_nx_graphs),
         run_config_filename=json_filename,
         stage_index=stage_index,
