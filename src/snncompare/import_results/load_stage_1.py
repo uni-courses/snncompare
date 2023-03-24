@@ -17,9 +17,7 @@ from simsnn.core.nodes import LIF
 from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
-from snncompare.export_results.output_stage1_snn_graphs import (
-    simsnn_files_exists_and_get_path,
-)
+from snncompare.import_results.helper import simsnn_files_exists_and_get_path
 from snncompare.run_config.Run_config import Run_config
 
 from .read_json import load_json_file_into_dict
@@ -63,6 +61,7 @@ def load_simsnn_graphs(
 ) -> Union[None, Simulator]:
     """Loads the input_graph."""
     simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
+        output_category="snns",
         input_graph=input_graph,
         run_config=run_config,
         with_adaptation=with_adaptation,

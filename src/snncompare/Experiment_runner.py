@@ -6,6 +6,7 @@ setting of the experiment configuration settings.
 
 # import showme
 import copy
+import sys
 from pprint import pprint
 from typing import Dict, List, Optional, Union
 
@@ -228,14 +229,15 @@ class Experiment_runner:
                     ],
                     with_adaptation=adaptation_boolean,
                 )
+            sys.exit()
 
             # Exports results, including graphs as dict.
-            output_files_stage_1_and_2(
-                exp_config=exp_config,
-                run_config=run_config,
-                results_nx_graphs=results_nx_graphs,
-                stage_index=1,
-            )
+            # output_files_stage_1_and_2(
+            # exp_config=exp_config,
+            # run_config=run_config,
+            # results_nx_graphs=results_nx_graphs,
+            # stage_index=1,
+            # )
 
         else:
             results_nx_graphs = load_results_stage_1(run_config=run_config)

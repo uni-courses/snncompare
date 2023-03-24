@@ -12,7 +12,6 @@ Output in separate folders:
     radiation type, Died neurons list with adaptation.
 """
 import json
-import os
 from pathlib import Path
 from pprint import pprint
 from typing import Dict, List, Tuple, Union
@@ -21,8 +20,10 @@ import jsons
 import networkx as nx
 from networkx.readwrite import json_graph
 from simsnn.core.simulators import Simulator
+from snnradiation.Radiation_damage import get_random_neurons
 from typeguard import typechecked
 
+# if TYPE_CHECKING:
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_results.export_json_results import (
     verify_loaded_json_content_is_nx_graph,
@@ -31,6 +32,12 @@ from snncompare.export_results.export_json_results import (
 from snncompare.export_results.helper import (
     exp_config_to_filename,
     run_config_to_filename,
+)
+from snncompare.import_results.helper import (
+    create_relative_path,
+    get_isomorphic_graph_hash,
+    get_radiation_description,
+    simsnn_files_exists_and_get_path,
 )
 from snncompare.run_config.Run_config import Run_config
 
@@ -49,12 +56,13 @@ def output_stage_1_configs_and_input_graphs(
     output_mdsa_rand_nrs(
         input_graph=graphs_dict["input_graph"], run_config=run_config
     )
+    output_radiation(graphs_dict=graphs_dict, run_config=run_config)
 
 
 @typechecked
 def output_simsnn_stage1_exp_config(
     *,
-    exp_config: Exp_config,
+    exp_config: "Exp_config",
 ) -> None:
     """Exports results dict to a json file."""
     relative_dir: str = "results/exp_configs/"
@@ -97,19 +105,6 @@ def output_simsnn_stage1_run_config(*, run_config: Run_config) -> None:
         output_filepath=f"{relative_dir}{run_config_filename}.json",
         some_dict=jsons.dump(run_config.__dict__),
     )
-
-
-@typechecked
-def create_relative_path(*, some_path: str) -> None:
-    """Exports Run_config to a json file."""
-    absolute_path: str = f"{os.getcwd()}/{some_path}"
-    # Create subdirectory in results dir.
-    if not os.path.exists(absolute_path):
-        # Path(absolute_path).mkdir(parents=True, exist_ok=True)
-        os.makedirs(absolute_path)
-
-    if not os.path.exists(absolute_path):
-        raise NotADirectoryError(f"{absolute_path} does not exist.")
 
 
 @typechecked
@@ -182,57 +177,90 @@ def write_undirected_graph_to_json(
 
 
 @typechecked
-def get_isomorphic_graph_hash(*, some_graph: nx.Graph) -> str:
-    """Returns the hash of the isomorphic graph. Meaning all graphs that have
-    the same shape, return the same hash string.
-
-    An isomorphic graph is one that looks the same as another/has the
-    same shape as another, (if you are blind to the node numbers).
-    """
-    isomorphic_hash: str = (
-        nx.algorithms.graph_hashing.weisfeiler_lehman_graph_hash(some_graph)
-    )
-    return isomorphic_hash
-
-
-@typechecked
 def output_mdsa_rand_nrs(
     *, input_graph: nx.Graph, run_config: Run_config
 ) -> None:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
-    snn_rand_edge_weights: List[int] = []
-    for node_index in input_graph:
-        snn_rand_edge_weights.append(
-            input_graph.graph["alg_props"]["rand_edge_weights"][node_index]
-        )
-
-    output_dir: str = f"results/rand_nrs/{run_config.graph_size}/"
-    target_file_exists, output_filepath = prepare_target_file_output(
-        output_dir=output_dir, some_graph=input_graph
+    rand_nrs_exists, rand_nrs_filepath = simsnn_files_exists_and_get_path(
+        output_category="rand_nrs",
+        input_graph=input_graph,
+        run_config=run_config,
+        with_adaptation=False,
     )
-    if not target_file_exists:
-        write_to_json(
-            output_filepath=output_filepath,
-            some_dict=snn_rand_edge_weights,
-        )
-    else:
-        # Read target_file, check if these random nrs are already in,
-        # and append them if not.
-        pass
+
+    output_unique_list(
+        output_filepath=rand_nrs_filepath,
+        some_list=input_graph.graph["alg_props"]["rand_edge_weights"],
+        target_file_exists=rand_nrs_exists,
+    )
 
 
 @typechecked
-def prepare_target_file_output(
-    *, output_dir: str, some_graph: Union[nx.Graph, nx.DiGraph]
-) -> Tuple[bool, str]:
-    """Creates the relative filepath if it does not exist.
+def output_radiation(
+    *,
+    graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    run_config: Run_config,
+) -> None:
+    """Stores the random numbers chosen for the original MDSA snn algorithm."""
+    # if with_adaptation:
+    # TODO: get radiation type.
+    radiation_name, radiation_parameter = get_radiation_description(
+        run_config=run_config
+    )
+    if radiation_name == "neuron_death":
+        for with_adaptation in [False, True]:
+            if with_adaptation:
+                snn_graph = graphs_dict["adapted_snn_graph"]
+            else:
+                snn_graph = graphs_dict["snn_algo_graph"]
 
-    Returns True if the target file already exists, False otherwise.
-    """
+            (
+                radiation_file_exists,
+                radiation_filepath,
+            ) = simsnn_files_exists_and_get_path(
+                output_category="radiation",
+                input_graph=graphs_dict["input_graph"],
+                run_config=run_config,
+                with_adaptation=with_adaptation,
+            )
+            simsnn_neuron_names: List[str] = list(
+                map(lambda neuron: neuron.name, list(snn_graph.network.nodes))
+            )
+            dead_neuron_names: List[str] = get_random_neurons(
+                neuron_names=simsnn_neuron_names,
+                probability=radiation_parameter,
+                seed=run_config.seed,
+            )
+            output_unique_list(
+                output_filepath=radiation_filepath,
+                some_list=dead_neuron_names,
+                target_file_exists=radiation_file_exists,
+            )
+    else:
+        raise NotImplementedError(
+            f"Error:{radiation_name} is not yet implemented."
+        )
 
-    isomorphic_hash: str = get_isomorphic_graph_hash(some_graph=some_graph)
-    output_filepath: str = f"{output_dir}{isomorphic_hash}.json"
 
-    if not Path(output_filepath).is_file():
-        create_relative_path(some_path=output_dir)
-    return Path(output_filepath).is_file(), output_filepath
+@typechecked
+def output_unique_list(
+    *,
+    output_filepath: str,
+    some_list: List[Union[int, str]],
+    target_file_exists: bool,
+) -> None:
+    """Stores the random numbers chosen for the original MDSA snn algorithm."""
+
+    if not target_file_exists:
+        write_to_json(
+            output_filepath=output_filepath,
+            some_dict=some_list,
+        )
+    else:
+        with open(output_filepath, encoding="utf-8") as json_file:
+            some_lists = json.load(json_file)
+            json_file.close()
+        # TODO: Read target_file, check if these random nrs are already in,
+        # and append them if not.
+        print(f"some_lists={some_lists}")
+        raise NotImplementedError("Error, target already exists. Write check.")

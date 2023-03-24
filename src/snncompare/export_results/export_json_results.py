@@ -10,7 +10,7 @@ from typeguard import typechecked
 
 @typechecked
 def write_to_json(
-    *, output_filepath: str, some_dict: Union[Dict, List[int]]
+    *, output_filepath: str, some_dict: Union[Dict, List[Union[int, str]]]
 ) -> None:
     """Writes a dict file to a .json file.
 

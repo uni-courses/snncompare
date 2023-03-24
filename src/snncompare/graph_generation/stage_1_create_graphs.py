@@ -133,6 +133,7 @@ def nx_lif_graph_to_simsnn_graph(
         )
     for edge in snn_graph.edges():
         synapse = snn_graph.edges[edge]["synapse"]
+        # pylint: disable=R0801
         net.createSynapse(
             pre=simsnn[edge[0]],
             post=simsnn[edge[1]],
@@ -373,7 +374,7 @@ def get_radiation_graph(
             rad_dam = Radiation_damage(probability=radiation_setting)
             radiation_graph: nx.DiGraph = copy.deepcopy(snn_graph)
             dead_neuron_names = rad_dam.inject_simulated_radiation(
-                get_degree=radiation_graph,
+                snn_graph=radiation_graph,
                 probability=rad_dam.neuron_death_probability,
                 seed=seed,
             )
