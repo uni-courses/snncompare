@@ -23,6 +23,7 @@ def sim_graphs(
 
     :param stage_1_graphs: Dict:
     """
+
     for graph_name, snn in stage_1_graphs.items():
         if graph_name != "input_graph":
             print(f"graph_name={graph_name}")

@@ -56,6 +56,9 @@ from snncompare.progress_report.has_completed_stage1 import (
     has_outputted_stage_1,
 )
 from snncompare.run_config.Run_config import Run_config
+from snncompare.simulation.add_radiation_graphs import (
+    ensure_empty_rad_snns_exist,
+)
 
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
@@ -289,6 +292,11 @@ class Experiment_runner:
             # loaded_from_json=results_nx_graphs["run_config"],
             # incoming=run_config,
             # )
+
+            ensure_empty_rad_snns_exist(
+                run_config=run_config,
+                stage_1_graphs=results_nx_graphs["graphs_dict"],
+            )
 
             # Run simulation on networkx or lava backend.
             sim_graphs(
