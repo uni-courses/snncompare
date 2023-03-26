@@ -16,6 +16,9 @@ from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
 from snncompare.export_results.export_json_results import write_to_json
+from snncompare.export_results.output_stage1_configs_and_input_graph import (
+    get_rand_nrs_and_hash,
+)
 from snncompare.import_results.helper import simsnn_files_exists_and_get_path
 from snncompare.run_config.Run_config import Run_config
 
@@ -28,11 +31,16 @@ def output_stage_1_snns(
     with_adaptation: bool,
 ) -> None:
     """Exports results dict to a json file."""
+    _, rand_nrs_hash = get_rand_nrs_and_hash(
+        input_graph=graphs_dict["input_graph"]
+    )
     simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
         output_category="snns",
         input_graph=graphs_dict["input_graph"],
         run_config=run_config,
         with_adaptation=with_adaptation,
+        stage_index=1,
+        rand_nrs_hash=rand_nrs_hash,
     )
     if not simsnn_exists:
         if with_adaptation:

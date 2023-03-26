@@ -11,6 +11,7 @@ Output in separate folders:
     radiation type, died neurons list without adaptation.
     radiation type, Died neurons list with adaptation.
 """
+import hashlib
 import json
 from pathlib import Path
 from pprint import pprint
@@ -50,22 +51,30 @@ def output_stage_1_configs_and_input_graphs(
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
 ) -> None:
     """Exports results dict to a json file."""
-    output_simsnn_stage1_exp_config(exp_config=exp_config)
-    output_simsnn_stage1_run_config(run_config=run_config)
-    output_input_graph(input_graph=graphs_dict["input_graph"])
-    output_mdsa_rand_nrs(
-        input_graph=graphs_dict["input_graph"], run_config=run_config
+    output_simsnn_stage1_exp_config(exp_config=exp_config, stage_index=1)
+    output_simsnn_stage1_run_config(run_config=run_config, stage_index=1)
+    output_input_graph(
+        input_graph=graphs_dict["input_graph"],
+        stage_index=1,
     )
-    output_radiation(graphs_dict=graphs_dict, run_config=run_config)
+    output_mdsa_rand_nrs(
+        input_graph=graphs_dict["input_graph"],
+        run_config=run_config,
+        stage_index=1,
+    )
+    output_radiation(
+        graphs_dict=graphs_dict, run_config=run_config, stage_index=1
+    )
 
 
 @typechecked
 def output_simsnn_stage1_exp_config(
     *,
     exp_config: "Exp_config",
+    stage_index: int,
 ) -> None:
     """Exports results dict to a json file."""
-    relative_dir: str = "results/exp_configs/"
+    relative_dir: str = f"results/stage{stage_index}/exp_configs/"
     create_relative_path(some_path=relative_dir)
 
     # Convert exp_config to exp_config name.
@@ -86,9 +95,11 @@ def output_simsnn_stage1_exp_config(
 
 
 @typechecked
-def output_simsnn_stage1_run_config(*, run_config: Run_config) -> None:
+def output_simsnn_stage1_run_config(
+    *, run_config: Run_config, stage_index: int
+) -> None:
     """Exports Run_config to a json file."""
-    relative_dir: str = "results/run_configs/"
+    relative_dir: str = f"results/stage{stage_index}/run_configs/"
     create_relative_path(some_path=relative_dir)
 
     # Convert exp_config to exp_config name.
@@ -111,11 +122,14 @@ def output_simsnn_stage1_run_config(*, run_config: Run_config) -> None:
 def output_input_graph(
     *,
     input_graph: nx.Graph,
+    stage_index: int,
 ) -> None:
     """Outputs input graph it is not yet outputted."""
     isomorphic_hash: str = get_isomorphic_graph_hash(some_graph=input_graph)
 
-    output_dir: str = f"results/input_graphs/{len(input_graph)}/"
+    output_dir: str = (
+        f"results/stage{stage_index}/input_graphs/{len(input_graph)}/"
+    )
     output_filepath: str = f"{output_dir}{isomorphic_hash}.json"
     if not Path(output_filepath).is_file():
         create_relative_path(some_path=output_dir)
@@ -178,21 +192,42 @@ def write_undirected_graph_to_json(
 
 @typechecked
 def output_mdsa_rand_nrs(
-    *, input_graph: nx.Graph, run_config: Run_config
+    *,
+    input_graph: nx.Graph,
+    run_config: Run_config,
+    stage_index: int,
 ) -> None:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
+
+    rand_nrs, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
+
     rand_nrs_exists, rand_nrs_filepath = simsnn_files_exists_and_get_path(
         output_category="rand_nrs",
         input_graph=input_graph,
         run_config=run_config,
         with_adaptation=False,
+        stage_index=stage_index,
+        rand_nrs_hash=rand_nrs_hash,
     )
 
     output_unique_list(
         output_filepath=rand_nrs_filepath,
-        some_list=input_graph.graph["alg_props"]["rand_edge_weights"],
+        some_list=rand_nrs,
         target_file_exists=rand_nrs_exists,
     )
+
+
+@typechecked
+def get_rand_nrs_and_hash(
+    *,
+    input_graph: nx.Graph,
+) -> Tuple[List[int], str]:
+    """Returns the rand nrs and accompanying hash."""
+    rand_nrs: List[int] = input_graph.graph["alg_props"]["rand_edge_weights"]
+    rand_nrs_hash: str = str(
+        hashlib.sha256(json.dumps(rand_nrs).encode("utf-8")).hexdigest()
+    )
+    return rand_nrs, rand_nrs_hash
 
 
 @typechecked
@@ -200,13 +235,14 @@ def output_radiation(
     *,
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     run_config: Run_config,
+    stage_index: int,
 ) -> None:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
-    # if with_adaptation:
-    # TODO: get radiation type.
+
     radiation_name, radiation_parameter = get_radiation_description(
         run_config=run_config
     )
+    # pylint:disable=R0801
     if radiation_name == "neuron_death":
         for with_adaptation in [False, True]:
             if with_adaptation:
@@ -215,31 +251,56 @@ def output_radiation(
                 snn_graph = graphs_dict["snn_algo_graph"]
 
             (
+                affected_neurons,
+                rad_affected_neurons_hash,
+            ) = get_radiation_names_and_hash(
+                snn_graph=snn_graph,
+                radiation_parameter=radiation_parameter,
+                run_config=run_config,
+            )
+            (
                 radiation_file_exists,
                 radiation_filepath,
             ) = simsnn_files_exists_and_get_path(
-                output_category="radiation",
+                output_category=f"{radiation_name}_{radiation_parameter}",
                 input_graph=graphs_dict["input_graph"],
                 run_config=run_config,
                 with_adaptation=with_adaptation,
+                stage_index=stage_index,
+                rad_affected_neurons_hash=rad_affected_neurons_hash,
             )
-            simsnn_neuron_names: List[str] = list(
-                map(lambda neuron: neuron.name, list(snn_graph.network.nodes))
-            )
-            dead_neuron_names: List[str] = get_random_neurons(
-                neuron_names=simsnn_neuron_names,
-                probability=radiation_parameter,
-                seed=run_config.seed,
-            )
+
             output_unique_list(
                 output_filepath=radiation_filepath,
-                some_list=dead_neuron_names,
+                some_list=affected_neurons,
                 target_file_exists=radiation_file_exists,
             )
     else:
         raise NotImplementedError(
             f"Error:{radiation_name} is not yet implemented."
         )
+
+
+@typechecked
+def get_radiation_names_and_hash(
+    snn_graph: Simulator, radiation_parameter: float, run_config: Run_config
+) -> Tuple[List[str], str]:
+    """Returns the neuron names that are affected by the radiation, and the
+    accompanying hash."""
+    simsnn_neuron_names: List[str] = list(
+        map(lambda neuron: neuron.name, list(snn_graph.network.nodes))
+    )
+    affected_neurons: List[str] = get_random_neurons(
+        neuron_names=simsnn_neuron_names,
+        probability=radiation_parameter,
+        seed=run_config.seed,
+    )
+    rad_affected_neurons_hash: str = str(
+        hashlib.sha256(
+            json.dumps(affected_neurons).encode("utf-8")
+        ).hexdigest()
+    )
+    return affected_neurons, rad_affected_neurons_hash
 
 
 @typechecked
@@ -257,10 +318,4 @@ def output_unique_list(
             some_dict=some_list,
         )
     else:
-        with open(output_filepath, encoding="utf-8") as json_file:
-            some_lists = json.load(json_file)
-            json_file.close()
-        # TODO: Read target_file, check if these random nrs are already in,
-        # and append them if not.
-        print(f"some_lists={some_lists}")
         raise NotImplementedError("Error, target already exists. Write check.")

@@ -65,6 +65,7 @@ def load_simsnn_graphs(
         input_graph=input_graph,
         run_config=run_config,
         with_adaptation=with_adaptation,
+        stage_index=1,
     )
     if simsnn_exists:
         return load_simsnn_graph_from_file(

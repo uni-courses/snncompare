@@ -38,7 +38,9 @@ def verify_stage_1_graphs(
     # TODO: Verify run_config is valid "subset" of experiment config.
 
     # Verify the graphs that are required for the run_config are generated.
-    assert_graphs_are_in_dict(run_config=run_config, graphs=graphs, stage=1)
+    assert_graphs_are_in_dict(
+        run_config=run_config, graphs=graphs, stage_index=1
+    )
 
     # TODO: verify the properties required by the run config are in the graphs.
 
@@ -94,11 +96,13 @@ def assert_graphs_are_in_dict(
     *,
     run_config: Run_config,
     graphs: Dict,
-    stage: int,
+    stage_index: int,
 ) -> None:
     """Throws error if the not all the expected graphs are in the list of
     graphs."""
     if not expected_graphs_are_in_dict(
-        run_config=run_config, graphs=graphs, stage=stage
+        run_config=run_config, graphs=graphs, stage=stage_index
     ):
-        raise ValueError(f"Error, graph is missing:{graphs},stage:{stage}")
+        raise ValueError(
+            f"Error, graph is missing:{graphs},stage:{stage_index}"
+        )

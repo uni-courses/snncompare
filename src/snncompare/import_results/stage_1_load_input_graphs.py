@@ -46,7 +46,9 @@ def load_results_stage_1(
 
     # Verify the graph names are as expected for the graph name.
     assert_graphs_are_in_dict(
-        run_config=run_config, graphs=stage_1_dict["graphs_dict"], stage=1
+        run_config=run_config,
+        graphs=stage_1_dict["graphs_dict"],
+        stage_index=1,
     )
 
     return stage_1_dict

@@ -6,7 +6,6 @@ setting of the experiment configuration settings.
 
 # import showme
 import copy
-import sys
 from pprint import pprint
 from typing import Dict, List, Optional, Union
 
@@ -51,11 +50,18 @@ from snncompare.optional_config.Output_config import (
     Output_config,
     Zoom,
 )
+from snncompare.progress_report.has_completed_stage1 import (
+    assert_has_outputted_stage_1,
+    has_outputted_stage_1,
+)
 from snncompare.run_config.Run_config import Run_config
 
 from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
-from .graph_generation.stage_1_create_graphs import get_graphs_stage_1
+from .graph_generation.stage_1_create_graphs import (
+    get_graphs_stage_1,
+    get_input_graph_of_run_config,
+)
 from .import_results.check_completed_stages import has_outputted_stage_jsons
 from .import_results.stage_1_load_input_graphs import load_results_stage_1
 from .process_results.process_results import compute_results, set_results
@@ -188,8 +194,11 @@ class Experiment_runner:
 
         # Check if stage 1 is performed. If not, perform it.
         if (
-            not has_outputted_stage_jsons(
-                expected_stages=[1], run_config=run_config, stage_index=1
+            not has_outputted_stage_1(
+                input_graph=get_input_graph_of_run_config(
+                    run_config=run_config
+                ),
+                run_config=run_config,
             )
             or 1 in output_config.recreate_stages
         ):
@@ -229,16 +238,6 @@ class Experiment_runner:
                     ],
                     with_adaptation=adaptation_boolean,
                 )
-            sys.exit()
-
-            # Exports results, including graphs as dict.
-            # output_files_stage_1_and_2(
-            # exp_config=exp_config,
-            # run_config=run_config,
-            # results_nx_graphs=results_nx_graphs,
-            # stage_index=1,
-            # )
-
         else:
             results_nx_graphs = load_results_stage_1(run_config=run_config)
         self.equalise_loaded_run_config(
@@ -246,11 +245,7 @@ class Experiment_runner:
             incoming=run_config,
         )
 
-        assert_stage_is_completed(
-            expected_stages=[1],
-            run_config=run_config,
-            stage_index=1,
-        )
+        assert_has_outputted_stage_1(run_config=run_config)
         return results_nx_graphs
 
     @customshowme.time

@@ -3,7 +3,7 @@
 import os
 from pathlib import Path
 from pprint import pprint
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import networkx as nx
 from typeguard import typechecked
@@ -14,7 +14,11 @@ from snncompare.run_config.Run_config import Run_config
 
 @typechecked
 def prepare_target_file_output(
-    *, output_dir: str, some_graph: Union[nx.Graph, nx.DiGraph]
+    *,
+    output_dir: str,
+    some_graph: Union[nx.Graph, nx.DiGraph],
+    rad_affected_neurons_hash: Optional[str] = None,
+    rand_nrs_hash: Optional[str] = None,
 ) -> Tuple[bool, str]:
     """Creates the relative filepath if it does not exist.
 
@@ -22,7 +26,17 @@ def prepare_target_file_output(
     """
 
     isomorphic_hash: str = get_isomorphic_graph_hash(some_graph=some_graph)
-    output_filepath: str = f"{output_dir}{isomorphic_hash}.json"
+    additional_hashes: str = ""
+    if rand_nrs_hash is not None:
+        additional_hashes = f"{additional_hashes}_rand_{rand_nrs_hash}"
+    if rad_affected_neurons_hash is not None:
+        additional_hashes = (
+            f"{additional_hashes}_rad_{rad_affected_neurons_hash}"
+        )
+
+    output_filepath: str = (
+        f"{output_dir}{isomorphic_hash}{additional_hashes}.json"
+    )
 
     if not Path(output_filepath).is_file():
         create_relative_path(some_path=output_dir)
@@ -63,6 +77,9 @@ def simsnn_files_exists_and_get_path(
     run_config: Run_config,
     input_graph: nx.Graph,
     with_adaptation: bool,
+    stage_index: int,
+    rad_affected_neurons_hash: Optional[str] = None,
+    rand_nrs_hash: Optional[str] = None,
 ) -> Tuple[bool, str]:
     """Returns two tuples which contain: graph file exists, and the graph
     filepath.
@@ -81,27 +98,33 @@ def simsnn_files_exists_and_get_path(
         if with_adaptation:
             # Import adapted snn.
             output_dir: str = (
-                f"results/{algorithm_name}_{algorithm_parameter}/"
-                + f"{adaptation_name}_{adaptation_parameter}/{output_category}"
-                + "/"
+                f"results/stage{stage_index}/{algorithm_name}_"
+                + f"{algorithm_parameter}/{adaptation_name}_"
+                + f"{adaptation_parameter}/{output_category}/"
             )
             (
                 snn_algo_graph_exists,
                 snn_algo_graph_filepath,
             ) = prepare_target_file_output(
-                output_dir=output_dir, some_graph=input_graph
+                output_dir=output_dir,
+                some_graph=input_graph,
+                rad_affected_neurons_hash=rad_affected_neurons_hash,
+                rand_nrs_hash=rand_nrs_hash,
             )
         else:
             # Import default snn.
             output_dir = (
-                f"results/{algorithm_name}_{algorithm_parameter}"
-                + f"/no_adaptation/{output_category}/"
+                f"results/stage{stage_index}/{algorithm_name}_"
+                + f"{algorithm_parameter}/no_adaptation/{output_category}/"
             )
             (
                 snn_algo_graph_exists,
                 snn_algo_graph_filepath,
             ) = prepare_target_file_output(
-                output_dir=output_dir, some_graph=input_graph
+                output_dir=output_dir,
+                some_graph=input_graph,
+                rad_affected_neurons_hash=rad_affected_neurons_hash,
+                rand_nrs_hash=rand_nrs_hash,
             )
         return (snn_algo_graph_exists, snn_algo_graph_filepath)
 

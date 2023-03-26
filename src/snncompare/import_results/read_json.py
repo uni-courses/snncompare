@@ -56,7 +56,9 @@ def load_json_file_into_dict(
     any other object than some results loader.
     Loads a json file into dict from a filepath."""
     if not Path(json_filepath).is_file():
-        raise FileNotFoundError("Error, filepath does not exist:{filepath}")
+        raise FileNotFoundError(
+            f"Error, filepath does not exist:{json_filepath}"
+        )
     # TODO: verify extension.
     # TODO: verify json formatting is valid.
     with open(json_filepath, encoding="utf-8") as json_file:
