@@ -7,18 +7,17 @@ from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
-    get_radiation_names_and_hash,
+    Radiation_output_data,
+    get_radiation_names_filepath_and_exists,
+    get_rand_nrs_and_hash,
 )
-from snncompare.progress_report.has_completed_stage1 import (
-    has_outputted_snn_graph,
-)
+from snncompare.import_results.helper import simsnn_files_exists_and_get_path
 from snncompare.run_config.Run_config import Run_config
 
 
 @typechecked
 def has_outputted_stage_2(
     *,
-    input_graph: nx.Graph,
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     run_config: Run_config,
 ) -> bool:
@@ -34,29 +33,55 @@ def has_outputted_stage_2(
     stage2/algorithm_name+setting/adaptation_type/isomorphichash+rand_hash+rad_affected_neurons_hash
     under filenames:
     """
-    for with_radiation in [False, True]:
-        print(f"with_radiation={with_radiation}")
-        radiation_parameter: float = 5000000.0  # TODO: change this.
-        for with_adaptation in [False, True]:
-            if with_adaptation:
-                snn_graph = graphs_dict["adapted_snn_graph"]
-            else:
-                snn_graph = graphs_dict["snn_algo_graph"]
-            (
-                affected_neurons,
-                rad_affected_neurons_hash,
-            ) = get_radiation_names_and_hash(
-                snn_graph=snn_graph,
-                radiation_parameter=radiation_parameter,
+    return has_outputted_stage_2_non_radiation_snns(
+        graphs_dict=graphs_dict,
+        run_config=run_config,
+    ) and has_outputted_stage_2_radiation_snns(
+        graphs_dict=graphs_dict,
+        run_config=run_config,
+    )
+
+
+def has_outputted_stage_2_non_radiation_snns(
+    *,
+    graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    run_config: Run_config,
+) -> bool:
+    """Returns False if not both rad_snn_algo_graph and
+    rad_adapted_snn_algo_graph files exist."""
+    for with_adaptation in [False, True]:
+        _, rand_nrs_hash = get_rand_nrs_and_hash(
+            input_graph=graphs_dict["input_graph"]
+        )
+        simsnn_exists, _ = simsnn_files_exists_and_get_path(
+            output_category="snns",
+            input_graph=graphs_dict["input_graph"],
+            run_config=run_config,
+            with_adaptation=with_adaptation,
+            stage_index=2,
+            rand_nrs_hash=rand_nrs_hash,
+        )
+        if not simsnn_exists:
+            return False
+    return True
+
+
+def has_outputted_stage_2_radiation_snns(
+    *,
+    graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    run_config: Run_config,
+) -> bool:
+    """Returns False if not both rad_snn_algo_graph and
+    rad_adapted_snn_algo_graph files exist."""
+    for with_adaptation in [False, True]:
+        radiation_output_data: Radiation_output_data = (
+            get_radiation_names_filepath_and_exists(
+                graphs_dict=graphs_dict,
                 run_config=run_config,
-            )
-            print(f"affected_neurons={affected_neurons}")
-            if not has_outputted_snn_graph(
-                input_graph=input_graph,
-                run_config=run_config,
-                with_adaptation=with_adaptation,
                 stage_index=2,
-                rad_affected_neurons_hash=rad_affected_neurons_hash,
-            ):
-                return False
+                with_adaptation=with_adaptation,
+            )
+        )
+        if not radiation_output_data.radiation_file_exists:
+            return False
     return True

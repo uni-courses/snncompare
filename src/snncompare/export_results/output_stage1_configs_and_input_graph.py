@@ -43,6 +43,24 @@ from snncompare.import_results.helper import (
 from snncompare.run_config.Run_config import Run_config
 
 
+class Radiation_output_data:
+    """Stores the data used in outputting radiation."""
+
+    # pylint: disable=R0903
+    @typechecked
+    def __init__(
+        self,
+        affected_neurons: List[str],
+        rad_affected_neurons_hash: str,
+        radiation_file_exists: bool,
+        radiation_filepath: str,
+    ) -> None:
+        self.affected_neurons: List[str] = affected_neurons
+        self.rad_affected_neurons_hash: str = rad_affected_neurons_hash
+        self.radiation_file_exists: bool = radiation_file_exists
+        self.radiation_filepath: str = radiation_filepath
+
+
 @typechecked
 def output_stage_1_configs_and_input_graphs(
     *,
@@ -62,9 +80,20 @@ def output_stage_1_configs_and_input_graphs(
         run_config=run_config,
         stage_index=1,
     )
-    output_radiation(
-        graphs_dict=graphs_dict, run_config=run_config, stage_index=1
-    )
+    for with_adaptation in [False, True]:
+        radiation_output_data: Radiation_output_data = (
+            get_radiation_names_filepath_and_exists(
+                graphs_dict=graphs_dict,
+                run_config=run_config,
+                stage_index=1,
+                with_adaptation=with_adaptation,
+            )
+        )
+        output_unique_list(
+            output_filepath=radiation_output_data.radiation_filepath,
+            some_list=radiation_output_data.affected_neurons,
+            target_file_exists=radiation_output_data.radiation_file_exists,
+        )
 
 
 @typechecked
@@ -201,6 +230,7 @@ def output_mdsa_rand_nrs(
 
     rand_nrs, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
 
+    # pylint:disable=R0801
     rand_nrs_exists, rand_nrs_filepath = simsnn_files_exists_and_get_path(
         output_category="rand_nrs",
         input_graph=input_graph,
@@ -231,54 +261,57 @@ def get_rand_nrs_and_hash(
 
 
 @typechecked
-def output_radiation(
+def get_radiation_names_filepath_and_exists(
     *,
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     run_config: Run_config,
     stage_index: int,
-) -> None:
+    with_adaptation: bool,
+) -> Radiation_output_data:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
 
+    # Get the type of radiation used in this run_config.
     radiation_name, radiation_parameter = get_radiation_description(
         run_config=run_config
     )
+
     # pylint:disable=R0801
     if radiation_name == "neuron_death":
-        for with_adaptation in [False, True]:
-            if with_adaptation:
-                snn_graph = graphs_dict["adapted_snn_graph"]
-            else:
-                snn_graph = graphs_dict["snn_algo_graph"]
+        if with_adaptation:
+            snn_graph = graphs_dict["adapted_snn_graph"]
+        else:
+            snn_graph = graphs_dict["snn_algo_graph"]
 
-            (
-                affected_neurons,
-                rad_affected_neurons_hash,
-            ) = get_radiation_names_and_hash(
-                snn_graph=snn_graph,
-                radiation_parameter=radiation_parameter,
-                run_config=run_config,
-            )
-            (
-                radiation_file_exists,
-                radiation_filepath,
-            ) = simsnn_files_exists_and_get_path(
-                output_category=f"{radiation_name}_{radiation_parameter}",
-                input_graph=graphs_dict["input_graph"],
-                run_config=run_config,
-                with_adaptation=with_adaptation,
-                stage_index=stage_index,
-                rad_affected_neurons_hash=rad_affected_neurons_hash,
-            )
-
-            output_unique_list(
-                output_filepath=radiation_filepath,
-                some_list=affected_neurons,
-                target_file_exists=radiation_file_exists,
-            )
-    else:
-        raise NotImplementedError(
-            f"Error:{radiation_name} is not yet implemented."
+        # Get the list of affected neurons and the accompanying hash.
+        (
+            affected_neurons,
+            rad_affected_neurons_hash,
+        ) = get_radiation_names_and_hash(
+            snn_graph=snn_graph,
+            radiation_parameter=radiation_parameter,
+            run_config=run_config,
         )
+        (
+            radiation_file_exists,
+            radiation_filepath,
+        ) = simsnn_files_exists_and_get_path(
+            output_category=f"{radiation_name}_{radiation_parameter}",
+            input_graph=graphs_dict["input_graph"],
+            run_config=run_config,
+            with_adaptation=with_adaptation,
+            stage_index=stage_index,
+            rad_affected_neurons_hash=rad_affected_neurons_hash,
+        )
+
+        return Radiation_output_data(
+            affected_neurons=affected_neurons,
+            rad_affected_neurons_hash=rad_affected_neurons_hash,
+            radiation_file_exists=radiation_file_exists,
+            radiation_filepath=radiation_filepath,
+        )
+    raise NotImplementedError(
+        f"Error:{radiation_name} is not yet implemented."
+    )
 
 
 @typechecked

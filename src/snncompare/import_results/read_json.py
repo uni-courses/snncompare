@@ -6,7 +6,7 @@ graphs.
 """
 import json
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 
 from typeguard import typechecked
 
@@ -51,9 +51,8 @@ def load_results_from_json(
 def load_json_file_into_dict(
     *,
     json_filepath: str,
-) -> Dict[str, Optional[Dict]]:
-    """TODO: make this into a private function that cannot be called by
-    any other object than some results loader.
+) -> Dict:
+    """TODO: Include expected type upon loading, or not.
     Loads a json file into dict from a filepath."""
     if not Path(json_filepath).is_file():
         raise FileNotFoundError(

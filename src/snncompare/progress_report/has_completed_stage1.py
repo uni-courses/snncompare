@@ -94,7 +94,12 @@ def has_outputted_rand_nrs(
 
 
 def has_outputted_radiation(
-    *, input_graph: nx.Graph, run_config: Run_config
+    *,
+    input_graph: nx.Graph,
+    run_config: Run_config,
+    stage_index: int,
+    rad_affected_neurons_hash: Optional[str] = None,
+    rand_nrs_hash: Optional[str] = None,
 ) -> bool:
     """Returns True if the radiation for this run config has been outputted."""
     radiation_name, radiation_parameter = get_radiation_description(
@@ -110,7 +115,9 @@ def has_outputted_radiation(
                 input_graph=input_graph,
                 run_config=run_config,
                 with_adaptation=with_adaptation,
-                stage_index=1,
+                stage_index=stage_index,
+                rad_affected_neurons_hash=rad_affected_neurons_hash,
+                rand_nrs_hash=rand_nrs_hash,
             )
             if not radiation_file_exists:
                 return False

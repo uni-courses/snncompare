@@ -6,6 +6,7 @@
     radiation type, died neurons list without adaptation.
     radiation type, Died neurons list with adaptation.
 """
+import copy
 from typing import Dict, List, Union
 
 import networkx as nx
@@ -75,10 +76,10 @@ def output_snn_graph(
 
     if isinstance(snn_graph, Simulator):
         json_simsns_neurons: Dict = simsnn_nodes_to_json(
-            simsnn_neurons=snn_graph.network.nodes
+            simsnn_neurons=copy.deepcopy(snn_graph.network.nodes)
         )
         json_simsnn_synapses: Dict = simsnn_synapses_to_json(
-            simsnn_synapses=snn_graph.network.synapses
+            simsnn_synapses=copy.deepcopy(snn_graph.network.synapses)
         )
 
         write_to_json(

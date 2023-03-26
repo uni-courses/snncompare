@@ -43,6 +43,7 @@ from snncompare.export_results.output_stage1_configs_and_input_graph import (
 from snncompare.export_results.output_stage1_snn_graphs import (
     output_stage_1_snns,
 )
+from snncompare.export_results.output_stage2_snns import output_stage_2_snns
 from snncompare.helper import add_stage_completion_to_graph, dicts_are_equal
 from snncompare.import_results.load_stage_1 import load_simsnn_graphs
 from snncompare.optional_config.Output_config import (
@@ -279,26 +280,34 @@ class Experiment_runner:
         ):
             # TODO: include check on whether or not stage 1 data is already
             # computed (to prevent loading from file).
-            results_nx_graphs = load_results_stage_1(run_config=run_config)
+
+            # results_nx_graphs = load_results_stage_1(run_config=run_config)
 
             # TODO: remove stage 2 artifacts from loaded data.
 
-            self.equalise_loaded_run_config(
-                loaded_from_json=results_nx_graphs["run_config"],
-                incoming=run_config,
-            )
+            # self.equalise_loaded_run_config(
+            # loaded_from_json=results_nx_graphs["run_config"],
+            # incoming=run_config,
+            # )
 
             # Run simulation on networkx or lava backend.
             sim_graphs(
                 run_config=run_config,
                 stage_1_graphs=results_nx_graphs["graphs_dict"],
             )
+
+            output_stage_2_snns(
+                run_config=run_config,
+                graphs_dict=results_nx_graphs["graphs_dict"],
+            )
+
             output_files_stage_1_and_2(
                 exp_config=exp_config,
                 run_config=run_config,
                 results_nx_graphs=results_nx_graphs,
                 stage_index=2,
             )
+
         else:
             # TODO: verify loading is required.
             if not results_nx_graphs_contain_expected_stages(
