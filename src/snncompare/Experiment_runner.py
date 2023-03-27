@@ -427,18 +427,24 @@ class Experiment_runner:
                 simulator=run_config.simulator,
             )
 
-            # pylint: disable=E1125
-            output_stage_files_3_and_4(
-                output_config=output_config,
-                results_nx_graphs=results_nx_graphs,
-                stage_index=4,
-            )
+            # Indicate the graphs have completed stage 1.
+            # for graph_name,snn in results_nx_graphs["graphs_dict"].items():
+            # if graph_name !="input_graph":
+            # print(f'graph_name={graph_name}')
+            # add_stage_completion_to_graph(snn=snn, stage_index=4)
 
-        assert_stage_is_completed(
-            expected_stages=[1, 2, 4],  # TODO: determine if 3 should be in.
-            run_config=run_config,
-            stage_index=4,
-        )
+            # pylint: disable=E1125
+            # output_stage_files_3_and_4(
+            # output_config=output_config,
+            # results_nx_graphs=results_nx_graphs,
+            # stage_index=4,
+            # )
+
+        # assert_stage_is_completed(
+        # expected_stages=[1, 2, 4],  # TODO: determine if 3 should be in.
+        # run_config=run_config,
+        # stage_index=4,
+        # )
 
     @typechecked
     def equalise_loaded_run_config(

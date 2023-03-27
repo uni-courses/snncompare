@@ -81,6 +81,7 @@ def exp_config_to_filename(
 
     # stripped_run_config:Dict = copy.deepcopy(run_config).__dict__
     stripped_exp_config: Dict = copy.deepcopy(exp_config_dict)
+    unique_id = stripped_exp_config["unique_id"]
     stripped_exp_config.pop("unique_id")
 
     # instead (To reduce filename length).
@@ -105,7 +106,9 @@ def exp_config_to_filename(
     filename = filename.replace("unique_", "")
 
     if len(filename) > 256:
-        raise NameError(f"Filename={filename} is too long:{len(filename)}")
+        filename = unique_id
+        # raise NameError(f"Filename={filename} is too long:{len(filename)}")
+
     return filename
 
 
