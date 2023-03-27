@@ -120,7 +120,7 @@ def nx_lif_graph_to_simsnn_graph(
             V_reset=0,
             V_min=-inf,
             thr=nx_lif.vth.get(),
-            amplitude=0,
+            amplitude=1,
             I_e=0,
             noise=0,
             rng=0,

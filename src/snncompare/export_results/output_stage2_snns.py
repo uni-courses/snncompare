@@ -90,7 +90,6 @@ def get_desired_snn_graph(
     with_radiation: bool,
 ) -> Union[nx.DiGraph, Simulator]:
     """Outputs the simsnn neuron behaviour over time."""
-    print(graphs_dict.keys())
     if with_adaptation:
         if with_radiation:
             snn_graph = graphs_dict["rad_adapted_snn_graph"]

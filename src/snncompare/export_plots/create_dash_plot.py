@@ -54,8 +54,7 @@ def create_svg_plot(
     dash_figures: Dict[str, List[go.Figure]] = {}
     plotted_graphs: Dict[str, nx.DiGraph] = {}
 
-    for i, (graph_name, snn_graph) in enumerate(graphs.items()):
-        print(f"i={i}")
+    for _, (graph_name, snn_graph) in enumerate(graphs.items()):
         if graph_name in graph_names:
             print("")
             print("")
