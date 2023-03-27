@@ -113,8 +113,13 @@ def nx_lif_graph_to_simsnn_graph(
     simsnn: Dict[str, LIF] = {}
     for node_name in snn_graph.nodes:
         nx_lif: LIF_neuron = snn_graph.nodes[node_name]["nx_lif"][0]
+        if nx_lif.dv.get() > 1 or nx_lif.dv.get() < -1:
+            raise ValueError(
+                f"Error, dv={nx_lif.dv.get()} is not in range [-1,1] for: "
+                + f"{node_name}"
+            )
         simsnn[node_name] = net.createLIF(
-            m=1,
+            m=1 - nx_lif.dv.get(),
             bias=nx_lif.bias.get(),
             V_init=0,
             V_reset=0,

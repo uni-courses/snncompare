@@ -243,6 +243,7 @@ class Experiment_runner:
                     with_adaptation=adaptation_boolean,
                 )
         else:
+            print("STAGE 1 LOADING")
             results_nx_graphs = load_results_stage_1(run_config=run_config)
         self.equalise_loaded_run_config(
             loaded_from_json=results_nx_graphs["run_config"],
@@ -423,6 +424,7 @@ class Experiment_runner:
             compute_results(
                 results_nx_graphs=results_nx_graphs,
                 stage_index=4,
+                simulator=run_config.simulator,
             )
 
             # pylint: disable=E1125

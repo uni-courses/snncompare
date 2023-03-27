@@ -7,7 +7,8 @@ graph that have been selected according to Alipour, and according to the
 respective SNN graph.
 """
 import copy
-from typing import Dict
+from pprint import pprint
+from typing import Dict, Union
 
 import networkx as nx
 from simsnn.core.simulators import Simulator
@@ -98,6 +99,7 @@ def perform_mdsa_results_computation_if_needed(
 def compute_results(
     *,
     results_nx_graphs: Dict,
+    simulator: str,
     stage_index: int,
 ) -> None:
     """Integrates the results per graph type into the graph, then export the
@@ -107,34 +109,41 @@ def compute_results(
     stage_4_graphs = copy.deepcopy(results_nx_graphs["graphs_dict"])
     # Embed results into snn graphs
     for graph_name in results_nx_graphs["graphs_dict"].keys():
+        if graph_name != "input_graph":
+            if simulator == "nx":
+                graph_obj = results_nx_graphs["graphs_dict"][graph_name]
+            elif simulator == "simsnn":
+                print(f"graph_name={graph_name}")
+                graph_obj = results_nx_graphs["graphs_dict"][
+                    graph_name
+                ].network.graph
+                print("graph_obj.graph.__dict__")
+                pprint(graph_obj.graph)
+            else:
+                raise NotImplementedError(
+                    f"Error, simulator:{simulator} not supported."
+                )
+
         if graph_name == "snn_algo_graph":
             # stage_4_graphs[graph_name]["results"] =results["snn_algo_result"]
             add_result_to_last_graph(
                 snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
+                result_per_type=graph_obj.graph["results"],
             )
         elif graph_name == "adapted_snn_graph":
             add_result_to_last_graph(
                 snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
+                result_per_type=graph_obj.graph["results"],
             )
         elif graph_name == "rad_snn_algo_graph":
             add_result_to_last_graph(
                 snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
+                result_per_type=graph_obj.graph["results"],
             )
         elif graph_name == "rad_adapted_snn_graph":
             add_result_to_last_graph(
                 snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
+                result_per_type=graph_obj.graph["results"],
             )
 
     # overwrite nx_graphs with stage_4_graphs
@@ -161,7 +170,7 @@ def compute_results(
 
 @typechecked
 def add_result_to_last_graph(
-    *, snn_graphs: nx.DiGraph, result_per_type: Dict
+    *, snn_graphs: Union[nx.DiGraph, Simulator], result_per_type: Dict
 ) -> None:
     """Checks whether the incoming snn_graph is a list of graphs or single
     graph.
@@ -172,6 +181,7 @@ def add_result_to_last_graph(
     """
     if isinstance(snn_graphs, nx.DiGraph):
         snn_graphs.graph["results"] = result_per_type
+
     else:
         raise TypeError(
             "Error, unsupported snn graph type:" + f"{type(snn_graphs)}"

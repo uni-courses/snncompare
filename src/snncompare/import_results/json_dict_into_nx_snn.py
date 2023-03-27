@@ -63,7 +63,6 @@ def json_graph_to_simsnn_snn(*, json_graphs: Dict) -> None:
             )
             # TODO: set completed_stages.
         else:
-            # exit()
             json_graphs[graph_name] = json_graph.node_link_graph(
                 json_graphs[graph_name]
             )
