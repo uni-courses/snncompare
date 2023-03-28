@@ -62,7 +62,7 @@ def create_svg_plot(
             sim_duration = get_some_duration(
                 simulator=run_config.simulator,
                 snn_graph=snn_graph,
-                duration_name="sim_duration",
+                duration_name="actual_duration",
             )
 
             print(f"Creating:graph_name={graph_name}")

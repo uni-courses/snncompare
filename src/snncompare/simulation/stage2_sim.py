@@ -31,22 +31,29 @@ def sim_graphs(
     """
 
     for graph_name, snn in stage_1_graphs.items():
+        # Derive the adaptation setting for this graph.
         if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
             with_adaptation: bool = True
         else:
             with_adaptation = False
-        if graph_name != "input_graph" and not graph_exists_already(
-            input_graph=stage_1_graphs["input_graph"],
-            stage_1_graphs=stage_1_graphs,
-            run_config=run_config,
-            with_adaptation=with_adaptation,
-        ):
-            print(f"graph_name={graph_name}")
-            sim_snn(
+
+        if graph_name != "input_graph":
+            if not graph_exists_already(
                 input_graph=stage_1_graphs["input_graph"],
-                snn=snn,
+                stage_1_graphs=stage_1_graphs,
                 run_config=run_config,
-            )
+                with_adaptation=with_adaptation,
+            ):
+                print(f"graph_name={graph_name}")
+                sim_snn(
+                    input_graph=stage_1_graphs["input_graph"],
+                    snn=snn,
+                    run_config=run_config,
+                )
+            else:
+                raise NotImplementedError(
+                    f"Error, need to load graph from file!:{graph_name}"
+                )
         add_stage_completion_to_graph(snn=snn, stage_index=2)
 
 

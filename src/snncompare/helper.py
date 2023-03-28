@@ -328,6 +328,12 @@ def get_some_duration(
 ) -> int:
     """Compute the simulation duration for a given algorithm and graph."""
     if simulator == "simsnn":
+        if duration_name not in snn_graph.network.graph.graph:
+            if duration_name == "actual_duration":
+                return len(snn_graph.multimeter.V)
+            raise ValueError(
+                f"Error, {duration_name} not found in simsnn graph."
+            )
         return snn_graph.network.graph.graph[duration_name]
     if simulator == "nx":
         return snn_graph.graph[duration_name]
