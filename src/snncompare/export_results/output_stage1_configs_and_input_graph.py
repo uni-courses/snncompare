@@ -15,7 +15,7 @@ import hashlib
 import json
 from pathlib import Path
 from pprint import pprint
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import jsons
 import networkx as nx
@@ -274,6 +274,7 @@ def get_radiation_names_filepath_and_exists(
     run_config: Run_config,
     stage_index: int,
     with_adaptation: bool,
+    rand_nrs_hash: Optional[str] = None,
 ) -> Radiation_data:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
 
@@ -308,6 +309,7 @@ def get_radiation_names_filepath_and_exists(
             with_adaptation=with_adaptation,
             stage_index=stage_index,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
+            rand_nrs_hash=rand_nrs_hash,
         )
         return Radiation_data(
             affected_neurons=affected_neurons,

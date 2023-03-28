@@ -58,8 +58,8 @@ from snncompare.progress_report.has_completed_stage1 import (
     assert_has_outputted_stage_1,
     has_outputted_stage_1,
 )
-from snncompare.progress_report.has_completed_stage4 import (
-    assert_has_outputted_stage_4,
+from snncompare.progress_report.has_completed_stage2_or_4 import (
+    assert_has_outputted_stage_2_or_4,
 )
 from snncompare.run_config.Run_config import Run_config
 from snncompare.simulation.add_radiation_graphs import (
@@ -448,9 +448,10 @@ class Experiment_runner:
             run_config=run_config,
             graphs_dict=results_nx_graphs["graphs_dict"],
         )
-        assert_has_outputted_stage_4(
+        assert_has_outputted_stage_2_or_4(
             graphs_dict=results_nx_graphs["graphs_dict"],
             run_config=run_config,
+            stage_index=4,
         )
 
         verify_stage_completion(
