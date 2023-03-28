@@ -34,6 +34,7 @@ from snncompare.export_results.helper import (
     exp_config_to_filename,
     run_config_to_filename,
 )
+from snncompare.helper import get_snn_graph_from_graphs_dict
 from snncompare.import_results.helper import (
     create_relative_path,
     get_isomorphic_graph_hash,
@@ -85,10 +86,21 @@ def output_stage_1_configs_and_input_graphs(
         run_config=run_config,
         stage_index=1,
     )
+
+    # Output radiation affected neurons.
     for with_adaptation in [False, True]:
+        snn_graph: Union[
+            nx.DiGraph, Simulator
+        ] = get_snn_graph_from_graphs_dict(
+            with_adaptation=with_adaptation,
+            with_radiation=False,  # No radiation graph is needed to compute
+            # which neurons are affected by radiation.
+            graphs_dict=graphs_dict,
+        )
         radiation_data: Radiation_data = (
             get_radiation_names_filepath_and_exists(
-                graphs_dict=graphs_dict,
+                input_graph=graphs_dict["input_graph"],
+                snn_graph=snn_graph,
                 run_config=run_config,
                 stage_index=1,
                 with_adaptation=with_adaptation,
@@ -270,13 +282,18 @@ def get_rand_nrs_and_hash(
 @typechecked
 def get_radiation_names_filepath_and_exists(
     *,
-    graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    input_graph: nx.Graph,
+    snn_graph: Union[nx.DiGraph, Simulator],
     run_config: Run_config,
     stage_index: int,
     with_adaptation: bool,
     rand_nrs_hash: Optional[str] = None,
 ) -> Radiation_data:
-    """Stores the random numbers chosen for the original MDSA snn algorithm."""
+    """Stores the random numbers chosen for the original MDSA snn algorithm.
+
+    TODO: verify for each call to this function whether rand_nrs_hash should
+    be included.
+    """
 
     # Get the type of radiation used in this run_config.
     radiation_name, radiation_parameter = get_radiation_description(
@@ -285,11 +302,6 @@ def get_radiation_names_filepath_and_exists(
 
     # pylint:disable=R0801
     if radiation_name == "neuron_death":
-        if with_adaptation:
-            snn_graph = graphs_dict["adapted_snn_graph"]
-        else:
-            snn_graph = graphs_dict["snn_algo_graph"]
-
         # Get the list of affected neurons and the accompanying hash.
         (
             affected_neurons,
@@ -304,7 +316,7 @@ def get_radiation_names_filepath_and_exists(
             radiation_filepath,
         ) = simsnn_files_exists_and_get_path(
             output_category=f"{radiation_name}_{radiation_parameter}",
-            input_graph=graphs_dict["input_graph"],
+            input_graph=input_graph,
             run_config=run_config,
             with_adaptation=with_adaptation,
             stage_index=stage_index,

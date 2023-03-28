@@ -24,6 +24,8 @@ repos:
    rev: 6.0.0
    hooks:
     - id: flake8-conda
+      args:
+       - --ignore=E741,W503
 
 # Test if the import statements are sorted correctly.
  - repo: https://github.com/PyCQA/isort

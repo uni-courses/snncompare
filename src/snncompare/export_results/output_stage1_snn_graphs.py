@@ -46,20 +46,20 @@ def output_stage_1_snns(
     if not simsnn_exists:
         if with_adaptation:
             # Export default snn.
-            output_snn_graph(
+            output_snn_graph_stage_1(
                 output_filepath=simsnn_filepath,
                 snn_graph=graphs_dict["snn_algo_graph"],
             )
         else:
             # Export adapted snn.
-            output_snn_graph(
+            output_snn_graph_stage_1(
                 output_filepath=simsnn_filepath,
                 snn_graph=graphs_dict["adapted_snn_graph"],
             )
 
 
 @typechecked
-def output_snn_graph(
+def output_snn_graph_stage_1(
     *,
     output_filepath: str,
     snn_graph: Union[nx.DiGraph, Simulator],

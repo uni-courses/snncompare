@@ -12,6 +12,7 @@ from snncompare.export_results.output_stage1_configs_and_input_graph import (
     get_radiation_names_filepath_and_exists,
 )
 from snncompare.export_results.output_stage2_snns import get_desired_snn_graph
+from snncompare.helper import get_snn_graph_from_graphs_dict
 from snncompare.import_results.helper import get_radiation_description
 from snncompare.run_config.Run_config import Run_config
 
@@ -53,15 +54,24 @@ def apply_radiation_to_empty_simsnn_graphs(
     radiation_name, _ = get_radiation_description(run_config=run_config)
     if radiation_name == "neuron_death":
         for with_adaptation in [False, True]:
+            snn_graph: Union[
+                nx.DiGraph, Simulator
+            ] = get_snn_graph_from_graphs_dict(
+                with_adaptation=with_adaptation,
+                with_radiation=False,  # No radiation graph is needed to
+                # compute which neurons are affected by radiation.
+                graphs_dict=stage_1_graphs,
+            )
             radiation_data: Radiation_data = (
                 get_radiation_names_filepath_and_exists(
-                    graphs_dict=stage_1_graphs,
+                    input_graph=stage_1_graphs["input_graph"],
+                    snn_graph=snn_graph,
                     run_config=run_config,
                     stage_index=2,
                     with_adaptation=with_adaptation,
                 )
             )
-            snn_graph: Union[nx.DiGraph, Simulator] = get_desired_snn_graph(
+            snn_graph = get_desired_snn_graph(
                 graphs_dict=stage_1_graphs,
                 with_adaptation=with_adaptation,
                 with_radiation=True,

@@ -72,7 +72,6 @@ def compute_mark(*, input_graph: nx.Graph, rand_ceil: float) -> None:
                 input_graph.nodes[n]["marks"] += rand_ceil + 1
                 input_graph.nodes[n]["countermarks"] += 1
                 nr_of_max_weights = nr_of_max_weights + 1
-
                 # Verify there is only one max weight neuron.
                 if nr_of_max_weights > 1:
                     raise ValueError("Two numbers with identical max weight.")
@@ -146,7 +145,6 @@ def get_alipour_labels(*, G: nx.DiGraph, configuration: str) -> Dict[str, str]:
             ] = f'{node_name}, W:{G.nodes[node_name]["weight"]}'
         else:
             raise NotImplementedError("Unsupported configuration.")
-
     return labels
 
 
@@ -202,7 +200,6 @@ def compute_marks_for_m_larger_than_one(
                     # (not by 1).
                     input_graph.nodes[n]["marks"] += rand_ceil + 1
                     input_graph.nodes[n]["countermarks"] += 1
-
         if show or export:
             plot_alipour(
                 configuration="0rand_mark",
@@ -266,7 +263,6 @@ def add_stage_completion_to_graph(
         graph = snn.network.graph
     else:
         graph = snn
-
     # Initialise the completed_stages key.
     if stage_index == 1:
         if "completed_stages" in graph.graph:
@@ -276,7 +272,6 @@ def add_stage_completion_to_graph(
             )
         graph.graph["completed_stages"] = []
         print(f"graph={graph}")
-
     # After stage 1, the completed_stages key should already be a list.
     elif not isinstance(graph.graph["completed_stages"], list):
         raise TypeError(
@@ -284,7 +279,6 @@ def add_stage_completion_to_graph(
             + "list. instead, it is of type:"
             + f'{type(graph.graph["completed_stages"])}'
         )
-
     # At this point, the completed_stages key should not contain the current
     # stage index already..
     if stage_index in graph.graph["completed_stages"]:
@@ -370,3 +364,53 @@ def dicts_are_equal(
             right_copy.pop("unique_id")
         return left_copy == right_copy
     return left == right
+
+
+@typechecked
+def get_with_adaptation_bool(*, graph_name: str) -> bool:
+    """Returns True if the graph name belongs to a graph that has adaptation,
+    returns False otherwise."""
+    if graph_name in ["adapted_snn_graph", "rad_adapted_snn_graph"]:
+        return True
+    if graph_name in ["snn_algo_graph", "rad_snn_algo_graph"]:
+        return False
+    raise NotImplementedError(f"Error, {graph_name} is not supported.")
+
+
+@typechecked
+def get_with_radiation_bool(*, graph_name: str) -> bool:
+    """Returns True if the graph name belongs to a graph that has radiation,
+    returns False otherwise."""
+    if graph_name in ["rad_snn_algo_graph", "rad_adapted_snn_graph"]:
+        return True
+    if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
+        return False
+    raise NotImplementedError(f"Error, {graph_name} is not supported.")
+
+
+def get_snn_graph_from_graphs_dict(
+    with_adaptation: bool,
+    with_radiation: bool,
+    graphs_dict: Dict[str, Union[nx.DiGraph, Simulator]],
+) -> Union[nx.DiGraph, Simulator]:
+    """Returns the snn graph corresponding to the adaptation and radiation
+    configuration."""
+    return graphs_dict[
+        get_snn_graph_name(
+            with_adaptation=with_adaptation, with_radiation=with_radiation
+        )
+    ]
+
+
+def get_snn_graph_name(
+    with_adaptation: bool, with_radiation: bool
+) -> Union[nx.DiGraph, Simulator]:
+    """Returns the snn graph name corresponding to the adaptation and radiation
+    configuration."""
+    if with_adaptation:
+        if with_radiation:
+            return "rad_adapted_snn_graph"
+        return "adapted_snn_graph"
+    if with_radiation:
+        return "rad_snn_algo_graph"
+    return "snn_algo_graph"

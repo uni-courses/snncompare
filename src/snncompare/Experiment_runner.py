@@ -48,7 +48,7 @@ from snncompare.export_results.output_stage4_results import (
     output_stage_4_results,
 )
 from snncompare.helper import add_stage_completion_to_graph, dicts_are_equal
-from snncompare.import_results.load_stage_1 import load_simsnn_graphs
+from snncompare.import_results.load_stage_1_and_2 import load_simsnn_graphs
 from snncompare.optional_config.Output_config import (
     Hover_info,
     Output_config,
@@ -211,7 +211,6 @@ class Experiment_runner:
             "run_config": run_config,
             "graphs_dict": {"input_graph": input_graph},
         }
-
         # Check if stage 1 is performed. If not, perform it.
         if (
             not has_outputted_stage_1(
@@ -238,16 +237,16 @@ class Experiment_runner:
                 run_config=run_config,
                 graphs_dict=results_nx_graphs["graphs_dict"],
             )
-            for adaptation_boolean in [False, True]:
+            for with_adaptation in [False, True]:
                 output_stage_1_snns(
                     run_config=run_config,
                     graphs_dict=results_nx_graphs["graphs_dict"],
-                    with_adaptation=adaptation_boolean,
+                    with_adaptation=with_adaptation,
                 )
 
         else:
-            for adaptation_boolean in [False, True]:
-                if adaptation_boolean:
+            for with_adaptation in [False, True]:
+                if with_adaptation:
                     graph_name: str = "snn_algo_graph"
                 else:
                     graph_name = "adapted_snn_graph"
@@ -256,11 +255,8 @@ class Experiment_runner:
                 ] = load_simsnn_graphs(
                     run_config=run_config,
                     input_graph=input_graph,
-                    with_adaptation=adaptation_boolean,
-                )
-                # Indicate the graphs have completed stage 1.
-                add_stage_completion_to_graph(
-                    snn=results_nx_graphs["graphs_dict"][graph_name],
+                    with_adaptation=with_adaptation,
+                    with_radiation=False,
                     stage_index=1,
                 )
 
@@ -292,7 +288,6 @@ class Experiment_runner:
                 results_nx_graphs=results_nx_graphs, run_config=run_config
             )
         # TODO: also verify for simsnn
-
         if (
             not has_outputted_stage_jsons(
                 expected_stages=[1, 2], run_config=run_config, stage_index=2

@@ -14,9 +14,16 @@ from snncompare.export_results.output_stage1_configs_and_input_graph import (
     get_rand_nrs_and_hash,
 )
 from snncompare.import_results.helper import simsnn_files_exists_and_get_path
+from snncompare.import_results.load_stage_1_and_2 import load_simsnn_graphs
 from snncompare.run_config.Run_config import Run_config
 
-from ..helper import add_stage_completion_to_graph, get_max_sim_duration
+from ..helper import (
+    add_stage_completion_to_graph,
+    get_max_sim_duration,
+    get_snn_graph_from_graphs_dict,
+    get_with_adaptation_bool,
+    get_with_radiation_bool,
+)
 
 
 @typechecked
@@ -32,12 +39,14 @@ def sim_graphs(
 
     for graph_name, snn in stage_1_graphs.items():
         # Derive the adaptation setting for this graph.
-        if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
-            with_adaptation: bool = True
-        else:
-            with_adaptation = False
 
         if graph_name != "input_graph":
+            with_adaptation: bool = get_with_adaptation_bool(
+                graph_name=graph_name
+            )
+            with_radiation: bool = get_with_radiation_bool(
+                graph_name=graph_name
+            )
             if not graph_exists_already(
                 input_graph=stage_1_graphs["input_graph"],
                 stage_1_graphs=stage_1_graphs,
@@ -50,11 +59,24 @@ def sim_graphs(
                     snn=snn,
                     run_config=run_config,
                 )
-            else:
-                raise NotImplementedError(
-                    f"Error, need to load graph from file!:{graph_name}"
+                add_stage_completion_to_graph(
+                    snn=stage_1_graphs[graph_name], stage_index=2
                 )
-        add_stage_completion_to_graph(snn=snn, stage_index=2)
+            else:
+                print(f"LOADING graph_name={graph_name}")
+                print(f"with_adaptation={with_adaptation}")
+                print(f"with_radiation={with_radiation}")
+                stage_1_graphs[graph_name] = load_simsnn_graphs(
+                    run_config=run_config,
+                    input_graph=stage_1_graphs["input_graph"],
+                    with_adaptation=with_adaptation,
+                    with_radiation=with_radiation,
+                    stage_index=2,
+                )
+        else:
+            add_stage_completion_to_graph(
+                snn=stage_1_graphs[graph_name], stage_index=2
+            )
 
 
 @typechecked
@@ -69,9 +91,17 @@ def graph_exists_already(
 
     False otherwise.
     """
+
     _, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
-    radiation_data: Radiation_data = get_radiation_names_filepath_and_exists(
+    snn_graph: Union[nx.DiGraph, Simulator] = get_snn_graph_from_graphs_dict(
+        with_adaptation=with_adaptation,
+        with_radiation=False,  # No radiation graph is needed to compute which
+        # neurons are affected by radiation.
         graphs_dict=stage_1_graphs,
+    )
+    radiation_data: Radiation_data = get_radiation_names_filepath_and_exists(
+        input_graph=stage_1_graphs["input_graph"],
+        snn_graph=snn_graph,
         run_config=run_config,
         stage_index=1,
         with_adaptation=with_adaptation,
