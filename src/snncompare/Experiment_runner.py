@@ -44,6 +44,9 @@ from snncompare.export_results.output_stage1_snn_graphs import (
     output_stage_1_snns,
 )
 from snncompare.export_results.output_stage2_snns import output_stage_2_snns
+from snncompare.export_results.output_stage4_results import (
+    output_stage_4_results,
+)
 from snncompare.helper import add_stage_completion_to_graph, dicts_are_equal
 from snncompare.import_results.load_stage_1 import load_simsnn_graphs
 from snncompare.optional_config.Output_config import (
@@ -55,12 +58,14 @@ from snncompare.progress_report.has_completed_stage1 import (
     assert_has_outputted_stage_1,
     has_outputted_stage_1,
 )
+from snncompare.progress_report.has_completed_stage4 import (
+    assert_has_outputted_stage_4,
+)
 from snncompare.run_config.Run_config import Run_config
 from snncompare.simulation.add_radiation_graphs import (
     ensure_empty_rad_snns_exist,
 )
 
-from .export_results.Output_stage_12 import output_files_stage_1_and_2
 from .export_results.Output_stage_34 import output_stage_files_3_and_4
 from .graph_generation.stage_1_create_graphs import (
     get_graphs_stage_1,
@@ -68,8 +73,10 @@ from .graph_generation.stage_1_create_graphs import (
 )
 from .import_results.check_completed_stages import has_outputted_stage_jsons
 from .import_results.stage_1_load_input_graphs import load_results_stage_1
-from .process_results.process_results import compute_results, set_results
-from .run_config.verify_run_completion import assert_stage_is_completed
+from .process_results.process_results import (
+    set_results,
+    verify_stage_completion,
+)
 from .simulation.stage2_sim import sim_graphs
 
 
@@ -157,7 +164,6 @@ class Experiment_runner:
             )
 
             results_nx_graphs = self.__perform_run_stage_2(
-                exp_config=exp_config,
                 results_nx_graphs=results_nx_graphs,
                 output_config=output_config,
                 run_config=run_config,
@@ -196,12 +202,20 @@ class Experiment_runner:
         generating an SNN (graph) that runs the intended algorithm.
         """
 
+        input_graph: nx.Graph = get_input_graph_of_run_config(
+            run_config=run_config
+        )
+        add_stage_completion_to_graph(snn=input_graph, stage_index=1)
+        results_nx_graphs = {
+            "exp_config": exp_config,
+            "run_config": run_config,
+            "graphs_dict": {"input_graph": input_graph},
+        }
+
         # Check if stage 1 is performed. If not, perform it.
         if (
             not has_outputted_stage_1(
-                input_graph=get_input_graph_of_run_config(
-                    run_config=run_config
-                ),
+                input_graph=input_graph,
                 run_config=run_config,
             )
             or 1 in output_config.recreate_stages
@@ -217,11 +231,7 @@ class Experiment_runner:
             for snn in stage_1_graphs.values():
                 add_stage_completion_to_graph(snn=snn, stage_index=1)
 
-            results_nx_graphs = {
-                "exp_config": exp_config,
-                "run_config": run_config,
-                "graphs_dict": stage_1_graphs,
-            }
+            results_nx_graphs["graphs_dict"] = stage_1_graphs
 
             output_stage_1_configs_and_input_graphs(
                 exp_config=exp_config,
@@ -235,16 +245,25 @@ class Experiment_runner:
                     with_adaptation=adaptation_boolean,
                 )
 
-                load_simsnn_graphs(
+        else:
+            for adaptation_boolean in [False, True]:
+                if adaptation_boolean:
+                    graph_name: str = "snn_algo_graph"
+                else:
+                    graph_name = "adapted_snn_graph"
+                results_nx_graphs["graphs_dict"][
+                    graph_name
+                ] = load_simsnn_graphs(
                     run_config=run_config,
-                    input_graph=results_nx_graphs["graphs_dict"][
-                        "input_graph"
-                    ],
+                    input_graph=input_graph,
                     with_adaptation=adaptation_boolean,
                 )
-        else:
-            print("STAGE 1 LOADING")
-            results_nx_graphs = load_results_stage_1(run_config=run_config)
+                # Indicate the graphs have completed stage 1.
+                add_stage_completion_to_graph(
+                    snn=results_nx_graphs["graphs_dict"][graph_name],
+                    stage_index=1,
+                )
+
         self.equalise_loaded_run_config(
             loaded_from_json=results_nx_graphs["run_config"],
             incoming=run_config,
@@ -257,7 +276,6 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_2(
         self,
-        exp_config: Exp_config,
         output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
@@ -310,12 +328,12 @@ class Experiment_runner:
                 graphs_dict=results_nx_graphs["graphs_dict"],
             )
 
-            output_files_stage_1_and_2(
-                exp_config=exp_config,
-                run_config=run_config,
-                results_nx_graphs=results_nx_graphs,
-                stage_index=2,
-            )
+            # output_files_stage_1_and_2(
+            # exp_config=exp_config,
+            # run_config=run_config,
+            # results_nx_graphs=results_nx_graphs,
+            # stage_index=2,
+            # )
 
         else:
             # TODO: verify loading is required.
@@ -345,11 +363,11 @@ class Experiment_runner:
             )
         # TODO: verify completed stages are contained in simsnn graphs as well.
 
-        assert_stage_is_completed(
-            expected_stages=[1, 2],
-            run_config=run_config,
-            stage_index=2,
-        )
+        # assert_stage_is_completed(
+        # expected_stages=[1, 2],
+        # run_config=run_config,
+        # stage_index=2,
+        # )
 
         return results_nx_graphs
 
@@ -415,30 +433,44 @@ class Experiment_runner:
                 ],
             )
 
-        if set_results(
+        set_results(
             exp_config=exp_config,
             output_config=output_config,
             run_config=run_config,
             stage_2_graphs=results_nx_graphs["graphs_dict"],
-        ):
-            compute_results(
-                results_nx_graphs=results_nx_graphs,
-                stage_index=4,
-                simulator=run_config.simulator,
-            )
+        )
+        for graph_name, graph in results_nx_graphs["graphs_dict"].items():
+            if graph_name != "input_graph":
+                print(f"graph_name={graph_name}")
+                pprint(graph.network.graph.graph["results"])
 
-            # Indicate the graphs have completed stage 1.
-            # for graph_name,snn in results_nx_graphs["graphs_dict"].items():
-            # if graph_name !="input_graph":
-            # print(f'graph_name={graph_name}')
-            # add_stage_completion_to_graph(snn=snn, stage_index=4)
+        output_stage_4_results(
+            run_config=run_config,
+            graphs_dict=results_nx_graphs["graphs_dict"],
+        )
+        assert_has_outputted_stage_4(
+            graphs_dict=results_nx_graphs["graphs_dict"],
+            run_config=run_config,
+        )
 
-            # pylint: disable=E1125
-            # output_stage_files_3_and_4(
-            # output_config=output_config,
-            # results_nx_graphs=results_nx_graphs,
-            # stage_index=4,
-            # )
+        verify_stage_completion(
+            results_nx_graphs=results_nx_graphs,
+            stage_index=4,
+            simulator=run_config.simulator,
+        )
+
+        # Indicate the graphs have completed stage 1.
+        # for graph_name,snn in results_nx_graphs["graphs_dict"].items():
+        # if graph_name !="input_graph":
+        # print(f'graph_name={graph_name}')
+        # add_stage_completion_to_graph(snn=snn, stage_index=4)
+
+        # pylint: disable=E1125
+        # output_stage_files_3_and_4(
+        # output_config=output_config,
+        # results_nx_graphs=results_nx_graphs,
+        # stage_index=4,
+        # )
 
         # assert_stage_is_completed(
         # expected_stages=[1, 2, 4],  # TODO: determine if 3 should be in.

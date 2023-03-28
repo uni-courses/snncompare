@@ -8,6 +8,12 @@ from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
 from snnbackends.simsnn.run_on_simsnn import run_snn_on_simsnn
 from typeguard import typechecked
 
+from snncompare.export_results.output_stage1_configs_and_input_graph import (
+    Radiation_data,
+    get_radiation_names_filepath_and_exists,
+    get_rand_nrs_and_hash,
+)
+from snncompare.import_results.helper import simsnn_files_exists_and_get_path
 from snncompare.run_config.Run_config import Run_config
 
 from ..helper import add_stage_completion_to_graph, get_max_sim_duration
@@ -25,7 +31,16 @@ def sim_graphs(
     """
 
     for graph_name, snn in stage_1_graphs.items():
-        if graph_name != "input_graph":
+        if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
+            with_adaptation: bool = True
+        else:
+            with_adaptation = False
+        if graph_name != "input_graph" and not graph_exists_already(
+            input_graph=stage_1_graphs["input_graph"],
+            stage_1_graphs=stage_1_graphs,
+            run_config=run_config,
+            with_adaptation=with_adaptation,
+        ):
             print(f"graph_name={graph_name}")
             sim_snn(
                 input_graph=stage_1_graphs["input_graph"],
@@ -33,6 +48,38 @@ def sim_graphs(
                 run_config=run_config,
             )
         add_stage_completion_to_graph(snn=snn, stage_index=2)
+
+
+@typechecked
+def graph_exists_already(
+    *,
+    input_graph: nx.Graph,
+    stage_1_graphs: Dict,
+    run_config: "Run_config",
+    with_adaptation: bool,
+) -> bool:
+    """Returns True if a graph already exists.
+
+    False otherwise.
+    """
+    _, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
+    radiation_data: Radiation_data = get_radiation_names_filepath_and_exists(
+        graphs_dict=stage_1_graphs,
+        run_config=run_config,
+        stage_index=1,
+        with_adaptation=with_adaptation,
+    )
+
+    simsnn_exists, _ = simsnn_files_exists_and_get_path(
+        output_category="snns",
+        input_graph=stage_1_graphs["input_graph"],
+        run_config=run_config,
+        with_adaptation=with_adaptation,
+        stage_index=2,
+        rad_affected_neurons_hash=radiation_data.rad_affected_neurons_hash,
+        rand_nrs_hash=rand_nrs_hash,
+    )
+    return simsnn_exists
 
 
 @typechecked

@@ -7,7 +7,7 @@ from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
-    Radiation_output_data,
+    Radiation_data,
     get_radiation_names_filepath_and_exists,
     get_rand_nrs_and_hash,
 )
@@ -33,19 +33,20 @@ def has_outputted_stage_2(
     stage2/algorithm_name+setting/adaptation_type/isomorphichash+rand_hash+rad_affected_neurons_hash
     under filenames:
     """
-    return has_outputted_stage_2_non_radiation_snns(
+    return has_outputted_non_radiation_json(
         graphs_dict=graphs_dict,
         run_config=run_config,
-    ) and has_outputted_stage_2_radiation_snns(
-        graphs_dict=graphs_dict,
-        run_config=run_config,
+        stage_index=2,
+    ) and has_outputted_radiation_json(
+        graphs_dict=graphs_dict, run_config=run_config, stage_index=2
     )
 
 
-def has_outputted_stage_2_non_radiation_snns(
+def has_outputted_non_radiation_json(
     *,
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     run_config: Run_config,
+    stage_index: int,
 ) -> bool:
     """Returns False if not both rad_snn_algo_graph and
     rad_adapted_snn_algo_graph files exist."""
@@ -58,7 +59,7 @@ def has_outputted_stage_2_non_radiation_snns(
             input_graph=graphs_dict["input_graph"],
             run_config=run_config,
             with_adaptation=with_adaptation,
-            stage_index=2,
+            stage_index=stage_index,
             rand_nrs_hash=rand_nrs_hash,
         )
         if not simsnn_exists:
@@ -66,22 +67,23 @@ def has_outputted_stage_2_non_radiation_snns(
     return True
 
 
-def has_outputted_stage_2_radiation_snns(
+def has_outputted_radiation_json(
     *,
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     run_config: Run_config,
+    stage_index: int,
 ) -> bool:
     """Returns False if not both rad_snn_algo_graph and
     rad_adapted_snn_algo_graph files exist."""
     for with_adaptation in [False, True]:
-        radiation_output_data: Radiation_output_data = (
+        radiation_data: Radiation_data = (
             get_radiation_names_filepath_and_exists(
                 graphs_dict=graphs_dict,
                 run_config=run_config,
-                stage_index=2,
+                stage_index=stage_index,
                 with_adaptation=with_adaptation,
             )
         )
-        if not radiation_output_data.radiation_file_exists:
+        if not radiation_data.radiation_file_exists:
             return False
     return True

@@ -8,7 +8,7 @@ from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
-    Radiation_output_data,
+    Radiation_data,
     get_radiation_names_filepath_and_exists,
 )
 from snncompare.export_results.output_stage2_snns import get_desired_snn_graph
@@ -53,7 +53,7 @@ def apply_radiation_to_empty_simsnn_graphs(
     radiation_name, _ = get_radiation_description(run_config=run_config)
     if radiation_name == "neuron_death":
         for with_adaptation in [False, True]:
-            radiation_output_data: Radiation_output_data = (
+            radiation_data: Radiation_data = (
                 get_radiation_names_filepath_and_exists(
                     graphs_dict=stage_1_graphs,
                     run_config=run_config,
@@ -66,7 +66,7 @@ def apply_radiation_to_empty_simsnn_graphs(
                 with_adaptation=with_adaptation,
                 with_radiation=True,
             )
-            for neuron_name in radiation_output_data.affected_neurons:
+            for neuron_name in radiation_data.affected_neurons:
                 apply_radiation_death_to_empty_simsnn_neuron(
                     neuron_name=neuron_name,
                     snn_graph=snn_graph,

@@ -275,6 +275,7 @@ def add_stage_completion_to_graph(
                 + f"already created for stage 1{graph.graph}:"
             )
         graph.graph["completed_stages"] = []
+        print(f"graph={graph}")
 
     # After stage 1, the completed_stages key should already be a list.
     elif not isinstance(graph.graph["completed_stages"], list):

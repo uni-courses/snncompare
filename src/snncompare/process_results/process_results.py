@@ -66,7 +66,10 @@ def perform_mdsa_results_computation_if_needed(
     run_config: Run_config,
     stage_2_graphs: Dict,
 ) -> bool:
-    """Performs result computation if the results are not in the graph yet."""
+    """Performs result computation if the results are not in the graph yet.
+
+    TODO: separate check whether computation is needed, with setting results.
+    """
     set_new_results: bool = False
 
     for snn in stage_2_graphs.values():
@@ -94,7 +97,7 @@ def perform_mdsa_results_computation_if_needed(
 
 
 @typechecked
-def compute_results(
+def verify_stage_completion(
     *,
     results_nx_graphs: Dict,
     simulator: str,
@@ -102,50 +105,6 @@ def compute_results(
 ) -> None:
     """Integrates the results per graph type into the graph, then export the
     results dictionary (again) into the stage 4 folder."""
-    # Create new independent graphs dict to include the results.
-    # TODO: determine why/don't duplicate.
-    # stage_4_graphs = copy.deepcopy(results_nx_graphs["graphs_dict"])
-    # Embed results into snn graphs
-    # for graph_name in results_nx_graphs["graphs_dict"].keys():
-    # if graph_name != "input_graph":
-    #     if simulator == "nx":
-    #         graph_obj = results_nx_graphs["graphs_dict"][graph_name]
-    #     elif simulator == "simsnn":
-    #         print(f"graph_name={graph_name}")
-    #         graph_obj = results_nx_graphs["graphs_dict"][
-    #             graph_name
-    #         ].network.graph
-    #         print("graph_obj.graph.__dict__")
-    #         pprint(graph_obj.graph)
-    #     else:
-    #         raise NotImplementedError(
-    #             f"Error, simulator:{simulator} not supported."
-    #         )
-
-    # if graph_name == "snn_algo_graph":
-    #     # stage_4_graphs[graph_name]["results"] =results["snn_algo_result"]
-    #     add_result_to_last_graph(
-    #         snn_graphs=stage_4_graphs[graph_name],
-    #         result_per_type=graph_obj.graph["results"],
-    #     )
-    # elif graph_name == "adapted_snn_graph":
-    #     add_result_to_last_graph(
-    #         snn_graphs=stage_4_graphs[graph_name],
-    #         result_per_type=graph_obj.graph["results"],
-    #     )
-    # elif graph_name == "rad_snn_algo_graph":
-    #     add_result_to_last_graph(
-    #         snn_graphs=stage_4_graphs[graph_name],
-    #         result_per_type=graph_obj.graph["results"],
-    #     )
-    # elif graph_name == "rad_adapted_snn_graph":
-    #     add_result_to_last_graph(
-    #         snn_graphs=stage_4_graphs[graph_name],
-    #         result_per_type=graph_obj.graph["results"],
-    #     )
-
-    # overwrite nx_graphs with stage_4_graphs
-    # results_nx_graphs["graphs_dict"] = stage_4_graphs
 
     # Verify the results_nx_graphs are valid.
     if simulator == "nx":

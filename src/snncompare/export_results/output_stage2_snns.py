@@ -17,7 +17,7 @@ from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
-    Radiation_output_data,
+    Radiation_data,
     get_radiation_names_filepath_and_exists,
     get_rand_nrs_and_hash,
 )
@@ -39,17 +39,17 @@ def output_stage_2_snns(
         for with_radiation in [False, True]:
             # pylint:disable=R0801
             if with_radiation:
-                radiation_output_data: Radiation_output_data = (
+                radiation_data: Radiation_data = (
                     get_radiation_names_filepath_and_exists(
                         graphs_dict=graphs_dict,
                         run_config=run_config,
-                        stage_index=2,
+                        stage_index=stage_index,
                         with_adaptation=with_adaptation,
                     )
                 )
                 rad_affected_neurons_hash: Union[
                     None, str
-                ] = radiation_output_data.rad_affected_neurons_hash
+                ] = radiation_data.rad_affected_neurons_hash
             else:
                 rad_affected_neurons_hash = None
 
@@ -63,23 +63,23 @@ def output_stage_2_snns(
             input_graph=graphs_dict["input_graph"],
             run_config=run_config,
             with_adaptation=with_adaptation,
-            stage_index=2,
+            stage_index=stage_index,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
             rand_nrs_hash=rand_nrs_hash,
         )
-        if simsnn_exists:
-            raise FileExistsError(
-                f"Error, {simsnn_exists} already exists while outputting: "
-                + f"stage{stage_index}"
+        if not simsnn_exists:
+            # raise FileExistsError(
+            #    f"Error, {simsnn_filepath} already exists while outputting: "
+            #    + f"stage{stage_index}"
+            # )
+            output_snn_graph(
+                output_filepath=simsnn_filepath,
+                snn_graph=get_desired_snn_graph(
+                    graphs_dict=graphs_dict,
+                    with_adaptation=with_adaptation,
+                    with_radiation=with_radiation,
+                ),
             )
-        output_snn_graph(
-            output_filepath=simsnn_filepath,
-            snn_graph=get_desired_snn_graph(
-                graphs_dict=graphs_dict,
-                with_adaptation=with_adaptation,
-                with_radiation=with_radiation,
-            ),
-        )
 
 
 @typechecked

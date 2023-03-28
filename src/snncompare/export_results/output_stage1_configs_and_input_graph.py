@@ -43,10 +43,11 @@ from snncompare.import_results.helper import (
 from snncompare.run_config.Run_config import Run_config
 
 
-class Radiation_output_data:
+class Radiation_data:
     """Stores the data used in outputting radiation."""
 
     # pylint: disable=R0903
+    # pylint: disable=R0913
     @typechecked
     def __init__(
         self,
@@ -54,11 +55,15 @@ class Radiation_output_data:
         rad_affected_neurons_hash: str,
         radiation_file_exists: bool,
         radiation_filepath: str,
+        radiation_name: str,
+        radiation_parameter: float,
     ) -> None:
         self.affected_neurons: List[str] = affected_neurons
         self.rad_affected_neurons_hash: str = rad_affected_neurons_hash
         self.radiation_file_exists: bool = radiation_file_exists
         self.radiation_filepath: str = radiation_filepath
+        self.radiation_name: str = radiation_name
+        self.radiation_parameter: float = radiation_parameter
 
 
 @typechecked
@@ -81,7 +86,7 @@ def output_stage_1_configs_and_input_graphs(
         stage_index=1,
     )
     for with_adaptation in [False, True]:
-        radiation_output_data: Radiation_output_data = (
+        radiation_data: Radiation_data = (
             get_radiation_names_filepath_and_exists(
                 graphs_dict=graphs_dict,
                 run_config=run_config,
@@ -89,11 +94,12 @@ def output_stage_1_configs_and_input_graphs(
                 with_adaptation=with_adaptation,
             )
         )
-        output_unique_list(
-            output_filepath=radiation_output_data.radiation_filepath,
-            some_list=radiation_output_data.affected_neurons,
-            target_file_exists=radiation_output_data.radiation_file_exists,
-        )
+        if not radiation_data.radiation_file_exists:
+            output_unique_list(
+                output_filepath=radiation_data.radiation_filepath,
+                some_list=radiation_data.affected_neurons,
+                target_file_exists=radiation_data.radiation_file_exists,
+            )
 
 
 @typechecked
@@ -240,11 +246,12 @@ def output_mdsa_rand_nrs(
         rand_nrs_hash=rand_nrs_hash,
     )
 
-    output_unique_list(
-        output_filepath=rand_nrs_filepath,
-        some_list=rand_nrs,
-        target_file_exists=rand_nrs_exists,
-    )
+    if not rand_nrs_exists:
+        output_unique_list(
+            output_filepath=rand_nrs_filepath,
+            some_list=rand_nrs,
+            target_file_exists=rand_nrs_exists,
+        )
 
 
 @typechecked
@@ -267,7 +274,7 @@ def get_radiation_names_filepath_and_exists(
     run_config: Run_config,
     stage_index: int,
     with_adaptation: bool,
-) -> Radiation_output_data:
+) -> Radiation_data:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
 
     # Get the type of radiation used in this run_config.
@@ -302,12 +309,13 @@ def get_radiation_names_filepath_and_exists(
             stage_index=stage_index,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
         )
-
-        return Radiation_output_data(
+        return Radiation_data(
             affected_neurons=affected_neurons,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
             radiation_file_exists=radiation_file_exists,
             radiation_filepath=radiation_filepath,
+            radiation_name=radiation_name,
+            radiation_parameter=radiation_parameter,
         )
     raise NotImplementedError(
         f"Error:{radiation_name} is not yet implemented."

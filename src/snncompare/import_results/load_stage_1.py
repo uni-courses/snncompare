@@ -9,7 +9,7 @@
 """
 import json
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import networkx as nx
 from simsnn.core.networks import Network
@@ -17,7 +17,13 @@ from simsnn.core.nodes import LIF
 from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
+from snncompare.export_results.output_stage1_configs_and_input_graph import (
+    get_rand_nrs_and_hash,
+)
 from snncompare.import_results.helper import simsnn_files_exists_and_get_path
+from snncompare.progress_report.has_completed_stage1 import (
+    has_outputted_stage_1,
+)
 from snncompare.run_config.Run_config import Run_config
 
 from .read_json import load_json_file_into_dict
@@ -58,20 +64,28 @@ def load_simsnn_graphs(
     run_config: Run_config,
     input_graph: nx.Graph,
     with_adaptation: bool,
-) -> Union[None, Simulator]:
+) -> Simulator:
     """Loads the input_graph."""
+    if not has_outputted_stage_1(
+        input_graph=input_graph,
+        run_config=run_config,
+    ):
+        raise SystemError("Can not load graph from file if it doesn't exist.")
+
+    _, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
     simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
         output_category="snns",
         input_graph=input_graph,
         run_config=run_config,
         with_adaptation=with_adaptation,
         stage_index=1,
+        rand_nrs_hash=rand_nrs_hash,
     )
     if simsnn_exists:
         return load_simsnn_graph_from_file(
             simsnn_filepath=simsnn_filepath,
         )
-    return None
+    raise FileNotFoundError(f"Error, simsnn not found at:{simsnn_filepath}")
 
 
 @typechecked
