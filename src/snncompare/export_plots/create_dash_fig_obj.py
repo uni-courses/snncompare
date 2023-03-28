@@ -38,11 +38,6 @@ class NamedAnnotation:
         if category not in self.supported_categories:
             raise ValueError(f"Error, category:{category} not supported.")
 
-    @typechecked
-    def get_node_name(self) -> Union[str, None]:
-        """returns the node_name of the annotation if not None."""
-        return self.node_name
-
 
 # Build image from incoming graph and positioning parameters
 # pylint: disable=R0914

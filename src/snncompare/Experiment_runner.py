@@ -328,13 +328,6 @@ class Experiment_runner:
                 graphs_dict=results_nx_graphs["graphs_dict"],
             )
 
-            # output_files_stage_1_and_2(
-            # exp_config=exp_config,
-            # run_config=run_config,
-            # results_nx_graphs=results_nx_graphs,
-            # stage_index=2,
-            # )
-
         else:
             # TODO: verify loading is required.
             if not results_nx_graphs_contain_expected_stages(

@@ -15,7 +15,6 @@ import seaborn as sns
 from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
-from snncompare.create_configs import get_adaptations_or_radiations
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_results.load_json_to_nx_graph import (
     load_verified_json_graphs_from_json,
@@ -142,34 +141,6 @@ def create_performance_plots(
                     title=f"{radiation_name}={radiation_value}",
                     x_axis_label_rotation=45,
                 )
-
-
-@typechecked
-def get_radiation_and_adaptation_performance(
-    *,
-    exp_config: Exp_config,
-) -> Tuple[List, List]:
-    """So to get this data,
-
-    - per run config
-      -loops through the seeds,
-        - per radiation level,
-          - per column
-            Get the result of a run config and store it in the boxplot data.
-    """
-
-    adaptations: List = []
-    radiations: List = []
-
-    for adaptation in get_adaptations_or_radiations(
-        adaptations_or_radiations=exp_config.adaptations,
-    ):
-        adaptations.append(adaptation)
-    for radiation in get_adaptations_or_radiations(
-        adaptations_or_radiations=exp_config.radiations,
-    ):
-        radiations.append(radiation)
-    return adaptations, radiations
 
 
 @typechecked

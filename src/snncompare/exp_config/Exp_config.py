@@ -526,15 +526,6 @@ def verify_adap_and_rad_settings(
     )
 
 
-def verify_algorithm_settings(
-    *,
-    supp_exp_config: Supported_experiment_settings,
-    some_dict: dict,
-    check_type: str,
-) -> None:
-    """TODO: Verifies the settings of the algorithm are valid."""
-
-
 def verify_radiations_values(
     *,
     supp_exp_config: Supported_experiment_settings,

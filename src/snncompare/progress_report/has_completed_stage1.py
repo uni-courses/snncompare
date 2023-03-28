@@ -13,7 +13,6 @@ from snncompare.graph_generation.stage_1_create_graphs import (
 )
 from snncompare.import_results.helper import (
     get_isomorphic_graph_hash,
-    get_radiation_description,
     simsnn_files_exists_and_get_path,
 )
 from snncompare.run_config.Run_config import Run_config
@@ -91,41 +90,6 @@ def has_outputted_rand_nrs(
         return False
     # TODO: verify if file contains radiation neurons for this seed.
     raise FileNotFoundError(f"{rand_nrs_filepath} does not exist.")
-
-
-def has_outputted_radiation(
-    *,
-    input_graph: nx.Graph,
-    run_config: Run_config,
-    stage_index: int,
-    rad_affected_neurons_hash: Optional[str] = None,
-    rand_nrs_hash: Optional[str] = None,
-) -> bool:
-    """Returns True if the radiation for this run config has been outputted."""
-    radiation_name, radiation_parameter = get_radiation_description(
-        run_config=run_config
-    )
-    if radiation_name == "neuron_death":
-        for with_adaptation in [False, True]:
-            (
-                radiation_file_exists,
-                radiation_filepath,
-            ) = simsnn_files_exists_and_get_path(
-                output_category=f"{radiation_name}_{radiation_parameter}",
-                input_graph=input_graph,
-                run_config=run_config,
-                with_adaptation=with_adaptation,
-                stage_index=stage_index,
-                rad_affected_neurons_hash=rad_affected_neurons_hash,
-                rand_nrs_hash=rand_nrs_hash,
-            )
-            if not radiation_file_exists:
-                return False
-            # TODO: verify if file contains radiation neurons for this seed.
-            raise FileNotFoundError(f"{radiation_filepath} does not exist.")
-    raise NotImplementedError(
-        f"Error {radiation_name} is not yet implemented."
-    )
 
 
 @typechecked
