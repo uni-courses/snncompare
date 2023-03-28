@@ -252,7 +252,7 @@ class Hover_info:
         be printed."""
         for synaptic_model in synaptic_models:
             if synaptic_model == "LIF":
-                sample_synapse: LIF_neuron.Synapse = Synapse(
+                sample_synapse: Synapse = Synapse(
                     weight=1,
                     delay=1,
                     change_per_t=1,

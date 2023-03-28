@@ -75,10 +75,10 @@ def output_snn_graph_stage_1(
     # instead.
 
     if isinstance(snn_graph, Simulator):
-        json_simsns_neurons: Dict = simsnn_nodes_to_json(
+        json_simsns_neurons: List[Dict] = simsnn_nodes_to_json(
             simsnn_neurons=copy.deepcopy(snn_graph.network.nodes)
         )
-        json_simsnn_synapses: Dict = simsnn_synapses_to_json(
+        json_simsnn_synapses: List[Dict] = simsnn_synapses_to_json(
             simsnn_synapses=copy.deepcopy(snn_graph.network.synapses)
         )
 

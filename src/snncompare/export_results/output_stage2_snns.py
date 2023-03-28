@@ -75,9 +75,6 @@ def output_stage_2_snns(
                 rand_nrs_hash=rand_nrs_hash,
             )
 
-            print(f"with_adaptation={with_adaptation}")
-            print(f"with_radiation={with_radiation}")
-            print(f"{simsnn_exists} at:{simsnn_filepath}")
             if not simsnn_exists:
                 output_snn_graph_stage_2(
                     output_filepath=simsnn_filepath,
@@ -122,9 +119,9 @@ def output_snn_graph_stage_2(
     # instead.
 
     if isinstance(snn_graph, Simulator):
-        v: List[float] = snn_graph.multimeter.V.tolist()
-        i: List[float] = snn_graph.multimeter.I.tolist()
-        spikes: List[bool] = snn_graph.raster.spikes.tolist()
+        v: List = snn_graph.multimeter.V.tolist()
+        i: List = snn_graph.multimeter.I.tolist()
+        spikes: List = snn_graph.raster.spikes.tolist()
         neuron_dict: Dict = {"V": v, "I": i, "spikes": spikes}
         with open(output_filepath, "w", encoding="utf-8") as fp:
             json.dump(

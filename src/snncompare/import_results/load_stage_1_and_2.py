@@ -114,7 +114,6 @@ def load_simsnn_graph_from_file(
     """Loads the simsnn filepath and converts it into a simsnn graph file."""
 
     # Read output JSON file into dict.
-    print(f"stage_1_simsnn_filepath={stage_1_simsnn_filepath}")
     with open(stage_1_simsnn_filepath, encoding="utf-8") as json_file:
         some_dict: Dict[str, List] = json.load(json_file)
         json_file.close()
@@ -221,7 +220,7 @@ def load_snn_graph_stage_2(
     for key, value in loaded_snn.items():
         loaded_snn[key] = np.array(value)
         if key == "spikes":
-            stage_1_simsnn_simulator.raster = loaded_snn[key]
+            stage_1_simsnn_simulator.raster.spikes = loaded_snn[key]
         elif key == "V":
             stage_1_simsnn_simulator.multimeter.V = loaded_snn[key]
         elif key == "I":

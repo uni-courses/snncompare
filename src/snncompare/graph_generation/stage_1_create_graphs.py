@@ -233,7 +233,7 @@ def get_input_graphs(
     """Removes graphs that are not used, because of a maximum nr of graphs that
     is to be evaluated."""
     used_graphs = Used_graphs()
-    input_graphs: List[nx.DiGraph] = used_graphs.get_graphs(
+    input_graphs: List[nx.Graph] = used_graphs.get_graphs(
         run_config.graph_size
     )
     if len(input_graphs) > run_config.graph_nr:

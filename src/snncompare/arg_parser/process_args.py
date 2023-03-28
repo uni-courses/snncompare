@@ -2,7 +2,7 @@
 import argparse
 import os
 import shutil
-from typing import List
+from typing import List, Union
 
 from typeguard import typechecked
 
@@ -39,7 +39,9 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     )
 
     if args.run_config_path is not None:
-        specific_run_config: Run_config = load_run_config_from_file(
+        specific_run_config: Union[
+            None, Run_config
+        ] = load_run_config_from_file(
             custom_config_path=custom_config_path,
             filename=f"{args.run_config_path}",
         )

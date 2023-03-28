@@ -53,7 +53,7 @@ def sim_graphs(
                 run_config=run_config,
                 with_adaptation=with_adaptation,
             ):
-                print(f"graph_name={graph_name}")
+                print(f"graph_name={graph_name} - simulating.")
                 sim_snn(
                     input_graph=stage_1_graphs["input_graph"],
                     snn=snn,
@@ -63,9 +63,7 @@ def sim_graphs(
                     snn=stage_1_graphs[graph_name], stage_index=2
                 )
             else:
-                print(f"LOADING graph_name={graph_name}")
-                print(f"with_adaptation={with_adaptation}")
-                print(f"with_radiation={with_radiation}")
+                print(f"graph_name={graph_name} - loading.")
                 stage_1_graphs[graph_name] = load_simsnn_graphs(
                     run_config=run_config,
                     input_graph=stage_1_graphs["input_graph"],

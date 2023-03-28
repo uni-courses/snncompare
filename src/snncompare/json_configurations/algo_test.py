@@ -138,7 +138,7 @@ def run_config_with_error() -> Run_config:
 @typechecked
 def get_exp_config_mdsa_size5_m4() -> "Exp_config":
     """Returns a default experiment setting with  graph size 7, m=4."""
-    mdsa_creation_only_size_7_m_4: "Exp_config" = (
+    mdsa_creation_only_size_7_m_4: Exp_config = (
         long_exp_config_for_mdsa_testing_without_adaptation()
     )
     mdsa_creation_only_size_7_m_4.algorithms = {
