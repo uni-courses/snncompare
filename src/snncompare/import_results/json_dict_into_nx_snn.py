@@ -82,7 +82,6 @@ def restore_nx_lif_neuron_and_synapse_objects(
             )
     for node in graph.nodes:
         if "nx_lif" in graph.nodes[node].keys():
-            # print(graph.nodes[node]["nx_lif"])
             graph.nodes[node]["nx_lif"] = list(
                 map(
                     manually_create_lif_neuron,

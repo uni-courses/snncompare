@@ -112,7 +112,6 @@ def load_simsnn_graph_from_file(
     stage_index: int,
 ) -> Simulator:
     """Loads the simsnn filepath and converts it into a simsnn graph file."""
-
     # Read output JSON file into dict.
     with open(stage_1_simsnn_filepath, encoding="utf-8") as json_file:
         some_dict: Dict[str, List] = json.load(json_file)

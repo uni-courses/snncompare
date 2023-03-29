@@ -47,6 +47,7 @@ def sim_graphs(
             with_radiation: bool = get_with_radiation_bool(
                 graph_name=graph_name
             )
+
             if not graph_exists_already(
                 input_graph=stage_1_graphs["input_graph"],
                 stage_1_graphs=stage_1_graphs,
@@ -72,6 +73,7 @@ def sim_graphs(
                     with_radiation=with_radiation,
                     stage_index=2,
                 )
+
         else:
             add_stage_completion_to_graph(
                 snn=stage_1_graphs[graph_name], stage_index=2
@@ -113,10 +115,6 @@ def graph_exists_already(
         rad_affected_neurons_hash=rad_affected_neurons_hash,
         rand_nrs_hash=rand_nrs_hash,
     )
-    # if not simsnn_exists:
-    #     print(f"with_radiation={with_radiation}")
-    #     print(f"False:{simsnn_filepath}")
-    #     exit()
     return simsnn_exists
 
 

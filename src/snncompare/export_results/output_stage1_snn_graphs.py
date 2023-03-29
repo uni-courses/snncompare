@@ -43,18 +43,19 @@ def output_stage_1_snns(
         stage_index=1,
         rand_nrs_hash=rand_nrs_hash,
     )
+
     if not simsnn_exists:
         if with_adaptation:
             # Export default snn.
             output_snn_graph_stage_1(
                 output_filepath=simsnn_filepath,
-                snn_graph=graphs_dict["snn_algo_graph"],
+                snn_graph=graphs_dict["adapted_snn_graph"],
             )
         else:
             # Export adapted snn.
             output_snn_graph_stage_1(
                 output_filepath=simsnn_filepath,
-                snn_graph=graphs_dict["adapted_snn_graph"],
+                snn_graph=graphs_dict["snn_algo_graph"],
             )
 
 
@@ -78,6 +79,7 @@ def output_snn_graph_stage_1(
         json_simsns_neurons: List[Dict] = simsnn_nodes_to_json(
             simsnn_neurons=copy.deepcopy(snn_graph.network.nodes)
         )
+
         json_simsnn_synapses: List[Dict] = simsnn_synapses_to_json(
             simsnn_synapses=copy.deepcopy(snn_graph.network.synapses)
         )

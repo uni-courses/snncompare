@@ -311,6 +311,7 @@ def get_radiation_names_filepath_and_exists(
             radiation_parameter=radiation_parameter,
             run_config=run_config,
         )
+
         (
             radiation_file_exists,
             radiation_filepath,
@@ -323,6 +324,7 @@ def get_radiation_names_filepath_and_exists(
             rad_affected_neurons_hash=rad_affected_neurons_hash,
             rand_nrs_hash=rand_nrs_hash,
         )
+
         return Radiation_data(
             affected_neurons=affected_neurons,
             rad_affected_neurons_hash=rad_affected_neurons_hash,

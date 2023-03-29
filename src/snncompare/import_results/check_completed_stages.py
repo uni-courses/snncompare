@@ -213,7 +213,6 @@ def has_valid_json_results(
 
     TODO: support different algorithms.
     """
-    print("HI")
     for algo_name, algo_settings in run_config.algorithm.items():
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):

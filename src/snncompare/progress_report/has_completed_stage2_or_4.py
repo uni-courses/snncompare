@@ -120,6 +120,5 @@ def has_outputted_radiation_json(
             )
         )
         if not radiation_data.radiation_file_exists:
-            print(f"FALSE:{radiation_data.radiation_filepath}")
             return False
     return True

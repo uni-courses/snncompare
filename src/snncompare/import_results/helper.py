@@ -113,6 +113,7 @@ def simsnn_files_exists_and_get_path(
             )
         else:
             # Import default snn.
+
             output_dir = (
                 f"results/stage{stage_index}/{algorithm_name}_"
                 + f"{algorithm_parameter}/no_adaptation/{output_category}/"

@@ -53,7 +53,6 @@ def verify_json_graphs_dict_contain_correct_stages(
                         "Error, the json_graph is of type:"
                         f"{type(json_graph)}, with content:{json_graph}"
                     )
-                # print(f'json_graph["graph"]={json_graph}')
                 if "graph" not in json_graph.keys():
                     raise SystemError("Error, graph not in json graphs keys.")
                 if "completed_stages" not in json_graph["graph"].keys():
