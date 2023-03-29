@@ -9,7 +9,7 @@
 """
 import json
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import networkx as nx
 import numpy as np
@@ -22,6 +22,9 @@ from snncompare.export_results.output_stage1_configs_and_input_graph import (
     Radiation_data,
     get_radiation_names_filepath_and_exists,
     get_rand_nrs_and_hash,
+)
+from snncompare.graph_generation.stage_1_create_graphs import (
+    get_input_graph_of_run_config,
 )
 from snncompare.helper import add_stage_completion_to_graph
 from snncompare.import_results.helper import simsnn_files_exists_and_get_path
@@ -60,6 +63,36 @@ def input_graph_exists(
     # nrs.
     output_filepath: str = f"{output_dir}{run_config.isomorphic_hash}.json"
     return Path(output_filepath).is_file()
+
+
+@typechecked
+def load_stage1_simsnn_graphs(
+    *,
+    run_config: Run_config,
+    input_graph: nx.Graph,
+    stage_1_graphs_dict: Optional[Dict] = None,
+) -> Dict:
+    """Loads stage1 simsnn graphs and input graph."""
+    if stage_1_graphs_dict is None:
+        stage_1_graphs_dict = {}
+        stage_1_graphs_dict["input_graph"] = get_input_graph_of_run_config(
+            run_config=run_config
+        )
+
+    for with_adaptation in [False, True]:
+        if with_adaptation:
+            graph_name: str = "adapted_snn_graph"
+        else:
+            graph_name = "snn_algo_graph"
+        stage_1_graphs_dict[graph_name] = load_simsnn_graphs(
+            run_config=run_config,
+            input_graph=input_graph,
+            with_adaptation=with_adaptation,
+            with_radiation=False,
+            stage_index=1,
+        )
+
+    return stage_1_graphs_dict
 
 
 @typechecked

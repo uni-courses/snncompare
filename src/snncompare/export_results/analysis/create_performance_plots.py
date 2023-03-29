@@ -22,8 +22,8 @@ from snncompare.export_results.load_json_to_nx_graph import (
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
-from snncompare.import_results.check_completed_stages import (
-    has_outputted_stage_jsons,
+from snncompare.progress_report.has_completed_stage2_or_4 import (
+    has_outputted_stage_2_or_4,
 )
 from snncompare.run_config.Run_config import Run_config
 
@@ -151,9 +151,10 @@ def get_completed_and_missing_run_configs(
     """Returns the run configs that still need to be ran."""
     missing_run_configs: List[Run_config] = []
     completed_run_configs: List[Run_config] = []
+    graphs_dict: Dict = {}  # TODO: load from file.
     for run_config in run_configs:
-        if not has_outputted_stage_jsons(
-            expected_stages=[1, 2, 4],  # Assume results have been created.
+        if not has_outputted_stage_2_or_4(
+            graphs_dict=graphs_dict,
             run_config=run_config,
             stage_index=4,
         ):

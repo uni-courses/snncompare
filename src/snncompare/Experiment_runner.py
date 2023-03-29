@@ -48,7 +48,9 @@ from snncompare.export_results.output_stage4_results import (
     output_stage_4_results,
 )
 from snncompare.helper import add_stage_completion_to_graph, dicts_are_equal
-from snncompare.import_results.load_stage_1_and_2 import load_simsnn_graphs
+from snncompare.import_results.load_stage_1_and_2 import (
+    load_stage1_simsnn_graphs,
+)
 from snncompare.optional_config.Output_config import (
     Hover_info,
     Output_config,
@@ -206,6 +208,7 @@ class Experiment_runner:
             run_config=run_config
         )
         add_stage_completion_to_graph(snn=input_graph, stage_index=1)
+
         results_nx_graphs = {
             "exp_config": exp_config,
             "run_config": run_config,
@@ -245,20 +248,11 @@ class Experiment_runner:
                 )
 
         else:
-            for with_adaptation in [False, True]:
-                if with_adaptation:
-                    graph_name: str = "adapted_snn_graph"
-                else:
-                    graph_name = "snn_algo_graph"
-                results_nx_graphs["graphs_dict"][
-                    graph_name
-                ] = load_simsnn_graphs(
-                    run_config=run_config,
-                    input_graph=input_graph,
-                    with_adaptation=with_adaptation,
-                    with_radiation=False,
-                    stage_index=1,
-                )
+            results_nx_graphs["graphs_dict"] = load_stage1_simsnn_graphs(
+                run_config=run_config,
+                input_graph=input_graph,
+                stage_1_graphs_dict=results_nx_graphs["graphs_dict"],
+            )
 
         self.equalise_loaded_run_config(
             loaded_from_json=results_nx_graphs["run_config"],
