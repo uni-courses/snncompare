@@ -247,9 +247,9 @@ class Experiment_runner:
         else:
             for with_adaptation in [False, True]:
                 if with_adaptation:
-                    graph_name: str = "snn_algo_graph"
+                    graph_name: str = "adapted_snn_graph"
                 else:
-                    graph_name = "adapted_snn_graph"
+                    graph_name = "snn_algo_graph"
                 results_nx_graphs["graphs_dict"][
                     graph_name
                 ] = load_simsnn_graphs(

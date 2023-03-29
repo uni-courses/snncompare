@@ -7,7 +7,8 @@
     rad_adapted_snn_algo_graph: spikes, du, dv.
 """
 import json
-from typing import Dict, List, Union
+from pathlib import Path
+from typing import Dict, List, Tuple, Union
 
 import networkx as nx
 from simsnn.core.simulators import Simulator
@@ -34,31 +35,16 @@ def output_stage_2_snns(
 
     for with_adaptation in [False, True]:
         for with_radiation in [False, True]:
-            # pylint:disable=R0801
-            if with_radiation:
-                snn_graph: Union[
-                    nx.DiGraph, Simulator
-                ] = get_snn_graph_from_graphs_dict(
-                    with_adaptation=with_adaptation,
-                    with_radiation=False,  # No radiation graph is needed to
-                    # compute which neurons are affected by radiation.
-                    graphs_dict=graphs_dict,
-                )
-
-                radiation_data: Radiation_data = (
-                    get_radiation_names_filepath_and_exists(
-                        input_graph=graphs_dict["input_graph"],
-                        snn_graph=snn_graph,
-                        run_config=run_config,
-                        stage_index=stage_index,
-                        with_adaptation=with_adaptation,
-                    )
-                )
-                rad_affected_neurons_hash: Union[
-                    None, str
-                ] = radiation_data.rad_affected_neurons_hash
-            else:
-                rad_affected_neurons_hash = None
+            (
+                output_category,
+                rad_affected_neurons_hash,
+            ) = get_output_category_and_rad_affected_neuron_hash(
+                graphs_dict=graphs_dict,
+                run_config=run_config,
+                with_adaptation=with_adaptation,
+                with_radiation=with_radiation,
+                stage_index=stage_index,
+            )
 
             _, rand_nrs_hash = get_rand_nrs_and_hash(
                 input_graph=graphs_dict["input_graph"]
@@ -66,7 +52,7 @@ def output_stage_2_snns(
 
             # pylint:disable=R0801
             simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
-                output_category="snns",
+                output_category=output_category,
                 input_graph=graphs_dict["input_graph"],
                 run_config=run_config,
                 with_adaptation=with_adaptation,
@@ -74,7 +60,6 @@ def output_stage_2_snns(
                 rad_affected_neurons_hash=rad_affected_neurons_hash,
                 rand_nrs_hash=rand_nrs_hash,
             )
-
             if not simsnn_exists:
                 output_snn_graph_stage_2(
                     output_filepath=simsnn_filepath,
@@ -84,6 +69,48 @@ def output_stage_2_snns(
                         with_radiation=with_radiation,
                     ),
                 )
+
+
+def get_output_category_and_rad_affected_neuron_hash(
+    graphs_dict: Dict,
+    run_config: "Run_config",
+    with_adaptation: bool,
+    with_radiation: bool,
+    stage_index: int,
+) -> Tuple[str, Union[None, str]]:
+    """Returns the output category and radiation_affected_neuron_hash."""
+    # pylint:disable=R0801
+    if with_radiation:
+        snn_graph: Union[
+            nx.DiGraph, Simulator
+        ] = get_snn_graph_from_graphs_dict(
+            with_adaptation=with_adaptation,
+            with_radiation=False,  # No radiation graph is needed to
+            # compute which neurons are affected by radiation.
+            graphs_dict=graphs_dict,
+        )
+
+        radiation_data: Radiation_data = (
+            get_radiation_names_filepath_and_exists(
+                input_graph=graphs_dict["input_graph"],
+                snn_graph=snn_graph,
+                run_config=run_config,
+                stage_index=stage_index,
+                with_adaptation=with_adaptation,
+            )
+        )
+        rad_affected_neurons_hash: Union[
+            None, str
+        ] = radiation_data.rad_affected_neurons_hash
+        output_category: str = (
+            f"{radiation_data.radiation_name}"
+            + f"_{radiation_data.radiation_parameter}"
+        )
+    else:
+        rad_affected_neurons_hash = None
+        output_category = "snns"
+
+    return output_category, rad_affected_neurons_hash
 
 
 @typechecked
@@ -131,3 +158,11 @@ def output_snn_graph_stage_2(
                 sort_keys=True,
             )
             fp.close()
+
+        # Verify the file exists.
+        if not Path(output_filepath).is_file():
+            raise FileExistsError(
+                f"Error, filepath:{output_filepath} was not created."
+            )
+    else:
+        raise NotImplementedError(f"Error, {type(snn_graph)} not supported.")

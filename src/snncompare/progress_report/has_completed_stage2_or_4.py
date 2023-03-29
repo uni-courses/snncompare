@@ -104,7 +104,8 @@ def has_outputted_radiation_json(
         snn_graph: Union[
             nx.DiGraph, Simulator
         ] = get_snn_graph_from_graphs_dict(
-            with_adaptation=with_adaptation,
+            # with_adaptation=with_adaptation,
+            with_adaptation=True,
             with_radiation=False,
             graphs_dict=graphs_dict,
         )

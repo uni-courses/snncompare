@@ -9,9 +9,10 @@ from snnbackends.simsnn.run_on_simsnn import run_snn_on_simsnn
 from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
-    Radiation_data,
-    get_radiation_names_filepath_and_exists,
     get_rand_nrs_and_hash,
+)
+from snncompare.export_results.output_stage2_snns import (
+    get_output_category_and_rad_affected_neuron_hash,
 )
 from snncompare.import_results.helper import simsnn_files_exists_and_get_path
 from snncompare.import_results.load_stage_1_and_2 import load_simsnn_graphs
@@ -20,7 +21,6 @@ from snncompare.run_config.Run_config import Run_config
 from ..helper import (
     add_stage_completion_to_graph,
     get_max_sim_duration,
-    get_snn_graph_from_graphs_dict,
     get_with_adaptation_bool,
     get_with_radiation_bool,
 )
@@ -52,6 +52,7 @@ def sim_graphs(
                 stage_1_graphs=stage_1_graphs,
                 run_config=run_config,
                 with_adaptation=with_adaptation,
+                with_radiation=with_radiation,
             ):
                 print(f"graph_name={graph_name} - simulating.")
                 sim_snn(
@@ -84,6 +85,7 @@ def graph_exists_already(
     stage_1_graphs: Dict,
     run_config: "Run_config",
     with_adaptation: bool,
+    with_radiation: bool,
 ) -> bool:
     """Returns True if a graph already exists.
 
@@ -91,29 +93,30 @@ def graph_exists_already(
     """
 
     _, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
-    snn_graph: Union[nx.DiGraph, Simulator] = get_snn_graph_from_graphs_dict(
-        with_adaptation=with_adaptation,
-        with_radiation=False,  # No radiation graph is needed to compute which
-        # neurons are affected by radiation.
+    (
+        output_category,
+        rad_affected_neurons_hash,
+    ) = get_output_category_and_rad_affected_neuron_hash(
         graphs_dict=stage_1_graphs,
-    )
-    radiation_data: Radiation_data = get_radiation_names_filepath_and_exists(
-        input_graph=stage_1_graphs["input_graph"],
-        snn_graph=snn_graph,
         run_config=run_config,
-        stage_index=1,
         with_adaptation=with_adaptation,
+        with_radiation=with_radiation,
+        stage_index=1,
     )
 
     simsnn_exists, _ = simsnn_files_exists_and_get_path(
-        output_category="snns",
+        output_category=output_category,
         input_graph=stage_1_graphs["input_graph"],
         run_config=run_config,
         with_adaptation=with_adaptation,
         stage_index=2,
-        rad_affected_neurons_hash=radiation_data.rad_affected_neurons_hash,
+        rad_affected_neurons_hash=rad_affected_neurons_hash,
         rand_nrs_hash=rand_nrs_hash,
     )
+    # if not simsnn_exists:
+    #     print(f"with_radiation={with_radiation}")
+    #     print(f"False:{simsnn_filepath}")
+    #     exit()
     return simsnn_exists
 
 

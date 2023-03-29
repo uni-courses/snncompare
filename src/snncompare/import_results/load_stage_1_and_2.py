@@ -138,12 +138,17 @@ def load_simsnn_graph_from_file(
         rad_affected_neurons_hash: Union[
             None, str
         ] = radiation_data.rad_affected_neurons_hash
+        output_category: str = (
+            f"{radiation_data.radiation_name}"
+            + f"_{radiation_data.radiation_parameter}"
+        )
     else:
+        output_category = "snns"
         rad_affected_neurons_hash = None
 
     if stage_index == 2:
         simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
-            output_category="snns",
+            output_category=output_category,
             input_graph=input_graph,
             run_config=run_config,
             with_adaptation=with_adaptation,

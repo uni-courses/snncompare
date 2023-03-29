@@ -394,11 +394,10 @@ def get_snn_graph_from_graphs_dict(
 ) -> Union[nx.DiGraph, Simulator]:
     """Returns the snn graph corresponding to the adaptation and radiation
     configuration."""
-    return graphs_dict[
-        get_snn_graph_name(
-            with_adaptation=with_adaptation, with_radiation=with_radiation
-        )
-    ]
+    graph_name: str = get_snn_graph_name(
+        with_adaptation=with_adaptation, with_radiation=with_radiation
+    )
+    return graphs_dict[graph_name]
 
 
 def get_snn_graph_name(
@@ -410,6 +409,7 @@ def get_snn_graph_name(
         if with_radiation:
             return "rad_adapted_snn_graph"
         return "adapted_snn_graph"
+
     if with_radiation:
         return "rad_snn_algo_graph"
     return "snn_algo_graph"
