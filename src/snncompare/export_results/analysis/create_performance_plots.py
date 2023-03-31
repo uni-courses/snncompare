@@ -18,6 +18,7 @@ from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
+from snncompare.export_plots.plot_graphs import export_plot
 from snncompare.graph_generation.stage_1_create_graphs import (
     get_input_graph_of_run_config,
 )
@@ -129,6 +130,10 @@ def create_performance_plots(
 
                 create_dotted_boxplot(
                     y_series=y_series,
+                    filename=(
+                        f"{count}_dotted_boxplot_{radiation_name}="
+                        + f"{radiation_value}_{adaptation}"
+                    ),
                     title=f"{radiation_name}={radiation_value}",
                 )
 
@@ -409,7 +414,7 @@ def load_pickle(*, filepath: str) -> List[Run_config]:
 
 
 def create_dotted_boxplot(
-    y_series: Dict[str, List[float]], title: str
+    filename: str, y_series: Dict[str, List[float]], title: str
 ) -> None:
     """Creates a dotted boxplot."""
 
@@ -434,9 +439,29 @@ def create_dotted_boxplot(
     # add title
     plt.title(title, loc="left")
 
-    # TODO: rotate the x-axis labels.
+    # Rotate the x-axis labels.
+    # ha stands for horizontal alignment, the top right of the x-axis label
+    # is positioned below the respective x-tick.
+    plt.xticks(rotation=45, ha="right")
 
-    # TODO: export plot to file.
+    # Ensure the bottom x-tick labels are within the image.
+    plt.tight_layout()
+
+    # Fix scale of boxplot.
+    plt.ylim(0, 1.2)
+
+    # Export plot to file.
+    export_plot(
+        some_plt=plt,
+        # some_plt=ax1,
+        # filename=f"latex/Images/{filename}",
+        filename=filename,
+        extensions=["png"],
+    )
+
+    # Clear figure data.
+    plt.clf()
+    plt.close()
 
     # show the graph
-    plt.show()
+    # plt.show()
