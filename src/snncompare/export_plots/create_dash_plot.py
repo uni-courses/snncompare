@@ -1,11 +1,10 @@
 """Generates interactive view of graph."""
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 import dash
 import networkx as nx
 import plotly.graph_objs as go
-from simsnn.core.simulators import Simulator
 from snnbackends.simsnn.simsnn_to_nx_lif import (
     add_simsnn_simulation_data_to_reconstructed_nx_lif,
     simsnn_graph_to_nx_lif_graph,
@@ -39,9 +38,11 @@ from snncompare.run_config.Run_config import Run_config
 def create_svg_plot(
     run_config_filename: str,
     graph_names: List[str],
-    graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    # graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    graphs: Dict,
     output_config: Output_config,
     run_config: Run_config,
+    port: int,
     # single_timestep: Optional[int] = 5,
     single_timestep: Optional[int] = None,
 ) -> None:
@@ -103,6 +104,7 @@ def create_svg_plot(
         plot_config=plot_config,
         plotted_graphs=plotted_graphs,
         single_timestep=single_timestep,
+        port=port,
     )
 
 
@@ -160,6 +162,7 @@ def show_figures(
     output_config: Output_config,
     plot_config: Plot_config,
     plotted_graphs: Dict[str, nx.DiGraph],
+    port: int,
     single_timestep: Optional[bool],
 ) -> None:
     """Shows the dash figures."""
@@ -181,6 +184,7 @@ def show_figures(
                     app=app,
                     plot_config=plot_config,
                     plotted_graphs=plotted_graphs,
+                    port=port,
                 )
 
 

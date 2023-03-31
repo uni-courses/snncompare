@@ -75,7 +75,6 @@ from snncompare.simulation.add_radiation_graphs import (
     ensure_empty_rad_snns_exist,
 )
 
-from .export_results.Output_stage_34 import output_stage_files_3_and_4
 from .graph_generation.stage_1_create_graphs import (
     get_graphs_stage_1,
     get_input_graph_of_run_config,
@@ -395,38 +394,20 @@ class Experiment_runner:
                 run_config_dict=run_config.__dict__
             )
 
-            for graph_name in get_snn_graph_names():
+            graph_names: List[str] = get_snn_graph_names()
+            print(f"graph_names={graph_names}")
+
+            for i, graph_name in enumerate(get_snn_graph_names()):
                 if graph_name == "rad_adapted_snn_graph":
-                    # results_nx_graphs[graph_name] = load_simsnn_graphs(
-                    # run_config=run_config,
-                    # input_graph=results_nx_graphs["input_graph"],
-                    # with_adaptation=with_adaptation,
-                    # with_radiation=with_radiation,
-                    # stage_index=2,
-                    # )
                     create_svg_plot(
                         run_config_filename=run_config_filename,
                         graph_names=[graph_name],
-                        graphs=results_nx_graphs,
+                        graphs=results_nx_graphs["graphs_dict"],
                         output_config=output_config,
+                        port=8050 + i,
                         run_config=run_config,
                     )
-
-            # Generate output json dicts (and plots) of propagated graphs.
-            # pylint: disable=E1125
-            output_stage_files_3_and_4(
-                output_config=output_config,
-                results_nx_graphs=results_nx_graphs,
-                stage_index=3,
-            )
-
-            # TODO: re-enable this check.
-            # assert_stage_3_is_completed(
-            #    results_nx_graphs=results_nx_graphs,
-            #    run_config=run_config,
-            # )
-
-            # TODO: assert gif file exists
+            input("Proceeding to next visualisation.")
 
     @typechecked
     def __perform_run_stage_4(
