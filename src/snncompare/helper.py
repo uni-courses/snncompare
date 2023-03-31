@@ -422,8 +422,9 @@ def get_snn_graph_names() -> List[str]:
     in some order.
     """
     graph_names: List[str] = []
-    for with_adaptation in [False, True]:
-        for with_radiation in [False, True]:
+
+    for with_radiation in [False, True]:
+        for with_adaptation in [False, True]:
             graph_name: str = get_snn_graph_name(
                 with_adaptation=with_adaptation, with_radiation=with_radiation
             )
