@@ -413,3 +413,19 @@ def get_snn_graph_name(
     if with_radiation:
         return "rad_snn_algo_graph"
     return "snn_algo_graph"
+
+
+def get_snn_graph_names() -> List[str]:
+    """Returns the 4 graph names: rad_adapted_snn_graph adapted_snn_graph
+    rad_snn_algo_graph snn_algo_graph.
+
+    in some order.
+    """
+    graph_names: List[str] = []
+    for with_adaptation in [False, True]:
+        for with_radiation in [False, True]:
+            graph_name: str = get_snn_graph_name(
+                with_adaptation=with_adaptation, with_radiation=with_radiation
+            )
+            graph_names.append(graph_name)
+    return graph_names

@@ -1,14 +1,16 @@
 """Creates the experiment results in the form of plots with lines indicating
 the performance of the SNNs."""
 
-# Take in exp_config or run_configs
-# If exp_config, get run_configs
-
 import copy
 import pickle  # nosec
+
+# Take in exp_config or run_configs
+# If exp_config, get run_configs
+from pprint import pprint
 from typing import Dict, List, Tuple
 
 import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -16,11 +18,16 @@ from simplt.box_plot.box_plot import create_box_plot
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.export_results.load_json_to_nx_graph import (
-    load_verified_json_graphs_from_json,
+from snncompare.graph_generation.stage_1_create_graphs import (
+    get_input_graph_of_run_config,
 )
-from snncompare.export_results.verify_stage_1_graphs import (
-    get_expected_stage_1_graph_names,
+from snncompare.helper import get_snn_graph_names
+from snncompare.import_results.load_stage4 import load_stage4_results
+from snncompare.import_results.load_stage_1_and_2 import (
+    load_stage1_simsnn_graphs,
+)
+from snncompare.progress_report.has_completed_stage1 import (
+    has_outputted_stage_1,
 )
 from snncompare.progress_report.has_completed_stage2_or_4 import (
     has_outputted_stage_2_or_4,
@@ -106,6 +113,7 @@ def create_performance_plots(
                     }:
                         wanted_run_configs.append(run_config)
 
+                print(f"wanted:{len(wanted_run_configs)}")
                 print("Get datapoints.")
                 # Get results per line.
                 boxplot_data: Dict[
@@ -114,7 +122,6 @@ def create_performance_plots(
                     adaptations=exp_config.adaptations,
                     wanted_run_configs=wanted_run_configs,
                     seeds=exp_config.seeds,
-                    reload_from_json=False,
                 )
 
                 print("Get y-series")
@@ -151,16 +158,29 @@ def get_completed_and_missing_run_configs(
     """Returns the run configs that still need to be ran."""
     missing_run_configs: List[Run_config] = []
     completed_run_configs: List[Run_config] = []
-    graphs_dict: Dict = {}  # TODO: load from file.
+
     for run_config in run_configs:
-        if not has_outputted_stage_2_or_4(
-            graphs_dict=graphs_dict,
+        input_graph: nx.Graph = get_input_graph_of_run_config(
+            run_config=run_config
+        )
+        if has_outputted_stage_1(
+            input_graph=input_graph,
             run_config=run_config,
-            stage_index=4,
         ):
-            missing_run_configs.append(run_config)
+            graphs_dict: Dict = load_stage1_simsnn_graphs(
+                run_config=run_config,
+                input_graph=input_graph,
+            )
+            if has_outputted_stage_2_or_4(
+                graphs_dict=graphs_dict,
+                run_config=run_config,
+                stage_index=4,
+            ):
+                completed_run_configs.append(run_config)
+            else:
+                missing_run_configs.append(run_config)
         else:
-            completed_run_configs.append(run_config)
+            missing_run_configs.append(run_config)
     if len(missing_run_configs) > 0:
         print(f"Want:{len(run_configs)}, missing:{len(missing_run_configs)}")
     return completed_run_configs, missing_run_configs
@@ -173,46 +193,49 @@ def get_boxplot_datapoints(
     wanted_run_configs: List[Run_config],
     # run_config_nx_graphs: Dict,
     seeds: List[int],
-    reload_from_json: bool,
 ) -> Dict[str, Dict[int, Boxplot_x_val]]:
     """Returns the run configs that still need to be ran."""
-    print(f"reload_from_json={reload_from_json}")
     # Creates a boxplot storage object, with the name of the column as string,
     # and in the value a dict with seed as key, and boxplot score (nr_of_wrongs
     # vs nr of right) in the value.
     # Hence it creates the x-axis categories: no redundancy, n-redundancy.
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = get_mdsa_boxplot_data(
         adaptations=adaptations,
-        graph_names=get_expected_stage_1_graph_names(
-            run_config=wanted_run_configs[0]
-        ),
+        graph_names=get_snn_graph_names(),
         seeds=seeds,
     )
     print(f"Created empty boxplot_data object, seeds={seeds}.")
     for i, wanted_run_config in enumerate(wanted_run_configs):
+        input_graph: nx.Graph = get_input_graph_of_run_config(
+            run_config=wanted_run_config,
+        )
         # Get the results per x-axis category per graph type.
         for algo_name in wanted_run_config.algorithm.keys():
             if algo_name == "MDSA":
-                # Get the graphs names that were used in the run.
-                graph_names = get_expected_stage_1_graph_names(
-                    run_config=wanted_run_config
+                stage_4_results_dict = load_stage4_results(
+                    run_config=wanted_run_config,
+                    input_graph=input_graph,
+                    stage_4_results_dict=None,
                 )
+
+                # Get the graphs names that were used in the run.
+                graph_names = get_snn_graph_names()
+                print(f"graph_names={graph_names}")
+                # exit()
 
                 # TODO: load the boxplot data pickle if it exists, otherwise
                 # load it from json data.
 
                 # Get the snn graphs to be able to compute the snn results.
-                graphs_dict: Dict = load_verified_json_graphs_from_json(
-                    run_config=wanted_run_config,
-                    expected_stages=[1, 2, 4],
-                )
+
                 print(f"Loading json results:({i}/{len(wanted_run_configs)})")
 
                 # Specify the x-axis labels and get snn result dicts.
                 x_labels, results = get_x_labels(
                     adaptations=adaptations,
-                    graphs_dict=graphs_dict,
+                    graphs_dict=stage_4_results_dict,
                     graph_names=graph_names,
+                    simulator=wanted_run_config.simulator,
                 )
 
                 # Per column, compute the graph scores, and store them into the
@@ -240,6 +263,7 @@ def get_x_labels(
     adaptations: Dict[str, List[int]],
     graphs_dict: Dict,
     graph_names: List[str],
+    simulator: str,
 ) -> Tuple[List[str], Dict]:
     """Returns a tuple of the x-axis labels per column, and the accompanying
     snn graph results."""
@@ -252,9 +276,14 @@ def get_x_labels(
                     # Create a new column and xlabel in the results dict, and
                     # store the snn graph results in there.
                     x_labels.append(f"{rad_name}:{rad_val}")
-                    results[x_labels[-1]] = graphs_dict[graph_name]["graph"][
-                        "results"
-                    ]
+                    if simulator == "simsnn":
+                        results[x_labels[-1]] = graphs_dict[
+                            graph_name
+                        ].network.graph.graph["results"]
+                    elif simulator == "nx":
+                        results[x_labels[-1]] = graphs_dict[graph_name][
+                            "graph"
+                        ]["results"]
         elif graph_name != "input_graph":
             # This are:
             # - snn_algo_graphs: 100% score
@@ -263,7 +292,15 @@ def get_x_labels(
             # category are put into 1 column, because there aren't any
             # different types of adaptation.
             x_labels.append(graph_name)
-            results[x_labels[-1]] = graphs_dict[graph_name]["graph"]["results"]
+            # print("graphs_dict[graph_name].network.graph=")
+            # pprint(graphs_dict[graph_name].network.graph.graph)
+            results[x_labels[-1]] = graphs_dict[
+                graph_name
+            ].network.graph.graph["results"]
+    print("x_labels")
+    pprint(x_labels)
+    pprint("results")
+    pprint(results)
     return x_labels, results
 
 

@@ -150,18 +150,18 @@ def load_simsnn_graph_from_file(
         some_dict: Dict[str, List] = json.load(json_file)
         json_file.close()
 
-    stage_1_simsnn_simulator = stage1_simsnn_graph_from_file_to_simulator(
+    stage1_simsnn: Simulator = stage1_simsnn_graph_from_file_to_simulator(
         add_to_raster=True,
         add_to_multimeter=True,
         simsnn_dict=some_dict,
     )
-    add_stage_completion_to_graph(snn=stage_1_simsnn_simulator, stage_index=1)
+    add_stage_completion_to_graph(snn=stage1_simsnn, stage_index=1)
 
     if with_radiation:
         radiation_data: Radiation_data = (
             get_radiation_names_filepath_and_exists(
                 input_graph=input_graph,
-                snn_graph=stage_1_simsnn_simulator,
+                snn_graph=stage1_simsnn,
                 run_config=run_config,
                 stage_index=stage_index,
                 with_adaptation=with_adaptation,
@@ -178,7 +178,7 @@ def load_simsnn_graph_from_file(
         output_category = "snns"
         rad_affected_neurons_hash = None
 
-    if stage_index == 2:
+    if stage_index in [2, 4]:
         simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
             output_category=output_category,
             input_graph=input_graph,
@@ -189,19 +189,30 @@ def load_simsnn_graph_from_file(
             rad_affected_neurons_hash=rad_affected_neurons_hash,
         )
         if simsnn_exists:
-            load_snn_graph_stage_2(
-                output_filepath=simsnn_filepath,
-                stage_1_simsnn_simulator=stage_1_simsnn_simulator,
-            )
+            if stage_index == 2:
+                load_snn_graph_stage_2(
+                    output_filepath=simsnn_filepath,
+                    stage_1_simsnn_simulator=stage1_simsnn,
+                )
+            elif stage_index == 4:
+                add_stage4_results_from_file_to_snn(
+                    output_filepath=simsnn_filepath,
+                    stage_1_simsnn_simulator=stage1_simsnn,
+                    with_radiation=with_radiation,
+                )
+            else:
+                raise NotImplementedError(
+                    f"Error, loading stage:{stage_index} not supported."
+                )
 
             add_stage_completion_to_graph(
-                snn=stage_1_simsnn_simulator, stage_index=2
+                snn=stage1_simsnn, stage_index=stage_index
             )
         else:
             raise FileNotFoundError(
                 f"Error, simsnn not found at:{simsnn_filepath}"
             )
-    return stage_1_simsnn_simulator
+    return stage1_simsnn
 
 
 @typechecked
@@ -264,3 +275,24 @@ def load_snn_graph_stage_2(
             stage_1_simsnn_simulator.multimeter.I = loaded_snn[key]
         else:
             raise KeyError(f"Error:{key} not supported in stage 2 snn dict.")
+
+
+@typechecked
+def add_stage4_results_from_file_to_snn(
+    *,
+    output_filepath: str,
+    stage_1_simsnn_simulator: Simulator,
+    with_radiation: bool,
+) -> None:
+    """Adds the spikes, I and V of an snn into a simsnn Simulator object."""
+    # Verify the file exists.
+    if not Path(output_filepath).is_file():
+        raise FileExistsError(
+            f"Error, filepath:{output_filepath} was not created."
+        )
+    if with_radiation:
+        print(f"output_filepath={output_filepath}")
+    loaded_snn: Dict = load_json_file_into_dict(json_filepath=output_filepath)
+    stage_1_simsnn_simulator.network.graph.graph["results"] = {}
+    for key, value in loaded_snn.items():
+        stage_1_simsnn_simulator.network.graph.graph["results"][key] = value
