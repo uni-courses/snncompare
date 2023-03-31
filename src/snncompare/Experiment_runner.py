@@ -24,6 +24,7 @@ from snncompare.exp_config.Exp_config import (
     Exp_config,
     Supported_experiment_settings,
 )
+from snncompare.export_plots.create_dash_plot import create_svg_plot
 from snncompare.export_plots.Plot_config import (
     Plot_config,
     get_default_plot_config,
@@ -31,12 +32,14 @@ from snncompare.export_plots.Plot_config import (
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_plots.temp_default_output_creation import (
     create_default_hover_info,
+    create_default_output_config,
 )
 from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
     get_completed_and_missing_run_configs,
     store_pickle,
 )
+from snncompare.export_results.helper import run_config_to_filename
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     output_stage_1_configs_and_input_graphs,
 )
@@ -47,7 +50,11 @@ from snncompare.export_results.output_stage2_snns import output_stage_2_snns
 from snncompare.export_results.output_stage4_results import (
     output_stage_4_results,
 )
-from snncompare.helper import add_stage_completion_to_graph, dicts_are_equal
+from snncompare.helper import (
+    add_stage_completion_to_graph,
+    dicts_are_equal,
+    get_snn_graph_names,
+)
 from snncompare.import_results.load_stage_1_and_2 import (
     load_stage1_simsnn_graphs,
 )
@@ -172,8 +179,10 @@ class Experiment_runner:
             )
 
             self.__perform_run_stage_3(
+                exp_config=exp_config,
                 output_config=output_config,
                 results_nx_graphs=results_nx_graphs,
+                run_config=run_config,
             )
 
             self.__perform_run_stage_4(
@@ -345,6 +354,8 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_3(
         self,
+        run_config: Run_config,
+        exp_config: Exp_config,
         output_config: Output_config,
         results_nx_graphs: Dict,
     ) -> None:
@@ -363,6 +374,44 @@ class Experiment_runner:
         - A circular synapse: a recurrent connection of a neuron into itself.
         """
         if output_config.export_types:
+            if "hover_info" not in output_config.__dict__.keys():
+                output_config = create_default_output_config(
+                    exp_config=exp_config,
+                )
+            # Override output config from exp_config.
+            output_config.extra_storing_config.show_images = True
+            output_config.hover_info.neuron_properties = [
+                "spikes",
+                "a_in_next",
+                "bias",
+                "du",
+                "u",
+                "dv",
+                "v",
+                "vth",
+            ]
+
+            run_config_filename = run_config_to_filename(
+                run_config_dict=run_config.__dict__
+            )
+
+            for graph_name in get_snn_graph_names():
+                if graph_name == "rad_adapted_snn_graph":
+                    # results_nx_graphs[graph_name] = load_simsnn_graphs(
+                    # run_config=run_config,
+                    # input_graph=results_nx_graphs["input_graph"],
+                    # with_adaptation=with_adaptation,
+                    # with_radiation=with_radiation,
+                    # stage_index=2,
+                    # )
+                    create_svg_plot(
+                        run_config_filename=run_config_filename,
+                        graph_names=[graph_name],
+                        graphs=results_nx_graphs,
+                        output_config=output_config,
+                        run_config=run_config,
+                    )
+
             # Generate output json dicts (and plots) of propagated graphs.
             # pylint: disable=E1125
             output_stage_files_3_and_4(
