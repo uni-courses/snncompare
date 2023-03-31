@@ -4,8 +4,8 @@ setting of the experiment configuration settings.
 (The values of the settings may vary, yet the types should be the same.)
 """
 
-# import showme
 import copy
+import multiprocessing
 from pprint import pprint
 from typing import Dict, List, Optional, Union
 
@@ -397,16 +397,42 @@ class Experiment_runner:
             graph_names: List[str] = get_snn_graph_names()
             print(f"graph_names={graph_names}")
 
+            # manager = multiprocessing.Manager()
+            # return_dict = manager.dict()
+            jobs = []
+
             for i, graph_name in enumerate(get_snn_graph_names()):
-                if graph_name == "rad_adapted_snn_graph":
-                    create_svg_plot(
-                        run_config_filename=run_config_filename,
-                        graph_names=[graph_name],
-                        graphs=results_nx_graphs["graphs_dict"],
-                        output_config=output_config,
-                        port=8050 + i,
-                        run_config=run_config,
+                if graph_name in [
+                    "snn_algo_graph",
+                    "adapted_snn_graph",
+                    "rad_adapted_snn_graph",
+                ]:
+                    p = multiprocessing.Process(
+                        target=create_svg_plot,
+                        args=(
+                            [graph_name],
+                            results_nx_graphs["graphs_dict"],
+                            output_config,
+                            8050 + i,
+                            run_config,
+                            run_config_filename,
+                            None,
+                        ),
                     )
+                    jobs.append(p)
+                    p.start()
+
+                    # create_svg_plot(
+                    # graph_names=[graph_name],
+                    # graphs=results_nx_graphs["graphs_dict"],
+                    # output_config=output_config,
+                    # port=8050+i,
+                    # run_config=run_config,
+                    # run_config_filename=run_config_filename,
+                    # single_timestep=None,
+                    # )
+            for proc in jobs:
+                proc.join()
             input("Proceeding to next visualisation.")
 
     @typechecked
