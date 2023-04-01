@@ -234,6 +234,22 @@ def parse_cli_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "-sgt",
+        "--show-graph-type",
+        type=str,
+        dest="show_graph_type",
+        # const="show_graph_type",
+        help=(
+            "If show-images is true, this will allow you to specify which"
+            + "graph type  is shown in Dash. You can choose from:"
+            + " - rad_adapted_snn_graph"
+            + " - adapted_snn_graph"
+            + " - rad_snn_algo_graph"
+            + " - snn_algo_graph"
+        ),
+    )
+
+    parser.add_argument(
         "-sdn",
         "--store-died-neurons",
         action="store_true",
@@ -261,6 +277,16 @@ def parse_cli_args() -> argparse.Namespace:
 
     # Ensure SNN behaviour visualisation in stage 3 is exported to images.
     parser.add_argument(
+        "-p",
+        "--port",
+        nargs="?",
+        type=int,
+        dest="dash_port",
+        help=("Show dash app in browser on 127:0.0.1:<port>"),
+    )
+
+    # Ensure SNN behaviour visualisation in stage 3 is exported to images.
+    parser.add_argument(
         "-z",
         "--zoom",
         nargs="?",
@@ -276,5 +302,4 @@ def parse_cli_args() -> argparse.Namespace:
 
     # Load the arguments that are given.
     args = parser.parse_args()
-    print(f"args={args.__dict__}")
     return args

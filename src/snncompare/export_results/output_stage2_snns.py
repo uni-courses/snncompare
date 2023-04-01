@@ -16,7 +16,7 @@ from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     Radiation_data,
-    get_radiation_names_filepath_and_exists,
+    get_rad_name_filepath_and_exists,
     get_rand_nrs_and_hash,
 )
 from snncompare.helper import get_snn_graph_from_graphs_dict
@@ -90,14 +90,12 @@ def get_output_category_and_rad_affected_neuron_hash(
             graphs_dict=graphs_dict,
         )
 
-        radiation_data: Radiation_data = (
-            get_radiation_names_filepath_and_exists(
-                input_graph=graphs_dict["input_graph"],
-                snn_graph=snn_graph,
-                run_config=run_config,
-                stage_index=stage_index,
-                with_adaptation=with_adaptation,
-            )
+        radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
+            input_graph=graphs_dict["input_graph"],
+            snn_graph=snn_graph,
+            run_config=run_config,
+            stage_index=stage_index,
+            with_adaptation=with_adaptation,
         )
         rad_affected_neurons_hash: Union[
             None, str

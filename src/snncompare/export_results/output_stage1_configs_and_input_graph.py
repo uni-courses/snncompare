@@ -67,6 +67,26 @@ class Radiation_data:
         self.radiation_parameter: float = radiation_parameter
 
 
+class Rand_nrs_data:
+    """Stores the data used in outputting random numbers belonging to MDSA
+    instance."""
+
+    # pylint: disable=R0903
+    # pylint: disable=R0913
+    @typechecked
+    def __init__(
+        self,
+        rand_nrs_file_exists: bool,
+        rand_nrs_filepath: str,
+        rand_nrs: List[int],
+        rand_nrs_hash: str,
+    ) -> None:
+        self.rand_nrs_file_exists: bool = rand_nrs_file_exists
+        self.rand_nrs_filepath: str = rand_nrs_filepath
+        self.rand_nrs: List[int] = rand_nrs
+        self.rand_nrs_hash: str = rand_nrs_hash
+
+
 @typechecked
 def output_stage_1_configs_and_input_graphs(
     *,
@@ -97,16 +117,15 @@ def output_stage_1_configs_and_input_graphs(
             # which neurons are affected by radiation.
             graphs_dict=graphs_dict,
         )
-        radiation_data: Radiation_data = (
-            get_radiation_names_filepath_and_exists(
-                input_graph=graphs_dict["input_graph"],
-                snn_graph=snn_graph,
-                run_config=run_config,
-                stage_index=1,
-                with_adaptation=with_adaptation,
-            )
+        radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
+            input_graph=graphs_dict["input_graph"],
+            snn_graph=snn_graph,
+            run_config=run_config,
+            stage_index=1,
+            with_adaptation=with_adaptation,
         )
         if not radiation_data.radiation_file_exists:
+            print(f"radiation_filepath={radiation_data.radiation_filepath}")
             output_unique_list(
                 output_filepath=radiation_data.radiation_filepath,
                 some_list=radiation_data.affected_neurons,
@@ -238,18 +257,21 @@ def write_undirected_graph_to_json(
 
 
 @typechecked
-def output_mdsa_rand_nrs(
+def get_rand_nrs_data(
     *,
     input_graph: nx.Graph,
     run_config: Run_config,
     stage_index: int,
-) -> None:
-    """Stores the random numbers chosen for the original MDSA snn algorithm."""
+) -> Rand_nrs_data:
+    """Returns True if the random numbers belonging to some MDSA instance are
+    outputted.
 
+    False otherwise.
+    """
     rand_nrs, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
 
     # pylint:disable=R0801
-    rand_nrs_exists, rand_nrs_filepath = simsnn_files_exists_and_get_path(
+    rand_nrs_file_exists, rand_nrs_filepath = simsnn_files_exists_and_get_path(
         output_category="rand_nrs",
         input_graph=input_graph,
         run_config=run_config,
@@ -258,11 +280,34 @@ def output_mdsa_rand_nrs(
         rand_nrs_hash=rand_nrs_hash,
     )
 
-    if not rand_nrs_exists:
+    return Rand_nrs_data(
+        rand_nrs_file_exists=rand_nrs_file_exists,
+        rand_nrs_filepath=rand_nrs_filepath,
+        rand_nrs=rand_nrs,
+        rand_nrs_hash=rand_nrs_hash,
+    )
+
+
+@typechecked
+def output_mdsa_rand_nrs(
+    *,
+    input_graph: nx.Graph,
+    run_config: Run_config,
+    stage_index: int,
+) -> None:
+    """Stores the random numbers chosen for the original MDSA snn algorithm."""
+
+    rand_nrs_data: Rand_nrs_data = get_rand_nrs_data(
+        input_graph=input_graph,
+        run_config=run_config,
+        stage_index=stage_index,
+    )
+
+    if not rand_nrs_data.rand_nrs_file_exists:
         output_unique_list(
-            output_filepath=rand_nrs_filepath,
-            some_list=rand_nrs,
-            target_file_exists=rand_nrs_exists,
+            output_filepath=rand_nrs_data.rand_nrs_filepath,
+            some_list=rand_nrs_data.rand_nrs,
+            target_file_exists=rand_nrs_data.rand_nrs_file_exists,
         )
 
 
@@ -280,7 +325,7 @@ def get_rand_nrs_and_hash(
 
 
 @typechecked
-def get_radiation_names_filepath_and_exists(
+def get_rad_name_filepath_and_exists(
     *,
     input_graph: nx.Graph,
     snn_graph: Union[nx.DiGraph, Simulator],

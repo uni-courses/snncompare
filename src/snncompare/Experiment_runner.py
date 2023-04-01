@@ -56,16 +56,14 @@ from snncompare.helper import (
     get_snn_graph_names,
 )
 from snncompare.import_results.load_stage_1_and_2 import (
+    assert_has_outputted_stage_1,
+    has_outputted_stage_1,
     load_stage1_simsnn_graphs,
 )
 from snncompare.optional_config.Output_config import (
     Hover_info,
     Output_config,
     Zoom,
-)
-from snncompare.progress_report.has_completed_stage1 import (
-    assert_has_outputted_stage_1,
-    has_outputted_stage_1,
 )
 from snncompare.progress_report.has_completed_stage2_or_4 import (
     assert_has_outputted_stage_2_or_4,
@@ -394,26 +392,21 @@ class Experiment_runner:
                 run_config_dict=run_config.__dict__
             )
 
-            graph_names: List[str] = get_snn_graph_names()
-            print(f"graph_names={graph_names}")
-
-            # manager = multiprocessing.Manager()
-            # return_dict = manager.dict()
+            # Generate Dash plots using multiprocessing.
             jobs = []
-
             for i, graph_name in enumerate(get_snn_graph_names()):
-                if graph_name in [
-                    "snn_algo_graph",
-                    "adapted_snn_graph",
-                    "rad_adapted_snn_graph",
-                ]:
+                if output_config.dash_port is None:
+                    dash_port: int = 8050 + i
+                else:
+                    dash_port = output_config.dash_port + i
+                if graph_name in output_config.graph_types:
                     p = multiprocessing.Process(
                         target=create_svg_plot,
                         args=(
                             [graph_name],
                             results_nx_graphs["graphs_dict"],
                             output_config,
-                            8050 + i,
+                            dash_port,
                             run_config,
                             run_config_filename,
                             None,
@@ -421,16 +414,6 @@ class Experiment_runner:
                     )
                     jobs.append(p)
                     p.start()
-
-                    # create_svg_plot(
-                    # graph_names=[graph_name],
-                    # graphs=results_nx_graphs["graphs_dict"],
-                    # output_config=output_config,
-                    # port=8050+i,
-                    # run_config=run_config,
-                    # run_config_filename=run_config_filename,
-                    # single_timestep=None,
-                    # )
             for proc in jobs:
                 proc.join()
             input("Proceeding to next visualisation.")

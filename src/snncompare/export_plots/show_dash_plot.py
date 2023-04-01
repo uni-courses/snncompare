@@ -42,13 +42,11 @@ def show_dash_figures(
     port: int,
 ) -> None:
     """Shows a figure in dash using browser."""
-    print("SHOWING DASH APP.")
     dash_figures: Dict[str, go.Figure] = {}
     identified_annotations_dict: Dict[str, List] = {}
     temporal_node_colours_dict: Dict[str, List] = {}
     temporal_node_opacity_dict: Dict[str, List] = {}
     for graph_name, plotted_graph in plotted_graphs.items():
-        print(f"graph_name={graph_name}")
         # Start Dash app.
         (
             dash_figures[graph_name],

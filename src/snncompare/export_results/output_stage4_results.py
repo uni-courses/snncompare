@@ -16,7 +16,7 @@ from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     Radiation_data,
-    get_radiation_names_filepath_and_exists,
+    get_rad_name_filepath_and_exists,
     get_rand_nrs_and_hash,
 )
 from snncompare.export_results.output_stage2_snns import get_desired_snn_graph
@@ -51,7 +51,7 @@ def output_stage_4_results(
                 )
 
                 radiation_data: Radiation_data = (
-                    get_radiation_names_filepath_and_exists(
+                    get_rad_name_filepath_and_exists(
                         input_graph=graphs_dict["input_graph"],
                         snn_graph=snn_graph,
                         run_config=run_config,

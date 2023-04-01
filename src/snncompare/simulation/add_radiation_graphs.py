@@ -9,7 +9,7 @@ from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     Radiation_data,
-    get_radiation_names_filepath_and_exists,
+    get_rad_name_filepath_and_exists,
 )
 from snncompare.export_results.output_stage2_snns import get_desired_snn_graph
 from snncompare.helper import get_snn_graph_from_graphs_dict
@@ -62,14 +62,12 @@ def apply_radiation_to_empty_simsnn_graphs(
                 # compute which neurons are affected by radiation.
                 graphs_dict=stage_1_graphs,
             )
-            radiation_data: Radiation_data = (
-                get_radiation_names_filepath_and_exists(
-                    input_graph=stage_1_graphs["input_graph"],
-                    snn_graph=snn_graph,
-                    run_config=run_config,
-                    stage_index=2,
-                    with_adaptation=with_adaptation,
-                )
+            radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
+                input_graph=stage_1_graphs["input_graph"],
+                snn_graph=snn_graph,
+                run_config=run_config,
+                stage_index=2,
+                with_adaptation=with_adaptation,
             )
             snn_graph = get_desired_snn_graph(
                 graphs_dict=stage_1_graphs,

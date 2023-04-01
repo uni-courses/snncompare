@@ -25,10 +25,8 @@ from snncompare.graph_generation.stage_1_create_graphs import (
 from snncompare.helper import get_snn_graph_names
 from snncompare.import_results.load_stage4 import load_stage4_results
 from snncompare.import_results.load_stage_1_and_2 import (
-    load_stage1_simsnn_graphs,
-)
-from snncompare.progress_report.has_completed_stage1 import (
     has_outputted_stage_1,
+    load_stage1_simsnn_graphs,
 )
 from snncompare.progress_report.has_completed_stage2_or_4 import (
     has_outputted_stage_2_or_4,
