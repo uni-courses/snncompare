@@ -71,6 +71,30 @@ def create_relative_path(*, some_path: str) -> None:
 
 
 @typechecked
+def seed_hash_file_exists_and_get_filepath(
+    *,
+    output_category: str,
+    run_config: Run_config,
+) -> Tuple[bool, str]:
+    """Returns two tuples which contain: graph file exists, and the graph
+    filepath.
+
+    First tuple for the unadapted snn, the second tuple for the adapted
+    tuple.
+    """
+    algorithm_name, algorithm_parameter = get_algorithm_description(
+        run_config=run_config
+    )
+
+    output_path: str = (
+        f"results/stage1/{algorithm_name}_"
+        + f"{algorithm_parameter}/no_adaptation/{output_category}/"
+        + f"{run_config.seed}.txt"
+    )
+    return Path(output_path).is_file(), output_path
+
+
+@typechecked
 def simsnn_files_exists_and_get_path(
     *,
     output_category: str,
@@ -193,3 +217,15 @@ def assert_has_one_element(*, some_list: List) -> None:
             "Error the number of algorithms in a single run_config was not 1:"
             + f"{some_list}"
         )
+
+
+@typechecked
+def file_contains_line(*, filepath: str, expected_line: str) -> bool:
+    """Returns True if a file exists and contains a line at least once, False
+    otherwise."""
+    with open(filepath, encoding="utf-8") as txt_file:
+        for _, line in enumerate(txt_file, 1):
+            if expected_line in line:
+                return True
+        txt_file.close()
+    return False

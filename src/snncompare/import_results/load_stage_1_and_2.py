@@ -99,7 +99,10 @@ def has_outputted_snn_graph(
             run_config=run_config,
             stage_index=stage_index,
         )
-        if rand_nrs_data.rand_nrs_file_exists:
+        if (
+            rand_nrs_data.rand_nrs_file_exists
+            and rand_nrs_data.seed_in_seed_hash_file
+        ):
             # Check if radiation is outputted.
             radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
                 input_graph=input_graph,
@@ -117,9 +120,7 @@ def has_outputted_snn_graph(
             )
             if radiation_data.radiation_file_exists:
                 return True
-            # print(f"No rad at: {radiation_data.radiation_filepath}")
             return False
-        # print("No rand_nrs")
         return False
     return False
 
@@ -305,7 +306,6 @@ def load_simsnn_graph_from_file(
                 add_stage4_results_from_file_to_snn(
                     output_filepath=simsnn_filepath,
                     stage_1_simsnn_simulator=stage1_simsnn,
-                    with_radiation=with_radiation,
                 )
             else:
                 raise NotImplementedError(
@@ -389,7 +389,6 @@ def add_stage4_results_from_file_to_snn(
     *,
     output_filepath: str,
     stage_1_simsnn_simulator: Simulator,
-    with_radiation: bool,
 ) -> None:
     """Adds the spikes, I and V of an snn into a simsnn Simulator object."""
     # Verify the file exists.
@@ -397,8 +396,6 @@ def add_stage4_results_from_file_to_snn(
         raise FileExistsError(
             f"Error, filepath:{output_filepath} was not created."
         )
-    if with_radiation:
-        print(f"output_filepath={output_filepath}")
     loaded_snn: Dict = load_json_file_into_dict(json_filepath=output_filepath)
     stage_1_simsnn_simulator.network.graph.graph["results"] = {}
     for key, value in loaded_snn.items():

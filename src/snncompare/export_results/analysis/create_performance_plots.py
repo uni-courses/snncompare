@@ -6,7 +6,6 @@ import pickle  # nosec
 
 # Take in exp_config or run_configs
 # If exp_config, get run_configs
-from pprint import pprint
 from typing import Dict, List, Tuple
 
 import matplotlib.pyplot as plt
@@ -223,8 +222,6 @@ def get_boxplot_datapoints(
 
                 # Get the graphs names that were used in the run.
                 graph_names = get_snn_graph_names()
-                print(f"graph_names={graph_names}")
-                # exit()
 
                 # TODO: load the boxplot data pickle if it exists, otherwise
                 # load it from json data.
@@ -300,10 +297,6 @@ def get_x_labels(
             results[x_labels[-1]] = graphs_dict[
                 graph_name
             ].network.graph.graph["results"]
-    print("x_labels")
-    pprint(x_labels)
-    pprint("results")
-    pprint(results)
     return x_labels, results
 
 

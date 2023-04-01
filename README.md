@@ -174,6 +174,14 @@ Typical run:
 
 ```bash
 python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r1 -r2 -r4
+python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -dr
+```
+
+Debug run, in separate console:
+
+```bash
+python -m src.snncompare -e debug0 -j1 -j2 -j4 -j5 -rev  -si -sgt rad_adapted_snn_graph
+python -m src.snncompare -e debug1 -j1 -j2 -j4 -j5 -rev  -si -sgt rad_adapted_snn_graph
 ```
 
 For more info, run:

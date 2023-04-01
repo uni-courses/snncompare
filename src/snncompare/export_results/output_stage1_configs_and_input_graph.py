@@ -37,8 +37,10 @@ from snncompare.export_results.helper import (
 from snncompare.helper import get_snn_graph_from_graphs_dict
 from snncompare.import_results.helper import (
     create_relative_path,
+    file_contains_line,
     get_isomorphic_graph_hash,
     get_radiation_description,
+    seed_hash_file_exists_and_get_filepath,
     simsnn_files_exists_and_get_path,
 )
 from snncompare.run_config.Run_config import Run_config
@@ -80,11 +82,17 @@ class Rand_nrs_data:
         rand_nrs_filepath: str,
         rand_nrs: List[int],
         rand_nrs_hash: str,
+        seed_hash_file_exists: bool,
+        seed_in_seed_hash_file: bool,
+        seed_hash_filepath: str,
     ) -> None:
         self.rand_nrs_file_exists: bool = rand_nrs_file_exists
         self.rand_nrs_filepath: str = rand_nrs_filepath
         self.rand_nrs: List[int] = rand_nrs
         self.rand_nrs_hash: str = rand_nrs_hash
+        self.seed_hash_file_exists: bool = seed_hash_file_exists
+        self.seed_in_seed_hash_file: bool = seed_in_seed_hash_file
+        self.seed_hash_filepath: str = seed_hash_filepath
 
 
 @typechecked
@@ -270,6 +278,21 @@ def get_rand_nrs_data(
     """
     rand_nrs, rand_nrs_hash = get_rand_nrs_and_hash(input_graph=input_graph)
 
+    (
+        seed_hash_file_exists,
+        seed_hash_filepath,
+    ) = seed_hash_file_exists_and_get_filepath(
+        output_category="rand_nrs",
+        run_config=run_config,
+    )
+
+    if seed_hash_file_exists:
+        seed_in_seed_hash_file: bool = file_contains_line(
+            filepath=seed_hash_filepath, expected_line=rand_nrs_hash
+        )
+    else:
+        seed_in_seed_hash_file = False
+
     # pylint:disable=R0801
     rand_nrs_file_exists, rand_nrs_filepath = simsnn_files_exists_and_get_path(
         output_category="rand_nrs",
@@ -285,6 +308,9 @@ def get_rand_nrs_data(
         rand_nrs_filepath=rand_nrs_filepath,
         rand_nrs=rand_nrs,
         rand_nrs_hash=rand_nrs_hash,
+        seed_hash_file_exists=seed_hash_file_exists,
+        seed_hash_filepath=seed_hash_filepath,
+        seed_in_seed_hash_file=seed_in_seed_hash_file,
     )
 
 
@@ -302,6 +328,16 @@ def output_mdsa_rand_nrs(
         run_config=run_config,
         stage_index=stage_index,
     )
+
+    if not rand_nrs_data.seed_hash_file_exists or not file_contains_line(
+        filepath=rand_nrs_data.seed_hash_filepath,
+        expected_line=rand_nrs_data.rand_nrs_hash,
+    ):
+        with open(
+            rand_nrs_data.seed_hash_filepath, "a", encoding="utf-8"
+        ) as txt_file:
+            txt_file.write(rand_nrs_data.rand_nrs_hash)
+            txt_file.close()
 
     if not rand_nrs_data.rand_nrs_file_exists:
         output_unique_list(

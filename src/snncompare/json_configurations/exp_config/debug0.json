@@ -12,7 +12,7 @@
     ]
   },
   "max_graph_size": 5,
-  "max_max_graphs": 6,
+  "max_max_graphs": 1,
   "min_graph_size": 5,
   "min_max_graphs": 1,
   "neuron_models": [
@@ -20,11 +20,11 @@
   ],
   "radiations": {
     "neuron_death": [
-      0.01
+      0.05
     ]
   },
   "seeds": [
-    7
+    8
   ],
   "simulators": [
     "simsnn"
