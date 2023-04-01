@@ -71,7 +71,7 @@ def create_relative_path(*, some_path: str) -> None:
 
 
 @typechecked
-def seed_hash_file_exists_and_get_filepath(
+def seed_rand_nrs_hash_file_exists(
     *,
     output_category: str,
     run_config: Run_config,
@@ -91,6 +91,42 @@ def seed_hash_file_exists_and_get_filepath(
         + f"{algorithm_parameter}/no_adaptation/{output_category}/"
         + f"{run_config.seed}.txt"
     )
+    return Path(output_path).is_file(), output_path
+
+
+@typechecked
+def seed_rad_neurons_hash_file_exists(
+    *,
+    output_category: str,
+    run_config: Run_config,
+    with_adaptation: bool,
+) -> Tuple[bool, str]:
+    """Returns two tuples which contain: graph file exists, and the graph
+    filepath.
+
+    First tuple for the unadapted snn, the second tuple for the adapted
+    tuple.
+    """
+    algorithm_name, algorithm_parameter = get_algorithm_description(
+        run_config=run_config
+    )
+
+    if with_adaptation:
+        adaptation_name, adaptation_parameter = get_adaptation_description(
+            run_config=run_config
+        )
+        output_path: str = (
+            f"results/stage1/{algorithm_name}_"
+            + f"{algorithm_parameter}/{adaptation_name}_"
+            + f"{adaptation_parameter}/{output_category}/"
+            + f"{run_config.seed}.txt"
+        )
+    else:
+        output_path = (
+            f"results/stage1/{algorithm_name}_"
+            + f"{algorithm_parameter}/no_adaptation/{output_category}/"
+            + f"{run_config.seed}.txt"
+        )
     return Path(output_path).is_file(), output_path
 
 

@@ -40,12 +40,14 @@ from snncompare.import_results.helper import (
     file_contains_line,
     get_isomorphic_graph_hash,
     get_radiation_description,
-    seed_hash_file_exists_and_get_filepath,
+    seed_rad_neurons_hash_file_exists,
+    seed_rand_nrs_hash_file_exists,
     simsnn_files_exists_and_get_path,
 )
 from snncompare.run_config.Run_config import Run_config
 
 
+# pylint: disable=R0902
 class Radiation_data:
     """Stores the data used in outputting radiation."""
 
@@ -60,6 +62,9 @@ class Radiation_data:
         radiation_filepath: str,
         radiation_name: str,
         radiation_parameter: float,
+        seed_hash_file_exists: bool,
+        seed_in_seed_hash_file: bool,
+        seed_hash_filepath: str,
     ) -> None:
         self.affected_neurons: List[str] = affected_neurons
         self.rad_affected_neurons_hash: str = rad_affected_neurons_hash
@@ -67,6 +72,9 @@ class Radiation_data:
         self.radiation_filepath: str = radiation_filepath
         self.radiation_name: str = radiation_name
         self.radiation_parameter: float = radiation_parameter
+        self.seed_hash_file_exists: bool = seed_hash_file_exists
+        self.seed_in_seed_hash_file: bool = seed_in_seed_hash_file
+        self.seed_hash_filepath: str = seed_hash_filepath
 
 
 class Rand_nrs_data:
@@ -139,6 +147,15 @@ def output_stage_1_configs_and_input_graphs(
                 some_list=radiation_data.affected_neurons,
                 target_file_exists=radiation_data.radiation_file_exists,
             )
+        if not radiation_data.seed_hash_file_exists or not file_contains_line(
+            filepath=radiation_data.seed_hash_filepath,
+            expected_line=radiation_data.rad_affected_neurons_hash,
+        ):
+            with open(
+                radiation_data.seed_hash_filepath, "a", encoding="utf-8"
+            ) as txt_file:
+                txt_file.write(f"{radiation_data.rad_affected_neurons_hash}\n")
+                txt_file.close()
 
 
 @typechecked
@@ -281,7 +298,7 @@ def get_rand_nrs_data(
     (
         seed_hash_file_exists,
         seed_hash_filepath,
-    ) = seed_hash_file_exists_and_get_filepath(
+    ) = seed_rand_nrs_hash_file_exists(
         output_category="rand_nrs",
         run_config=run_config,
     )
@@ -336,7 +353,7 @@ def output_mdsa_rand_nrs(
         with open(
             rand_nrs_data.seed_hash_filepath, "a", encoding="utf-8"
         ) as txt_file:
-            txt_file.write(rand_nrs_data.rand_nrs_hash)
+            txt_file.write(f"{rand_nrs_data.rand_nrs_hash}\n")
             txt_file.close()
 
     if not rand_nrs_data.rand_nrs_file_exists:
@@ -406,6 +423,23 @@ def get_rad_name_filepath_and_exists(
             rand_nrs_hash=rand_nrs_hash,
         )
 
+        (
+            seed_hash_file_exists,
+            seed_hash_filepath,
+        ) = seed_rad_neurons_hash_file_exists(
+            output_category=f"{radiation_name}_{radiation_parameter}",
+            run_config=run_config,
+            with_adaptation=with_adaptation,
+        )
+
+        if seed_hash_file_exists:
+            seed_in_seed_hash_file: bool = file_contains_line(
+                filepath=seed_hash_filepath,
+                expected_line=rad_affected_neurons_hash,
+            )
+        else:
+            seed_in_seed_hash_file = False
+
         return Radiation_data(
             affected_neurons=affected_neurons,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
@@ -413,6 +447,9 @@ def get_rad_name_filepath_and_exists(
             radiation_filepath=radiation_filepath,
             radiation_name=radiation_name,
             radiation_parameter=radiation_parameter,
+            seed_hash_filepath=seed_hash_filepath,
+            seed_hash_file_exists=seed_hash_file_exists,
+            seed_in_seed_hash_file=seed_in_seed_hash_file,
         )
     raise NotImplementedError(
         f"Error:{radiation_name} is not yet implemented."

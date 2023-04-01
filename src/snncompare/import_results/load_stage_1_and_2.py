@@ -118,7 +118,10 @@ def has_outputted_snn_graph(
                 with_adaptation=with_adaptation,
                 rand_nrs_hash=None,
             )
-            if radiation_data.radiation_file_exists:
+            if (
+                radiation_data.radiation_file_exists
+                and radiation_data.seed_in_seed_hash_file
+            ):
                 return True
             return False
         return False
