@@ -78,7 +78,7 @@ from .graph_generation.stage_1_create_graphs import (
     get_input_graph_of_run_config,
 )
 from .import_results.check_completed_stages import has_outputted_stage_jsons
-from .import_results.stage_1_load_input_graphs import load_results_stage_1
+from .import_results.load_stage1_results import load_results_stage_1
 from .process_results.process_results import (
     set_results,
     verify_stage_completion,

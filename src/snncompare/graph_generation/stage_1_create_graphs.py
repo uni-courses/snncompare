@@ -234,7 +234,9 @@ def get_input_graphs(
     is to be evaluated."""
     used_graphs = Used_graphs()
     input_graphs: List[nx.Graph] = used_graphs.get_graphs(
-        run_config.graph_size
+        max_nr_of_graphs=run_config.graph_nr + 1,
+        seed=run_config.seed,
+        size=run_config.graph_size,
     )
     if len(input_graphs) > run_config.graph_nr:
         for input_graph in input_graphs:
