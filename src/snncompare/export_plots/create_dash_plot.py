@@ -41,7 +41,6 @@ def create_svg_plot(
     graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     # graphs: Dict,
     output_config: Output_config,
-    port: int,
     run_config: Run_config,
     run_config_filename: str,
     single_timestep: Optional[int] = None,
@@ -104,7 +103,7 @@ def create_svg_plot(
         plot_config=plot_config,
         plotted_graphs=plotted_graphs,
         single_timestep=single_timestep,
-        port=port,
+        port=output_config.dash_port,
     )
 
 
