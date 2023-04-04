@@ -91,7 +91,7 @@ class Supported_experiment_settings:
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
         self.min_max_graphs = 1
-        self.max_max_graphs = 15
+        self.max_max_graphs = 20
 
         # Specify the maximum graph size.
         self.min_graph_size = 3
