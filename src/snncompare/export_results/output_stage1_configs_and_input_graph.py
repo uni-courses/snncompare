@@ -133,29 +133,13 @@ def output_stage_1_configs_and_input_graphs(
             # which neurons are affected by radiation.
             graphs_dict=graphs_dict,
         )
-        radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
-            input_graph=graphs_dict["input_graph"],
-            snn_graph=snn_graph,
+
+        output_radiation_data(
+            graphs_dict=graphs_dict,
             run_config=run_config,
-            stage_index=1,
+            snn_graph=snn_graph,
             with_adaptation=with_adaptation,
         )
-        if not radiation_data.radiation_file_exists:
-            print(f"radiation_filepath={radiation_data.radiation_filepath}")
-            output_unique_list(
-                output_filepath=radiation_data.radiation_filepath,
-                some_list=radiation_data.affected_neurons,
-                target_file_exists=radiation_data.radiation_file_exists,
-            )
-        if not radiation_data.seed_hash_file_exists or not file_contains_line(
-            filepath=radiation_data.seed_hash_filepath,
-            expected_line=radiation_data.rad_affected_neurons_hash,
-        ):
-            with open(
-                radiation_data.seed_hash_filepath, "a", encoding="utf-8"
-            ) as txt_file:
-                txt_file.write(f"{radiation_data.rad_affected_neurons_hash}\n")
-                txt_file.close()
 
 
 @typechecked
@@ -377,6 +361,7 @@ def get_rand_nrs_and_hash(
     return rand_nrs, rand_nrs_hash
 
 
+# pylint: disable=R0914
 @typechecked
 def get_rad_name_filepath_and_exists(
     *,
@@ -440,7 +425,7 @@ def get_rad_name_filepath_and_exists(
         else:
             seed_in_seed_hash_file = False
 
-        return Radiation_data(
+        radiation_data: Radiation_data = Radiation_data(
             affected_neurons=affected_neurons,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
             radiation_file_exists=radiation_file_exists,
@@ -451,6 +436,7 @@ def get_rad_name_filepath_and_exists(
             seed_hash_file_exists=seed_hash_file_exists,
             seed_in_seed_hash_file=seed_in_seed_hash_file,
         )
+        return radiation_data
     raise NotImplementedError(
         f"Error:{radiation_name} is not yet implemented."
     )
@@ -462,9 +448,10 @@ def get_radiation_names_and_hash(
 ) -> Tuple[List[str], str]:
     """Returns the neuron names that are affected by the radiation, and the
     accompanying hash."""
-    simsnn_neuron_names: List[str] = list(
-        map(lambda neuron: neuron.name, list(snn_graph.network.nodes))
+    simsnn_neuron_names: List[str] = sorted(
+        list(map(lambda neuron: neuron.name, list(snn_graph.network.nodes)))
     )
+
     affected_neurons: List[str] = get_random_neurons(
         neuron_names=simsnn_neuron_names,
         probability=radiation_parameter,
@@ -494,3 +481,38 @@ def output_unique_list(
         )
     else:
         raise NotImplementedError("Error, target already exists. Write check.")
+
+
+@typechecked
+def output_radiation_data(
+    *,
+    graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    run_config: Run_config,
+    snn_graph: Union[nx.DiGraph, Simulator],
+    with_adaptation: bool,
+) -> None:
+    """Exports json file with radiation data."""
+    # Output radiation data
+    radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
+        input_graph=graphs_dict["input_graph"],
+        snn_graph=snn_graph,
+        run_config=run_config,
+        stage_index=1,
+        with_adaptation=with_adaptation,
+    )
+
+    if not radiation_data.radiation_file_exists:
+        output_unique_list(
+            output_filepath=radiation_data.radiation_filepath,
+            some_list=radiation_data.affected_neurons,
+            target_file_exists=radiation_data.radiation_file_exists,
+        )
+    if not radiation_data.seed_hash_file_exists or not file_contains_line(
+        filepath=radiation_data.seed_hash_filepath,
+        expected_line=radiation_data.rad_affected_neurons_hash,
+    ):
+        with open(
+            radiation_data.seed_hash_filepath, "a", encoding="utf-8"
+        ) as txt_file:
+            txt_file.write(f"{radiation_data.rad_affected_neurons_hash}\n")
+            txt_file.close()
