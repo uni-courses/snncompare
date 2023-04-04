@@ -190,10 +190,11 @@ def add_marks_to_nodes_for_mdsa(
 def compute_weight_for_m_0(*, input_graph: nx.Graph, node_index: int) -> None:
     """Computes the weight for the initial m=0 round, using the degree of the
     node instead of the (counter)marks from the previous round."""
-    print(f"{node_index}, degree={input_graph.degree[node_index]}")
     input_graph.nodes[node_index]["weight"] = (
-        input_graph.degree[node_index]
-        # len(nx.all_neighbors(input_graph, node_index))
+        # The degree is substitute of the marks, and the marks are for the snn
+        # which are multiplied with the nr of nodes to ensure all neighbours
+        # have a unique weight.
+        input_graph.degree[node_index] * len(input_graph.nodes)
         + input_graph.nodes[node_index]["random_number"]
     )
 
