@@ -1,0 +1,71 @@
+{
+  "adaptations": {
+    "redundancy": [
+      2
+    ]
+  },
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 0
+      },
+      {
+        "m_val": 1
+      },
+      {
+        "m_val": 2
+      }
+    ]
+  },
+  "max_graph_size": 20,
+  "max_max_graphs": 4,
+  "min_graph_size": 20,
+  "min_max_graphs": 4,
+  "neuron_models": [
+    "LIF"
+  ],
+  "radiations": {
+    "neuron_death": [
+      0.01,
+      0.05,
+      0.1,
+      0.25
+    ]
+  },
+  "seeds": [
+    7,
+    8,
+    9,
+    20,
+    21,
+    22,
+    23,
+    24
+  ],
+  "simulators": [
+    "simsnn"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [3, 1]}",
+    "{\"__tuple__\": true, \"items\": [4, 2]}",
+    "{\"__tuple__\": true, \"items\": [5, 3]}",
+    "{\"__tuple__\": true, \"items\": [6, 4]}",
+    "{\"__tuple__\": true, \"items\": [7, 8]}",
+    "{\"__tuple__\": true, \"items\": [8, 10]}",
+    "{\"__tuple__\": true, \"items\": [9, 10]}",
+    "{\"__tuple__\": true, \"items\": [10, 5]}",
+    "{\"__tuple__\": true, \"items\": [11, 5]}",
+    "{\"__tuple__\": true, \"items\": [12, 5]}",
+    "{\"__tuple__\": true, \"items\": [13, 5]}",
+    "{\"__tuple__\": true, \"items\": [14, 5]}",
+    "{\"__tuple__\": true, \"items\": [15, 5]}",
+    "{\"__tuple__\": true, \"items\": [16, 5]}",
+    "{\"__tuple__\": true, \"items\": [17, 5]}",
+    "{\"__tuple__\": true, \"items\": [18, 5]}",
+    "{\"__tuple__\": true, \"items\": [19, 5]}",
+    "{\"__tuple__\": true, \"items\": [20, 5]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ]
+}
