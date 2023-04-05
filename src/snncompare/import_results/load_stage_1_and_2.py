@@ -21,6 +21,7 @@ from typeguard import typechecked
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     Radiation_data,
     Rand_nrs_data,
+    get_input_graph_output_filepath,
     get_rad_name_filepath_and_exists,
     get_rand_nrs_and_hash,
     get_rand_nrs_data,
@@ -29,9 +30,9 @@ from snncompare.graph_generation.stage_1_create_graphs import (
     get_input_graph_of_run_config,
 )
 from snncompare.helper import add_stage_completion_to_graph
-from snncompare.import_results.helper import (
-    get_isomorphic_graph_hash,
-    simsnn_files_exists_and_get_path,
+from snncompare.import_results.helper import simsnn_files_exists_and_get_path
+from snncompare.import_results.load_stage1_results import (
+    get_run_config_filepath,
 )
 from snncompare.run_config.Run_config import Run_config
 
@@ -60,16 +61,24 @@ def has_outputted_stage_1(
             stage_index=1,
         ):
             return False
+        if not has_outputted_input_graph(
+            input_graph=input_graph,
+        ):
+            return False
+        json_filepath: str = get_run_config_filepath(run_config=run_config)
+        if not Path(json_filepath).is_file():
+            return False
     return True
 
 
 def has_outputted_input_graph(
-    *, input_graph: nx.Graph, run_config: Run_config
+    *,
+    input_graph: nx.Graph,
 ) -> bool:
     """Returns True if the rand_nrs for this run config has been outputted."""
-    isomorphic_hash: str = get_isomorphic_graph_hash(some_graph=input_graph)
-    output_dir: str = f"results/input_graphs/{run_config.graph_size}/"
-    output_filepath: str = f"{output_dir}{isomorphic_hash}.json"
+    output_filepath: str = get_input_graph_output_filepath(
+        input_graph=input_graph
+    )
     return Path(output_filepath).is_file()
 
 
@@ -210,7 +219,6 @@ def load_stage1_simsnn_graphs(
             with_radiation=False,
             stage_index=1,
         )
-
     return stage_1_graphs_dict
 
 

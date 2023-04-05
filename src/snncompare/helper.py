@@ -2,10 +2,12 @@
 import copy
 import random
 from pathlib import Path
+from pprint import pprint
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import networkx as nx
 from networkx.classes.graph import Graph
+from simsnn.core.connections import Synapse
 from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
@@ -222,6 +224,7 @@ def get_snn_graph_name(
     return "snn_algo_graph"
 
 
+@typechecked
 def get_snn_graph_names() -> List[str]:
     """Returns the 4 graph names: rad_adapted_snn_graph adapted_snn_graph
     rad_snn_algo_graph snn_algo_graph.
@@ -237,3 +240,41 @@ def get_snn_graph_names() -> List[str]:
             )
             graph_names.append(graph_name)
     return graph_names
+
+
+@typechecked
+def get_rand_synapse_weights(
+    input_graph: nx.Graph, simsnn_synapses: List[Synapse]
+) -> List[int]:
+    """Returns the synapse weights of the outgoing spikes of the rand_
+    neurons."""
+
+    rand_neurons: List[int] = [0] * len(input_graph.nodes)
+    neighbour_count: List[int] = [0] * len(input_graph.nodes)
+    for synapse in simsnn_synapses:
+        if (
+            synapse.pre.name[:5] == "rand_"
+            and synapse.post.name[:15] == "degree_receiver"
+        ):
+            rand_neurons[int(synapse.pre.name[5:])] = synapse.w
+            neighbour_count[int(synapse.pre.name[5:])] += 1
+
+    expected_isomorphic_hash: str = (
+        nx.algorithms.graph_hashing.weisfeiler_lehman_graph_hash(input_graph)
+    )
+
+    for node_index in input_graph.nodes:
+        if input_graph.degree(node_index) != neighbour_count[node_index]:
+            print(f"input_graph.degrees={input_graph.degree}")
+            print(f"expected_isomorphic_hash={expected_isomorphic_hash}")
+            print(rand_neurons)
+            print(neighbour_count)
+            pprint(input_graph.__dict__)
+            raise ValueError("Degrees do not match!")
+
+        if (
+            input_graph.graph["alg_props"]["rand_edge_weights"][node_index]
+            != rand_neurons[node_index]
+        ):
+            raise ValueError("Degrees do not match!")
+    return neighbour_count

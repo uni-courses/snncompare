@@ -21,6 +21,7 @@ from snncompare.run_config.Run_config import Run_config
 from ..helper import (
     add_stage_completion_to_graph,
     get_max_sim_duration,
+    get_rand_synapse_weights,
     get_with_adaptation_bool,
     get_with_radiation_bool,
 )
@@ -73,7 +74,12 @@ def sim_graphs(
                     with_radiation=with_radiation,
                     stage_index=2,
                 )
-
+                get_rand_synapse_weights(
+                    input_graph=stage_1_graphs["input_graph"],
+                    simsnn_synapses=stage_1_graphs[
+                        graph_name
+                    ].network.synapses,
+                )
         else:
             add_stage_completion_to_graph(
                 snn=stage_1_graphs[graph_name], stage_index=2

@@ -171,6 +171,8 @@ def simsnn_files_exists_and_get_path(
                 rad_affected_neurons_hash=rad_affected_neurons_hash,
                 rand_nrs_hash=rand_nrs_hash,
             )
+            # print("With adaptation=True")
+            # print(snn_algo_graph_filepath)
         else:
             # Import default snn.
 
@@ -187,6 +189,9 @@ def simsnn_files_exists_and_get_path(
                 rad_affected_neurons_hash=rad_affected_neurons_hash,
                 rand_nrs_hash=rand_nrs_hash,
             )
+            # print("With adaptation=False")
+            # print(snn_algo_graph_filepath)
+            # print("Does the snn filepath include the rand_nrs hash?")
         return (snn_algo_graph_exists, snn_algo_graph_filepath)
 
     raise NotImplementedError(f"Error:{algorithm_name} is not yet supported.")

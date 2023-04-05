@@ -115,7 +115,6 @@ def output_stage_1_configs_and_input_graphs(
     output_simsnn_stage1_run_config(run_config=run_config, stage_index=1)
     output_input_graph(
         input_graph=graphs_dict["input_graph"],
-        stage_index=1,
     )
     output_mdsa_rand_nrs(
         input_graph=graphs_dict["input_graph"],
@@ -194,18 +193,32 @@ def output_simsnn_stage1_run_config(
 
 
 @typechecked
+def get_input_graph_output_dir(*, input_graph: nx.Graph) -> str:
+    """Returns the dir in which the input graph as it will be outputted."""
+
+    output_dir: str = f"results/stage1/input_graphs/{len(input_graph)}/"
+    return output_dir
+
+
+@typechecked
+def get_input_graph_output_filepath(*, input_graph: nx.Graph) -> str:
+    """Returns the path towards the input graph as it will be outputted."""
+    isomorphic_hash: str = get_isomorphic_graph_hash(some_graph=input_graph)
+    output_dir: str = get_input_graph_output_dir(input_graph=input_graph)
+    output_filepath: str = f"{output_dir}{isomorphic_hash}.json"
+    return output_filepath
+
+
+@typechecked
 def output_input_graph(
     *,
     input_graph: nx.Graph,
-    stage_index: int,
 ) -> None:
     """Outputs input graph it is not yet outputted."""
-    isomorphic_hash: str = get_isomorphic_graph_hash(some_graph=input_graph)
-
-    output_dir: str = (
-        f"results/stage{stage_index}/input_graphs/{len(input_graph)}/"
+    output_dir: str = get_input_graph_output_dir(input_graph=input_graph)
+    output_filepath: str = get_input_graph_output_filepath(
+        input_graph=input_graph
     )
-    output_filepath: str = f"{output_dir}{isomorphic_hash}.json"
     if not Path(output_filepath).is_file():
         create_relative_path(some_path=output_dir)
 

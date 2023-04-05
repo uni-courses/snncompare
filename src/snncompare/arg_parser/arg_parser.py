@@ -1,6 +1,7 @@
 """Parses CLI arguments that specify on which platform to simulate the spiking
 neural network (SNN)."""
-import argparse
+from argparse import ArgumentParser, Namespace
+from typing import Optional, Union
 
 from typeguard import typechecked
 
@@ -8,12 +9,14 @@ from snncompare.exp_config.Exp_config import Supported_experiment_settings
 
 
 @typechecked
-def parse_cli_args() -> argparse.Namespace:
+def parse_cli_args(
+    parse: Optional[bool] = True,
+) -> Union[ArgumentParser, Namespace]:
     """Reads command line arguments and converts them into python arguments."""
     supp_setts = Supported_experiment_settings()
 
     # Instantiate the parser
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description="Optional description for arg" + " parser"
     )
 
@@ -300,6 +303,8 @@ def parse_cli_args() -> argparse.Namespace:
         ),
     )
 
-    # Load the arguments that are given.
-    args = parser.parse_args()
-    return args
+    # Load the arguments that are given and execute them.
+    if parse:
+        args = parser.parse_args()
+        return args
+    return parser

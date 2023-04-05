@@ -58,7 +58,10 @@ def load_verified_json_graphs_from_json(
     run_config: Run_config,
     expected_stages: List[int],
 ) -> Dict:
-    """Loads the json dict and returns the graphs of the relevant stages."""
+    """Loads the json dict and returns the graphs of the relevant stages.
+
+    TODO: delete?
+    """
     results_json_graphs = load_json_results(
         run_config=run_config,
         expected_stages=expected_stages,
@@ -86,7 +89,10 @@ def load_json_results(
     run_config: Run_config,
     expected_stages: List[int],
 ) -> Dict:
-    """Loads results from json file."""
+    """Loads results from json file.
+
+    TODO: delete?
+    """
     results_json_graphs = {}
     filename: str = run_config_to_filename(run_config_dict=run_config.__dict__)
     json_filepath = f"results/{filename}.json"

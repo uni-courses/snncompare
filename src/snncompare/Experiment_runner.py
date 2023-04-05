@@ -13,7 +13,6 @@ import customshowme
 import networkx as nx
 from simsnn.core.simulators import Simulator
 from snnbackends.verify_nx_graphs import (
-    results_nx_graphs_contain_expected_stages,
     verify_results_nx_graphs,
     verify_results_nx_graphs_contain_expected_stages,
 )
@@ -77,8 +76,8 @@ from .graph_generation.stage_1_create_graphs import (
     get_graphs_stage_1,
     get_input_graph_of_run_config,
 )
-from .import_results.check_completed_stages import has_outputted_stage_jsons
-from .import_results.load_stage1_results import load_results_stage_1
+
+# from .import_results.load_stage1_results import load_results_stage_1
 from .process_results.process_results import (
     set_results,
     verify_stage_completion,
@@ -160,6 +159,7 @@ class Experiment_runner:
         plot_config = get_default_plot_config()
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
+            # shutil.rmtree("results")
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config.__dict__)
             results_nx_graphs = self.perform_run_stage_1(
@@ -171,7 +171,7 @@ class Experiment_runner:
 
             results_nx_graphs = self.__perform_run_stage_2(
                 results_nx_graphs=results_nx_graphs,
-                output_config=output_config,
+                # output_config=output_config,
                 run_config=run_config,
             )
 
@@ -260,10 +260,10 @@ class Experiment_runner:
                 stage_1_graphs_dict=results_nx_graphs["graphs_dict"],
             )
 
-        self.equalise_loaded_run_config(
-            loaded_from_json=results_nx_graphs["run_config"],
-            incoming=run_config,
-        )
+            # self.equalise_loaded_run_config(
+            # loaded_from_json=results_nx_graphs["run_config"],
+            # incoming=run_config,
+            # )
 
         assert_has_outputted_stage_1(run_config=run_config)
         return results_nx_graphs
@@ -272,7 +272,7 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_2(
         self,
-        output_config: Output_config,
+        # output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
     ) -> Dict:
@@ -287,63 +287,22 @@ class Experiment_runner:
             verify_results_nx_graphs(
                 results_nx_graphs=results_nx_graphs, run_config=run_config
             )
-        # TODO: also verify for simsnn
-        if (
-            not has_outputted_stage_jsons(
-                expected_stages=[1, 2], run_config=run_config, stage_index=2
-            )
-            # Only stage I should be loaded.
-            or 2 in output_config.recreate_stages
-        ):
-            ensure_empty_rad_snns_exist(
-                run_config=run_config,
-                stage_1_graphs=results_nx_graphs["graphs_dict"],
-            )
 
-            # Run simulation on networkx or lava backend.
-            sim_graphs(
-                run_config=run_config,
-                stage_1_graphs=results_nx_graphs["graphs_dict"],
-            )
+        ensure_empty_rad_snns_exist(
+            run_config=run_config,
+            stage_1_graphs=results_nx_graphs["graphs_dict"],
+        )
 
-            output_stage_2_snns(
-                run_config=run_config,
-                graphs_dict=results_nx_graphs["graphs_dict"],
-            )
+        # Run simulation on networkx or lava backend.
+        sim_graphs(
+            run_config=run_config,
+            stage_1_graphs=results_nx_graphs["graphs_dict"],
+        )
 
-        else:
-            # TODO: verify loading is required.
-            if not results_nx_graphs_contain_expected_stages(
-                results_nx_graphs=results_nx_graphs,
-                stage_index=2,
-                expected_stages=[
-                    1,
-                    2,
-                ],
-            ):
-                # Load results of stage 1 and 2 from file.
-                results_nx_graphs = load_results_stage_1(run_config=run_config)
-                self.equalise_loaded_run_config(
-                    loaded_from_json=results_nx_graphs["run_config"],
-                    incoming=run_config,
-                )
-
-        if run_config.simulator == "nx":
-            verify_results_nx_graphs_contain_expected_stages(
-                results_nx_graphs=results_nx_graphs,
-                stage_index=2,
-                expected_stages=[
-                    1,
-                    2,
-                ],
-            )
-        # TODO: verify completed stages are contained in simsnn graphs as well.
-
-        # assert_stage_is_completed(
-        # expected_stages=[1, 2],
-        # run_config=run_config,
-        # stage_index=2,
-        # )
+        output_stage_2_snns(
+            run_config=run_config,
+            graphs_dict=results_nx_graphs["graphs_dict"],
+        )
 
         return results_nx_graphs
 

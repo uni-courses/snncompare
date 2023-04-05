@@ -44,6 +44,7 @@ def run_config_to_filename(
 
     # stripped_run_config:Dict = copy.deepcopy(run_config).__dict__
     stripped_run_config: Dict = copy.deepcopy(run_config_dict)
+    stripped_run_config.pop("isomorphic_hash_input")
 
     # instead (To reduce filename length).
     filename = str(flatten(d=stripped_run_config))

@@ -217,11 +217,10 @@ def get_input_graph_of_run_config(
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
-    input_graph: nx.Graph = get_input_graphs(run_config=run_config)[
-        run_config.graph_nr
-    ]
-
-    # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
+    input_graphs: Dict[str, nx.Graph] = get_input_graphs(run_config=run_config)
+    sorted_hashes: List[str] = sorted(input_graphs.keys())
+    run_config.isomorphic_hash_input = sorted_hashes[run_config.graph_nr]
+    input_graph: nx.Graph = input_graphs[run_config.isomorphic_hash_input]
     return input_graph
 
 
@@ -229,17 +228,17 @@ def get_input_graph_of_run_config(
 def get_input_graphs(
     *,
     run_config: Run_config,
-) -> List[nx.Graph]:
+) -> Dict[str, nx.Graph]:
     """Removes graphs that are not used, because of a maximum nr of graphs that
     is to be evaluated."""
     used_graphs = Used_graphs()
-    input_graphs: List[nx.Graph] = used_graphs.get_graphs(
+    input_graphs: Dict[str, nx.Graph] = used_graphs.get_graphs(
         max_nr_of_graphs=run_config.graph_nr + 1,
         seed=run_config.seed,
         size=run_config.graph_size,
     )
-    if len(input_graphs) > run_config.graph_nr:
-        for input_graph in input_graphs:
+    if len(input_graphs.values()) > run_config.graph_nr:
+        for input_graph in input_graphs.values():
             # TODO: set alg_props:
             if "alg_props" not in input_graph.graph.keys():
                 input_graph.graph["alg_props"] = SNN_initialisation_properties(
