@@ -49,6 +49,7 @@ def get_graphs_stage_1(
         plot_config=plot_config,
         run_config=run_config,
     )
+
     if run_config.simulator == "nx":
         return stage_1_graphs
     if run_config.simulator == "simsnn":
@@ -89,6 +90,7 @@ def nx_lif_graphs_to_simsnn_graphs(
                 new_graphs[graph_name] = simsnn_graph_to_nx_lif_graph(
                     simsnn=stage_1_graphs[graph_name]
                 )
+
             else:
                 new_graphs[graph_name] = nx_lif_graph_to_simsnn_graph(
                     snn_graph=stage_1_graphs[graph_name],

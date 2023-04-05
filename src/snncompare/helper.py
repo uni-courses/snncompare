@@ -2,7 +2,6 @@
 import copy
 import random
 from pathlib import Path
-from pprint import pprint
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import networkx as nx
@@ -255,7 +254,9 @@ def get_rand_synapse_weights(
         if (
             synapse.pre.name[:5] == "rand_"
             and synapse.post.name[:15] == "degree_receiver"
+            and synapse.post.name[-2:] == "_0"
         ):
+            # print(f'{synapse.pre.name} - {synapse.post.name}')
             rand_neurons[int(synapse.pre.name[5:])] = synapse.w
             neighbour_count[int(synapse.pre.name[5:])] += 1
 
@@ -266,10 +267,11 @@ def get_rand_synapse_weights(
     for node_index in input_graph.nodes:
         if input_graph.degree(node_index) != neighbour_count[node_index]:
             print(f"input_graph.degrees={input_graph.degree}")
+            print(f"neighbour_count={neighbour_count}")
             print(f"expected_isomorphic_hash={expected_isomorphic_hash}")
             print(rand_neurons)
             print(neighbour_count)
-            pprint(input_graph.__dict__)
+            # pprint(input_graph.__dict__)
             raise ValueError("Degrees do not match!")
 
         if (

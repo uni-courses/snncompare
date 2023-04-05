@@ -213,6 +213,7 @@ class Experiment_runner:
         input_graph: nx.Graph = get_input_graph_of_run_config(
             run_config=run_config
         )
+
         add_stage_completion_to_graph(snn=input_graph, stage_index=1)
 
         results_nx_graphs = {
@@ -220,6 +221,7 @@ class Experiment_runner:
             "run_config": run_config,
             "graphs_dict": {"input_graph": input_graph},
         }
+
         # Check if stage 1 is performed. If not, perform it.
         if (
             not has_outputted_stage_1(
@@ -246,6 +248,7 @@ class Experiment_runner:
                 run_config=run_config,
                 graphs_dict=results_nx_graphs["graphs_dict"],
             )
+
             for with_adaptation in [False, True]:
                 output_stage_1_snns(
                     run_config=run_config,
