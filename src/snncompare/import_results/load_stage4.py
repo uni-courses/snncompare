@@ -5,7 +5,6 @@ radiation, adaptation with radiation,
 """
 from typing import Dict, Optional
 
-import networkx as nx
 from typeguard import typechecked
 
 from snncompare.graph_generation.stage_1_create_graphs import (
@@ -20,7 +19,6 @@ from snncompare.run_config.Run_config import Run_config
 def load_stage4_results(
     *,
     run_config: Run_config,
-    input_graph: nx.Graph,
     stage_4_results_dict: Optional[Dict] = None,
 ) -> Dict:
     """Loads stage1 simsnn graphs and input graph."""
@@ -37,7 +35,7 @@ def load_stage4_results(
             )
             stage_4_results_dict[graph_name] = load_simsnn_graphs(
                 run_config=run_config,
-                input_graph=input_graph,
+                input_graph=stage_4_results_dict["input_graph"],
                 with_adaptation=with_adaptation,
                 with_radiation=with_radiation,
                 stage_index=4,

@@ -7,6 +7,9 @@
   "algorithms": {
     "MDSA": [
       {
+        "m_val": 0
+      },
+      {
         "m_val": 1
       }
     ]
@@ -30,7 +33,9 @@
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [20, 4]}"
+    "{\"__tuple__\": true, \"items\": [3, 1]}",
+    "{\"__tuple__\": true, \"items\": [6, 3]}",
+    "{\"__tuple__\": true, \"items\": [10, 10]}"
   ],
   "synaptic_models": [
     "LIF"

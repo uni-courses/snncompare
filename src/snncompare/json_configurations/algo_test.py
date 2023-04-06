@@ -37,7 +37,7 @@ def load_exp_config_from_file(
     *, custom_config_path: str, filename: str
 ) -> "Exp_config":
     """Loads an experiment config from file, then verifies and returns it."""
-    filepath = f"{custom_config_path}/exp_config/{filename}.json"
+    filepath = f"{custom_config_path}exp_config/{filename}.json"
     if file_exists(filepath=filepath):
         with open(filepath, encoding="utf-8") as json_file:
             encoded_exp_config = json.load(json_file)

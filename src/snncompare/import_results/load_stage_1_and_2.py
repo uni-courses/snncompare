@@ -197,7 +197,6 @@ def input_graph_exists(
 def load_stage1_simsnn_graphs(
     *,
     run_config: Run_config,
-    input_graph: nx.Graph,
     stage_1_graphs_dict: Optional[Dict] = None,
 ) -> Dict:
     """Loads stage1 simsnn graphs and input graph."""
@@ -214,7 +213,7 @@ def load_stage1_simsnn_graphs(
             graph_name = "snn_algo_graph"
         stage_1_graphs_dict[graph_name] = load_simsnn_graphs(
             run_config=run_config,
-            input_graph=input_graph,
+            input_graph=stage_1_graphs_dict["input_graph"],
             with_adaptation=with_adaptation,
             with_radiation=False,
             stage_index=1,

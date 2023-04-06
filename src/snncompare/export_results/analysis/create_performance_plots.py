@@ -13,7 +13,7 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from simplt.box_plot.box_plot import create_box_plot
+from rich.progress import track
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
@@ -94,14 +94,19 @@ def create_performance_plots(
     """
 
     count: int = 0
-    print("Creating boxplot data.")
     for radiation_name, radiation_values in reversed(
         exp_config.radiations.items()
     ):
+        # TODO: separate per radiation_name (type).
+
         for radiation_value in radiation_values:
             count += 1  # Keep track of counter for boxplot filenames.
             for adaptation in exp_config.adaptations:
-                print(f"adaptation={adaptation}")
+                print(
+                    "Loading stage 4 results to create boxplot with:"
+                    + f"{radiation_name}:{radiation_value}, adaptation type"
+                    + f":{adaptation}"
+                )
 
                 # Get run configs belonging to this radiation type/level.
                 wanted_run_configs: List[Run_config] = []
@@ -111,8 +116,6 @@ def create_performance_plots(
                     }:
                         wanted_run_configs.append(run_config)
 
-                print(f"wanted:{len(wanted_run_configs)}")
-                print("Get datapoints.")
                 # Get results per line.
                 boxplot_data: Dict[
                     str, Dict[int, Boxplot_x_val]
@@ -122,7 +125,7 @@ def create_performance_plots(
                     seeds=exp_config.seeds,
                 )
 
-                print("Get y-series")
+                print("\nConverting stage 4 results into boxplot.")
                 y_series = boxplot_data_to_y_series(boxplot_data=boxplot_data)
 
                 create_dotted_boxplot(
@@ -131,24 +134,8 @@ def create_performance_plots(
                         f"{count}_dotted_boxplot_{radiation_name}="
                         + f"{radiation_value}_{adaptation}"
                     ),
-                    title=f"{radiation_name}={radiation_value}",
-                )
-
-                print("Create boxplot.")
-                # Generate box plots.
-                create_box_plot(
-                    extensions=["png"],
-                    filename=(
-                        f"{count}_boxplot_{radiation_name}="
-                        + f"{radiation_value}_{adaptation}"
-                    ),
-                    legendPosition=0,
-                    output_dir="latex/Images",
-                    x_axis_label="x-axis label [units]",
-                    y_axis_label="y-axis label [units]",
-                    y_series=y_series,
-                    title=f"{radiation_name}={radiation_value}",
-                    x_axis_label_rotation=45,
+                    title=f"SNN MDSA algorithm with simulated {radiation_name}"
+                    + f"={radiation_value*100}[%]",
                 )
 
 
@@ -171,7 +158,6 @@ def get_completed_and_missing_run_configs(
         ):
             graphs_dict: Dict = load_stage1_simsnn_graphs(
                 run_config=run_config,
-                input_graph=input_graph,
             )
             if has_outputted_stage_2_or_4(
                 graphs_dict=graphs_dict,
@@ -206,29 +192,22 @@ def get_boxplot_datapoints(
         graph_names=get_snn_graph_names(),
         seeds=seeds,
     )
-    print(f"Created empty boxplot_data object, seeds={seeds}.")
-    for i, wanted_run_config in enumerate(wanted_run_configs):
-        input_graph: nx.Graph = get_input_graph_of_run_config(
-            run_config=wanted_run_config,
-        )
+    for wanted_run_config in track(
+        wanted_run_configs, total=len(wanted_run_configs)
+    ):
+        # TODO: load the boxplot data pickle if it exists, otherwise
+        # load it from json data.
+
         # Get the results per x-axis category per graph type.
         for algo_name in wanted_run_config.algorithm.keys():
             if algo_name == "MDSA":
                 stage_4_results_dict = load_stage4_results(
                     run_config=wanted_run_config,
-                    input_graph=input_graph,
                     stage_4_results_dict=None,
                 )
 
                 # Get the graphs names that were used in the run.
                 graph_names = get_snn_graph_names()
-
-                # TODO: load the boxplot data pickle if it exists, otherwise
-                # load it from json data.
-
-                # Get the snn graphs to be able to compute the snn results.
-
-                print(f"Loading json results:({i}/{len(wanted_run_configs)})")
 
                 # Specify the x-axis labels and get snn result dicts.
                 x_labels, results = get_x_labels(
@@ -381,13 +360,14 @@ def boxplot_data_to_y_series(
 
     for name, seed_and_y_vals in boxplot_data.items():
         for seed, y_score in seed_and_y_vals.items():
-            print(f"{name},seed={seed}={y_score.__dict__}")
+            print(f"{name},  seed={seed},  {y_score.__dict__}")
             columns[name].append(
                 # Compute the score in range [0,1] and add it to the column
                 # score list.
                 float(y_score.correct_results)
                 / float(y_score.correct_results + y_score.wrong_results)
             )
+    print("")
     return columns
 
 
@@ -415,16 +395,16 @@ def create_dotted_boxplot(
     for col_name, y_vals in y_series.items():
         dataseries.append(
             pd.DataFrame(
-                {"group": np.repeat(col_name, len(y_vals)), "value": y_vals}
+                {"": np.repeat(col_name, len(y_vals)), "value": y_vals}
             )
         )
     # Merge the columns into a single figure.
     df = pd.concat(dataseries)
     # boxplot
-    sns.boxplot(x="group", y="value", data=df)
+    sns.boxplot(x="", y="value", data=df)
     # add stripplot
     sns.stripplot(
-        x="group", y="value", data=df, color="orange", jitter=0.2, size=2.5
+        x="", y="value", data=df, color="orange", jitter=0.2, size=2.5
     )
 
     # add title
@@ -434,6 +414,9 @@ def create_dotted_boxplot(
     # ha stands for horizontal alignment, the top right of the x-axis label
     # is positioned below the respective x-tick.
     plt.xticks(rotation=45, ha="right")
+
+    # plt.xlabel(x_axis_label)
+    plt.ylabel("Score [-]")
 
     # Ensure the bottom x-tick labels are within the image.
     plt.tight_layout()

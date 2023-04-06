@@ -132,12 +132,6 @@ class Experiment_runner:
             )
 
         if 5 in output_config.output_json_stages:
-            self.load_pickled_boxplot_data(
-                exp_config=self.exp_config,
-                run_configs=self.run_configs,
-                output_config=output_config,
-            )
-
             create_performance_plots(
                 completed_run_configs=self.run_configs,
                 exp_config=exp_config,
@@ -259,7 +253,6 @@ class Experiment_runner:
         else:
             results_nx_graphs["graphs_dict"] = load_stage1_simsnn_graphs(
                 run_config=run_config,
-                input_graph=input_graph,
                 stage_1_graphs_dict=results_nx_graphs["graphs_dict"],
             )
 
