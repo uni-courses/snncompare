@@ -215,6 +215,8 @@ git clone git@github.com:a-t-0/snncompare.git
 
 cp snncompare/.vscode/settings.json .vscode/settings.json
 cp snncompare/snn_rebuild.sh ~/bin/snnrb
+rm ~/.local/bin/snnrb
+# Now close and re-open the terminal.
 
 cd snncompare
 conda env create --file environment.yml

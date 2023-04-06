@@ -12,7 +12,7 @@ default_language_version:
 repos:
 # Test if the python code is formatted according to the Black standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-black
-   rev: 23.1.0
+   rev: 23.3.0
    hooks:
      - id: black-conda
        args:
@@ -171,7 +171,7 @@ repos:
 #     args: ['--never', '--application-directories', 'src']
 
  - repo: https://github.com/myint/docformatter
-   rev: v1.5.1
+   rev: v1.6.0
    hooks:
    - id: docformatter
 

@@ -16,8 +16,9 @@ while [[ "$#" -gt 0 ]]; do
       		shift # past value
       		;;
 		-r|--rebuild) rebuild=1; ;;
-        -p|--precommit) precommit=1 ;;
+	        -p|--precommit) precommit=1 ;;
 		-pu|--precommit-update) precommit_update=1 ;;
+		-pi|--precommit-install) precommit_install=1 ;;
 		-pip|--publish-to-pip) publish_to_pip=1 ;;
 		-c|--commitpush)
 			commitpush=1
@@ -109,6 +110,17 @@ run_precommit() {
 		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
         exit 5
 	fi
+}
+
+run_precommit_install() {
+    local git_path="$1"
+    if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
+	eval "$(conda shell.bash hook)"
+	cd "$git_path" && conda deactivate && conda activate snncompare && pre-commit install
+    else
+	echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
+        exit 5
+    fi
 }
 
 run_precommit_update() {
@@ -210,6 +222,10 @@ do
 
 	if [ "$precommit" == 1 ]; then
 		run_precommit "$DIR_WITH_REPOS$reponame"
+	fi
+
+	if [ "$precommit_install" == 1 ]; then
+		run_precommit_install "$DIR_WITH_REPOS$reponame"
 	fi
 
 	if [ "$precommit_update" == 1 ]; then
