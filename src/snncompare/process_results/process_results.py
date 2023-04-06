@@ -6,18 +6,17 @@ The MDSA algorithm results will consist of a list of nodes per used
 graph that have been selected according to Alipour, and according to the
 respective SNN graph.
 """
-import copy
-from typing import Dict
+from typing import Dict, Union
 
 import networkx as nx
+from simsnn.core.simulators import Simulator
 from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
     set_mdsa_snn_results,
 )
-from snnbackends.verify_nx_graphs import (
-    verify_nx_graph_contains_correct_stages,
-)
+from snnbackends.verify_nx_graphs import verify_snn_contains_correct_stages
 from typeguard import typechecked
 
+from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
@@ -30,6 +29,7 @@ from ..import_results.check_completed_stages import (
 @typechecked
 def set_results(
     *,
+    exp_config: Exp_config,
     output_config: Output_config,
     run_config: Run_config,
     stage_2_graphs: Dict,
@@ -39,6 +39,7 @@ def set_results(
         if algo_name == "MDSA":
             if isinstance(algo_settings["m_val"], int):
                 return perform_mdsa_results_computation_if_needed(
+                    exp_config=exp_config,
                     m_val=algo_settings["m_val"],
                     output_config=output_config,
                     run_config=run_config,
@@ -59,20 +60,31 @@ def set_results(
 @typechecked
 def perform_mdsa_results_computation_if_needed(
     *,
+    exp_config: Exp_config,
     m_val: int,
     output_config: Output_config,
     run_config: Run_config,
     stage_2_graphs: Dict,
 ) -> bool:
-    """Performs result computation if the results are not in the graph yet."""
+    """Performs result computation if the results are not in the graph yet.
+
+    TODO: separate check whether computation is needed, with setting results.
+    """
     set_new_results: bool = False
-    for nx_graph in stage_2_graphs.values():
+
+    for snn in stage_2_graphs.values():
+        if isinstance(snn, Simulator):
+            graph = snn.network.graph
+        else:
+            graph = snn
+
         if (
-            4 not in nx_graph.graph["completed_stages"]
+            4 not in graph.graph["completed_stages"]
             or 4 in output_config.recreate_stages
         ):
             set_new_results = True
             set_mdsa_snn_results(
+                exp_config=exp_config,
                 m_val=m_val,
                 output_config=output_config,
                 run_config=run_config,
@@ -80,70 +92,34 @@ def perform_mdsa_results_computation_if_needed(
             )
 
             # Indicate the graphs have completed stage 1.
-
-            add_stage_completion_to_graph(input_graph=nx_graph, stage_index=4)
+            add_stage_completion_to_graph(snn=graph, stage_index=4)
     return set_new_results
 
 
 @typechecked
-def compute_results(
+def verify_stage_completion(
     *,
     results_nx_graphs: Dict,
+    simulator: str,
     stage_index: int,
 ) -> None:
     """Integrates the results per graph type into the graph, then export the
     results dictionary (again) into the stage 4 folder."""
-    # Create new independent graphs dict to include the results.
-    # TODO: determine why/don't duplicate.
-    stage_4_graphs = copy.deepcopy(results_nx_graphs["graphs_dict"])
-    # Embed results into snn graphs
-    for graph_name in results_nx_graphs["graphs_dict"].keys():
-        if graph_name == "snn_algo_graph":
-            # stage_4_graphs[graph_name]["results"] =results["snn_algo_result"]
-            add_result_to_last_graph(
-                snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
-            )
-        elif graph_name == "adapted_snn_graph":
-            add_result_to_last_graph(
-                snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
-            )
-        elif graph_name == "rad_snn_algo_graph":
-            add_result_to_last_graph(
-                snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
-            )
-        elif graph_name == "rad_adapted_snn_graph":
-            add_result_to_last_graph(
-                snn_graphs=stage_4_graphs[graph_name],
-                result_per_type=results_nx_graphs["graphs_dict"][
-                    graph_name
-                ].graph["results"],
-            )
-
-    # overwrite nx_graphs with stage_4_graphs
-    results_nx_graphs["graphs_dict"] = stage_4_graphs
 
     # Verify the results_nx_graphs are valid.
-    nx_graphs_have_completed_stage(
-        run_config=results_nx_graphs["run_config"],
-        results_nx_graphs=results_nx_graphs,
-        stage_index=4,
-    )
+    if simulator == "nx":
+        nx_graphs_have_completed_stage(
+            run_config=results_nx_graphs["run_config"],
+            results_nx_graphs=results_nx_graphs,
+            stage_index=4,
+        )
 
     # Export graphs with embedded results to json.
     # TODO: move export into separate function.
-    for graph_name, nx_graph in stage_4_graphs.items():
-        verify_nx_graph_contains_correct_stages(
+    for graph_name, nx_graph in results_nx_graphs["graphs_dict"].items():
+        verify_snn_contains_correct_stages(
             graph_name=graph_name,
-            nx_graph=nx_graph,
+            snn=nx_graph,
             expected_stages=get_expected_stages(
                 stage_index=stage_index,
             ),
@@ -152,7 +128,7 @@ def compute_results(
 
 @typechecked
 def add_result_to_last_graph(
-    *, snn_graphs: nx.DiGraph, result_per_type: Dict
+    *, snn_graphs: Union[nx.DiGraph, Simulator], result_per_type: Dict
 ) -> None:
     """Checks whether the incoming snn_graph is a list of graphs or single
     graph.
@@ -163,6 +139,7 @@ def add_result_to_last_graph(
     """
     if isinstance(snn_graphs, nx.DiGraph):
         snn_graphs.graph["results"] = result_per_type
+
     else:
         raise TypeError(
             "Error, unsupported snn graph type:" + f"{type(snn_graphs)}"

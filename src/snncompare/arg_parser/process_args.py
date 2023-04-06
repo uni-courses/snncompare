@@ -2,13 +2,15 @@
 import argparse
 import os
 import shutil
-from typing import List
+from typing import List, Union
 
 from typeguard import typechecked
 
+from snncompare.arg_parser.helper import convert_csv_list_arg_to_list
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
+from snncompare.helper import get_snn_graph_names
 from snncompare.optional_config.Output_config import (
     Extra_storing_config,
     Output_config,
@@ -39,7 +41,9 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     )
 
     if args.run_config_path is not None:
-        specific_run_config: Run_config = load_run_config_from_file(
+        specific_run_config: Union[
+            None, Run_config
+        ] = load_run_config_from_file(
             custom_config_path=custom_config_path,
             filename=f"{args.run_config_path}",
         )
@@ -84,12 +88,44 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
             if "svg" not in args.export_images:
                 args.export_images.append("svg")
 
-    if args.export_images is not None:
-        optional_config_args_dict["export_types"] = args.export_images.split(
-            ","
+    optional_config_args_dict["export_types"] = convert_csv_list_arg_to_list(
+        arg_name="export_images", arg_val=args.export_images
+    )
+
+    # Ensure user only specifies graph types to show if show_images isn't None.
+    if args.show_graph_type and not args.show_images:
+        raise SyntaxError(
+            "Specified a graph type without asking the graphs to be displayed."
+            + f"{args.show_graph_type}"
         )
-    else:
-        optional_config_args_dict["export_types"] = []
+    # Ensure user only specifies graph types to show if show_images isn't None.
+    if args.show_images and (
+        args.show_graph_type is None or len(args.show_graph_type) == 1
+    ):
+        raise SyntaxError(
+            "show-images is True, yet no graph type (to show) is specified."
+        )
+
+    optional_config_args_dict["graph_types"] = convert_csv_list_arg_to_list(
+        arg_name="show_graph_type", arg_val=args.show_graph_type
+    )
+
+    if any(
+        show_graph_name not in get_snn_graph_names()
+        for show_graph_name in optional_config_args_dict["graph_types"]
+    ):
+        raise ValueError(
+            "show_graph_type values:"
+            + f'{optional_config_args_dict["show_graph_type"]}'
+            + " not in supported"
+            + f"graph_names:{get_snn_graph_names()}"
+        )
+    optional_config_args_dict["dash_port"] = args.dash_port
+    if args.dash_port and args.dash_port < 8000:
+        raise ValueError(
+            "Error, port nr should be >8000. Not necessarily over 9000."
+        )
+
     optional_config_args_dict["zoom"] = parse_zoom_arg(args=args)
     optional_config_args_dict["recreate_stages"] = parse_recreate_stages(
         args=args

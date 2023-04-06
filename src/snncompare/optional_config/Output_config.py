@@ -23,6 +23,8 @@ class Output_config:
         output_json_stages: list[int],
         extra_storing_config: Extra_storing_config,
         hover_info: Hover_info | None = None,
+        graph_types: list[str] | None = None,
+        dash_port: int | None = None,
     ):
         """Stores run configuration settings for the exp_configriment."""
         self.verify_int_list_values(
@@ -54,6 +56,8 @@ class Output_config:
             )
 
         self.extra_storing_config: Extra_storing_config = extra_storing_config
+        self.graph_types: None | list[str] = graph_types
+        self.dash_port: None | int = dash_port
 
     @typechecked
     def verify_int_list_values(
@@ -252,7 +256,7 @@ class Hover_info:
         be printed."""
         for synaptic_model in synaptic_models:
             if synaptic_model == "LIF":
-                sample_synapse: LIF_neuron.Synapse = Synapse(
+                sample_synapse: Synapse = Synapse(
                     weight=1,
                     delay=1,
                     change_per_t=1,

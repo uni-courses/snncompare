@@ -38,11 +38,6 @@ class NamedAnnotation:
         if category not in self.supported_categories:
             raise ValueError(f"Error, category:{category} not supported.")
 
-    @typechecked
-    def get_node_name(self) -> Union[str, None]:
-        """returns the node_name of the annotation if not None."""
-        return self.node_name
-
 
 # Build image from incoming graph and positioning parameters
 # pylint: disable=R0914
@@ -161,6 +156,8 @@ def xy_max(
     """Computes the max x- and y-positions found in the nodes."""
     positions: List[Tuple[float, float]] = []
     for node_name in G.nodes():
+        if G.nodes[node_name]["pos"] is None:
+            raise ValueError(f"Error, pos:{node_name} is None.")
         positions.append(G.nodes[node_name]["pos"])
 
     x = max(list(map(lambda a: a[0], positions)))

@@ -65,8 +65,8 @@ def convert_stage_1_digraphs_to_json(*, graphs: Dict) -> Dict:
         graphs_dict_stage_1[graph_name] = digraph_to_json(G=graph_container)
     if not graphs_dict_stage_1:  # checks if dict not empty like: {}
         raise ValueError(
-            f"Error, len(graphs)={len(graphs)} stage=1, graphs_dict_stage_1"
-            + " is empty."
+            f"Error, len(graphs)={len(graphs)} stage_index=1, "
+            + "graphs_dict_stage_1 is empty."
         )
     return graphs_dict_stage_1
 

@@ -15,7 +15,10 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
 )
 from typeguard import typechecked
 
-from snncompare.export_results.export_json_results import write_dict_to_json
+from snncompare.export_results.export_json_results import (
+    verify_loaded_json_content_is_nx_graph,
+    write_to_json,
+)
 from snncompare.export_results.helper import get_expected_image_paths_stage_3
 from snncompare.run_config.Run_config import Run_config
 
@@ -92,7 +95,10 @@ def create_result_file_for_testing(
     # TODO: support stage 4 dummy creation.
 
     # TODO: Optional: ensure output files exists.
-    write_dict_to_json(
+    write_to_json(
+        output_filepath=json_filepath, some_dict=jsons.dump(dummy_result)
+    )
+    verify_loaded_json_content_is_nx_graph(
         output_filepath=json_filepath, some_dict=jsons.dump(dummy_result)
     )
 

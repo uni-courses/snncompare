@@ -10,7 +10,8 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_results.export_json_results import (
     encode_tuples,
-    write_dict_to_json,
+    verify_loaded_json_content_is_nx_graph,
+    write_to_json,
 )
 from snncompare.helper import file_exists
 from snncompare.run_config.Run_config import Run_config
@@ -25,7 +26,8 @@ def store_exp_config_to_file(
     # epxort to file.
     filepath = f"{custom_config_path}{filename}.json"
     new_dict = encode_tuples(some_dict=exp_config.__dict__)
-    write_dict_to_json(
+    write_to_json(output_filepath=filepath, some_dict=jsons.dump(new_dict))
+    verify_loaded_json_content_is_nx_graph(
         output_filepath=filepath, some_dict=jsons.dump(new_dict)
     )
 
@@ -35,7 +37,7 @@ def load_exp_config_from_file(
     *, custom_config_path: str, filename: str
 ) -> "Exp_config":
     """Loads an experiment config from file, then verifies and returns it."""
-    filepath = f"{custom_config_path}/exp_config/{filename}.json"
+    filepath = f"{custom_config_path}exp_config/{filename}.json"
     if file_exists(filepath=filepath):
         with open(filepath, encoding="utf-8") as json_file:
             encoded_exp_config = json.load(json_file)
@@ -136,7 +138,7 @@ def run_config_with_error() -> Run_config:
 @typechecked
 def get_exp_config_mdsa_size5_m4() -> "Exp_config":
     """Returns a default experiment setting with  graph size 7, m=4."""
-    mdsa_creation_only_size_7_m_4: "Exp_config" = (
+    mdsa_creation_only_size_7_m_4: Exp_config = (
         long_exp_config_for_mdsa_testing_without_adaptation()
     )
     mdsa_creation_only_size_7_m_4.algorithms = {

@@ -2,12 +2,12 @@
 from __future__ import annotations
 
 import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 import networkx as nx
 from simplt.export_plot import create_target_dir_if_not_exists
-from typeguard import TYPE_CHECKING, typechecked
+from typeguard import typechecked
 
 if TYPE_CHECKING:
     from snncompare.tests.test_scope import Long_scope_of_tests

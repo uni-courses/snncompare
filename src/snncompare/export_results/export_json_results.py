@@ -9,11 +9,19 @@ from typeguard import typechecked
 
 
 @typechecked
-def write_dict_to_json(*, output_filepath: str, some_dict: Dict) -> None:
-    """Writes a dict file to a .json file."""
+def write_to_json(
+    *, output_filepath: str, some_dict: Union[Dict, List[Union[int, str]]]
+) -> None:
+    """Writes a dict file to a .json file.
+
+    TODO: Rename some_dict to some_text.
+    """
 
     with open(output_filepath, "w", encoding="utf-8") as fp:
-        json.dump(some_dict, fp, indent=4, sort_keys=True)
+        if isinstance(some_dict, Dict):
+            json.dump(some_dict, fp, indent=4, sort_keys=True)
+        elif isinstance(some_dict, List):
+            json.dump(some_dict, fp, indent=4, sort_keys=True)
         fp.close()
 
     # Verify the file exists.
@@ -22,6 +30,11 @@ def write_dict_to_json(*, output_filepath: str, some_dict: Dict) -> None:
             f"Error, filepath:{output_filepath} was not created."
         )
 
+
+def verify_loaded_json_content_is_nx_graph(
+    output_filepath: str, some_dict: Dict
+) -> None:
+    """Verifies an exported graph can be loaded correctly."""
     # TODO: verify the file content is valid.
     if "graph" in some_dict.keys():
         with open(output_filepath, encoding="utf-8") as json_file:

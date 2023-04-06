@@ -6,7 +6,6 @@ from snnbackends.networkx.LIF_neuron import LIF_neuron
 from typeguard import typechecked
 
 from snncompare.export_plots.get_graph_colours import get_nx_node_colours
-from snncompare.export_plots.get_xy_ticks import store_xy_ticks
 from snncompare.optional_config.Output_config import Hover_info
 
 
@@ -46,7 +45,7 @@ def store_plot_params_in_graph(
         plotted_graph=plotted_graph,
         snn_graph=snn_graph,
     )
-    store_xy_ticks(lif_neurons=lif_neurons, plotted_graph=plotted_graph)
+    # store_xy_ticks(lif_neurons=lif_neurons, plotted_graph=plotted_graph)
 
     store_node_position(plotted_graph=plotted_graph, snn_graph=snn_graph, t=t)
     store_node_labels(
@@ -129,11 +128,11 @@ def store_node_labels(
             )
         if hover_info.incoming_synapses:
             hovertext[node_name] = hovertext[node_name] + get_edges_of_node(
-                snn_graph=snn_graph, node_name=node_name, outgoing=False
+                snn_graph=snn_graph, node_name=node_name, outgoing=False, t=t
             )
         if hover_info.outgoing_synapses:
             hovertext[node_name] = hovertext[node_name] + get_edges_of_node(
-                snn_graph=snn_graph, node_name=node_name, outgoing=True
+                snn_graph=snn_graph, node_name=node_name, outgoing=True, t=t
             )
 
         # plotted_graph.nodes[node_name]["label"] = hovertext[node_name]
@@ -219,6 +218,7 @@ def get_edges_of_node(
     snn_graph: nx.DiGraph,
     node_name: str,
     outgoing: bool,
+    t: int,
 ) -> str:
     """Returns (the other) nodenames of the edges of a node."""
     node_edges: List[str] = ["<br />"]
@@ -229,9 +229,21 @@ def get_edges_of_node(
 
     for edge in snn_graph.edges():
         if edge[0] == node_name and outgoing:
-            node_edges.append(f"{edge[1]}<br /> ")
+            if snn_graph.nodes[edge[0]]["nx_lif"][t].spikes:
+                node_edges.append(
+                    f'{edge[0]}: {snn_graph.edges[edge]["synapse"].weight}'
+                    + "<br /> "
+                )
+            else:
+                node_edges.append(f"{edge[1]}<br /> ")
         elif edge[1] == node_name and not outgoing:
-            node_edges.append(f"{edge[0]}<br /> ")
+            if snn_graph.nodes[edge[0]]["nx_lif"][t].spikes:
+                node_edges.append(
+                    f'{edge[0]}: {snn_graph.edges[edge]["synapse"].weight}'
+                    + "<br /> "
+                )
+            else:
+                node_edges.append(f"{edge[0]}<br /> ")
 
     node_edge_str = "".join(node_edges)
 

@@ -16,6 +16,7 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
 
     if "exp_config" not in results_json_graphs:
         raise KeyError("Error, key: exp_config not in output_dict.")
+
     if "run_config" not in results_json_graphs:
         raise KeyError("Error, key: run_config not in output_dict.")
     if "graphs_dict" not in results_json_graphs:
@@ -30,7 +31,6 @@ def verify_results_safely_check_json_graphs_contain_expected_stages(
     results_json_graphs["run_config"] = dict_to_run_config(
         some_dict=results_json_graphs["run_config"]
     )
-
     verify_json_graphs_dict_contain_correct_stages(
         json_graphs=results_json_graphs["graphs_dict"],
         expected_stages=expected_stages,
@@ -47,12 +47,21 @@ def verify_json_graphs_dict_contain_correct_stages(
     graph."""
     for expected_stage in expected_stages:
         for graph_name, json_graph in json_graphs.items():
-            if not isinstance(json_graph, Dict):
-                raise TypeError(
-                    "Error, the json_graph is of type:"
-                    f"{type(json_graph)}, with content:{json_graph}"
-                )
-            completed_stages = json_graph["graph"]["completed_stages"]
+            if graph_name != "input_graph":
+                if not isinstance(json_graph, Dict):
+                    raise TypeError(
+                        "Error, the json_graph is of type:"
+                        f"{type(json_graph)}, with content:{json_graph}"
+                    )
+                if "graph" not in json_graph.keys():
+                    raise SystemError("Error, graph not in json graphs keys.")
+                if "completed_stages" not in json_graph["graph"].keys():
+                    raise SystemError(
+                        "Error, completed_stages not in json graphs graph"
+                        + " keys."
+                    )
+                completed_stages = json_graph["graph"]["completed_stages"]
+
             if expected_stage not in completed_stages:
                 raise ValueError(
                     "Error, for the above run_config, the expected stage:"

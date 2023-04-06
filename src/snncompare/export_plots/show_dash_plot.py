@@ -1,5 +1,6 @@
 """Creates a gif of an SNN propagation."""
 
+import logging
 from typing import Dict, List
 
 import dash
@@ -38,15 +39,14 @@ def show_dash_figures(
     app: dash.Dash,
     plot_config: Plot_config,
     plotted_graphs: Dict[str, nx.DiGraph],
+    port: int,
 ) -> None:
     """Shows a figure in dash using browser."""
-    print("SHOWING DASH APP.")
     dash_figures: Dict[str, go.Figure] = {}
     identified_annotations_dict: Dict[str, List] = {}
     temporal_node_colours_dict: Dict[str, List] = {}
     temporal_node_opacity_dict: Dict[str, List] = {}
     for graph_name, plotted_graph in plotted_graphs.items():
-        print(f"graph_name={graph_name}")
         # Start Dash app.
         (
             dash_figures[graph_name],
@@ -82,8 +82,10 @@ def show_dash_figures(
         temporal_node_opacity_dict=temporal_node_opacity_dict,
     )
 
-    app.run_server()
+    # Silence the dash app verbosity to console.
+    log = logging.getLogger("werkzeug")
+    log.setLevel(logging.ERROR)
+
+    # Launch the dash app in browser.
+    app.run_server(port=port, threaded=True)
     print("done running surver")
-    # app.run_server(debug=True)
-    # if __name__ == "__main__":
-    #    app.run_server(debug=True)

@@ -91,7 +91,7 @@ class Supported_experiment_settings:
         # Specify the maximum number of: (maximum number of graphs per run
         # size).
         self.min_max_graphs = 1
-        self.max_max_graphs = 15
+        self.max_max_graphs = 20
 
         # Specify the maximum graph size.
         self.min_graph_size = 3
@@ -114,7 +114,7 @@ class Supported_experiment_settings:
         self.seeds = list(range(0, 1000))
 
         # The backend/type of simulator that is used.
-        self.simulators = ["nx", "lava"]
+        self.simulators = ["nx", "lava", "simsnn"]
 
         # Generate the supported adaptation settings.
         self.specify_supported_adaptation_settings()
@@ -524,15 +524,6 @@ def verify_adap_and_rad_settings(
         "Error, property is expected to be a Dict, yet"
         + f" it was of type: {type(some_dict)}."
     )
-
-
-def verify_algorithm_settings(
-    *,
-    supp_exp_config: Supported_experiment_settings,
-    some_dict: dict,
-    check_type: str,
-) -> None:
-    """TODO: Verifies the settings of the algorithm are valid."""
 
 
 def verify_radiations_values(

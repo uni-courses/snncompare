@@ -31,25 +31,13 @@ def has_outputted_stage_jsons(
     run_config: Run_config,
     stage_index: int,
 ) -> bool:
-    """Checks if a stage has been outputted or not."""
-    if stage_index not in [1, 2, 3, 4, 5]:
-        raise ValueError(
-            f"Error, stage_index:{stage_index} was not in range:{[1,2,3,4,5]}"
-        )
-    expected_filepaths = get_expected_files(run_config=run_config)
-    # print(f'expected_filepaths=')
-    # pprint(expected_filepaths)
+    """Checks if a stage has been outputted or not.
 
-    if not expected_files_exist(expected_filepaths=expected_filepaths):
-        return False
-
-    if not expected_jsons_are_valid(
-        expected_filepaths=expected_filepaths,
-        expected_stages=expected_stages,
-        run_config=run_config,
-        stage_index=stage_index,
-    ):
-        return False
+    TODO: delete?
+    """
+    print(expected_stages)
+    print(run_config)
+    print(stage_index)
     return True
 
 
@@ -75,7 +63,10 @@ def has_outputted_images(
 
 @typechecked
 def get_expected_files(*, run_config: Run_config) -> List[str]:
-    """Returns the list of expected files for a run configuration."""
+    """Returns the list of expected files for a run configuration.
+
+    TODO: delete?
+    """
     expected_filepaths = []
     filename = run_config_to_filename(run_config_dict=run_config.__dict__)
     relative_output_dir = "results/"
@@ -135,7 +126,10 @@ def expected_json_content_is_valid(
     verbose: Optional[bool] = False,
 ) -> bool:
     """Safely checks if a json file can successfully be loaded into this
-    experiment."""
+    experiment.
+
+    TODO: delete?
+    """
 
     if filepath[-5:] == ".json":
         # Load the json graphs from json file to see if they exist.

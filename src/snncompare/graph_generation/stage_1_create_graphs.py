@@ -5,9 +5,13 @@ networkx Graph.
 """
 
 import copy
-from typing import Dict, List
+from math import inf
+from typing import Dict, List, Union
 
 import networkx as nx
+from simsnn.core.networks import Network
+from simsnn.core.nodes import LIF
+from simsnn.core.simulators import Simulator
 from snnadaptation.redundancy.redundancy import apply_redundancy
 from snnadaptation.redundancy.verify_redundancy_settings import (
     verify_redundancy_settings_for_run_config,
@@ -19,6 +23,8 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
     SNN_initialisation_properties,
 )
 from snnalgorithms.Used_graphs import Used_graphs
+from snnbackends.networkx.LIF_neuron import LIF_neuron
+from snnbackends.simsnn.simsnn_to_nx_lif import simsnn_graph_to_nx_lif_graph
 from snnradiation.Radiation_damage import (
     Radiation_damage,
     verify_radiation_is_applied,
@@ -28,11 +34,135 @@ from typeguard import typechecked
 from snncompare.export_plots.Plot_config import Plot_config
 from snncompare.run_config.Run_config import Run_config
 
-from ..helper import add_stage_completion_to_graph
+
+@typechecked
+def get_graphs_stage_1(
+    *,
+    plot_config: Plot_config,
+    run_config: Run_config,
+) -> Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]:
+    """Returns the initialised graphs for stage 1 for the different
+    simulators."""
+    stage_1_graphs: Dict[
+        str, Union[nx.Graph, nx.DiGraph, Simulator]
+    ] = get_nx_lif_graphs(
+        plot_config=plot_config,
+        run_config=run_config,
+    )
+
+    if run_config.simulator == "nx":
+        return stage_1_graphs
+    if run_config.simulator == "simsnn":
+        return nx_lif_graphs_to_simsnn_graphs(
+            stage_1_graphs=stage_1_graphs,
+            reverse_conversion=False,
+            run_config=run_config,
+        )
+    raise NotImplementedError(
+        "Error, did not yet implement simsnn to nx_lif converter."
+    )
 
 
 @typechecked
-def get_used_graphs(
+def nx_lif_graphs_to_simsnn_graphs(
+    *,
+    stage_1_graphs: Dict,
+    reverse_conversion: bool,
+    run_config: Run_config,
+) -> Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]:
+    """Converts nx_lif graphs to sim snn graphs."""
+    new_graphs: Dict = {}
+    new_graphs["input_graph"] = stage_1_graphs["input_graph"]
+    if "alg_props" not in new_graphs["input_graph"].graph.keys():
+        new_graphs["input_graph"].graph[
+            "alg_props"
+        ] = SNN_initialisation_properties(
+            G=new_graphs["input_graph"], seed=run_config.seed
+        ).__dict__
+
+    for graph_name in stage_1_graphs.keys():
+        # if graph_name in ["snn_algo_graph", "adapted_snn_graph",]:
+        if graph_name in [
+            "snn_algo_graph",
+            "adapted_snn_graph",
+        ]:
+            if reverse_conversion:
+                new_graphs[graph_name] = simsnn_graph_to_nx_lif_graph(
+                    simsnn=stage_1_graphs[graph_name]
+                )
+
+            else:
+                new_graphs[graph_name] = nx_lif_graph_to_simsnn_graph(
+                    snn_graph=stage_1_graphs[graph_name],
+                    add_to_multimeter=True,
+                    add_to_raster=True,
+                )
+
+    return new_graphs
+
+
+@typechecked
+def nx_lif_graph_to_simsnn_graph(
+    *,
+    snn_graph: nx.DiGraph,
+    add_to_multimeter: bool,
+    add_to_raster: bool,
+) -> Simulator:
+    """Converts an snn graph of type nx_LIF to sim snn graph."""
+    net = Network()
+    sim = Simulator(net, monitor_I=True)
+
+    simsnn: Dict[str, LIF] = {}
+    for node_name in snn_graph.nodes:
+        nx_lif: LIF_neuron = snn_graph.nodes[node_name]["nx_lif"][0]
+        if nx_lif.dv.get() > 1 or nx_lif.dv.get() < -1:
+            raise ValueError(
+                f"Error, dv={nx_lif.dv.get()} is not in range [-1,1] for: "
+                + f"{node_name}"
+            )
+        simsnn[node_name] = net.createLIF(
+            m=1 - nx_lif.dv.get(),
+            bias=nx_lif.bias.get(),
+            V_init=0,
+            V_reset=0,
+            V_min=-inf,
+            thr=nx_lif.vth.get(),
+            amplitude=1,
+            I_e=0,
+            noise=0,
+            rng=0,
+            ID=0,
+            name=node_name,
+            increment_count=False,
+            du=nx_lif.du.get(),
+            pos=nx_lif.pos,
+            spike_only_if_thr_exceeded=True,
+        )
+    for edge in snn_graph.edges():
+        synapse = snn_graph.edges[edge]["synapse"]
+        # pylint: disable=R0801
+        net.createSynapse(
+            pre=simsnn[edge[0]],
+            post=simsnn[edge[1]],
+            ID=edge,
+            w=synapse.weight,
+            d=1,
+        )
+
+    if add_to_raster:
+        # Add all neurons to the raster.
+        sim.raster.addTarget(net.nodes)
+    if add_to_multimeter:
+        # Add all neurons to the multimeter.
+        sim.multimeter.addTarget(net.nodes)
+
+    # Add (redundant) graph properties.
+    sim.network.graph.graph = snn_graph.graph
+    return sim
+
+
+@typechecked
+def get_nx_lif_graphs(
     *,
     plot_config: Plot_config,
     run_config: Run_config,
@@ -75,10 +205,6 @@ def get_used_graphs(
                 run_config=run_config,
                 seed=run_config.seed,
             )
-    # TODO: move this into a separate location/function.
-    # Indicate the graphs have completed stage 1.
-    for graph in graphs.values():
-        add_stage_completion_to_graph(input_graph=graph, stage_index=1)
     return graphs
 
 
@@ -93,11 +219,10 @@ def get_input_graph_of_run_config(
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
-    input_graph: nx.Graph = get_input_graphs(run_config=run_config)[
-        run_config.graph_nr
-    ]
-
-    # TODO: Verify the graphs are valid (triangle free and planar for MDSA).
+    input_graphs: Dict[str, nx.Graph] = get_input_graphs(run_config=run_config)
+    sorted_hashes: List[str] = sorted(input_graphs.keys())
+    run_config.isomorphic_hash_input = sorted_hashes[run_config.graph_nr]
+    input_graph: nx.Graph = input_graphs[run_config.isomorphic_hash_input]
     return input_graph
 
 
@@ -105,15 +230,17 @@ def get_input_graph_of_run_config(
 def get_input_graphs(
     *,
     run_config: Run_config,
-) -> List[nx.Graph]:
+) -> Dict[str, nx.Graph]:
     """Removes graphs that are not used, because of a maximum nr of graphs that
     is to be evaluated."""
     used_graphs = Used_graphs()
-    input_graphs: List[nx.DiGraph] = used_graphs.get_graphs(
-        run_config.graph_size
+    input_graphs: Dict[str, nx.Graph] = used_graphs.get_graphs(
+        max_nr_of_graphs=run_config.graph_nr + 1,
+        seed=run_config.seed,
+        size=run_config.graph_size,
     )
-    if len(input_graphs) > run_config.graph_nr:
-        for input_graph in input_graphs:
+    if len(input_graphs.values()) > run_config.graph_nr:
+        for input_graph in input_graphs.values():
             # TODO: set alg_props:
             if "alg_props" not in input_graph.graph.keys():
                 input_graph.graph["alg_props"] = SNN_initialisation_properties(
@@ -255,7 +382,7 @@ def get_radiation_graph(
             rad_dam = Radiation_damage(probability=radiation_setting)
             radiation_graph: nx.DiGraph = copy.deepcopy(snn_graph)
             dead_neuron_names = rad_dam.inject_simulated_radiation(
-                get_degree=radiation_graph,
+                snn_graph=radiation_graph,
                 probability=rad_dam.neuron_death_probability,
                 seed=seed,
             )

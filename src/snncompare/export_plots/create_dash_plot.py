@@ -5,6 +5,11 @@ from typing import Dict, List, Optional, Union
 import dash
 import networkx as nx
 import plotly.graph_objs as go
+from simsnn.core.simulators import Simulator
+from snnbackends.simsnn.simsnn_to_nx_lif import (
+    add_simsnn_simulation_data_to_reconstructed_nx_lif,
+    simsnn_graph_to_nx_lif_graph,
+)
 from typeguard import typechecked
 
 from snncompare.export_plots.create_dash_fig_obj import create_svg_with_dash
@@ -20,20 +25,24 @@ from snncompare.export_plots.show_dash_plot import (
 from snncompare.export_plots.store_plot_data_in_graph import (
     store_plot_params_in_graph,
 )
+from snncompare.helper import get_some_duration
 from snncompare.optional_config.Output_config import Output_config
+from snncompare.run_config.Run_config import Run_config
 
 
 # Determine which graph(s) the user would like to see.
 # If no specific preference specified, show all 4.
 # pylint: disable=R0903
+# pylint: disable=R0913
 # pylint: disable=R0914
 @typechecked
 def create_svg_plot(
-    run_config_filename: str,
     graph_names: List[str],
-    graphs: Dict[str, Union[nx.Graph, nx.DiGraph]],
+    graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    # graphs: Dict,
     output_config: Output_config,
-    # single_timestep: Optional[int] = 5,
+    run_config: Run_config,
+    run_config_filename: str,
     single_timestep: Optional[int] = None,
 ) -> None:
     """Creates the svg plots."""
@@ -44,21 +53,44 @@ def create_svg_plot(
     # pylint: disable=R1702
     dash_figures: Dict[str, List[go.Figure]] = {}
     plotted_graphs: Dict[str, nx.DiGraph] = {}
-    for i, (graph_name, snn_graph) in enumerate(graphs.items()):
-        print(f"i={i}")
+
+    for _, (graph_name, snn_graph) in enumerate(graphs.items()):
         if graph_name in graph_names:
             print("")
             print("")
 
-            sim_duration = snn_graph.graph["sim_duration"]
+            sim_duration = get_some_duration(
+                simulator=run_config.simulator,
+                snn_graph=snn_graph,
+                duration_name="actual_duration",
+            )
+
             print(f"Creating:graph_name={graph_name}")
+
+            # Convert simsnn to nx_LIF
+            if (
+                run_config.simulator == "simsnn"
+                and graph_name != "input_graph"
+            ):
+                nx_snn: nx.DiGraph = simsnn_graph_to_nx_lif_graph(
+                    simsnn=snn_graph
+                )
+
+                # Add time dimension to nx_snn that was created from simsnn.
+                add_simsnn_simulation_data_to_reconstructed_nx_lif(
+                    nx_snn=nx_snn,
+                    simsnn=snn_graph,
+                )
+
+            else:
+                nx_snn = snn_graph
             create_figures(
                 graph_name=graph_name,
                 run_config_filename=run_config_filename,
                 output_config=output_config,
                 plot_config=plot_config,
                 sim_duration=sim_duration,
-                snn_graph=snn_graph,
+                snn_graph=nx_snn,
                 single_timestep=single_timestep,
                 dash_figures=dash_figures,
                 plotted_graphs=plotted_graphs,
@@ -71,6 +103,7 @@ def create_svg_plot(
         plot_config=plot_config,
         plotted_graphs=plotted_graphs,
         single_timestep=single_timestep,
+        port=output_config.dash_port,
     )
 
 
@@ -128,6 +161,7 @@ def show_figures(
     output_config: Output_config,
     plot_config: Plot_config,
     plotted_graphs: Dict[str, nx.DiGraph],
+    port: int,
     single_timestep: Optional[bool],
 ) -> None:
     """Shows the dash figures."""
@@ -149,6 +183,7 @@ def show_figures(
                     app=app,
                     plot_config=plot_config,
                     plotted_graphs=plotted_graphs,
+                    port=port,
                 )
 
 
