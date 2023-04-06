@@ -158,30 +158,25 @@ graphs) with command:
 python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -rev
 ```
 
-You can output images with:
-
-```bash
-python -m src.snncompare -e mdsa_size3_m0_adap_rad -j1 -j2 -j4 -x svg
-```
-
 You can run a single `run_config` with:
 
 ```bash
 python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r run_config_file_name
 ```
 
-Typical run:
+Typical run (deletes pre-existing results):
 
 ```bash
-python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r1 -r2 -r4
-python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -dr
+python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -j5 -rev -dr
 ```
 
-Debug run, in separate console:
+Debug 2 runs, in separate console:
 
 ```bash
-python -m src.snncompare -e debug0 -j1 -j2 -j4 -j5 -rev  -si -sgt rad_adapted_snn_graph
-python -m src.snncompare -e debug1 -j1 -j2 -j4 -j5 -rev  -si -sgt rad_adapted_snn_graph
+python -m src.snncompare -e debug0 -j1 -j2 -j4 -j5 -rev  -si -sgt \
+ rad_adapted_snn_graph -p 8000
+python -m src.snncompare -e debug1 -j1 -j2 -j4 -j5 -rev  -si -sgt \
+ rad_adapted_snn_graph -p 8003
 ```
 
 For more info, run:
@@ -200,19 +195,35 @@ or to see live output, on any tests filenames containing substring: `results`:
 
 ```bash
 python -m pytest tests/sparse/MDSA/test_snn_results_with_adaptation.py --capture=tee-sys
+```
 
-python -m pytest \
-  tests/sparse/MDSA/adaptation/test_snns_without_radiation_passes.py \
-  --capture=tee-sys
-python -m pytest tests/sparse/MDSA/adaptation/test_redundancy_n.py --capture=tee-sys
-python -m pytest \
-  tests/sparse/MDSA/adaptation/test_redundancy_doesnt_spike_with_adaptation.py \
-  --capture=tee-sys
-python -m pytest tests/sparse/MDSA/adaptation/test_redundancy_1.py --capture=tee-sys
+## Developers
 
-python -m src.snncompare -e mdsa_long_no_overwrite -j5 -rev
-python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -rev -dr
-python -m src.snncompare -e mdsa_size3_m0_adap_rad -j1 -j2 -j4 -rev -dr
+Improve the project using:
+
+```bash
+mkdir -p ~/git/snn
+mkdir ~/git/snn/.vscode
+mkdir -p ~/bin
+cd ~/git/snn
+
+git clone git@github.com:a-t-0/snnadaptation.git
+git clone git@github.com:a-t-0/snnalgorithms.git
+git clone git@github.com:a-t-0/snnbackends.git
+git clone git@github.com:a-t-0/snnradiation.git
+git clone git@github.com:a-t-0/snncompare.git
+
+cp snncompare/.vscode/settings.json .vscode/settings.json
+cp snncompare/snn_rebuild.sh ~/bin/snnrb
+
+cd snncompare
+conda env create --file environment.yml
+```
+
+Then you can commit/update your work across all repos at  once with:
+
+```bash
+snnrb -c "Some commit."
 ```
 
 ## Test Coverage
