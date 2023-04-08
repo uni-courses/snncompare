@@ -8,28 +8,13 @@ SubInput: Run configuration within an experiment.
     Stage 4: Post-processed performance data of algorithm and adaptation
     mechanism.
 """
-import copy
 from typing import Dict
 
-import jsons
-import networkx as nx
-from networkx.readwrite import json_graph
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.export_plots.plot_graphs import plot_uncoordinated_graph
-from snncompare.export_results.export_nx_graph_to_json import digraph_to_json
-from snncompare.export_results.prepare_output_stage_1 import (
-    prepare_stage_1_and_2_nx_lif_output,
-    prepare_stage_1_and_2_simsnn_output,
-)
-from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
 
-from .export_json_results import (
-    verify_loaded_json_content_is_nx_graph,
-    write_to_json,
-)
 from .verify_stage_1_graphs import verify_stage_1_graphs
 from .verify_stage_2_graphs import verify_stage_2_graphs
 from .verify_stage_3_graphs import verify_stage_3_graphs
@@ -165,98 +150,3 @@ class Stage_4_graphs:
             run_config=run_config,
             graphs_stage_4=self.graphs_stage_4,
         )
-
-
-@typechecked
-def output_stage_json(
-    *,
-    exp_config: Exp_config,
-    run_config: Run_config,
-    results_nx_graphs: Dict,
-    run_config_filename: str,
-    stage_index: int,
-) -> None:
-    """Exports results dict to a json file."""
-
-    if results_nx_graphs["graphs_dict"] == {}:
-        raise ValueError(
-            "Error, the graphs_of_stage of stage_index="
-            + f"{stage_index} was an empty dict."
-        )
-
-    input_graph: nx.Graph = results_nx_graphs["graphs_dict"]["input_graph"]
-    if results_nx_graphs["run_config"].simulator == "nx":
-        results_nx_graphs = prepare_stage_1_and_2_nx_lif_output(
-            results_nx_graphs=results_nx_graphs,
-            stage_index=stage_index,
-        )
-
-    elif results_nx_graphs["run_config"].simulator == "simsnn":
-        results_nx_graphs["graphs_dict"] = prepare_stage_1_and_2_simsnn_output(
-            graphs_dict=results_nx_graphs["graphs_dict"],
-        )
-
-        results_nx_graphs["graphs_dict"]["input_graph"] = digraph_to_json(
-            G=input_graph
-        )
-
-    else:
-        raise NotImplementedError(
-            "Error, did not yet implement simsnn to nx_lif converter."
-        )
-
-    # Convert Run_config and Exp_config into dicts before jsons.dump. Done to
-    # elope warning on Exp_config.adaptations = None (optional argument), which
-    # cannot be dumped into dict.
-    exported_dict = copy.deepcopy(results_nx_graphs)
-    for key, val in exported_dict.items():
-        if not isinstance(val, Dict):
-            exported_dict[key] = val.__dict__
-
-    output_filepath = f"results/{run_config_filename}.json"
-    write_to_json(
-        output_filepath=output_filepath,
-        some_dict=jsons.dump(exported_dict),
-    )
-    verify_loaded_json_content_is_nx_graph(
-        output_filepath=output_filepath,
-        some_dict=jsons.dump(exported_dict),
-    )
-
-    # Revert input graph back from json to dict.
-    if not isinstance(
-        results_nx_graphs["graphs_dict"]["input_graph"], nx.Graph
-    ):
-        results_nx_graphs["graphs_dict"][
-            "input_graph"
-        ] = json_graph.node_link_graph(
-            results_nx_graphs["graphs_dict"]["input_graph"]
-        )
-    if not isinstance(
-        results_nx_graphs["graphs_dict"]["input_graph"], nx.Graph
-    ):
-        raise TypeError(
-            "Error, input graph was not of type nx.DiGraph:"
-            + f'{type(results_nx_graphs["graphs_dict"]["input_graph"])}'
-        )
-
-
-@typechecked
-def plot_graph_behaviours(
-    *,
-    run_config_filename: str,
-    output_config: Output_config,
-    stage_2_graphs: Dict,
-) -> None:
-    """Exports the plots of the graphs per time step of the run
-    configuration."""
-
-    # Loop over the graph types
-    for graph_name, snn_graph in stage_2_graphs.items():
-        if graph_name == "input_graph":
-            plot_uncoordinated_graph(
-                extensions=output_config.export_types,
-                G=snn_graph,
-                filename=f"{graph_name}_{run_config_filename}.png",
-                show=False,
-            )

@@ -53,43 +53,6 @@ def plot_circular_graph(
 
 
 @typechecked
-def plot_uncoordinated_graph(
-    *,
-    extensions: list[str],
-    G: nx.DiGraph | nx.Graph,
-    filename: str,
-    show: bool,
-) -> None:
-    """Generates a circular plot of a (directed) graph.
-
-    :param density: param G:
-    :param seed: The value of the random seed used for this test.
-    :param show: Default value = True)
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param export:  (Default value = False)
-    """
-    # TODO: Remove unused method.
-    # the_labels = get_alipour_labels(G, configuration=configuration)
-    # the_labels =
-    # nx.draw_networkx_labels(G, pos=None, labels=the_labels)
-    npos = nx.circular_layout(
-        G,
-        scale=1,
-    )
-    nx.draw(G, npos, with_labels=True)
-    export_plot(
-        some_plt=plt,
-        filename=filename,
-        extensions=extensions,
-    )
-
-    if show:
-        plt.show()
-    plt.clf()
-    plt.close()
-
-
-@typechecked
 def create_root_dir_if_not_exists(*, root_dir_name: str) -> None:
     """
 

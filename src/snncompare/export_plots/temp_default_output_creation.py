@@ -32,6 +32,7 @@ def create_default_output_config(*, exp_config: Exp_config) -> Output_config:
             count_spikes=False,
             count_neurons=False,
             count_synapses=False,
+            skip_stage_2_output=True,
             show_images=True,
             store_died_neurons=False,
         ),

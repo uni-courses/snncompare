@@ -165,35 +165,6 @@ def assert_has_outputted_stage_1(run_config: Run_config) -> None:
 
 
 @typechecked
-def load_input_graph(
-    *,
-    run_config: Run_config,
-) -> nx.Graph:
-    """Loads the input_graph."""
-    # Get the json filename.
-    output_dir: str = f"results/input_graphs/{run_config.graph_size}/"
-    # TODO: add dict with isomorphic hashes to run_config, instead of graph
-    # nrs.
-    output_filepath: str = f"{output_dir}{run_config.isomorphic_hash}.json"
-    input_graph_dict = load_json_file_into_dict(json_filepath=output_filepath)
-    input_graph: nx.Graph = nx.Graph(**input_graph_dict)
-    return input_graph
-
-
-@typechecked
-def input_graph_exists(
-    *,
-    run_config: Run_config,
-) -> bool:
-    """Returns True if the input graph file exists, False otherwise."""
-    output_dir: str = f"results/input_graphs/{run_config.graph_size}/"
-    # TODO: add dict with isomorphic hashes to run_config, instead of graph
-    # nrs.
-    output_filepath: str = f"{output_dir}{run_config.isomorphic_hash}.json"
-    return Path(output_filepath).is_file()
-
-
-@typechecked
 def load_stage1_simsnn_graphs(
     *,
     run_config: Run_config,

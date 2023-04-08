@@ -48,7 +48,6 @@ from snncompare.export_results.output_stage4_results import (
 )
 from snncompare.helper import (
     add_stage_completion_to_graph,
-    dicts_are_equal,
     get_snn_graph_names,
 )
 from snncompare.import_results.load_stage_1_and_2 import (
@@ -403,53 +402,6 @@ class Experiment_runner:
             run_config=run_config,
             stage_index=4,
         )
-
-        # verify_stage_completion(
-        # results_nx_graphs=results_nx_graphs,
-        # stage_index=4,
-        # simulator=run_config.simulator,
-        # )
-
-        # Indicate the graphs have completed stage 1.
-        # for graph_name,snn in results_nx_graphs["graphs_dict"].items():
-        # if graph_name !="input_graph":
-        # print(f'graph_name={graph_name}')
-        # add_stage_completion_to_graph(snn=snn, stage_index=4)
-
-        # pylint: disable=E1125
-        # output_stage_files_3_and_4(
-        # output_config=output_config,
-        # results_nx_graphs=results_nx_graphs,
-        # stage_index=4,
-        # )
-
-        # assert_stage_is_completed(
-        # expected_stages=[1, 2, 4],  # TODO: determine if 3 should be in.
-        # run_config=run_config,
-        # stage_index=4,
-        # )
-
-    @typechecked
-    def equalise_loaded_run_config(
-        self,
-        loaded_from_json: Run_config,
-        incoming: Run_config,
-    ) -> None:
-        """Ensures the non-impactfull run config that is loaded from json are
-        identical to those of the  incoming run_config."""
-        for key, val in incoming.__dict__.items():
-            if loaded_from_json.__dict__[key] != val:
-                loaded_from_json.__dict__[key] = val
-        if not dicts_are_equal(
-            left=loaded_from_json.__dict__,
-            right=incoming.__dict__,
-            without_unique_id=False,
-        ):
-            pprint(loaded_from_json.__dict__)
-            pprint(incoming.__dict__)
-            raise AttributeError(
-                "Run_config and loaded run_config from json are not equal."
-            )
 
     def load_pickled_boxplot_data(
         self,

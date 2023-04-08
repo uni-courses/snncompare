@@ -16,7 +16,6 @@ as the corresponding neighbours in the Neumann algorithm.
 # Run a run config.
 
 from pprint import pprint
-from typing import Dict
 from unittest import TestCase
 
 from typeguard import typechecked
@@ -27,63 +26,6 @@ from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.json_configurations.algo_test import load_exp_config_from_file
 from snncompare.optional_config.Output_config import Output_config
-from snncompare.run_config.Run_config import Run_config
-
-
-@typechecked
-def tested_run_config() -> Run_config:
-    """Returns the specific run config that is being tested."""
-    run_config: Run_config = Run_config(
-        **{
-            "adaptation": {"redundancy": 2},
-            "algorithm": {"MDSA": {"m_val": 0}},
-            "graph_nr": 2,
-            "graph_size": 6,
-            "max_duration": None,
-            "radiation": {"neuron_death": 0.01},
-            "seed": 7,
-            "simulator": "simsnn",
-        }
-    )
-    return run_config
-
-
-@typechecked
-def custom_mdsa_compliance_m0_exp_config() -> Exp_config:
-    """Contains a default experiment configuration used to test the MDSA
-    algorithm."""
-
-    # Create the experiment configuration settings for a run with adaptation
-    # and with radiation.
-    long_mdsa_testing: Dict = {
-        "adaptations": {"redundancy": [2]},
-        "algorithms": {
-            "MDSA": [
-                {"m_val": 0},
-            ]
-        },
-        # TODO: Change into list with "Seeds"
-        "seeds": [7],
-        # TODO: merge into: "input graph properties object
-        # TODO: include verification."
-        "max_graph_size": 20,
-        "max_max_graphs": 4,
-        "min_graph_size": 20,
-        "min_max_graphs": 4,
-        "radiations": {
-            "neuron_death": [
-                0.01,
-            ]
-        },
-        "size_and_max_graphs": [(6, 4)],
-        "simulators": ["simsnn"],
-        "neuron_models": ["LIF"],
-        "synaptic_models": ["LIF"],
-    }
-
-    # The ** loads the dict into the object.
-    exp_config = Exp_config(**long_mdsa_testing)
-    return exp_config
 
 
 class Test_something(TestCase):

@@ -6,9 +6,8 @@ The MDSA algorithm results will consist of a list of nodes per used
 graph that have been selected according to Alipour, and according to the
 respective SNN graph.
 """
-from typing import Dict, Union
+from typing import Dict
 
-import networkx as nx
 from simsnn.core.simulators import Simulator
 from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
     set_mdsa_snn_results,
@@ -144,24 +143,4 @@ def verify_stage_completion(
             expected_stages=get_expected_stages(
                 stage_index=stage_index,
             ),
-        )
-
-
-@typechecked
-def add_result_to_last_graph(
-    *, snn_graphs: Union[nx.DiGraph, Simulator], result_per_type: Dict
-) -> None:
-    """Checks whether the incoming snn_graph is a list of graphs or single
-    graph.
-
-    If it is a graph, add the results as key of the graph. If it is a
-    list of graphs, add the results as a key of the last graph in the
-    list.
-    """
-    if isinstance(snn_graphs, nx.DiGraph):
-        snn_graphs.graph["results"] = result_per_type
-
-    else:
-        raise TypeError(
-            "Error, unsupported snn graph type:" + f"{type(snn_graphs)}"
         )
