@@ -1,7 +1,8 @@
 {
   "adaptations": {
     "redundancy": [
-      2
+      2,
+      4
     ]
   },
   "algorithms": {

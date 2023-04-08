@@ -36,54 +36,55 @@ def output_stage_2_snns(
     """Exports results dict to a json file."""
     stage_index: int = 2
 
-    for with_adaptation in [False, True]:
-        for with_radiation in [False, True]:
-            next_action: str = simulate_load_or_skip(
-                output_config=output_config,
-                run_config=run_config,
-                stage_1_graphs=graphs_dict,
-                with_adaptation=with_adaptation,
-                with_radiation=with_radiation,
-            )
-
-            if next_action == "Simulate":
-                (
-                    output_category,
-                    rad_affected_neurons_hash,
-                ) = get_output_category_and_rad_affected_neuron_hash(
-                    graphs_dict=graphs_dict,
+    if not output_config.extra_storing_config.skip_stage_2_output:
+        for with_adaptation in [False, True]:
+            for with_radiation in [False, True]:
+                next_action: str = simulate_load_or_skip(
+                    output_config=output_config,
                     run_config=run_config,
+                    stage_1_graphs=graphs_dict,
                     with_adaptation=with_adaptation,
                     with_radiation=with_radiation,
-                    stage_index=stage_index,
                 )
 
-                _, rand_nrs_hash = get_rand_nrs_and_hash(
-                    input_graph=graphs_dict["input_graph"]
-                )
-
-                # pylint:disable=R0801
-                (
-                    simsnn_exists,
-                    simsnn_filepath,
-                ) = simsnn_files_exists_and_get_path(
-                    output_category=output_category,
-                    input_graph=graphs_dict["input_graph"],
-                    run_config=run_config,
-                    with_adaptation=with_adaptation,
-                    stage_index=stage_index,
-                    rad_affected_neurons_hash=rad_affected_neurons_hash,
-                    rand_nrs_hash=rand_nrs_hash,
-                )
-                if not simsnn_exists:
-                    output_snn_graph_stage_2(
-                        output_filepath=simsnn_filepath,
-                        snn_graph=get_desired_snn_graph(
-                            graphs_dict=graphs_dict,
-                            with_adaptation=with_adaptation,
-                            with_radiation=with_radiation,
-                        ),
+                if next_action == "Simulate":
+                    (
+                        output_category,
+                        rad_affected_neurons_hash,
+                    ) = get_output_category_and_rad_affected_neuron_hash(
+                        graphs_dict=graphs_dict,
+                        run_config=run_config,
+                        with_adaptation=with_adaptation,
+                        with_radiation=with_radiation,
+                        stage_index=stage_index,
                     )
+
+                    _, rand_nrs_hash = get_rand_nrs_and_hash(
+                        input_graph=graphs_dict["input_graph"]
+                    )
+
+                    # pylint:disable=R0801
+                    (
+                        simsnn_exists,
+                        simsnn_filepath,
+                    ) = simsnn_files_exists_and_get_path(
+                        output_category=output_category,
+                        input_graph=graphs_dict["input_graph"],
+                        run_config=run_config,
+                        with_adaptation=with_adaptation,
+                        stage_index=stage_index,
+                        rad_affected_neurons_hash=rad_affected_neurons_hash,
+                        rand_nrs_hash=rand_nrs_hash,
+                    )
+                    if not simsnn_exists:
+                        output_snn_graph_stage_2(
+                            output_filepath=simsnn_filepath,
+                            snn_graph=get_desired_snn_graph(
+                                graphs_dict=graphs_dict,
+                                with_adaptation=with_adaptation,
+                                with_radiation=with_radiation,
+                            ),
+                        )
 
 
 @typechecked
