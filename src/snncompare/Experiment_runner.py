@@ -62,6 +62,7 @@ from snncompare.optional_config.Output_config import (
 )
 from snncompare.progress_report.has_completed_stage2_or_4 import (
     assert_has_outputted_stage_2_or_4,
+    has_outputted_stage_2_or_4,
 )
 from snncompare.run_config.Run_config import Run_config
 from snncompare.simulation.add_radiation_graphs import (
@@ -386,22 +387,30 @@ class Experiment_runner:
         last entry of each graph.
         """
 
-        set_results(
-            exp_config=exp_config,
-            output_config=output_config,
-            run_config=run_config,
-            stage_2_graphs=results_nx_graphs["graphs_dict"],
-        )
+        if (
+            not has_outputted_stage_2_or_4(
+                graphs_dict=results_nx_graphs["graphs_dict"],
+                run_config=run_config,
+                stage_index=4,
+            )
+            or 4 in output_config.recreate_stages
+        ):
+            set_results(
+                exp_config=exp_config,
+                output_config=output_config,
+                run_config=run_config,
+                stage_2_graphs=results_nx_graphs["graphs_dict"],
+            )
 
-        output_stage_4_results(
-            run_config=run_config,
-            graphs_dict=results_nx_graphs["graphs_dict"],
-        )
-        assert_has_outputted_stage_2_or_4(
-            graphs_dict=results_nx_graphs["graphs_dict"],
-            run_config=run_config,
-            stage_index=4,
-        )
+            output_stage_4_results(
+                run_config=run_config,
+                graphs_dict=results_nx_graphs["graphs_dict"],
+            )
+            assert_has_outputted_stage_2_or_4(
+                graphs_dict=results_nx_graphs["graphs_dict"],
+                run_config=run_config,
+                stage_index=4,
+            )
 
     def load_pickled_boxplot_data(
         self,
