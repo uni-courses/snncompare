@@ -167,7 +167,7 @@ python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r run_config_fil
 Typical run (deletes pre-existing results):
 
 ```bash
-python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -j5 -rev -dr
+python -m src.snncompare -e quicktest -j1 -j2 -j4 -j5 -s2 -rev -dr
 ```
 
 Debug 2 runs, in separate console:

@@ -19,8 +19,14 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.optional_config.Output_config import Output_config
 from snncompare.run_config.Run_config import Run_config
+from snncompare.simulation.stage2_sim import stage_2_or_4_graph_exists_already
 
-from ..helper import add_stage_completion_to_graph, get_expected_stages
+from ..helper import (
+    add_stage_completion_to_graph,
+    get_expected_stages,
+    get_with_adaptation_bool,
+    get_with_radiation_bool,
+)
 from ..import_results.check_completed_stages import (
     nx_graphs_have_completed_stage,
 )
@@ -72,27 +78,42 @@ def perform_mdsa_results_computation_if_needed(
     """
     set_new_results: bool = False
 
-    for snn in stage_2_graphs.values():
+    for graph_name, snn in stage_2_graphs.items():
         if isinstance(snn, Simulator):
             graph = snn.network.graph
         else:
             graph = snn
-
-        if (
-            4 not in graph.graph["completed_stages"]
-            or 4 in output_config.recreate_stages
-        ):
-            set_new_results = True
-            set_mdsa_snn_results(
-                exp_config=exp_config,
-                m_val=m_val,
-                output_config=output_config,
-                run_config=run_config,
-                stage_2_graphs=stage_2_graphs,
+        if graph_name != "input_graph":
+            with_adaptation: bool = get_with_adaptation_bool(
+                graph_name=graph_name
+            )
+            with_radiation: bool = get_with_radiation_bool(
+                graph_name=graph_name
             )
 
-            # Indicate the graphs have completed stage 1.
-            add_stage_completion_to_graph(snn=graph, stage_index=4)
+            if not stage_2_or_4_graph_exists_already(
+                input_graph=stage_2_graphs["input_graph"],
+                stage_1_graphs=stage_2_graphs,
+                run_config=run_config,
+                with_adaptation=with_adaptation,
+                with_radiation=with_radiation,
+                stage_index=4,
+            ):
+                if (
+                    4 not in graph.graph["completed_stages"]
+                    or 4 in output_config.recreate_stages
+                ):
+                    set_new_results = True
+                    set_mdsa_snn_results(
+                        exp_config=exp_config,
+                        m_val=m_val,
+                        output_config=output_config,
+                        run_config=run_config,
+                        stage_2_graphs=stage_2_graphs,
+                    )
+
+        # Indicate the graphs have completed stage 1.
+        add_stage_completion_to_graph(snn=graph, stage_index=4)
     return set_new_results
 
 

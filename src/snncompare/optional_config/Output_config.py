@@ -161,10 +161,12 @@ class Extra_storing_config:
         count_spikes: bool,
         count_neurons: bool,
         count_synapses: bool,
+        skip_stage_2_output: bool,
         show_images: bool,
         store_died_neurons: bool,  # Does this say dead neuron storage?
     ):
         self.count_spikes: bool = count_spikes
+        self.skip_stage_2_output: bool = skip_stage_2_output
         if self.count_spikes:
             raise NotImplementedError(
                 "Error, count_spikes not yet implemented."

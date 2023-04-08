@@ -225,6 +225,19 @@ def parse_cli_args(
         help=("Run experiment config from small/fast to large/slow."),
     )
 
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-s2",
+        "--skip-stage-2-output",
+        action="store_true",
+        default=False,
+        help=(
+            "Skips outputting the simulation data of stage 2 for the snns."
+            + "Also skips the simulation if the results from that simulation"
+            + "already exist in stage 4."
+        ),
+    )
+
     parser.add_argument(
         "-si",
         "--show-images",

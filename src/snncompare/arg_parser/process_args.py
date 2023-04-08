@@ -33,7 +33,6 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
     TODO: list existing exp_configs
     TODO: list existing exp_configs
     """
-
     # if args.experiment_settings_name is not None:
     exp_config: Exp_config = load_exp_config_from_file(
         custom_config_path=custom_config_path,
@@ -136,6 +135,7 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
     extra_storing_config_dict["count_spikes"] = args.count_fires
     extra_storing_config_dict["count_neurons"] = args.count_neurons
     extra_storing_config_dict["count_synapses"] = args.count_synapses
+    extra_storing_config_dict["skip_stage_2_output"] = args.skip_stage_2_output
     extra_storing_config_dict["show_images"] = args.show_images
     extra_storing_config_dict["store_died_neurons"] = args.store_died_neurons
     optional_config_args_dict["extra_storing_config"] = Extra_storing_config(

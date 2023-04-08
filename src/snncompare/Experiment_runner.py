@@ -12,10 +12,7 @@ from typing import Dict, List, Optional, Union
 import customshowme
 import networkx as nx
 from simsnn.core.simulators import Simulator
-from snnbackends.verify_nx_graphs import (
-    verify_results_nx_graphs,
-    verify_results_nx_graphs_contain_expected_stages,
-)
+from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
 from snncompare.create_configs import generate_run_configs
@@ -78,10 +75,7 @@ from .graph_generation.stage_1_create_graphs import (
 )
 
 # from .import_results.load_stage1_results import load_results_stage_1
-from .process_results.process_results import (
-    set_results,
-    verify_stage_completion,
-)
+from .process_results.process_results import set_results
 from .simulation.stage2_sim import sim_graphs
 
 
@@ -165,7 +159,7 @@ class Experiment_runner:
 
             results_nx_graphs = self.__perform_run_stage_2(
                 results_nx_graphs=results_nx_graphs,
-                # output_config=output_config,
+                output_config=output_config,
                 run_config=run_config,
             )
 
@@ -268,7 +262,7 @@ class Experiment_runner:
     @typechecked
     def __perform_run_stage_2(
         self,
-        # output_config: Output_config,
+        output_config: Output_config,
         results_nx_graphs: Dict,
         run_config: Run_config,
     ) -> Dict:
@@ -278,6 +272,7 @@ class Experiment_runner:
         Stage two simulates the SNN graphs over time and, if desired,
         exports each timestep of those SNN graphs to a json dictionary.
         """
+
         # Verify incoming results dict.
         if run_config.simulator == "nx":
             verify_results_nx_graphs(
@@ -291,13 +286,16 @@ class Experiment_runner:
 
         # Run simulation on networkx or lava backend.
         sim_graphs(
+            output_config=output_config,
             run_config=run_config,
             stage_1_graphs=results_nx_graphs["graphs_dict"],
         )
 
+        # TODO: include check to se if stage 2 output is skipped.
         output_stage_2_snns(
-            run_config=run_config,
             graphs_dict=results_nx_graphs["graphs_dict"],
+            output_config=output_config,
+            run_config=run_config,
         )
 
         return results_nx_graphs
@@ -373,6 +371,7 @@ class Experiment_runner:
                 proc.join()
             input("Proceeding to next visualisation.")
 
+    @customshowme.time
     @typechecked
     def __perform_run_stage_4(
         self,
@@ -387,15 +386,6 @@ class Experiment_runner:
         default/Neumann implementation. Then stores this result in the
         last entry of each graph.
         """
-        if run_config.simulator == "nx":
-            verify_results_nx_graphs_contain_expected_stages(
-                results_nx_graphs=results_nx_graphs,
-                stage_index=2,
-                expected_stages=[
-                    1,
-                    2,
-                ],
-            )
 
         set_results(
             exp_config=exp_config,
@@ -403,10 +393,6 @@ class Experiment_runner:
             run_config=run_config,
             stage_2_graphs=results_nx_graphs["graphs_dict"],
         )
-        for graph_name, graph in results_nx_graphs["graphs_dict"].items():
-            if graph_name != "input_graph":
-                print(f"graph_name={graph_name}")
-                pprint(graph.network.graph.graph["results"])
 
         output_stage_4_results(
             run_config=run_config,
@@ -418,11 +404,11 @@ class Experiment_runner:
             stage_index=4,
         )
 
-        verify_stage_completion(
-            results_nx_graphs=results_nx_graphs,
-            stage_index=4,
-            simulator=run_config.simulator,
-        )
+        # verify_stage_completion(
+        # results_nx_graphs=results_nx_graphs,
+        # stage_index=4,
+        # simulator=run_config.simulator,
+        # )
 
         # Indicate the graphs have completed stage 1.
         # for graph_name,snn in results_nx_graphs["graphs_dict"].items():
