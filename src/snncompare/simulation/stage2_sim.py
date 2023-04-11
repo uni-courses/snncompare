@@ -58,8 +58,6 @@ def sim_graphs(
                 with_adaptation=with_adaptation,
                 with_radiation=with_radiation,
             )
-            print(f"next_action={next_action}")
-
             if next_action == "Simulate":
                 print(f"graph_name={graph_name} - simulating.")
                 sim_snn(
@@ -70,6 +68,7 @@ def sim_graphs(
                 add_stage_completion_to_graph(
                     snn=stage_1_graphs[graph_name], stage_index=2
                 )
+
             elif next_action == "Load":
                 print(f"graph_name={graph_name} - loading.")
                 stage_1_graphs[graph_name] = load_simsnn_graphs(
@@ -79,13 +78,16 @@ def sim_graphs(
                     with_radiation=with_radiation,
                     stage_index=2,
                 )
+
                 get_rand_synapse_weights(
                     input_graph=stage_1_graphs["input_graph"],
                     simsnn_synapses=stage_1_graphs[
                         graph_name
                     ].network.synapses,
                 )
-            elif not next_action == "Skip":
+            elif next_action == "Skip":
+                print("Skip.")
+            else:
                 raise ValueError(
                     f"Error, next action unexpected:{next_action}"
                 )

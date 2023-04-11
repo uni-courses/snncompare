@@ -212,6 +212,7 @@ def load_simsnn_graphs(
         rand_nrs_hash=rand_nrs_hash,
         rad_affected_neurons_hash=None,
     )
+    print(f"stage_1_simsnn_filepath={stage_1_simsnn_filepath}")
 
     return load_simsnn_graph_from_file(
         run_config=run_config,
@@ -277,6 +278,8 @@ def load_simsnn_graph_from_file(
             rand_nrs_hash=rand_nrs_hash,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
         )
+        print(f"simsnn_exists={simsnn_exists}")
+        print(f"simsnn_filepath={simsnn_filepath}")
         if simsnn_exists:
             if stage_index == 2:
                 load_snn_graph_stage_2(
