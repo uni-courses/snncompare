@@ -35,7 +35,6 @@ from snncompare.export_results.analysis.create_performance_plots import (
     get_completed_and_missing_run_configs,
     store_pickle,
 )
-from snncompare.export_results.helper import run_config_to_filename
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     output_stage_1_configs_and_input_graphs,
 )
@@ -64,7 +63,7 @@ from snncompare.progress_report.has_completed_stage2_or_4 import (
     assert_has_outputted_stage_2_or_4,
     has_outputted_stage_2_or_4,
 )
-from snncompare.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config, run_config_to_dict
 from snncompare.simulation.add_radiation_graphs import (
     ensure_empty_rad_snns_exist,
 )
@@ -149,7 +148,7 @@ class Experiment_runner:
         for i, run_config in enumerate(run_configs):
             # shutil.rmtree("results")
             print(f"\n{i+1}/{len(run_configs)} [runs]")
-            pprint(run_config.__dict__)
+            pprint(run_config_to_dict(run_config=run_config))
             results_nx_graphs = self.perform_run_stage_1(
                 exp_config=exp_config,
                 output_config=output_config,
@@ -340,10 +339,6 @@ class Experiment_runner:
                 "vth",
             ]
 
-            run_config_filename = run_config_to_filename(
-                run_config_dict=run_config.__dict__
-            )
-
             # Generate Dash plots using multiprocessing.
             jobs = []
             for i, graph_name in enumerate(get_snn_graph_names()):
@@ -360,7 +355,7 @@ class Experiment_runner:
                             output_config,
                             dash_port,
                             run_config,
-                            run_config_filename,
+                            run_config.unique_id,
                             None,
                         ),
                     )

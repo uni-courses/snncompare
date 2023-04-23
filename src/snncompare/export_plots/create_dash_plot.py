@@ -42,7 +42,6 @@ def create_svg_plot(
     # graphs: Dict,
     output_config: Output_config,
     run_config: Run_config,
-    run_config_filename: str,
     single_timestep: Optional[int] = None,
 ) -> None:
     """Creates the svg plots."""
@@ -86,7 +85,7 @@ def create_svg_plot(
                 nx_snn = snn_graph
             create_figures(
                 graph_name=graph_name,
-                run_config_filename=run_config_filename,
+                run_config_filename=run_config.unique_id,
                 output_config=output_config,
                 plot_config=plot_config,
                 sim_duration=sim_duration,

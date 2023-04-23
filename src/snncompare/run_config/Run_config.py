@@ -1,4 +1,5 @@
 """"Stores the run config Dict type."""
+import copy
 import sys
 from typing import Dict, Optional, Tuple, Union
 
@@ -137,6 +138,7 @@ class Run_config:
         # TODO: Verify run config object.
 
 
+@typechecked
 def dict_to_run_config(*, some_dict: Dict) -> Run_config:
     """Converts a dict into a Run_config object."""
     run_config: Run_config = Run_config(
@@ -153,3 +155,11 @@ def dict_to_run_config(*, some_dict: Dict) -> Run_config:
     for key, val in some_dict.items():
         setattr(run_config, key, val)
     return run_config
+
+
+@typechecked
+def run_config_to_dict(*, run_config: Run_config) -> Dict:
+    """Converts a run_config to a human readable dict."""
+    run_config_dict: Dict = copy.deepcopy(run_config.__dict__)
+    run_config_dict["radiation"] = run_config.radiation.__dict__
+    return run_config_dict

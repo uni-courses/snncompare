@@ -1,10 +1,12 @@
 """Performs tests check whether the has_outputted_stage_jsons( function
 correctly determines which stages have been completed and not for:
+
 Stage1=Done
 Stage2=Done
 Stage3=Done.
 Stage4=Done.
-."""
+.
+"""
 import os
 import shutil
 import unittest
@@ -15,7 +17,6 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.Experiment_runner import Experiment_runner
 from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
-from snncompare.export_results.helper import run_config_to_filename
 from snncompare.export_results.verify_stage_1_graphs import (
     get_expected_stage_1_graph_names,
 )
@@ -92,10 +93,7 @@ class Test_stage_1_output_json(unittest.TestCase):
         completed."""
 
         for run_config in self.experiment_runner.run_configs:
-            filename: str = run_config_to_filename(
-                run_config_dict=run_config.__dict__
-            )
-            json_filepath = "results/" + f"{filename}" + ".json"
+            json_filepath = "results/" + f"{run_config.unique_id}" + ".json"
 
             # TODO: determine per stage per run config which graph names are
             # expected.

@@ -25,6 +25,7 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
 from snnalgorithms.Used_graphs import Used_graphs
 from snnbackends.networkx.LIF_neuron import LIF_neuron
 from snnbackends.simsnn.simsnn_to_nx_lif import simsnn_graph_to_nx_lif_graph
+from snnradiation.apply_rad_to_simsnn import apply_rad_to_simsnn
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
@@ -165,9 +166,9 @@ def get_nx_lif_graphs(
 ) -> Dict:
     """First gets the input graph.
 
-    Then generates a graph with adaptation if it is required. Then
-    generates a graph with radiation if it is required. Then returns
-    this list of graphs.
+    Then creates the snn graph with (or without) adaptation. Radiation
+    graphs are ignored in stage 1. The input graph, snn_graph and
+    adapted_snn_graph are returned as a dict.
     """
     # TODO: move to central place in MDSA algo spec.
     graphs = {}
@@ -187,18 +188,6 @@ def get_nx_lif_graphs(
             plot_config=plot_config,
             run_config=run_config,
         )
-
-    if run_config.radiation:
-        graphs["rad_snn_algo_graph"] = get_radiation_graph(
-            snn_graph=graphs["snn_algo_graph"],
-            run_config=run_config,
-        )
-
-        if has_adaptation(run_config=run_config):
-            graphs["rad_adapted_snn_graph"] = get_radiation_graph(
-                snn_graph=graphs["adapted_snn_graph"],
-                run_config=run_config,
-            )
     return graphs
 
 
@@ -321,18 +310,19 @@ def get_redundant_graph(
 
 
 @typechecked
-def get_radiation_graph(
+def get_new_radiation_graph(
     *,
-    snn_graph: nx.DiGraph,
+    snn_graph: Simulator,
     run_config: Run_config,
-) -> nx.Graph:
+) -> Simulator:
     """Makes a deep copy of the incoming graph and applies radiation to it.
 
     Then returns the graph with the radiation, as well as a list of
     neurons that are dead.
     """
-    radiation_graph: nx.DiGraph = copy.deepcopy(snn_graph)
+    radiation_graph: Simulator = copy.deepcopy(snn_graph)
     # TODO: include ignored neuron names per algorithm.
-    # apply_rad_to_simsnn(rad=run_config.radiation, snn=radiation_graph)
-    print(run_config)
+    apply_rad_to_simsnn(
+        rad=run_config.radiation, snn=radiation_graph, ignored_neuron_names=[]
+    )
     return radiation_graph

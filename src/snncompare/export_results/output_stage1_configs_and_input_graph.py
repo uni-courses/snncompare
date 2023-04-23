@@ -20,6 +20,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import jsons
 import networkx as nx
 from networkx.readwrite import json_graph
+from simsnn.core.nodes import LIF
 from simsnn.core.simulators import Simulator
 from typeguard import typechecked
 
@@ -29,10 +30,7 @@ from snncompare.export_results.export_json_results import (
     verify_loaded_json_content_is_nx_graph,
     write_to_json,
 )
-from snncompare.export_results.helper import (
-    exp_config_to_filename,
-    run_config_to_filename,
-)
+from snncompare.export_results.helper import exp_config_to_filename
 from snncompare.helper import get_snn_graph_from_graphs_dict
 from snncompare.import_results.helper import (
     create_relative_path,
@@ -170,18 +168,13 @@ def output_simsnn_stage1_run_config(
     relative_dir: str = f"results/stage{stage_index}/run_configs/"
     create_relative_path(some_path=relative_dir)
 
-    # Convert exp_config to exp_config name.
-    run_config_filename = run_config_to_filename(
-        run_config_dict=run_config.__dict__
-    )
-
     # Write exp_config to file.
     write_to_json(
-        output_filepath=f"{relative_dir}{run_config_filename}.json",
+        output_filepath=f"{relative_dir}{run_config.unique_id}.json",
         some_dict=jsons.dump(run_config.__dict__),
     )
     verify_loaded_json_content_is_nx_graph(
-        output_filepath=f"{relative_dir}{run_config_filename}.json",
+        output_filepath=f"{relative_dir}{run_config.unique_id}.json",
         some_dict=jsons.dump(run_config.__dict__),
     )
 
@@ -386,9 +379,11 @@ def get_rad_name_filepath_and_exists(
 
     # Get the type of radiation used in this run_config.
     if isinstance(snn_graph, Simulator):
-        snn_neuron_names: List[str] = list(
-            map(lambda node: node.name, snn_graph.network.nodes)
-        )
+        # if isinstance(simsnn_node, LIF):
+        snn_neuron_names: List[str] = []
+        for node in snn_graph.network.nodes:
+            if isinstance(node, LIF):
+                snn_neuron_names.append(node.name)
     else:
         snn_neuron_names = snn_graph.nodes
     rad_affected_neurons_hash: str = run_config.radiation.get_rad_hash(

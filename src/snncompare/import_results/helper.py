@@ -9,7 +9,7 @@ import networkx as nx
 from typeguard import typechecked
 
 # if TYPE_CHECKING:
-from snncompare.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config, run_config_to_dict
 
 
 @typechecked
@@ -220,27 +220,11 @@ def get_adaptation_description(*, run_config: Run_config) -> Tuple[str, int]:
     adaptation_parameter: int = run_config.adaptation[adaptation_name]
 
     if adaptation_parameter == 0:
-        pprint(run_config.__dict__)
+        pprint(run_config_to_dict(run_config=run_config))
         raise ValueError(
             "Error, redundancy=0 is a duplicate of original graph."
         )
     return adaptation_name, adaptation_parameter
-
-
-def get_radiation_description(*, run_config: Run_config) -> Tuple[str, int]:
-    """Returns the radiation name and value as a single string."""
-    radiation_name: str = get_single_element(
-        some_list=list(run_config.radiation.keys())
-    )
-
-    radiation_parameter: int = run_config.radiation[radiation_name]
-
-    if radiation_parameter == 0:
-        pprint(run_config.__dict__)
-        raise ValueError(
-            "Error, redundancy=0 is a duplicate of original graph."
-        )
-    return radiation_name, radiation_parameter
 
 
 @typechecked

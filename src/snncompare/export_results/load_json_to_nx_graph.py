@@ -10,9 +10,8 @@ from snnbackends.verify_nx_graphs import (
 from typeguard import typechecked
 
 from snncompare.helper import dicts_are_equal, file_exists
-from snncompare.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config, run_config_to_dict
 
-from .helper import run_config_to_filename
 from .verify_json_graphs import (
     verify_results_safely_check_json_graphs_contain_expected_stages,
 )
@@ -75,7 +74,7 @@ def load_verified_json_graphs_from_json(
         without_unique_id=True,
     ):
         print("Current run_config:")
-        pprint(run_config.__dict__)
+        pprint(run_config_to_dict(run_config=run_config))
         print("Loaded run_config:")
         pprint(results_json_graphs["run_config"].__dict__)
         raise TabError("Error, difference in run configs, see above.")
@@ -94,8 +93,8 @@ def load_json_results(
     TODO: delete?
     """
     results_json_graphs = {}
-    filename: str = run_config_to_filename(run_config_dict=run_config.__dict__)
-    json_filepath = f"results/{filename}.json"
+
+    json_filepath = f"results/{run_config.unique_id}.json"
 
     if not file_exists(filepath=json_filepath):
         raise FileNotFoundError(f"Error, {json_filepath} was not found.")
