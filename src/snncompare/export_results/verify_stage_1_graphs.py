@@ -17,10 +17,7 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.run_config.Run_config import Run_config
 
-from ..graph_generation.stage_1_create_graphs import (
-    has_adaptation,
-    has_radiation,
-)
+from ..graph_generation.stage_1_create_graphs import has_adaptation
 
 
 @typechecked
@@ -59,7 +56,7 @@ def get_expected_stage_1_graph_names(
         expected_graph_names.append("adapted_snn_graph")
 
     if not run_config.simulator == "simsnn":
-        if has_radiation(run_config=run_config):
+        if run_config.radiation:
             expected_graph_names.append("rad_snn_algo_graph")
             if has_adaptation(run_config=run_config):
                 expected_graph_names.append("rad_adapted_snn_graph")

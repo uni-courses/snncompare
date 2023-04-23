@@ -74,11 +74,8 @@ def apply_radiation_to_empty_simsnn_graphs(
                 with_adaptation=with_adaptation,
                 with_radiation=True,
             )
-            for neuron_name in radiation_data.affected_neurons:
-                apply_radiation_death_to_empty_simsnn_neuron(
-                    neuron_name=neuron_name,
-                    snn_graph=snn_graph,
-                )
+            print(radiation_data)
+            raise NotImplementedError("TODO: apply radiation.")
     else:
         raise NotImplementedError(
             f"Error:{radiation_name} is not yet implemented."

@@ -1,11 +1,11 @@
 """"Stores the run config Dict type."""
-import copy
 import sys
 from typing import Dict, Optional, Tuple, Union
 
+from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
-from snncompare.export_results.helper import get_unique_id
+from snncompare.export_results.helper import get_unique_run_config_id
 
 if sys.version_info < (3, 11):
     from typing_extensions import TypedDict
@@ -111,9 +111,7 @@ class Run_config:
         algorithm: Dict[str, Dict[str, int]],
         graph_size: int,
         graph_nr: int,
-        radiation: Union[
-            None, Union[Dict[str, float], Dict[str, Tuple[int, float]]]
-        ],
+        radiation: Rad_damage,
         seed: int,
         simulator: str,
         max_duration: Optional[int] = None,
@@ -126,9 +124,7 @@ class Run_config:
 
         self.graph_size: int = graph_size
         self.graph_nr: int = graph_nr
-        self.radiation: Union[
-            None, Union[Dict[str, float], Dict[str, Tuple[int, float]]]
-        ] = radiation
+        self.radiation: Rad_damage = radiation
         self.seed: int = seed
         self.simulator: str = simulator
 
@@ -136,11 +132,9 @@ class Run_config:
 
         self.max_duration: Optional[int] = max_duration
 
-        self.unique_id: str = get_unique_id(some_config=copy.deepcopy(self))
+        self.unique_id: str = get_unique_run_config_id(run_config=self)
 
-        # Verify run config object.
-
-        # Compute hash of run config object.
+        # TODO: Verify run config object.
 
 
 def dict_to_run_config(*, some_dict: Dict) -> Run_config:

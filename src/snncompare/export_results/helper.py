@@ -149,9 +149,9 @@ def get_expected_image_paths_stage_3(  # type:ignore[misc]
 
 
 @typechecked
-def get_unique_id(  # type:ignore[misc]
+def get_unique_run_config_id(  # type:ignore[misc]
     *,
-    some_config: Any,
+    run_config: Any,
 ) -> str:
     """Checks if an experiment configuration dictionary already has a unique
     identifier, and if not it computes and appends it.
@@ -161,11 +161,18 @@ def get_unique_id(  # type:ignore[misc]
 
     :param exp_config: Exp_config:
     """
-    if "unique_id" in some_config.__dict__.keys():
+    if "unique_id" in run_config.__dict__.keys():
         raise KeyError(
-            f"Error, the exp_config:{some_config}\n"
+            f"Error, the exp_config:{run_config}\n"
             + "already contains a unique identifier."
         )
+
+    # Create deepcopy.
+    some_config = copy.deepcopy(run_config)
+
+    # Convert Rad_damage into hash
+    del some_config.radiation
+    some_config.radiation = run_config.radiation.get_rad_settings_hash()
 
     # Compute a unique code belonging to this particular experiment
     # configuration.

@@ -297,7 +297,6 @@ class Experiment_runner:
             output_config=output_config,
             run_config=run_config,
         )
-
         return results_nx_graphs
 
     @customshowme.time

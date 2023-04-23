@@ -22,9 +22,78 @@
     "LIF"
   ],
   "radiations": {
-    "neuron_death": [
-      0.05
-    ]
+    "change_u": {
+      "amplitude": [
+        1,
+        10
+      ],
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        0.01,
+        0.02,
+        0.05
+      ]
+    },
+    "neuron_death": {
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        0.01,
+        0.02,
+        0.05
+      ]
+    },
+    "rand_neuron_spike": {
+      "amplitude": [
+        1,
+        10
+      ],
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        0.01,
+        0.02,
+        0.05
+      ]
+    },
+    "rand_synapse_spike": {
+      "amplitude": [
+        1,
+        10
+      ],
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        0.01,
+        0.02,
+        0.05
+      ]
+    }
   },
   "seeds": [
     8
