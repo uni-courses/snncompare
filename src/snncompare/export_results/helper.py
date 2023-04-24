@@ -7,7 +7,10 @@ from typing import Any, Dict, List, Union
 
 import networkx as nx
 from simsnn.core.simulators import Simulator
+from snnradiation.Rad_damage import list_of_hashes_to_hash
 from typeguard import typechecked
+
+from snncompare.exp_config.Exp_config import Exp_config
 
 from ..helper import get_some_duration
 
@@ -32,7 +35,7 @@ def flatten(
 @typechecked
 def exp_config_to_filename(
     *,
-    exp_config_dict: Dict,
+    exp_config: Exp_config,
 ) -> str:
     """Converts an Exp_config dictionary into a filename.
 
@@ -43,12 +46,25 @@ def exp_config_to_filename(
     # TODO: allow user to specify a custom order of parameters.
 
     # stripped_run_config:Dict = copy.deepcopy(run_config).__dict__
-    stripped_exp_config: Dict = copy.deepcopy(exp_config_dict)
-    unique_id = stripped_exp_config["unique_id"]
-    stripped_exp_config.pop("unique_id")
+    stripped_exp_config: Exp_config = copy.deepcopy(exp_config)
+    stripped_exp_config_dict: Dict = stripped_exp_config.__dict__
+    unique_id = stripped_exp_config_dict["unique_id"]
+    stripped_exp_config_dict.pop("unique_id")
+
+    # Convert all the radiation settings into a list of hashes.
+    list_of_rad_hashes: List[str] = list(
+        map(
+            lambda radiation: radiation.get_rad_settings_hash(),
+            stripped_exp_config_dict["radiations"],
+        )
+    )
+    # Convert the list of hashes into a single hash.
+    stripped_exp_config_dict["radiation"] = list_of_hashes_to_hash(
+        hashes=list_of_rad_hashes
+    )
 
     # instead (To reduce filename length).
-    filename = str(flatten(d=stripped_exp_config))
+    filename = str(flatten(d=stripped_exp_config_dict))
 
     # Remove the ' symbols.
     # Don't, that makes it more difficult to load the dict again.
@@ -141,7 +157,7 @@ def get_unique_run_config_id(  # type:ignore[misc]
     # configuration.
     unique_id = str(
         hashlib.sha256(
-            json.dumps(some_config.__dict__).encode("utf-8")
+            json.dumps(sorted(some_config.__dict__)).encode("utf-8")
         ).hexdigest()
     )
     return unique_id

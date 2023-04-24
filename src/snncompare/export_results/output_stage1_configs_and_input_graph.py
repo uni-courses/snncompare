@@ -145,9 +145,7 @@ def output_simsnn_stage1_exp_config(
 
     # Convert exp_config to exp_config name.
 
-    exp_config_filename = exp_config_to_filename(
-        exp_config_dict=exp_config.__dict__
-    )
+    exp_config_filename = exp_config_to_filename(exp_config=exp_config)
 
     # Write exp_config to file.
     write_to_json(

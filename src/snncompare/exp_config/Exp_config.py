@@ -83,7 +83,7 @@ class Exp_config:
         some_exp_config.radiations = sorted(rad_hashes)
         unique_id = str(
             hashlib.sha256(
-                json.dumps(some_exp_config.__dict__).encode("utf-8")
+                json.dumps(sorted(some_exp_config.__dict__)).encode("utf-8")
             ).hexdigest()
         )
         return unique_id
