@@ -153,12 +153,12 @@ checkout_new_branch() {
 		eval "$(conda shell.bash hook)"
 		if [ "$new_branch" == 1 ]; then
 			cd "$git_path" && conda deactivate && conda activate snncompare && git checkout -b "$branch_name"
+			cd "$git_path" && conda deactivate && conda activate snncompare && git add -A
+			cd "$git_path" && conda deactivate && conda activate snncompare && git commit -m "$message"
+			cd "$git_path" && conda deactivate && conda activate snncompare && git push --set-upstream origin "$branch_name"
 		else
 			cd "$git_path" && conda deactivate && conda activate snncompare && git checkout "$branch_name"
 		fi
-		cd "$git_path" && conda deactivate && conda activate snncompare && git add -A
-		cd "$git_path" && conda deactivate && conda activate snncompare && git commit -m "$message"
-		cd "$git_path" && conda deactivate && conda activate snncompare && git push --set-upstream origin "$branch_name"
 	else
 		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
         exit 5
