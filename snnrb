@@ -158,6 +158,7 @@ checkout_new_branch() {
 			cd "$git_path" && conda deactivate && conda activate snncompare && git push --set-upstream origin "$branch_name"
 		else
 			cd "$git_path" && conda deactivate && conda activate snncompare && git checkout "$branch_name"
+			cd "$git_path" && conda deactivate && conda activate snncompare && git pull
 		fi
 	else
 		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
