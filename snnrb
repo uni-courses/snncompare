@@ -26,7 +26,8 @@ while [[ "$#" -gt 0 ]]; do
       		shift # past value
       		;;
 		-r|--rebuild) rebuild=1; ;;
-	        -p|--precommit) precommit=1 ;;
+	    -p|--pull) pull=1 ;;
+		-pc|--precommit) precommit=1 ;;
 		-pu|--precommit-update) precommit_update=1 ;;
 		-pi|--precommit-install) precommit_install=1 ;;
 		-pip|--publish-to-pip) publish_to_pip=1 ;;
@@ -145,6 +146,17 @@ run_precommit_update() {
 }
 
 
+git_pull() {
+	local git_path="$1"
+    if [ "$(conda_env_exists $CONDA_ENVIRONMENT_NAME)" == "FOUND" ]; then
+		eval "$(conda shell.bash hook)"
+		cd "$git_path" && conda deactivate && conda activate snncompare && git pull
+	else
+		echo "Error, conda environment name:$CONDA_ENVIRONMENT_NAME not found."
+        exit 5
+	fi
+}
+
 checkout_new_branch() {
     local git_path="$1"
 	local branch_name="$2"
@@ -257,6 +269,10 @@ do
 
 	if [ "$publish_to_pip" == 1 ]; then
 		publish_to_pip "$DIR_WITH_REPOS$reponame"
+	fi
+
+	if [ "$pull" == 1 ]; then
+		git_pull "$DIR_WITH_REPOS$reponame"
 	fi
 
 	if [ "$commitpush" == 1 ]; then
