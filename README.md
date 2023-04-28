@@ -212,8 +212,7 @@ git clone git@github.com:a-t-0/snnalgorithms.git
 git clone git@github.com:a-t-0/snnbackends.git
 git clone git@github.com:a-t-0/snnradiation.git
 git clone git@github.com:a-t-0/snncompare.git
-git clone git@github.com:a-t-0/simsnn.git
-
+git clone https://gitlab.socsci.ru.nl/Akke.Toeter/simsnn.git
 
 cp snncompare/.vscode/settings.json .vscode/settings.json
 cp snncompare/snn_rebuild.sh ~/bin/snnrb
