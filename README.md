@@ -207,20 +207,21 @@ mkdir ~/git/snn/.vscode
 mkdir -p ~/bin
 cd ~/git/snn
 
-git clone git@github.com:a-t-0/snnadaptation.git
-git clone git@github.com:a-t-0/snnalgorithms.git
-git clone git@github.com:a-t-0/snnbackends.git
-git clone git@github.com:a-t-0/snnradiation.git
-git clone git@github.com:a-t-0/snncompare.git
+git clone https://github.com/a-t-0/snnadaptation.git
+git clone https://github.com/a-t-0/snnalgorithms.git
+git clone https://github.com/a-t-0/snnbackends.git
+git clone https://github.com/a-t-0/snnradiation.git
+git clone https://github.com/a-t-0/snncompare.git
 git clone https://gitlab.socsci.ru.nl/Akke.Toeter/simsnn.git
-
-cp snncompare/.vscode/settings.json .vscode/settings.json
-cp snncompare/snn_rebuild.sh ~/bin/snnrb
-rm ~/.local/bin/snnrb
-# Now close and re-open the terminal.
 
 cd snncompare
 conda env create --file environment.yml
+git checkout excitatory-radiation
+chmod +x snnrb
+./snnrb --branch excitatory-radiation
+./snnrb --rebuild
+
+cp snncompare/.vscode/settings.json .vscode/settings.json
 ```
 
 Then you can commit/update your work across all repos at  once with:
