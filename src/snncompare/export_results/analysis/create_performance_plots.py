@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from rich.progress import track
+from snnadaptation.Adaptation import Adaptation
 from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
@@ -104,7 +105,7 @@ def create_performance_plots(
             print(
                 "Loading stage 4 results to create boxplot with:"
                 # + f"{radiation_name}:{radiation_value}, adaptation type"
-                + f":{adaptation}"
+                + f":{adaptation.__dict__}"
             )
 
             # Get run configs belonging to this radiation type/level.
@@ -196,7 +197,7 @@ def get_completed_and_missing_run_configs(
 @typechecked
 def get_boxplot_datapoints(
     *,
-    adaptations: Dict[str, List[int]],
+    adaptations: list[Adaptation],
     wanted_run_configs: List[Run_config],
     # run_config_nx_graphs: Dict,
     seeds: List[int],
@@ -258,7 +259,7 @@ def get_boxplot_datapoints(
 @typechecked
 def get_x_labels(
     *,
-    adaptations: Dict[str, List[int]],
+    adaptations: List[Adaptation],
     graphs_dict: Dict,
     graph_names: List[str],
     simulator: str,
@@ -269,19 +270,21 @@ def get_x_labels(
     results = {}
     for graph_name in graph_names:
         if graph_name == "rad_adapted_snn_graph":
-            for rad_name, rad_vals in adaptations.items():
-                for rad_val in rad_vals:
-                    # Create a new column and xlabel in the results dict, and
-                    # store the snn graph results in there.
-                    x_labels.append(f"{rad_name}:{rad_val}")
-                    if simulator == "simsnn":
-                        results[x_labels[-1]] = graphs_dict[
-                            graph_name
-                        ].network.graph.graph["results"]
-                    elif simulator == "nx":
-                        results[x_labels[-1]] = graphs_dict[graph_name][
-                            "graph"
-                        ]["results"]
+            # TODO: fix.
+            for adaptation in adaptations:
+                # Create a new column and xlabel in the results dict, and
+                # store the snn graph results in there.
+                x_labels.append(
+                    f"{adaptation.adaptation_type}:{adaptation.redundancy}"
+                )
+                if simulator == "simsnn":
+                    results[x_labels[-1]] = graphs_dict[
+                        graph_name
+                    ].network.graph.graph["results"]
+                elif simulator == "nx":
+                    results[x_labels[-1]] = graphs_dict[graph_name]["graph"][
+                        "results"
+                    ]
         elif graph_name != "input_graph":
             # This are:
             # - snn_algo_graphs: 100% score
@@ -321,7 +324,7 @@ def add_graph_scores(
 @typechecked
 def get_mdsa_boxplot_data(
     *,
-    adaptations: Dict[str, List[int]],
+    adaptations: List[Adaptation],
     graph_names: List[str],
     seeds: List[int],
 ) -> Dict[str, Dict[int, Boxplot_x_val]]:
@@ -346,14 +349,13 @@ def get_mdsa_boxplot_data(
     boxplot_data: Dict[str, Dict[int, Boxplot_x_val]] = {}
     for graph_name in graph_names:
         if graph_name == "rad_adapted_snn_graph":
-            for name, values in adaptations.items():
-                for value in values:
-                    # Create multiple columns in boxplot, to show the
-                    # adaptation effectivity, show 1 column with score per
-                    # adaptation type.
-                    boxplot_data[f"{name}:{value}"] = copy.deepcopy(
-                        x_series_data
-                    )
+            for adaptation in adaptations:
+                # Create multiple columns in boxplot, to show the
+                # adaptation effectivity, show 1 column with score per
+                # adaptation type.
+                boxplot_data[
+                    f"{adaptation.adaptation_type}:{adaptation.redundancy}"
+                ] = copy.deepcopy(x_series_data)
         elif graph_name != "input_graph":
             # Just post all scores on a single column; the avg score per snn
             # graph. For snn_algo and adapted_snn_algo graph they should both
