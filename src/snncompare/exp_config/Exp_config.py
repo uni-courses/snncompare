@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 from typing import Any, Dict
 
 from snnadaptation.redundancy.verify_redundancy_settings import (
@@ -10,9 +12,12 @@ from snnadaptation.redundancy.verify_redundancy_settings import (
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_exp_config
+from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
-from snncompare.export_results.helper import get_unique_id
+from snncompare.exp_config.rad_dict2obj import (
+    get_radiations_from_exp_config_dict,
+)
 
 
 # pylint: disable=R0902
@@ -48,14 +53,15 @@ class Exp_config:
         self.min_graph_size: int = min_graph_size
         self.min_max_graphs: int = min_max_graphs
         self.neuron_models: list = neuron_models
-        self.radiations: dict = radiations
+        self.radiations: list[
+            Rad_damage
+        ] = get_radiations_from_exp_config_dict(radiations=radiations)
         self.seeds: list[int] = seeds
         self.simulators: list = simulators
         self.size_and_max_graphs: list = size_and_max_graphs
         self.synaptic_models: list = synaptic_models
 
-        some_copy: Exp_config = copy.deepcopy(self)
-        self.unique_id: str = get_unique_id(some_config=some_copy)
+        self.unique_id: str = self.get_unique_exp_config_id()
 
         # Verify run config object.
         supp_exp_config = Supported_experiment_settings()
@@ -63,6 +69,24 @@ class Exp_config:
             supp_exp_config=supp_exp_config,
             exp_config=self,
         )
+
+    @typechecked
+    def get_unique_exp_config_id(
+        self,
+    ) -> str:
+        """Returns a unique hash for the exp_config object."""
+        some_exp_config: Exp_config = copy.deepcopy(self)
+        rad_hashes: list[str] = []
+        for rad_obj in self.radiations:
+            rad_hashes.append(rad_obj.get_rad_settings_hash())
+        del some_exp_config.radiations
+        some_exp_config.radiations = sorted(rad_hashes)
+        unique_id = str(
+            hashlib.sha256(
+                json.dumps(sorted(some_exp_config.__dict__)).encode("utf-8")
+            ).hexdigest()
+        )
+        return unique_id
 
 
 # pylint: disable=R0902
@@ -188,7 +212,6 @@ class Supported_experiment_settings:
     @typechecked
     def specify_supported_adaptation_settings(self) -> None:
         """Specifies all the supported types of adaptation settings."""
-
         # Specify the (to be) supported adaptation types.
         self.adaptations = {
             "None": [],

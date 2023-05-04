@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from rich.progress import track
+from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
@@ -94,49 +95,67 @@ def create_performance_plots(
     """
 
     count: int = 0
-    for radiation_name, radiation_values in reversed(
-        exp_config.radiations.items()
-    ):
+    for rad_setting in reversed(exp_config.radiations):
         # TODO: separate per radiation_name (type).
+        print(f"rad_setting={rad_setting.__dict__}")
+        # for radiation_value in radiation_values:
+        count += 1  # Keep track of counter for boxplot filenames.
+        for adaptation in exp_config.adaptations:
+            print(
+                "Loading stage 4 results to create boxplot with:"
+                # + f"{radiation_name}:{radiation_value}, adaptation type"
+                + f":{adaptation}"
+            )
 
-        for radiation_value in radiation_values:
-            count += 1  # Keep track of counter for boxplot filenames.
-            for adaptation in exp_config.adaptations:
-                print(
-                    "Loading stage 4 results to create boxplot with:"
-                    + f"{radiation_name}:{radiation_value}, adaptation type"
-                    + f":{adaptation}"
-                )
+            # Get run configs belonging to this radiation type/level.
+            wanted_run_configs: List[Run_config] = []
+            for run_config in completed_run_configs:
+                if run_config.radiation == rad_setting:
+                    wanted_run_configs.append(run_config)
 
-                # Get run configs belonging to this radiation type/level.
-                wanted_run_configs: List[Run_config] = []
-                for run_config in completed_run_configs:
-                    if run_config.radiation == {
-                        radiation_name: radiation_value
-                    }:
-                        wanted_run_configs.append(run_config)
+            # Get results per line.
+            boxplot_data: Dict[
+                str, Dict[int, Boxplot_x_val]
+            ] = get_boxplot_datapoints(
+                adaptations=exp_config.adaptations,
+                wanted_run_configs=wanted_run_configs,
+                seeds=exp_config.seeds,
+            )
 
-                # Get results per line.
-                boxplot_data: Dict[
-                    str, Dict[int, Boxplot_x_val]
-                ] = get_boxplot_datapoints(
-                    adaptations=exp_config.adaptations,
-                    wanted_run_configs=wanted_run_configs,
-                    seeds=exp_config.seeds,
-                )
+            print("\nConverting stage 4 results into boxplot.")
+            y_series = boxplot_data_to_y_series(boxplot_data=boxplot_data)
 
-                print("\nConverting stage 4 results into boxplot.")
-                y_series = boxplot_data_to_y_series(boxplot_data=boxplot_data)
+            filename: str = get_image_name(count=count, rad_setts=rad_setting)
+            create_dotted_boxplot(
+                y_series=y_series,
+                filename=filename,
+                title=f"SNN MDSA algorithm with simulated {filename}",
+                # + f"={100}[%]",
+            )
 
-                create_dotted_boxplot(
-                    y_series=y_series,
-                    filename=(
-                        f"{count}_dotted_boxplot_{radiation_name}="
-                        + f"{radiation_value}_{adaptation}"
-                    ),
-                    title=f"SNN MDSA algorithm with simulated {radiation_name}"
-                    + f"={radiation_value*100}[%]",
-                )
+
+@typechecked
+def get_image_name(*, count: int, rad_setts: Rad_damage) -> str:
+    """Returns the filename for a radiation setting. Uses output structure:
+    <raditation type><excitation type><probability><amplitude> Where the
+    excitation types are:
+
+     - excitatory
+     - inhibitory
+     - both
+    All adaptation methods are included in a single box plot.
+    """
+    if rad_setts.excitatory and rad_setts.inhibitory:
+        excitation_type: str = "both"
+    elif rad_setts.excitatory:
+        excitation_type = "excitatory"
+    elif rad_setts.inhibitory:
+        excitation_type = "inhibitory"
+
+    return (
+        f"{count}_{rad_setts.effect_type}_{excitation_type}_"
+        + f"{rad_setts.probability_per_t}_{rad_setts.amplitude}"
+    )
 
 
 @typechecked

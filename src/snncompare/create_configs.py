@@ -2,6 +2,8 @@
 from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
+from snnradiation.Rad_damage import Rad_damage
+
 # from snncompare.export_results.load_json_to_nx_graph import dicts_are_equal
 from typeguard import typechecked
 
@@ -76,12 +78,10 @@ def exp_config_to_run_configs(
     for algorithm_name, algo_specs in exp_config.algorithms.items():
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
-            for run_config_adaptation in get_adaptations_or_radiations(
+            for run_config_adaptation in get_adaptations(
                 adaptations_or_radiations=exp_config.adaptations,
             ):
-                for run_config_radiation in get_adaptations_or_radiations(
-                    adaptations_or_radiations=exp_config.radiations,
-                ):
+                for run_config_radiation in exp_config.radiations:
                     fill_remaining_run_config_settings(
                         adaptation=run_config_adaptation,
                         algorithm=algorithm,
@@ -98,7 +98,7 @@ def fill_remaining_run_config_settings(
     adaptation: Union[None, Dict],
     algorithm: Dict,
     exp_config: "Exp_config",
-    radiation: Union[None, Dict],
+    radiation: Rad_damage,
     run_configs: List[Run_config],
 ) -> None:
     """Generate basic settings for a run config."""
@@ -127,7 +127,7 @@ def run_parameters_to_dict(
     seed: int,
     size_and_max_graph: Tuple[int, int],
     graph_nr: int,
-    radiation: Union[None, Dict],
+    radiation: Rad_damage,
     simulator: str,
 ) -> Run_config:
     """Stores selected parameters into a dictionary.
@@ -149,7 +149,7 @@ def run_parameters_to_dict(
 
 
 @typechecked
-def get_adaptations_or_radiations(
+def get_adaptations(
     *,
     adaptations_or_radiations: Dict[str, List[Union[float, int]]],
 ) -> List:

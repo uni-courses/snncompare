@@ -24,10 +24,13 @@ channels:
 dependencies:
 # Specify specific python version.
   - python=3.10
+
+  # Install git without sudo if it is not installed.
+  - git
   # Generate plots.
   - matplotlib
-# Pre-commit packages for code quality:
-# Run python tests.
+  # Pre-commit packages for code quality:
+  # Run python tests.
   - pytest-cov
 # Turns relative import paths into absolute import paths.
   - absolufy-imports
@@ -47,6 +50,8 @@ dependencies:
   - docformatter
 # Auto generate docstrings.
   - flake8
+# Create gif of SNN behaviour.
+  - imageio
 # Auto sort the import statements.
   - isort
 # Auto format Markdown files.
@@ -55,7 +60,9 @@ dependencies:
   - mypy
   # Run graph software quickly.
   # Lava depends on networkx 2.8.7
-  - networkx==2.8.7
+  - networkx>=2.8.7
+# used to visualise dash plots.
+  - pandas
 # Auto generate documentation.
   - pdoc3
 # Another static type checker for python like mypy.
@@ -70,6 +77,8 @@ dependencies:
   - pyment
 # Auto check programming style aspects.
   - pylint
+# Used to visualise dash plots
+  - seaborn
 # Enable publishing the pip package.
   - twine
 # Ensure the python function arguments are verified at runtime.
@@ -84,8 +93,7 @@ dependencies:
     #- https://github.com/lava-nc/lava/releases/download/v0.3.0/lava-nc-0.3.0.tar.gz
     #- https://github.com/lava-nc/lava/releases/download/v0.5.0/lava-nc-0.5.0.tar.gz
     - https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
-    # Create gif of SNN behaviour.
-    - imageio
+
     # Support parsing Json files.
     - jsons
     # Visualise dash plots.
@@ -94,8 +102,6 @@ dependencies:
     - prettier
     # Tag files using Python.
     - pytaggit
-    # Identify and remove dead code.
-    - vulture
     #- pipreqs
     # Allow for auto generation of type-hints during runtime.
     - pyannotate
@@ -103,5 +109,3 @@ dependencies:
     - customshowme
     # Create boxplots.
     - simplt
-    # Support simsnn from Radboud University
-    - simsnn

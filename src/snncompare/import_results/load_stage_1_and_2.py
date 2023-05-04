@@ -60,13 +60,17 @@ def has_outputted_stage_1(
             with_adaptation=with_adaptation,
             stage_index=1,
         ):
+            print(f"with_adaptation={with_adaptation} did not find snn_graph.")
             return False
         if not has_outputted_input_graph(
             input_graph=input_graph,
         ):
+            print("no input")
             return False
+
         json_filepath: str = get_run_config_filepath(run_config=run_config)
         if not Path(json_filepath).is_file():
+            print(f"no json={json_filepath}")
             return False
     return True
 
@@ -112,16 +116,17 @@ def has_outputted_snn_graph(
             rand_nrs_data.rand_nrs_file_exists
             and rand_nrs_data.seed_in_seed_hash_file
         ):
+            some_snn = load_simsnn_graphs(
+                run_config=run_config,
+                input_graph=input_graph,
+                with_adaptation=with_adaptation,
+                with_radiation=False,
+                stage_index=1,
+            )
             # Check if radiation is outputted.
             radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
                 input_graph=input_graph,
-                snn_graph=load_simsnn_graphs(
-                    run_config=run_config,
-                    input_graph=input_graph,
-                    with_adaptation=with_adaptation,
-                    with_radiation=False,
-                    stage_index=1,
-                ),
+                snn_graph=some_snn,
                 run_config=run_config,
                 stage_index=stage_index,
                 with_adaptation=with_adaptation,
@@ -212,8 +217,6 @@ def load_simsnn_graphs(
         rand_nrs_hash=rand_nrs_hash,
         rad_affected_neurons_hash=None,
     )
-    print(f"stage_1_simsnn_filepath={stage_1_simsnn_filepath}")
-
     return load_simsnn_graph_from_file(
         run_config=run_config,
         input_graph=input_graph,
@@ -260,10 +263,7 @@ def load_simsnn_graph_from_file(
         rad_affected_neurons_hash: Union[
             None, str
         ] = radiation_data.rad_affected_neurons_hash
-        output_category: str = (
-            f"{radiation_data.radiation_name}"
-            + f"_{radiation_data.radiation_parameter}"
-        )
+        output_category: str = f"{radiation_data.radiation_name}"
     else:
         output_category = "snns"
         rad_affected_neurons_hash = None
@@ -278,8 +278,6 @@ def load_simsnn_graph_from_file(
             rand_nrs_hash=rand_nrs_hash,
             rad_affected_neurons_hash=rad_affected_neurons_hash,
         )
-        print(f"simsnn_exists={simsnn_exists}")
-        print(f"simsnn_filepath={simsnn_filepath}")
         if simsnn_exists:
             if stage_index == 2:
                 load_snn_graph_stage_2(

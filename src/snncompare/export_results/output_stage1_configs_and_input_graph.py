@@ -20,8 +20,8 @@ from typing import Dict, List, Optional, Tuple, Union
 import jsons
 import networkx as nx
 from networkx.readwrite import json_graph
+from simsnn.core.nodes import LIF
 from simsnn.core.simulators import Simulator
-from snnradiation.Radiation_damage import get_random_neurons
 from typeguard import typechecked
 
 # if TYPE_CHECKING:
@@ -30,16 +30,12 @@ from snncompare.export_results.export_json_results import (
     verify_loaded_json_content_is_nx_graph,
     write_to_json,
 )
-from snncompare.export_results.helper import (
-    exp_config_to_filename,
-    run_config_to_filename,
-)
+from snncompare.export_results.helper import exp_config_to_filename
 from snncompare.helper import get_snn_graph_from_graphs_dict
 from snncompare.import_results.helper import (
     create_relative_path,
     file_contains_line,
     get_isomorphic_graph_hash,
-    get_radiation_description,
     seed_rad_neurons_hash_file_exists,
     seed_rand_nrs_hash_file_exists,
     simsnn_files_exists_and_get_path,
@@ -56,22 +52,18 @@ class Radiation_data:
     @typechecked
     def __init__(
         self,
-        affected_neurons: List[str],
         rad_affected_neurons_hash: str,
         radiation_file_exists: bool,
         radiation_filepath: str,
         radiation_name: str,
-        radiation_parameter: float,
         seed_hash_file_exists: bool,
         seed_in_seed_hash_file: bool,
         seed_hash_filepath: str,
     ) -> None:
-        self.affected_neurons: List[str] = affected_neurons
         self.rad_affected_neurons_hash: str = rad_affected_neurons_hash
         self.radiation_file_exists: bool = radiation_file_exists
         self.radiation_filepath: str = radiation_filepath
         self.radiation_name: str = radiation_name
-        self.radiation_parameter: float = radiation_parameter
         self.seed_hash_file_exists: bool = seed_hash_file_exists
         self.seed_in_seed_hash_file: bool = seed_in_seed_hash_file
         self.seed_hash_filepath: str = seed_hash_filepath
@@ -153,9 +145,7 @@ def output_simsnn_stage1_exp_config(
 
     # Convert exp_config to exp_config name.
 
-    exp_config_filename = exp_config_to_filename(
-        exp_config_dict=exp_config.__dict__
-    )
+    exp_config_filename = exp_config_to_filename(exp_config=exp_config)
 
     # Write exp_config to file.
     write_to_json(
@@ -176,18 +166,13 @@ def output_simsnn_stage1_run_config(
     relative_dir: str = f"results/stage{stage_index}/run_configs/"
     create_relative_path(some_path=relative_dir)
 
-    # Convert exp_config to exp_config name.
-    run_config_filename = run_config_to_filename(
-        run_config_dict=run_config.__dict__
-    )
-
     # Write exp_config to file.
     write_to_json(
-        output_filepath=f"{relative_dir}{run_config_filename}.json",
+        output_filepath=f"{relative_dir}{run_config.unique_id}.json",
         some_dict=jsons.dump(run_config.__dict__),
     )
     verify_loaded_json_content_is_nx_graph(
-        output_filepath=f"{relative_dir}{run_config_filename}.json",
+        output_filepath=f"{relative_dir}{run_config.unique_id}.json",
         some_dict=jsons.dump(run_config.__dict__),
     )
 
@@ -195,7 +180,6 @@ def output_simsnn_stage1_run_config(
 @typechecked
 def get_input_graph_output_dir(*, input_graph: nx.Graph) -> str:
     """Returns the dir in which the input graph as it will be outputted."""
-
     output_dir: str = f"results/stage1/input_graphs/{len(input_graph)}/"
     return output_dir
 
@@ -354,9 +338,9 @@ def output_mdsa_rand_nrs(
             txt_file.close()
 
     if not rand_nrs_data.rand_nrs_file_exists:
-        output_unique_list(
+        output_unique_list_int_or_dict(
             output_filepath=rand_nrs_data.rand_nrs_filepath,
-            some_list=rand_nrs_data.rand_nrs,
+            output_data=rand_nrs_data.rand_nrs,
             target_file_exists=rand_nrs_data.rand_nrs_file_exists,
         )
 
@@ -392,97 +376,66 @@ def get_rad_name_filepath_and_exists(
     """
 
     # Get the type of radiation used in this run_config.
-    radiation_name, radiation_parameter = get_radiation_description(
-        run_config=run_config
+    if isinstance(snn_graph, Simulator):
+        # if isinstance(simsnn_node, LIF):
+        snn_neuron_names: List[str] = []
+        for node in snn_graph.network.nodes:
+            if isinstance(node, LIF):
+                snn_neuron_names.append(node.name)
+    else:
+        snn_neuron_names = snn_graph.nodes
+    rad_affected_neurons_hash: str = run_config.radiation.get_rad_hash(
+        neuron_names=snn_neuron_names, seed=run_config.seed
     )
 
-    # pylint:disable=R0801
-    if radiation_name == "neuron_death":
-        # Get the list of affected neurons and the accompanying hash.
-        (
-            affected_neurons,
-            rad_affected_neurons_hash,
-        ) = get_radiation_names_and_hash(
-            snn_graph=snn_graph,
-            radiation_parameter=radiation_parameter,
-            run_config=run_config,
-        )
-
-        (
-            radiation_file_exists,
-            radiation_filepath,
-        ) = simsnn_files_exists_and_get_path(
-            output_category=f"{radiation_name}_{radiation_parameter}",
-            input_graph=input_graph,
-            run_config=run_config,
-            with_adaptation=with_adaptation,
-            stage_index=stage_index,
-            rad_affected_neurons_hash=rad_affected_neurons_hash,
-            rand_nrs_hash=rand_nrs_hash,
-        )
-
-        (
-            seed_hash_file_exists,
-            seed_hash_filepath,
-        ) = seed_rad_neurons_hash_file_exists(
-            output_category=f"{radiation_name}_{radiation_parameter}",
-            run_config=run_config,
-            with_adaptation=with_adaptation,
-        )
-
-        if seed_hash_file_exists:
-            seed_in_seed_hash_file: bool = file_contains_line(
-                filepath=seed_hash_filepath,
-                expected_line=rad_affected_neurons_hash,
-            )
-        else:
-            seed_in_seed_hash_file = False
-
-        radiation_data: Radiation_data = Radiation_data(
-            affected_neurons=affected_neurons,
-            rad_affected_neurons_hash=rad_affected_neurons_hash,
-            radiation_file_exists=radiation_file_exists,
-            radiation_filepath=radiation_filepath,
-            radiation_name=radiation_name,
-            radiation_parameter=radiation_parameter,
-            seed_hash_filepath=seed_hash_filepath,
-            seed_hash_file_exists=seed_hash_file_exists,
-            seed_in_seed_hash_file=seed_in_seed_hash_file,
-        )
-        return radiation_data
-    raise NotImplementedError(
-        f"Error:{radiation_name} is not yet implemented."
+    # Get the list of affected neurons and the accompanying hash.
+    (
+        radiation_file_exists,
+        radiation_filepath,
+    ) = simsnn_files_exists_and_get_path(
+        output_category=run_config.radiation.effect_type,
+        input_graph=input_graph,
+        run_config=run_config,
+        with_adaptation=with_adaptation,
+        stage_index=stage_index,
+        rad_affected_neurons_hash=rad_affected_neurons_hash,
+        rand_nrs_hash=rand_nrs_hash,
     )
+
+    (
+        seed_hash_file_exists,
+        seed_hash_filepath,
+    ) = seed_rad_neurons_hash_file_exists(
+        output_category=run_config.radiation.effect_type,
+        run_config=run_config,
+        with_adaptation=with_adaptation,
+    )
+
+    if seed_hash_file_exists:
+        seed_in_seed_hash_file: bool = file_contains_line(
+            filepath=seed_hash_filepath,
+            expected_line=rad_affected_neurons_hash,
+        )
+    else:
+        seed_in_seed_hash_file = False
+
+    radiation_data: Radiation_data = Radiation_data(
+        rad_affected_neurons_hash=rad_affected_neurons_hash,
+        radiation_file_exists=radiation_file_exists,
+        radiation_filepath=radiation_filepath,
+        radiation_name=run_config.radiation.effect_type,
+        seed_hash_filepath=seed_hash_filepath,
+        seed_hash_file_exists=seed_hash_file_exists,
+        seed_in_seed_hash_file=seed_in_seed_hash_file,
+    )
+    return radiation_data
 
 
 @typechecked
-def get_radiation_names_and_hash(
-    snn_graph: Simulator, radiation_parameter: float, run_config: Run_config
-) -> Tuple[List[str], str]:
-    """Returns the neuron names that are affected by the radiation, and the
-    accompanying hash."""
-    simsnn_neuron_names: List[str] = sorted(
-        list(map(lambda neuron: neuron.name, list(snn_graph.network.nodes)))
-    )
-
-    affected_neurons: List[str] = get_random_neurons(
-        neuron_names=simsnn_neuron_names,
-        probability=radiation_parameter,
-        seed=run_config.seed,
-    )
-    rad_affected_neurons_hash: str = str(
-        hashlib.sha256(
-            json.dumps(affected_neurons).encode("utf-8")
-        ).hexdigest()
-    )
-    return affected_neurons, rad_affected_neurons_hash
-
-
-@typechecked
-def output_unique_list(
+def output_unique_list_int_or_dict(
     *,
     output_filepath: str,
-    some_list: List[Union[int, str]],
+    output_data: Union[Dict, List[Union[int, str]]],
     target_file_exists: bool,
 ) -> None:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
@@ -490,7 +443,7 @@ def output_unique_list(
     if not target_file_exists:
         write_to_json(
             output_filepath=output_filepath,
-            some_dict=some_list,
+            some_dict=output_data,
         )
     else:
         raise NotImplementedError("Error, target already exists. Write check.")
@@ -504,7 +457,8 @@ def output_radiation_data(
     snn_graph: Union[nx.DiGraph, Simulator],
     with_adaptation: bool,
 ) -> None:
-    """Exports json file with radiation data."""
+    """Exports json file with radiation settings, and adds the radiation
+    affected neuron hash to a list of those hashes per seed."""
     # Output radiation data
     radiation_data: Radiation_data = get_rad_name_filepath_and_exists(
         input_graph=graphs_dict["input_graph"],
@@ -515,11 +469,14 @@ def output_radiation_data(
     )
 
     if not radiation_data.radiation_file_exists:
-        output_unique_list(
+        output_unique_list_int_or_dict(
             output_filepath=radiation_data.radiation_filepath,
-            some_list=radiation_data.affected_neurons,
             target_file_exists=radiation_data.radiation_file_exists,
+            output_data=run_config.radiation.__dict__,
         )
+
+    # Also append the affected_neuron_hash to the list of radiation settings
+    # per seed.
     if not radiation_data.seed_hash_file_exists or not file_contains_line(
         filepath=radiation_data.seed_hash_filepath,
         expected_line=radiation_data.rad_affected_neurons_hash,

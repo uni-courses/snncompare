@@ -62,10 +62,7 @@ def output_stage_4_results(
                 rad_affected_neurons_hash: Union[
                     None, str
                 ] = radiation_data.rad_affected_neurons_hash
-                output_category: str = (
-                    f"{radiation_data.radiation_name}"
-                    + f"_{radiation_data.radiation_parameter}"
-                )
+                output_category: str = f"{radiation_data.radiation_name}"
             else:
                 rad_affected_neurons_hash = None
                 output_category = "snns"

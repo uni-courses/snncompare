@@ -168,6 +168,7 @@ Typical run (deletes pre-existing results):
 
 ```bash
 python -m src.snncompare -e quicktest -j1 -j2 -j4 -j5 -s2 -rev -dr
+python -m src.snncompare -e basic_results -j1 -j2 -j4 -j5 -s2 -rev -dr
 ```
 
 Debug 2 runs, in separate console:
@@ -207,19 +208,21 @@ mkdir ~/git/snn/.vscode
 mkdir -p ~/bin
 cd ~/git/snn
 
-git clone git@github.com:a-t-0/snnadaptation.git
-git clone git@github.com:a-t-0/snnalgorithms.git
-git clone git@github.com:a-t-0/snnbackends.git
-git clone git@github.com:a-t-0/snnradiation.git
-git clone git@github.com:a-t-0/snncompare.git
-
-cp snncompare/.vscode/settings.json .vscode/settings.json
-cp snncompare/snn_rebuild.sh ~/bin/snnrb
-rm ~/.local/bin/snnrb
-# Now close and re-open the terminal.
+git clone https://github.com/a-t-0/snnadaptation.git
+git clone https://github.com/a-t-0/snnalgorithms.git
+git clone https://github.com/a-t-0/snnbackends.git
+git clone https://github.com/a-t-0/snnradiation.git
+git clone https://github.com/a-t-0/snncompare.git
+git clone https://gitlab.socsci.ru.nl/Akke.Toeter/simsnn.git
 
 cd snncompare
 conda env create --file environment.yml
+git checkout excitatory-radiation
+chmod +x snnrb
+./snnrb --branch excitatory-radiation
+./snnrb --rebuild
+
+cp snncompare/.vscode/settings.json .vscode/settings.json
 ```
 
 Then you can commit/update your work across all repos at  once with:

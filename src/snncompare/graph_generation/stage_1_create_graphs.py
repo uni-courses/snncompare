@@ -25,10 +25,7 @@ from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
 from snnalgorithms.Used_graphs import Used_graphs
 from snnbackends.networkx.LIF_neuron import LIF_neuron
 from snnbackends.simsnn.simsnn_to_nx_lif import simsnn_graph_to_nx_lif_graph
-from snnradiation.Radiation_damage import (
-    Radiation_damage,
-    verify_radiation_is_applied,
-)
+from snnradiation.apply_rad_to_simsnn import apply_rad_to_simsnn
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
@@ -169,9 +166,9 @@ def get_nx_lif_graphs(
 ) -> Dict:
     """First gets the input graph.
 
-    Then generates a graph with adaptation if it is required. Then
-    generates a graph with radiation if it is required. Then returns
-    this list of graphs.
+    Then creates the snn graph with (or without) adaptation. Radiation
+    graphs are ignored in stage 1. The input graph, snn_graph and
+    adapted_snn_graph are returned as a dict.
     """
     # TODO: move to central place in MDSA algo spec.
     graphs = {}
@@ -191,20 +188,6 @@ def get_nx_lif_graphs(
             plot_config=plot_config,
             run_config=run_config,
         )
-
-    if has_radiation(run_config=run_config):
-        graphs["rad_snn_algo_graph"] = get_radiation_graph(
-            snn_graph=graphs["snn_algo_graph"],
-            run_config=run_config,
-            seed=run_config.seed,
-        )
-
-        if has_adaptation(run_config=run_config):
-            graphs["rad_adapted_snn_graph"] = get_radiation_graph(
-                snn_graph=graphs["adapted_snn_graph"],
-                run_config=run_config,
-                seed=run_config.seed,
-            )
     return graphs
 
 
@@ -313,25 +296,6 @@ def has_adaptation(
 
 
 @typechecked
-def has_radiation(
-    *,
-    run_config: Run_config,
-) -> bool:
-    """Checks if the radiation contains a None setting.
-
-    TODO: ensure the radiation only consists of 1 setting per run.
-    TODO: throw an error if the radiation settings contain multiple
-    settings, like "redundancy" and "None" simultaneously.
-    """
-    if run_config.radiation is None:
-        return False
-    for radiation_name in run_config.radiation.keys():
-        if radiation_name is not None:
-            return True
-    return False
-
-
-@typechecked
 def get_redundant_graph(
     *, snn_algo_graph: nx.DiGraph, plot_config: Plot_config, red_lev: int
 ) -> nx.DiGraph:
@@ -346,54 +310,19 @@ def get_redundant_graph(
 
 
 @typechecked
-def get_radiation_graph(
+def get_new_radiation_graph(
     *,
-    snn_graph: nx.DiGraph,
+    snn_graph: Simulator,
     run_config: Run_config,
-    seed: int,
-) -> nx.Graph:
+) -> Simulator:
     """Makes a deep copy of the incoming graph and applies radiation to it.
 
     Then returns the graph with the radiation, as well as a list of
     neurons that are dead.
     """
-
-    # TODO: determine on which graphs to apply the adaptation.
-
-    # TODO: Verify incoming graph has valid SNN properties.
-
-    # TODO: Check different radiation simulation times.
-
-    # Apply radiation simulation.
-
-    for radiation_name, radiation_setting in run_config.radiation.items():
-        if radiation_name is None:
-            raise SystemError(
-                "Error, if no radiation is selected, this method should not"
-                + " be reached."
-            )
-        if radiation_name == "neuron_death":
-            if not isinstance(radiation_setting, float):
-                raise TypeError(
-                    f"Error, radiation_setting={radiation_setting},"
-                    + "which is not an int."
-                )
-
-            rad_dam = Radiation_damage(probability=radiation_setting)
-            radiation_graph: nx.DiGraph = copy.deepcopy(snn_graph)
-            dead_neuron_names = rad_dam.inject_simulated_radiation(
-                snn_graph=radiation_graph,
-                probability=rad_dam.neuron_death_probability,
-                seed=seed,
-            )
-            # TODO: verify radiation is injected with V1000
-            verify_radiation_is_applied(
-                some_graph=radiation_graph,
-                dead_neuron_names=dead_neuron_names,
-                rad_type=radiation_name,
-            )
-
-            return radiation_graph
-        raise NotImplementedError(
-            f"Error, radiation_name:{radiation_name} is not supported."
-        )
+    radiation_graph: Simulator = copy.deepcopy(snn_graph)
+    # TODO: include ignored neuron names per algorithm.
+    apply_rad_to_simsnn(
+        rad=run_config.radiation, snn=radiation_graph, ignored_neuron_names=[]
+    )
+    return radiation_graph
