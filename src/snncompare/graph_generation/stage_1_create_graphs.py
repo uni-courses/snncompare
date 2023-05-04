@@ -255,25 +255,27 @@ def get_adapted_graph(
     """Converts an input graph of stage 1 and applies a form of brain-inspired
     adaptation to it."""
 
-    for adaptation_name, adaptation_setting in run_config.adaptation.items():
-        if adaptation_name is None:
-            raise ValueError(
-                "Error, if no adaptation is selected, this method should not"
-                + " be reached."
-            )
-        if adaptation_name == "redundancy":
-            verify_redundancy_settings_for_run_config(
-                adaptation=run_config.adaptation
-            )
-            adaptation_graph: nx.DiGraph = get_redundant_graph(
-                snn_algo_graph=snn_algo_graph,
-                plot_config=plot_config,
-                red_lev=adaptation_setting,
-            )
-            return adaptation_graph
-        raise NotImplementedError(
-            f"Error, adaptation_name:{adaptation_name} is not" + " supported."
+    if run_config.adaptation is None:
+        raise ValueError(
+            "Error, if no adaptation is selected, this method should not"
+            + " be reached."
         )
+    if run_config.adaptation.adaptation_type == "redundancy":
+        verify_redundancy_settings_for_run_config(
+            adaptation=run_config.adaptation
+        )
+        adaptation_graph: nx.DiGraph = get_redundant_graph(
+            snn_algo_graph=snn_algo_graph,
+            plot_config=plot_config,
+            red_lev=run_config.adaptation.redundancy,
+        )
+        return adaptation_graph
+    if run_config.adaptation.adaptation_type == "population":
+        raise NotImplementedError("Error, not yet implemented.")
+    raise NotImplementedError(
+        f"Error, {run_config.adaptation.adaptation_type} is not"
+        + " supported."
+    )
 
 
 @typechecked
@@ -289,10 +291,7 @@ def has_adaptation(
     """
     if run_config.adaptation is None:
         return False
-    for adaptation_name in run_config.adaptation.keys():
-        if adaptation_name is not None:
-            return True
-    return False
+    return True
 
 
 @typechecked

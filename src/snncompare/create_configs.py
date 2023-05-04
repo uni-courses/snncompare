@@ -2,6 +2,7 @@
 from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
+from snnadaptation.Adaptation import Adaptation
 from snnradiation.Rad_damage import Rad_damage
 
 # from snncompare.export_results.load_json_to_nx_graph import dicts_are_equal
@@ -72,15 +73,14 @@ def exp_config_to_run_configs(
 
     run_configs: List[Run_config] = []
 
+    pprint(exp_config.__dict__)
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
     # for algorithm in exp_config.algorithms:
     for algorithm_name, algo_specs in exp_config.algorithms.items():
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
-            for run_config_adaptation in get_adaptations(
-                adaptations_or_radiations=exp_config.adaptations,
-            ):
+            for run_config_adaptation in exp_config.adaptations:
                 for run_config_radiation in exp_config.radiations:
                     fill_remaining_run_config_settings(
                         adaptation=run_config_adaptation,
@@ -95,7 +95,7 @@ def exp_config_to_run_configs(
 @typechecked
 def fill_remaining_run_config_settings(
     *,
-    adaptation: Union[None, Dict],
+    adaptation: Union[None, Adaptation],
     algorithm: Dict,
     exp_config: "Exp_config",
     radiation: Rad_damage,
@@ -122,7 +122,7 @@ def fill_remaining_run_config_settings(
 @typechecked
 def run_parameters_to_dict(
     *,
-    adaptation: Union[None, Dict[str, int]],
+    adaptation: Union[None, Adaptation],
     algorithm: Dict[str, Dict[str, int]],
     seed: int,
     size_and_max_graph: Tuple[int, int],
@@ -146,21 +146,3 @@ def run_parameters_to_dict(
     )
 
     return run_config
-
-
-@typechecked
-def get_adaptations(
-    *,
-    adaptations_or_radiations: Dict[str, List[Union[float, int]]],
-) -> List:
-    """Returns the adaptations of the experiment config."""
-    adaptation_list: List = []
-    if adaptations_or_radiations == {}:
-        return [None]
-    for (
-        adaptation_name,
-        adaptation_values,
-    ) in adaptations_or_radiations.items():
-        for adaptation_value in adaptation_values:
-            adaptation_list.append({adaptation_name: adaptation_value})
-    return adaptation_list

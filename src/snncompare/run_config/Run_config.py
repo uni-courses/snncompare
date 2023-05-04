@@ -3,6 +3,7 @@ import copy
 import sys
 from typing import Dict, Optional, Tuple, Union
 
+from snnadaptation.Adaptation import Adaptation
 from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
@@ -19,36 +20,6 @@ class Algorithm(TypedDict):
     """Example typed dict to make the property types explicit."""
 
     alg_name: Dict[str, int]
-
-
-# pylint: disable=R0903
-class Adaptation:
-    """Adaptations."""
-
-    @typechecked
-    def __init__(
-        self,
-        name: str,
-        int_param: Optional[int],
-    ):
-        if name == "Redundancy":
-            self.name = name
-            self.adaptation = Redundancy(int_param)
-        else:
-            raise TypeError("Error, adaptation:{name} not yet supported.")
-
-
-# pylint: disable=R0903
-class Redundancy:
-    """Adaptation example."""
-
-    @typechecked
-    def __init__(self, redundancy: int):
-        if redundancy < 2:
-            raise ValueError("Error, redundancy should be 2 or larger.")
-        if redundancy % 2 == 1:
-            raise ValueError("Error, redundancy should be even integer.")
-        self.redundancy = redundancy
 
 
 # pylint: disable=R0903
@@ -108,7 +79,7 @@ class Run_config:
     @typechecked
     def __init__(
         self,
-        adaptation: Union[None, Dict[str, int]],
+        adaptation: Adaptation,
         algorithm: Dict[str, Dict[str, int]],
         graph_size: int,
         graph_nr: int,
@@ -120,7 +91,7 @@ class Run_config:
         """Stores run configuration settings for the experiment."""
 
         # Required properties
-        self.adaptation: Union[None, Dict[str, int]] = adaptation
+        self.adaptation: Union[None, Adaptation] = adaptation
         self.algorithm: Dict[str, Dict[str, int]] = algorithm
 
         self.graph_size: int = graph_size
