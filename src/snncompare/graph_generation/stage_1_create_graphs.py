@@ -12,6 +12,9 @@ import networkx as nx
 from simsnn.core.networks import Network
 from simsnn.core.nodes import LIF
 from simsnn.core.simulators import Simulator
+from snnadaptation.population.apply_population_coding import (
+    apply_population_coding,
+)
 from snnadaptation.redundancy.redundancy import apply_redundancy
 from snnadaptation.redundancy.verify_redundancy_settings import (
     verify_redundancy_settings_for_run_config,
@@ -264,18 +267,26 @@ def get_adapted_graph(
         verify_redundancy_settings_for_run_config(
             adaptation=run_config.adaptation
         )
-        adaptation_graph: nx.DiGraph = get_redundant_graph(
-            snn_algo_graph=snn_algo_graph,
+        adaptation_graph: nx.DiGraph = apply_redundancy(
+            adaptation_graph=copy.deepcopy(snn_algo_graph),
             plot_config=plot_config,
-            red_lev=run_config.adaptation.redundancy,
+            redundancy=run_config.adaptation.redundancy,
         )
-        return adaptation_graph
-    if run_config.adaptation.adaptation_type == "population":
+
+    elif run_config.adaptation.adaptation_type == "population":
+        adaptation_graph = apply_population_coding(
+            adaptation_graph=copy.deepcopy(snn_algo_graph),
+            plot_config=plot_config,
+            redundancy=run_config.adaptation.redundancy,
+        )
         raise NotImplementedError("Error, not yet implemented.")
-    raise NotImplementedError(
-        f"Error, {run_config.adaptation.adaptation_type} is not"
-        + " supported."
-    )
+    else:
+        raise NotImplementedError(
+            f"Error, {run_config.adaptation.adaptation_type} is not"
+            + " supported."
+        )
+
+    return adaptation_graph
 
 
 @typechecked
