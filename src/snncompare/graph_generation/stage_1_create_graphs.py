@@ -15,7 +15,9 @@ from simsnn.core.simulators import Simulator
 from snnadaptation.population.apply_population_coding import (
     apply_population_coding,
 )
-from snnadaptation.redundancy.redundancy import apply_redundancy
+from snnadaptation.redundancy.apply_sparse_redundancy import (
+    apply_sparse_redundancy,
+)
 from snnadaptation.redundancy.verify_redundancy_settings import (
     verify_redundancy_settings_for_run_config,
 )
@@ -267,7 +269,7 @@ def get_adapted_graph(
         verify_redundancy_settings_for_run_config(
             adaptation=run_config.adaptation
         )
-        adaptation_graph: nx.DiGraph = apply_redundancy(
+        adaptation_graph: nx.DiGraph = apply_sparse_redundancy(
             adaptation_graph=copy.deepcopy(snn_algo_graph),
             plot_config=plot_config,
             redundancy=run_config.adaptation.redundancy,
@@ -310,7 +312,7 @@ def get_redundant_graph(
 ) -> nx.DiGraph:
     """Returns a networkx graph that has a form of adaptation added."""
     adaptation_graph = copy.deepcopy(snn_algo_graph)
-    apply_redundancy(
+    apply_sparse_redundancy(
         adaptation_graph=adaptation_graph,
         plot_config=plot_config,
         redundancy=red_lev,

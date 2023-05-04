@@ -119,7 +119,11 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
             + " not in supported"
             + f"graph_names:{get_snn_graph_names()}"
         )
-    optional_config_args_dict["dash_port"] = args.dash_port
+
+    if args.dash_port is None:
+        optional_config_args_dict["dash_port"] = 8000
+    else:
+        optional_config_args_dict["dash_port"] = args.dash_port
     if args.dash_port and args.dash_port < 8000:
         raise ValueError(
             "Error, port nr should be >8000. Not necessarily over 9000."

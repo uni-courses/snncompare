@@ -89,7 +89,7 @@ def store_node_labels(
     snn_graph: nx.DiGraph,
     t: int,
 ) -> None:
-    """stores the node labels into the plotted graph."""
+    """Stores the node labels into the plotted graph."""
 
     # TODO: move into separate function.
     used_node_names: List[str] = []
@@ -220,7 +220,7 @@ def get_edges_of_node(
     outgoing: bool,
     t: int,
 ) -> str:
-    """Returns (the other) nodenames of the edges of a node."""
+    """Returns (the other) node_names of the edges of a node."""
     node_edges: List[str] = ["<br />"]
     if outgoing:
         node_edges.append("outgoing:<br />")
@@ -256,7 +256,7 @@ def store_edge_labels(
     plotted_graph: nx.DiGraph,
     snn_graph: nx.DiGraph,
 ) -> None:
-    """stores the edge labels into the plotted graph."""
+    """Stores the edge labels into the plotted graph."""
     for edge in plotted_graph.edges():
         if "connector" not in edge[0] and "connector" not in edge[1]:
             plotted_graph.edges[edge][
@@ -269,7 +269,7 @@ def store_edge_labels(
 def store_node_position(
     plotted_graph: nx.DiGraph, snn_graph: nx.DiGraph, t: int
 ) -> None:
-    """stores the node position the plotted graph."""
+    """Stores the node position the plotted graph."""
     for node_name in plotted_graph.nodes():
         if "connector" not in node_name:
             plotted_graph.nodes[node_name]["pos"] = snn_graph.nodes[node_name][
