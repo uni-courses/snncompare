@@ -279,7 +279,6 @@ def get_adapted_graph(
             plot_config=plot_config,
             redundancy=run_config.adaptation.redundancy,
         )
-        raise NotImplementedError("Error, not yet implemented.")
     else:
         raise NotImplementedError(
             f"Error, {run_config.adaptation.adaptation_type} is not"
