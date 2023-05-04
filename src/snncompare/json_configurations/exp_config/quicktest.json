@@ -1,8 +1,8 @@
 {
   "adaptations": {
-    "population": [
+    "redundancy": [
       2,
-      5
+      4
     ]
   },
   "algorithms": {
