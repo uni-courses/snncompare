@@ -169,6 +169,7 @@ Typical run (deletes pre-existing results):
 ```bash
 python -m src.snncompare -e quicktest -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e basic_results -j1 -j2 -j4 -j5 -s2 -rev -dr
+python -m src.snncompare -e test_population -j1 -j2 -j4 -j5 -s2 -rev -dr
 ```
 
 Debug 2 runs, in separate console:

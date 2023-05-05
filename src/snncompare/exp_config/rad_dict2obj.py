@@ -54,7 +54,6 @@ def add_generic_exp_config_rad_dict(
 
     Each Rad_damage object contains the settings for 1 run_config.
     """
-
     for amplitude in rad_settings["amplitude"]:
         for excitatory in rad_settings["excitatory"]:
             for inhibitory in rad_settings["inhibitory"]:

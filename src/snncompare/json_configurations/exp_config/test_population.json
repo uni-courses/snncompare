@@ -32,6 +32,9 @@
       "excitatory": [
         true
       ],
+      "inhibitory": [
+        false
+      ],
       "probability_per_t": [
         1e-06
       ]
