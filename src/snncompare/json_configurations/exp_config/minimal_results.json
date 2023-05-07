@@ -1,0 +1,115 @@
+{
+  "adaptations": {
+    "population": [
+      2,
+      4
+    ],
+    "redundancy": [
+      2,
+      4
+    ]
+  },
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 0
+      },
+      {
+        "m_val": 1
+      }
+    ]
+  },
+  "max_graph_size": 20,
+  "max_max_graphs": 4,
+  "min_graph_size": 20,
+  "min_max_graphs": 4,
+  "neuron_models": [
+    "LIF"
+  ],
+  "radiations": {
+    "change_u": {
+      "amplitude": [
+        1,
+        10
+      ],
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        1e-06,
+        1e-05
+      ]
+    },
+    "neuron_death": {
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        1e-06,
+        1e-05
+      ]
+    },
+    "rand_neuron_spike": {
+      "amplitude": [
+        1
+      ],
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        1e-06,
+        1e-05
+      ]
+    },
+    "rand_synapse_spike": {
+      "amplitude": [
+        1
+      ],
+      "excitatory": [
+        false,
+        true
+      ],
+      "inhibitory": [
+        false,
+        true
+      ],
+      "probability_per_t": [
+        1e-06,
+        1e-05
+      ]
+    }
+  },
+  "seeds": [
+    7,
+    22,
+    23,
+    24
+  ],
+  "simulators": [
+    "simsnn"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [3, 1]}",
+    "{\"__tuple__\": true, \"items\": [4, 2]}",
+    "{\"__tuple__\": true, \"items\": [5, 3]}",
+    "{\"__tuple__\": true, \"items\": [20, 5]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ]
+}
