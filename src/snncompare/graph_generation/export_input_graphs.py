@@ -55,7 +55,6 @@ def has_outputted_input_graph_for_graph_size_and_nr(
             if os.path.isfile(os.path.join(output_dir, name))
         ]
     )
-    input(f"nr_of_input_graphs={nr_of_input_graphs}")
     return nr_of_input_graphs > graph_nr
 
 
