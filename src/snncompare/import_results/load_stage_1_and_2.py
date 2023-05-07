@@ -60,17 +60,14 @@ def has_outputted_stage_1(
             with_adaptation=with_adaptation,
             stage_index=1,
         ):
-            print(f"with_adaptation={with_adaptation} did not find snn_graph.")
             return False
         if not has_outputted_input_graph(
             input_graph=input_graph,
         ):
-            print("no input")
             return False
 
         json_filepath: str = get_run_config_filepath(run_config=run_config)
         if not Path(json_filepath).is_file():
-            print(f"no json={json_filepath}")
             return False
     return True
 

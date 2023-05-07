@@ -2,6 +2,7 @@
 from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
+import customshowme
 from snnadaptation.Adaptation import Adaptation
 from snnradiation.Rad_damage import Rad_damage
 
@@ -16,6 +17,7 @@ from snncompare.run_config.Run_config import Run_config
 # from snncompare.exp_config.Exp_config import Exp_config
 
 
+@customshowme.time
 @typechecked
 def generate_run_configs(
     *,
@@ -72,8 +74,6 @@ def exp_config_to_run_configs(
     # pylint: disable=R0914
 
     run_configs: List[Run_config] = []
-
-    pprint(exp_config.__dict__)
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
     # for algorithm in exp_config.algorithms:

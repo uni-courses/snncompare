@@ -109,7 +109,6 @@ class Experiment_runner:
 
         # Load the ranges of supported settings.
         self.supp_exp_config = Supported_experiment_settings()
-
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config
         )
@@ -118,6 +117,7 @@ class Experiment_runner:
             self.run_configs.reverse()
 
         if perform_run:  # Used to get quick Experiment_runner for testing.
+            print("Performing run.\n\n")
             self.__perform_run(
                 exp_config=self.exp_config,
                 output_config=output_config,
@@ -125,6 +125,7 @@ class Experiment_runner:
             )
 
         if 5 in output_config.output_json_stages:
+            print("Generating boxplot results.\n\n")
             create_performance_plots(
                 completed_run_configs=self.run_configs,
                 exp_config=exp_config,

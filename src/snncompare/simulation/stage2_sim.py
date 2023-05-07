@@ -182,7 +182,7 @@ def stage_2_or_4_graph_exists_already(
         stage_index=1,
     )
 
-    simsnn_exists, _ = simsnn_files_exists_and_get_path(
+    simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
         output_category=output_category,
         input_graph=stage_1_graphs["input_graph"],
         run_config=run_config,
@@ -191,6 +191,7 @@ def stage_2_or_4_graph_exists_already(
         rad_affected_neurons_hash=rad_affected_neurons_hash,
         rand_nrs_hash=rand_nrs_hash,
     )
+    input(f"simsnn_filepath={simsnn_filepath}")
     return simsnn_exists
 
 

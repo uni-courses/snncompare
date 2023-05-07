@@ -185,7 +185,7 @@ repos:
 # Updates the syntax of `.py` files to the specified python version.
 # It is not compatible with: pre-commit hook: fix-encoding-pragma
  - repo: https://github.com/asottile/pyupgrade
-   rev: v3.3.2
+   rev: v3.4.0
    hooks:
      - id: pyupgrade
        args: [--py38-plus]
