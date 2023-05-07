@@ -7,7 +7,6 @@ import copy
 from math import inf
 from typing import Dict, Union
 
-import customshowme
 import networkx as nx
 from simsnn.core.networks import Network
 from simsnn.core.nodes import LIF
@@ -201,7 +200,6 @@ def get_nx_lif_graphs(
     return graphs
 
 
-@customshowme.time
 @typechecked
 def load_input_graph_from_file(
     *,
