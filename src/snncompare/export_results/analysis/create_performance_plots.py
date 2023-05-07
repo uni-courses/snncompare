@@ -2,7 +2,6 @@
 the performance of the SNNs."""
 
 import copy
-import pickle  # nosec
 
 # Take in exp_config or run_configs
 # If exp_config, get run_configs
@@ -21,7 +20,7 @@ from typeguard import typechecked
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_plots.plot_graphs import export_plot
 from snncompare.graph_generation.stage_1_create_graphs import (
-    get_input_graph_of_run_config,
+    load_input_graph_from_file_with_init_props,
 )
 from snncompare.helper import get_snn_graph_names
 from snncompare.import_results.load_stage4 import load_stage4_results
@@ -169,7 +168,7 @@ def get_completed_and_missing_run_configs(
     completed_run_configs: List[Run_config] = []
 
     for run_config in run_configs:
-        input_graph: nx.Graph = get_input_graph_of_run_config(
+        input_graph: nx.Graph = load_input_graph_from_file_with_init_props(
             run_config=run_config
         )
         if has_outputted_stage_1(
@@ -390,19 +389,6 @@ def boxplot_data_to_y_series(
             )
     print("")
     return columns
-
-
-def store_pickle(*, run_configs: List[Run_config], filepath: str) -> None:
-    """Stores run_config list into pickle file."""
-    with open(filepath, "wb") as handle:
-        pickle.dump(run_configs, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def load_pickle(*, filepath: str) -> List[Run_config]:
-    """Stores run_config list into pickle file."""
-    with open(filepath, "rb") as handle:
-        run_configs: List[Run_config] = pickle.load(handle)  # nosec
-    return run_configs
 
 
 def create_dotted_boxplot(

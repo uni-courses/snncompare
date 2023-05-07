@@ -5,7 +5,7 @@ networkx Graph.
 """
 import copy
 from math import inf
-from typing import Dict, List, Union
+from typing import Dict, Union
 
 import customshowme
 import networkx as nx
@@ -21,7 +21,9 @@ from snnadaptation.redundancy.apply_sparse_redundancy import (
 from snnadaptation.redundancy.verify_redundancy_settings import (
     verify_redundancy_settings_for_run_config,
 )
-from snnalgorithms.get_input_graphs import get_rand_planar_triangle_free_graph
+from snnalgorithms.get_input_graphs import (
+    add_mdsa_initialisation_properties_to_input_graph,
+)
 from snnalgorithms.sparse.MDSA.create_MDSA_snn_neurons import (
     get_new_mdsa_graph,
 )
@@ -34,6 +36,9 @@ from snnradiation.apply_rad_to_simsnn import apply_rad_to_simsnn
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
+from snncompare.graph_generation.export_input_graphs import (
+    load_input_graph_based_on_nr,
+)
 from snncompare.run_config.Run_config import Run_config
 
 
@@ -177,7 +182,7 @@ def get_nx_lif_graphs(
     """
     # TODO: move to central place in MDSA algo spec.
     graphs = {}
-    graphs["input_graph"] = get_input_graph_of_run_config(
+    graphs["input_graph"] = load_input_graph_from_file_with_init_props(
         run_config=run_config
     )
 
@@ -198,71 +203,31 @@ def get_nx_lif_graphs(
 
 @customshowme.time
 @typechecked
-def get_input_graph_of_run_config(
+def load_input_graph_from_file(
     *,
     run_config: Run_config,
 ) -> nx.Graph:
-    """TODO: support retrieving graph sizes larger than size 5.
-    TODO: ensure those graphs have valid properties, e.g. triangle-free and
-    non-planar."""
-
-    # Get the graph of the right size.
-    # TODO: Pass random seed.
-    input_graphs: Dict[str, nx.Graph] = get_input_graphs(run_config=run_config)
-    sorted_hashes: List[str] = sorted(input_graphs.keys())
-    run_config.isomorphic_hash_input = sorted_hashes[run_config.graph_nr]
-    input_graph: nx.Graph = input_graphs[run_config.isomorphic_hash_input]
+    """If the input graphs already exist for this run_config, it loads them
+    from file, otherwise, it generates them, exports them, and then returns
+    them."""
+    input_graph: nx.Graph = load_input_graph_based_on_nr(
+        graph_size=run_config.graph_size, graph_nr=run_config.graph_nr
+    )
     return input_graph
 
 
 @typechecked
-def get_input_graphs(
+def load_input_graph_from_file_with_init_props(
     *,
     run_config: Run_config,
-) -> Dict[str, nx.Graph]:
-    """Removes graphs that are not used, because of a maximum nr of graphs that
-    is to be evaluated.
-
-    TODO: export the input graphs to a pickle.
-    Use the experiment config to generate the minimum number of required input
-     graphs per graph size.
-    """
-
-    # Generate the input graphs.
-    input_graphs: Dict[str, nx.Graph] = get_rand_planar_triangle_free_graph(
-        density_cutoff=0.01,
-        max_nr_of_graphs=run_config.graph_nr + 1,
-        seed=run_config.seed,
-        size=run_config.graph_size,
+) -> nx.Graph:
+    """Loads an input graph from file, and then adds the initialisation
+    properties to it.."""
+    input_graph: nx.Graph = load_input_graph_from_file(run_config=run_config)
+    add_mdsa_initialisation_properties_to_input_graph(
+        input_graph=input_graph, seed=run_config.seed
     )
-
-    if len(input_graphs.values()) <= run_config.graph_nr:
-        raise ValueError(
-            f"For input_graph of size:{run_config.graph_size}, I found:"
-            + f"{len(input_graphs)} graphs, yet expected graph_nr:"
-            + f"{run_config.graph_nr}. Please lower the max_graphs setting in:"
-            + "size_and_max_graphs in the experiment configuration."
-        )
-    if len(run_config.algorithm.keys()) > 1:
-        raise ValueError("Error, only 1 algorithm per run config expected.")
-    if "MDSA" in run_config.algorithm.keys():
-        for input_graph in input_graphs.values():
-            # Add the algorithm properties for the MDSA algorithm into the
-            # input graphs as a dictionary. These properties are: the random
-            # numbers that are used for the graph initialisation.
-            if "alg_props" not in input_graph.graph.keys():
-                input_graph.graph["alg_props"] = SNN_initialisation_properties(
-                    input_graph, run_config.seed
-                ).__dict__
-
-            if not isinstance(input_graph, nx.Graph):
-                raise TypeError(
-                    "Error, the input graph is not a networkx graph:"
-                    + f"{type(input_graph)}"
-                )
-    else:
-        raise NotImplementedError("Error, algorithm not (yet) supported.")
-    return input_graphs
+    return input_graph
 
 
 @typechecked

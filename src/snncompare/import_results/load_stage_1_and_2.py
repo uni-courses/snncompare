@@ -21,13 +21,16 @@ from typeguard import typechecked
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     Radiation_data,
     Rand_nrs_data,
-    get_input_graph_output_filepath,
     get_rad_name_filepath_and_exists,
     get_rand_nrs_and_hash,
     get_rand_nrs_data,
 )
+from snncompare.graph_generation.export_input_graphs import (
+    get_input_graph_output_filepath,
+)
 from snncompare.graph_generation.stage_1_create_graphs import (
-    get_input_graph_of_run_config,
+    load_input_graph_from_file,
+    load_input_graph_from_file_with_init_props,
 )
 from snncompare.helper import add_stage_completion_to_graph
 from snncompare.import_results.helper import simsnn_files_exists_and_get_path
@@ -160,7 +163,9 @@ def has_outputted_rand_nrs(
 def assert_has_outputted_stage_1(run_config: Run_config) -> None:
     """Throws error if stage 1 is not outputted."""
     if not has_outputted_stage_1(
-        input_graph=get_input_graph_of_run_config(run_config=run_config),
+        input_graph=load_input_graph_from_file_with_init_props(
+            run_config=run_config
+        ),
         run_config=run_config,
     ):
         raise ValueError("Error, stage 1 was not completed.")
@@ -175,7 +180,7 @@ def load_stage1_simsnn_graphs(
     """Loads stage1 simsnn graphs and input graph."""
     if stage_1_graphs_dict is None:
         stage_1_graphs_dict = {}
-        stage_1_graphs_dict["input_graph"] = get_input_graph_of_run_config(
+        stage_1_graphs_dict["input_graph"] = load_input_graph_from_file(
             run_config=run_config
         )
 

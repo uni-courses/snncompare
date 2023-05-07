@@ -12,6 +12,9 @@ from typing import Dict, List, Optional, Union
 import customshowme
 import networkx as nx
 from simsnn.core.simulators import Simulator
+from snnalgorithms.get_input_graphs import (
+    create_mdsa_input_graphs_from_exp_config,
+)
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
@@ -33,7 +36,6 @@ from snncompare.export_plots.temp_default_output_creation import (
 from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
     get_completed_and_missing_run_configs,
-    store_pickle,
 )
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     output_stage_1_configs_and_input_graphs,
@@ -45,6 +47,7 @@ from snncompare.export_results.output_stage2_snns import output_stage_2_snns
 from snncompare.export_results.output_stage4_results import (
     output_stage_4_results,
 )
+from snncompare.graph_generation.export_input_graphs import store_pickle
 from snncompare.helper import (
     add_stage_completion_to_graph,
     get_snn_graph_names,
@@ -70,7 +73,7 @@ from snncompare.simulation.add_radiation_graphs import (
 
 from .graph_generation.stage_1_create_graphs import (
     get_graphs_stage_1,
-    get_input_graph_of_run_config,
+    load_input_graph_from_file_with_init_props,
 )
 
 # from .import_results.load_stage1_results import load_results_stage_1
@@ -109,6 +112,7 @@ class Experiment_runner:
 
         # Load the ranges of supported settings.
         self.supp_exp_config = Supported_experiment_settings()
+        create_mdsa_input_graphs_from_exp_config(exp_config=exp_config)
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config
         )
@@ -147,7 +151,6 @@ class Experiment_runner:
         plot_config = get_default_plot_config()
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
-            # shutil.rmtree("results")
             print(f"\n{i+1}/{len(run_configs)} [runs]")
             pprint(run_config_to_dict(run_config=run_config))
             results_nx_graphs = self.perform_run_stage_1(
@@ -198,7 +201,7 @@ class Experiment_runner:
         generating an SNN (graph) that runs the intended algorithm.
         """
 
-        input_graph: nx.Graph = get_input_graph_of_run_config(
+        input_graph: nx.Graph = load_input_graph_from_file_with_init_props(
             run_config=run_config
         )
 
