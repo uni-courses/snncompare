@@ -48,6 +48,8 @@ def has_outputted_input_graph_for_graph_size_and_nr(
 ) -> bool:
     """Returns True if this input graph already exists."""
     output_dir: str = f"results/stage1/input_graphs/{graph_size}/"
+    if not os.path.isdir(output_dir):
+        return False
     nr_of_input_graphs: int = len(
         [
             name
@@ -55,6 +57,7 @@ def has_outputted_input_graph_for_graph_size_and_nr(
             if os.path.isfile(os.path.join(output_dir, name))
         ]
     )
+
     return nr_of_input_graphs > graph_nr
 
 

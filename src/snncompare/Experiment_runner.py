@@ -302,7 +302,6 @@ class Experiment_runner:
         )
         return results_nx_graphs
 
-    @customshowme.time
     @typechecked
     def __perform_run_stage_3(
         self,
