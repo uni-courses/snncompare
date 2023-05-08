@@ -220,7 +220,7 @@ def load_input_graph_from_file_with_init_props(
     run_config: Run_config,
 ) -> nx.Graph:
     """Loads an input graph from file, and then adds the initialisation
-    properties to it.."""
+    properties to it."""
     input_graph: nx.Graph = load_input_graph_from_file(run_config=run_config)
     add_mdsa_initialisation_properties_to_input_graph(
         input_graph=input_graph, seed=run_config.seed

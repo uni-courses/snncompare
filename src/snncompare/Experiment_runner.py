@@ -33,8 +33,10 @@ from snncompare.export_plots.temp_default_output_creation import (
     create_default_hover_info,
     create_default_output_config,
 )
+from snncompare.export_results.analysis.adaptation_cost import (
+    create_adapation_cost_plots,
+)
 from snncompare.export_results.analysis.create_performance_plots import (
-    create_performance_plots,
     get_completed_and_missing_run_configs,
 )
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
@@ -130,10 +132,11 @@ class Experiment_runner:
 
         if 5 in output_config.output_json_stages:
             print("Generating boxplot results.\n\n")
-            create_performance_plots(
-                completed_run_configs=self.run_configs,
-                exp_config=exp_config,
-            )
+            # create_performance_plots(
+            #    completed_run_configs=self.run_configs,
+            #    exp_config=exp_config,
+            # )
+            create_adapation_cost_plots(exp_config=self.exp_config)
 
     # pylint: disable=W0238
     @typechecked
