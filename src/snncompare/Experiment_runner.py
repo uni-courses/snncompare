@@ -33,8 +33,8 @@ from snncompare.export_plots.temp_default_output_creation import (
     create_default_hover_info,
     create_default_output_config,
 )
-from snncompare.export_results.analysis.adaptation_cost import (
-    create_adapation_cost_plots,
+from snncompare.export_results.analysis.create_adaptation_cost_plot import (
+    plot_raw_adap_cost_datas,
 )
 from snncompare.export_results.analysis.create_performance_plots import (
     get_completed_and_missing_run_configs,
@@ -136,7 +136,7 @@ class Experiment_runner:
             #    completed_run_configs=self.run_configs,
             #    exp_config=exp_config,
             # )
-            create_adapation_cost_plots(exp_config=self.exp_config)
+            plot_raw_adap_cost_datas(exp_config=self.exp_config)
 
     # pylint: disable=W0238
     @typechecked
