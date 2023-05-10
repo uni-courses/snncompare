@@ -1,5 +1,6 @@
 """Helps in computing the adaptation cost plot data."""
 import json
+from pprint import pprint
 from typing import Dict, List, Set, Union
 
 import networkx as nx
@@ -131,10 +132,12 @@ def get_raw_adap_cost_datas(
             )
 
             # Get the snns for these adaptations.
+            pprint(dummy_run_config.__dict__)
             adapted_snn = get_snn(
                 dummy_run_config=dummy_run_config,
                 with_adaptation=True,
             )
+            print(len(adapted_snn.network.graph.nodes))
 
             raw_plot_data: Raw_adap_cost_data = Raw_adap_cost_data(
                 adaptation=adaptation,
