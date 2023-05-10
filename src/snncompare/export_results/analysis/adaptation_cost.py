@@ -49,6 +49,7 @@ class Adaptation_cost_plot_data:
     @typechecked
     def plot_adaptation_costs(
         self,
+        filename: str,
     ) -> None:
         """Plots the adaptation costs.
 
@@ -68,11 +69,6 @@ class Adaptation_cost_plot_data:
                     y_series[
                         adaptation_type
                     ] = adaptation_cost.xy_coords_per_adaptation_type
-
-        filename: str = (
-            f"{self.algorithm_name}_{self.algorithm_parameter}_"
-            + f"{self.cost_type}"
-        )
 
         output_dir: str = f"latex/graphs/adaptation_costs/{self.cost_type}/"
         create_relative_path(some_path=output_dir)

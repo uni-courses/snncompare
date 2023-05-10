@@ -1,6 +1,5 @@
 """Helps in computing the adaptation cost plot data."""
 import json
-from pprint import pprint
 from typing import Dict, List, Set, Union
 
 import networkx as nx
@@ -42,6 +41,14 @@ class Cost_plot_group:
         self.xy_coords_per_adaptation_type: Dict[
             float, List[float]
         ] = xy_coords_per_adaptation_type
+
+    @typechecked
+    def get_nth_y_coord_of_all_sizes(self, n: int) -> List[float]:
+        """Returns the nth y-value of each x-coordinate's list of y-values."""
+        nth_values: List[float] = []
+        for values in self.xy_coords_per_adaptation_type.values():
+            nth_values.append(values[n])
+        return nth_values
 
 
 # pylint: disable = R0902
@@ -132,12 +139,12 @@ def get_raw_adap_cost_datas(
             )
 
             # Get the snns for these adaptations.
-            pprint(dummy_run_config.__dict__)
+            # pprint(dummy_run_config.__dict__)
             adapted_snn = get_snn(
                 dummy_run_config=dummy_run_config,
                 with_adaptation=True,
             )
-            print(len(adapted_snn.network.graph.nodes))
+            # print(len(adapted_snn.network.graph.nodes))
 
             raw_plot_data: Raw_adap_cost_data = Raw_adap_cost_data(
                 adaptation=adaptation,

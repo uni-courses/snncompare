@@ -172,6 +172,7 @@ python -m src.snncompare -e basic_results -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e minimal_results -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e test_population -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e complexity -j1 -j2 -j4 -j5 -s2 -rev
+python -m src.snncompare -e complexity -j5
 ```
 
 Debug 2 runs, in separate console:

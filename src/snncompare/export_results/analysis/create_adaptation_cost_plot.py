@@ -17,20 +17,107 @@ from snncompare.export_results.analysis.get_adaptation_cost_settings import (
 @typechecked
 def plot_raw_adap_cost_datas(exp_config: Exp_config) -> None:
     """Creates raw plot data objects."""
-    raw_adap_cost_datas: List[
-        Raw_adap_cost_data
+    plot_data: Dict[
+        str, List[Raw_adap_cost_data]
     ] = get_used_raw_adap_cost_datas(
         exp_config=exp_config, plot_type="per_algorithm"
     )
 
-    for cost_type in raw_adap_cost_datas[0].cost_types:
-        adaptation_cost_plot_data: Adaptation_cost_plot_data = (
-            get_adaptation_cost_groups_from_incoming_adaptation_cost_datas(
-                cost_type=cost_type, raw_adap_cost_datas=raw_adap_cost_datas
+    for plot_name, raw_adap_cost_datas in plot_data.items():
+        for cost_type in raw_adap_cost_datas[0].cost_types:
+            adaptation_cost_plot_data: Adaptation_cost_plot_data = (
+                get_adaptation_cost_groups_from_incoming_adaptation_cost_datas(
+                    cost_type=cost_type,
+                    raw_adap_cost_datas=raw_adap_cost_datas,
+                )
             )
-        )
 
-        adaptation_cost_plot_data.plot_adaptation_costs()
+            filename: str = f"{plot_name}" + f"{cost_type}"
+            adaptation_cost_plot_data.plot_adaptation_costs(filename=filename)
+
+
+@typechecked
+def get_used_raw_adap_cost_datas(
+    *, exp_config: Exp_config, plot_type: str
+) -> Dict[str, List[Raw_adap_cost_data]]:
+    """Gets the adaptation cost objects for all runs in the Experiment setup,
+    and then filters them based on the desired plot type setting.
+
+    TODO: build support for per algorithm parameter.
+    """
+
+    plot_datas: Dict[str, List[Raw_adap_cost_data]] = {}
+
+    raw_adap_cost_datas: List[Raw_adap_cost_data] = get_raw_adap_cost_datas(
+        exp_config=exp_config
+    )
+
+    if plot_type == "per_algorithm":
+        for alg_name, alg_values in exp_config.algorithms.items():
+            used_raw_adap_cost_datas = per_algorithm(
+                exp_config=exp_config,
+                raw_adap_cost_datas=raw_adap_cost_datas,
+            )
+            plot_datas[f"{alg_name}_{alg_values}"] = used_raw_adap_cost_datas
+
+    if plot_type == "per_alg_param":
+        for alg_name, alg_values in exp_config.algorithms.items():
+            for alg_value in alg_values.values():
+                print(f"TODO:{alg_name} {alg_value}")
+
+                # plot_datas[f'{alg_name}_{alg_value}']=used_raw_adap_cost_datas
+
+    if plot_type == "per_adaptation_type":
+        per_adaptation_type()
+
+    if plot_type == "per_adaptation_value":
+        per_adaptation_value()
+    return plot_datas
+
+
+@typechecked
+def per_algorithm(
+    exp_config: Exp_config, raw_adap_cost_datas: List[Raw_adap_cost_data]
+) -> List[Raw_adap_cost_data]:
+    """Creates a plot of the adaptation costs.
+
+    The costs for all algorithm settings are put in a single plot.
+    """
+    # used_raw_adap_cost_datas: List[Raw_adap_cost_data]
+    for algorithm_name in exp_config.algorithms.keys():
+        used_raw_adap_cost_datas: List[Raw_adap_cost_data] = []
+        for raw_adap_cost_data in raw_adap_cost_datas:
+            if raw_adap_cost_data.algorithm_name == algorithm_name:
+                used_raw_adap_cost_datas.append(raw_adap_cost_data)
+
+    return used_raw_adap_cost_datas
+
+
+@typechecked
+def per_alg_param() -> None:
+    """Creates a plot of the adaptation costs.
+
+    The costs of adaptation are put in a separate plot per algorithm
+    parameter.
+    """
+
+
+@typechecked
+def per_adaptation_type() -> None:
+    """Creates a plot of the adaptation costs.
+
+    The costs of adaptation are put in a separate plot per adaptation
+    type.
+    """
+
+
+@typechecked
+def per_adaptation_value() -> None:
+    """Creates a plot of the adaptation costs.
+
+    The costs of adaptation are put in a separate plot per adaptation
+    value
+    """
 
 
 @typechecked
@@ -78,12 +165,11 @@ def get_adaptation_cost_groups_from_incoming_adaptation_cost_datas(
     for adaptation_type in get_adaptation_types(
         raw_adap_cost_datas=raw_adap_cost_datas
     ):  # both type and value
-        y_values: List[float] = []
-
         # Create a list of input_graph sizes, and per input_graph size, a list
         # of y-coordinates that represent the cost in [neurons/synapses/spikes]
         xy_coords_per_adaptation_type: Dict[float, List[float]] = {}
         for graph_size in get_graph_sizes(raw_adap_cost_datas):
+            y_values: List[float] = []
             for raw_adap_cost_data in raw_adap_cost_datas:
                 if raw_adap_cost_data.adaptation is None:
                     adaptation_name: str = "no_adaptation"
@@ -92,7 +178,10 @@ def get_adaptation_cost_groups_from_incoming_adaptation_cost_datas(
                         f"{raw_adap_cost_data.adaptation.adaptation_type}"
                         + f"_{raw_adap_cost_data.adaptation.redundancy}"
                     )
-                if adaptation_name == adaptation_type:
+                if (
+                    adaptation_name == adaptation_type
+                    and raw_adap_cost_data.graph_size == graph_size
+                ):
                     y_values.append(raw_adap_cost_data.costs[cost_type])
             xy_coords_per_adaptation_type[graph_size] = y_values
 
@@ -105,7 +194,7 @@ def get_adaptation_cost_groups_from_incoming_adaptation_cost_datas(
     adaptation_costs: List = []
     for key, value in cost_plot_groups.items():
         adaptation_costs.append(value)
-        print(f"{key}, {value.xy_coords_per_adaptation_type[3]}")
+        print(f"{key}, {value.get_nth_y_coord_of_all_sizes(n=0)}")
 
     # TODO: move into parent function (to add algorithm params).
     adaptation_cost_plot_data: Adaptation_cost_plot_data = (
@@ -121,74 +210,3 @@ def get_adaptation_cost_groups_from_incoming_adaptation_cost_datas(
     )
 
     return adaptation_cost_plot_data
-
-
-@typechecked
-def get_used_raw_adap_cost_datas(
-    *, exp_config: Exp_config, plot_type: str
-) -> List[Raw_adap_cost_data]:
-    """Gets the adaptation cost objects for all runs in the Experiment setup,
-    and then filters them based on the desired plot type setting.
-
-    TODO: build support for per algorithm parameter.
-    """
-    raw_adap_cost_datas: List[Raw_adap_cost_data] = get_raw_adap_cost_datas(
-        exp_config=exp_config
-    )
-    if plot_type == "per_algorithm":
-        used_raw_adap_cost_datas = per_algorithm(
-            exp_config=exp_config,
-            raw_adap_cost_datas=raw_adap_cost_datas,
-        )
-    if plot_type == "per_alg_param":
-        per_alg_param()
-    if plot_type == "per_adaptation_type":
-        per_adaptation_type()
-    if plot_type == "per_adaptation_value":
-        per_adaptation_value()
-    return used_raw_adap_cost_datas
-
-
-@typechecked
-def per_algorithm(
-    exp_config: Exp_config, raw_adap_cost_datas: List[Raw_adap_cost_data]
-) -> List[Raw_adap_cost_data]:
-    """Creates a plot of the adaptation costs.
-
-    The costs for all algorithm settings are put in a single plot.
-    """
-    # used_raw_adap_cost_datas: List[Raw_adap_cost_data]
-    for algorithm_name in exp_config.algorithms.keys():
-        used_raw_adap_cost_datas: List[Raw_adap_cost_data] = []
-        for raw_adap_cost_data in raw_adap_cost_datas:
-            if raw_adap_cost_data.algorithm_name == algorithm_name:
-                used_raw_adap_cost_datas.append(raw_adap_cost_data)
-
-    return used_raw_adap_cost_datas
-
-
-@typechecked
-def per_alg_param() -> None:
-    """Creates a plot of the adaptation costs.
-
-    The costs of adaptation are put in a separate plot per algorithm
-    parameter.
-    """
-
-
-@typechecked
-def per_adaptation_type() -> None:
-    """Creates a plot of the adaptation costs.
-
-    The costs of adaptation are put in a separate plot per adaptation
-    type.
-    """
-
-
-@typechecked
-def per_adaptation_value() -> None:
-    """Creates a plot of the adaptation costs.
-
-    The costs of adaptation are put in a separate plot per adaptation
-    value
-    """
