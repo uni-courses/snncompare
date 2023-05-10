@@ -209,4 +209,6 @@ def parse_output_json_stages(
         output_json_stages.append(4)
     if args.output_json_stage_5:
         output_json_stages.append(5)
+    if args.output_json_stage_6:
+        output_json_stages.append(6)
     return output_json_stages

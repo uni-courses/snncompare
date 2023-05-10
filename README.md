@@ -167,12 +167,14 @@ python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r run_config_fil
 Typical run (deletes pre-existing results):
 
 ```bash
+python -m src.snncompare -e neuron_death -j1 -j2 -j4 -j5 -s2 -rev
 python -m src.snncompare -e quicktest -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e basic_results -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e minimal_results -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e test_population -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e complexity -j1 -j2 -j4 -j5 -s2 -rev
 python -m src.snncompare -e complexity -j5
+python -m src.snncompare -e change_u -j5
 ```
 
 Debug 2 runs, in separate console:

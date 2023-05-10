@@ -29,7 +29,7 @@ class Output_config:
         """Stores run configuration settings for the exp_configriment."""
         self.verify_int_list_values(
             input_list=output_json_stages,
-            permitted_list=[1, 2, 4, 5],
+            permitted_list=[1, 2, 4, 5, 6],
             param_name="recreate_stages",
         )
 

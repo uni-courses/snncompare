@@ -96,6 +96,8 @@ def create_performance_plots(
 
     count: int = 0
     for rad_setting in reversed(exp_config.radiations):
+        print(f"rad_setting={rad_setting.__dict__}")
+    for rad_setting in reversed(exp_config.radiations):
         # TODO: separate per radiation_name (type).
         print(f"rad_setting={rad_setting.__dict__}")
         # for radiation_value in radiation_values:
@@ -154,7 +156,7 @@ def get_image_name(*, count: int, rad_setts: Rad_damage) -> str:
 
     return (
         f"{count}_{rad_setts.effect_type}_{excitation_type}_"
-        + f"{rad_setts.probability_per_t}_{rad_setts.amplitude}"
+        + f"{rad_setts.probability_per_t}_amplitude_{rad_setts.amplitude}"
     )
 
 

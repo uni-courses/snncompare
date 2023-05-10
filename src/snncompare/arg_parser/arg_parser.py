@@ -145,6 +145,17 @@ def parse_cli_args(
         help=("Store a compact json output with the boxplot data."),
     )
 
+    parser.add_argument(
+        "-j6",
+        "--output-json-stage-6",
+        action="store_true",
+        default=False,
+        help=(
+            "Store a adaptation costs in terms of neuronal-, synaptic- and "
+            + "energy complexity."
+        ),
+    )
+
     # Run run on a particular run_settings json file.
     parser.add_argument(
         "-r",
