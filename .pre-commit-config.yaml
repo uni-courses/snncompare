@@ -40,7 +40,7 @@ repos:
 # - repo: https://github.com/python/mypy
  - repo: https://github.com/pre-commit/mirrors-mypy
 ### - repo: https://github.com/a-t-0/mypy
-   rev: v1.2.0
+   rev: v1.3.0
    hooks:
     - id: mypy
       args: ["--disallow-untyped-calls", "--disallow-untyped-defs", "--disallow-incomplete-defs", "--disallow-any-explicit"]

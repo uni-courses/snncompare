@@ -169,6 +169,7 @@ Typical run (deletes pre-existing results):
 ```bash
 python -m src.snncompare -e neuron_death -j1 -j2 -j4 -j5 -s2 -rev
 python -m src.snncompare -e quicktest -j1 -j2 -j4 -j5 -s2 -rev -dr
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -j5 -s2 -rev
 python -m src.snncompare -e basic_results -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e minimal_results -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e test_population -j1 -j2 -j4 -j5 -s2 -rev -dr
@@ -177,12 +178,14 @@ python -m src.snncompare -e complexity -j5
 python -m src.snncompare -e change_u -j5
 ```
 
+## Demo
+
 Debug 2 runs, in separate console:
 
 ```bash
-python -m src.snncompare -e debug0 -j1 -j2 -j4 -j5 -rev  -si -sgt \
- rad_adapted_snn_graph -p 8000
-python -m src.snncompare -e debug1 -j1 -j2 -j4 -j5 -rev  -si -sgt \
+python -m src.snncompare -e live_demo_adaptation -j1 -j2 -j4 -j5 -rev  -si -sgt \
+ snn_algo_graph -p 8000
+python -m src.snncompare -e live_demo_adaptation -j1 -j2 -j4 -j5 -rev  -si -sgt \
  rad_adapted_snn_graph -p 8003
 ```
 

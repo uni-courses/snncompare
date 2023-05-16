@@ -40,4 +40,5 @@ def load_stage4_results(
                 with_radiation=with_radiation,
                 stage_index=4,
             )
+
     return stage_4_results_dict

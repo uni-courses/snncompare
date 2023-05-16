@@ -90,6 +90,17 @@ def parse_cli_args(
         ),
     )
 
+    parser.add_argument(
+        "-efm",
+        "--export-failure-modes",
+        action="store_true",
+        default=False,
+        help=(
+            "Store per timestep in the snn which radiated neurons spiked/didn"
+            "'t spike when the unradiated counterparts didn't/did spike."
+        ),
+    )
+
     # Create argument parsers to allow user to specify what to run.
     # Allow user run the experiment on a graph from file.
     parser.add_argument(
@@ -246,6 +257,17 @@ def parse_cli_args(
             "Skips outputting the simulation data of stage 2 for the snns."
             + "Also skips the simulation if the results from that simulation"
             + "already exist in stage 4."
+        ),
+    )
+
+    parser.add_argument(
+        "-sfm",
+        "--show-failure-modes",
+        action="store_true",
+        default=False,
+        help=(
+            "Shows a table with per radiated snn, which neuron(s) was/were"
+            "the first to differ in spike behaviour from the unradiated SNN."
         ),
     )
 

@@ -163,7 +163,9 @@ class Extra_storing_config:
         count_synapses: bool,
         skip_stage_2_output: bool,
         show_images: bool,
-        store_died_neurons: bool,  # Does this say dead neuron storage?
+        store_died_neurons: bool,
+        export_failure_modes: bool,
+        show_failure_modes: bool,
     ):
         self.count_spikes: bool = count_spikes
         self.skip_stage_2_output: bool = skip_stage_2_output
@@ -181,8 +183,10 @@ class Extra_storing_config:
             raise NotImplementedError(
                 "Error, count_synapses not yet implemented."
             )
+        self.export_failure_modes: bool = export_failure_modes
         self.show_images: bool = show_images
         self.store_died_neurons: bool = store_died_neurons
+        self.show_failure_modes: bool = show_failure_modes
         if self.count_spikes:
             raise NotImplementedError(
                 "Error, count_spikes not yet implemented."

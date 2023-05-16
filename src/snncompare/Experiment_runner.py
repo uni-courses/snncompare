@@ -47,9 +47,7 @@ from snncompare.export_results.output_stage1_snn_graphs import (
     output_stage_1_snns,
 )
 from snncompare.export_results.output_stage2_snns import output_stage_2_snns
-from snncompare.export_results.output_stage4_results import (
-    output_stage_4_results,
-)
+from snncompare.export_results.output_stage4_results import output_snn_results
 from snncompare.graph_generation.export_input_graphs import store_pickle
 from snncompare.helper import (
     add_stage_completion_to_graph,
@@ -65,6 +63,10 @@ from snncompare.optional_config.Output_config import (
     Output_config,
     Zoom,
 )
+from snncompare.process_results.get_failure_modes import (
+    add_failure_modes_to_graph,
+)
+from snncompare.process_results.show_failure_modes import show_failures
 from snncompare.progress_report.has_completed_stage2_or_4 import (
     assert_has_outputted_stage_2_or_4,
     has_outputted_stage_2_or_4,
@@ -140,6 +142,9 @@ class Experiment_runner:
 
         if 6 in output_config.output_json_stages:
             plot_raw_adap_cost_datas(exp_config=self.exp_config)
+
+        if output_config.extra_storing_config.show_failure_modes:
+            show_failures(exp_config=self.exp_config)
 
     # pylint: disable=W0238
     @typechecked
@@ -352,9 +357,9 @@ class Experiment_runner:
             jobs = []
             for i, graph_name in enumerate(get_snn_graph_names()):
                 if output_config.dash_port is None:
-                    dash_port: int = 8050 + i
+                    output_config.dash_port = 8050 + i
                 else:
-                    dash_port = output_config.dash_port + i
+                    output_config.dash_port += i
                 if graph_name in output_config.graph_types:
                     p = multiprocessing.Process(
                         target=create_svg_plot,
@@ -362,10 +367,7 @@ class Experiment_runner:
                             [graph_name],
                             results_nx_graphs["graphs_dict"],
                             output_config,
-                            dash_port,
                             run_config,
-                            run_config.unique_id,
-                            None,
                         ),
                     )
                     jobs.append(p)
@@ -405,10 +407,29 @@ class Experiment_runner:
                 stage_2_graphs=results_nx_graphs["graphs_dict"],
             )
 
-            output_stage_4_results(
-                run_config=run_config,
-                graphs_dict=results_nx_graphs["graphs_dict"],
-            )
+            output_data_types = ["results"]
+            if output_config.extra_storing_config.export_failure_modes:
+                output_data_types += [
+                    "failure_modes",
+                ]
+
+                # Set failure modes.
+                add_failure_modes_to_graph(
+                    snn_graphs=results_nx_graphs["graphs_dict"]
+                )
+
+            for output_data_type in output_data_types:
+                if output_data_type == "results":
+                    stage_index: int = 4
+                else:
+                    stage_index = 7
+                output_snn_results(
+                    output_data_type=output_data_type,
+                    run_config=run_config,
+                    graphs_dict=results_nx_graphs["graphs_dict"],
+                    stage_index=stage_index,
+                )
+
             assert_has_outputted_stage_2_or_4(
                 graphs_dict=results_nx_graphs["graphs_dict"],
                 run_config=run_config,

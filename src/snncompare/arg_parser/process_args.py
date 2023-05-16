@@ -142,6 +142,10 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
     extra_storing_config_dict["skip_stage_2_output"] = args.skip_stage_2_output
     extra_storing_config_dict["show_images"] = args.show_images
     extra_storing_config_dict["store_died_neurons"] = args.store_died_neurons
+    extra_storing_config_dict[
+        "export_failure_modes"
+    ] = args.export_failure_modes
+    extra_storing_config_dict["show_failure_modes"] = args.show_failure_modes
     optional_config_args_dict["extra_storing_config"] = Extra_storing_config(
         **extra_storing_config_dict
     )
