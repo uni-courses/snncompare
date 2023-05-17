@@ -270,7 +270,7 @@ def load_simsnn_graph_from_file(
         output_category = "snns"
         rad_affected_neurons_hash = None
 
-    if stage_index in [2, 4]:
+    if stage_index in [2, 4, 7]:
         simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
             output_category=output_category,
             input_graph=input_graph,
@@ -288,6 +288,11 @@ def load_simsnn_graph_from_file(
                 )
             elif stage_index == 4:
                 add_stage4_results_from_file_to_snn(
+                    output_filepath=simsnn_filepath,
+                    stage_1_simsnn_simulator=stage1_simsnn,
+                )
+            elif stage_index == 7:
+                add_stage7_failure_data_from_file_to_snn(
                     output_filepath=simsnn_filepath,
                     stage_1_simsnn_simulator=stage1_simsnn,
                 )
@@ -387,7 +392,7 @@ def add_stage4_results_from_file_to_snn(
 
 
 @typechecked
-def add_stage4_failure_data_from_file_to_snn(
+def add_stage7_failure_data_from_file_to_snn(
     *,
     output_filepath: str,
     stage_1_simsnn_simulator: Simulator,

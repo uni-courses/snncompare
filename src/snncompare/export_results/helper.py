@@ -54,7 +54,7 @@ def exp_config_to_filename(
     # Convert all the radiation settings into a list of hashes.
     list_of_rad_hashes: List[str] = list(
         map(
-            lambda radiation: radiation.get_rad_settings_hash(),
+            lambda radiation: radiation.get_hash(),
             stripped_exp_config_dict["radiations"],
         )
     )
@@ -133,12 +133,10 @@ def get_unique_run_config_id(  # type:ignore[misc]
     run_config: Any,
 ) -> str:
     """Checks if an experiment configuration dictionary already has a unique
-    identifier, and if not it computes and appends it.
+    identifier.
 
-    If it does, throws an error.
-    TODO: move into helper
-
-    :param exp_config: Exp_config:
+    If it does contains the identifier, throws an error. Otherwise
+    computes the unique identifier hash and appends it.
     """
     if "unique_id" in run_config.__dict__.keys():
         raise KeyError(
@@ -150,14 +148,35 @@ def get_unique_run_config_id(  # type:ignore[misc]
     some_config = copy.deepcopy(run_config)
 
     # Convert Rad_damage into hash
-    del some_config.radiation
-    some_config.radiation = run_config.radiation.get_rad_settings_hash()
+
+    convert_run_config_attributes_into_hashes(some_config=some_config.__dict__)
+
+    # sorted(__dict__) returns a list of the sorted dictionary keys ONLY.
+    key_sorted_value_list: List = []
+    # .keys() is not needed in next line:
+    for sorted_key in sorted(some_config.__dict__.keys()):
+        key_sorted_value_list.append(some_config.__dict__[sorted_key])
 
     # Compute a unique code belonging to this particular experiment
     # configuration.
     unique_id = str(
         hashlib.sha256(
-            json.dumps(sorted(some_config.__dict__)).encode("utf-8")
+            # json.dumps(sorted(some_config.__dict__)).encode("utf-8")
+            json.dumps(key_sorted_value_list).encode("utf-8")
         ).hexdigest()
     )
+    print(f"unique_id={unique_id}")
     return unique_id
+
+
+def convert_run_config_attributes_into_hashes(some_config: Dict) -> None:
+    """Converts the run_config dictionary into a dictionary with keys and
+    hashes as values."""
+    # sorted(__dict__) returns a list of the sorted dictionary keys ONLY.
+    for sorted_key in sorted(some_config.keys()):
+        if sorted_key == "adaptation":
+            adaptation_hash: str = some_config[sorted_key].get_hash()
+            some_config[sorted_key] = adaptation_hash
+        if sorted_key == "radiation":
+            radiation_hash: str = some_config[sorted_key].get_hash()
+            some_config[sorted_key] = radiation_hash

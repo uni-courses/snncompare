@@ -79,17 +79,52 @@ class Exp_config:
     ) -> str:
         """Returns a unique hash for the exp_config object."""
         some_exp_config: Exp_config = copy.deepcopy(self)
-        rad_hashes: list[str] = []
-        for rad_obj in self.radiations:
-            rad_hashes.append(rad_obj.get_rad_settings_hash())
-        del some_exp_config.radiations
-        some_exp_config.radiations = sorted(rad_hashes)
+        # rad_hashes: list[str] = []
+        # for rad_obj in self.radiations:
+        # rad_hashes.append(rad_obj.get_hash())
+        # del some_exp_config.radiations
+        # some_exp_config.radiations = sorted(rad_hashes)
+
+        self.convert_exp_config_attributes_into_hashes(
+            some_exp_config=some_exp_config.__dict__
+        )
+
+        # sorted(__dict__) returns a list of the sorted dictionary keys ONLY.
+        key_sorted_value_list: list = []
+        # .keys() is not needed in next line:
+        for sorted_key in sorted(some_exp_config.__dict__.keys()):
+            key_sorted_value_list.append(some_exp_config.__dict__[sorted_key])
+
         unique_id = str(
             hashlib.sha256(
-                json.dumps(sorted(some_exp_config.__dict__)).encode("utf-8")
+                json.dumps(key_sorted_value_list).encode("utf-8")
             ).hexdigest()
         )
         return unique_id
+
+    def convert_exp_config_attributes_into_hashes(
+        self, some_exp_config: dict
+    ) -> None:
+        """Converts the run_config dictionary into a dictionary with keys and
+        hashes as values.
+
+        TODO: remove duplicate code with:
+        convert_run_config_attributes_into_hashes
+        """
+        # sorted(__dict__) returns a list of the sorted dictionary keys ONLY.
+        for sorted_key in sorted(some_exp_config.keys()):
+            if sorted_key == "adaptations":
+                adaptation_hashes: list[str] = []
+                for adaptation in some_exp_config[sorted_key]:
+                    adaptation_hash: str = adaptation.get_hash()
+                    adaptation_hashes.append(adaptation_hash)
+                some_exp_config[sorted_key] = adaptation_hashes
+            if sorted_key == "radiations":
+                radiation_hashes: list[str] = []
+                for radiation in some_exp_config[sorted_key]:
+                    radiation_hash: str = radiation.get_hash()
+                    radiation_hashes.append(radiation_hash)
+                some_exp_config[sorted_key] = radiation_hashes
 
 
 # pylint: disable=R0902

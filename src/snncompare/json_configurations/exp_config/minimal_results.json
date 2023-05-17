@@ -29,64 +29,13 @@
   "radiations": {
     "change_u": {
       "amplitude": [
-        1,
-        10
-      ],
-      "excitatory": [
-        false,
-        true
-      ],
-      "inhibitory": [
-        false,
-        true
-      ],
-      "probability_per_t": [
-        1e-06,
-        1e-05
-      ]
-    },
-    "neuron_death": {
-      "excitatory": [
-        false,
-        true
-      ],
-      "inhibitory": [
-        false,
-        true
-      ],
-      "probability_per_t": [
-        1e-06,
-        1e-05
-      ]
-    },
-    "rand_neuron_spike": {
-      "amplitude": [
         1
       ],
       "excitatory": [
-        false,
         true
       ],
       "inhibitory": [
-        false,
-        true
-      ],
-      "probability_per_t": [
-        1e-06,
-        1e-05
-      ]
-    },
-    "rand_synapse_spike": {
-      "amplitude": [
-        1
-      ],
-      "excitatory": [
-        false,
-        true
-      ],
-      "inhibitory": [
-        false,
-        true
+        false
       ],
       "probability_per_t": [
         1e-06,
@@ -107,7 +56,7 @@
     "{\"__tuple__\": true, \"items\": [3, 1]}",
     "{\"__tuple__\": true, \"items\": [4, 2]}",
     "{\"__tuple__\": true, \"items\": [5, 3]}",
-    "{\"__tuple__\": true, \"items\": [20, 5]}"
+    "{\"__tuple__\": true, \"items\": [15, 3]}"
   ],
   "synaptic_models": [
     "LIF"

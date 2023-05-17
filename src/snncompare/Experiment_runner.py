@@ -144,7 +144,9 @@ class Experiment_runner:
             plot_raw_adap_cost_datas(exp_config=self.exp_config)
 
         if output_config.extra_storing_config.show_failure_modes:
-            show_failures(exp_config=self.exp_config)
+            show_failures(
+                exp_config=self.exp_config, run_configs=self.run_configs
+            )
 
     # pylint: disable=W0238
     @typechecked
