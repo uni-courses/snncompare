@@ -112,6 +112,7 @@ def perform_mdsa_results_computation_if_needed(
                         stage_2_graphs=stage_2_graphs,
                     )
 
+                    # Print run_config results.
                     if isinstance(snn, Simulator):
                         graph_attributes = snn.network.graph.graph
                     else:

@@ -38,7 +38,6 @@ def add_failure_modes_to_graph(
     if "spikes" in adapted_unradiated_snn.raster.__dict__.keys():
         unradiated_spikes: List = adapted_unradiated_snn.raster.spikes.tolist()
     else:
-        print("TODO: load from file")
         _, rand_nrs_hash = get_rand_nrs_and_hash(
             input_graph=snn_graphs["input_graph"]
         )
