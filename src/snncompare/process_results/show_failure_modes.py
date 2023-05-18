@@ -271,18 +271,19 @@ def convert_table_dict_to_table(
     *,
     adaptation_names: List[str],
     table: Dict[int, Dict[str, List[str]]],
-) -> List[List[str]]:
+) -> List[List[Union[List[str], str]]]:
     """Converts a table dict to a table of lists of lists."""
 
     # Create 2d matrix.
-    rows: List[List[str]] = []
+    rows: List[List[Union[List[str], str]]] = []
     for timestep, failure_modes in table.items():
-        new_row: List[str] = [str(timestep)]
+        new_row: List[Union[List[str], str]] = [str(timestep)]
         for adaptation_name in adaptation_names:
             if adaptation_name not in failure_modes.keys():
                 new_row.append("")
             else:
-                new_row.append(adaptation_name)
+                print(f"appending:{failure_modes[adaptation_name]}END")
+                new_row.append(failure_modes[adaptation_name])
         rows.append(new_row)
     return rows
 
