@@ -341,7 +341,7 @@ def show_failures(
     @typechecked
     def update_output(
         seed: int, graph_size: int
-    ) -> Union[List[List[str]], List[Dict[str, Union[int, str]]]]:
+    ) -> Tuple[List[List[str]], List[Dict[str, Union[int, str]]]]:
         print(f"seed={seed}, graph_size={graph_size}")
         return update_table(graph_size=graph_size, seed=seed)
 
