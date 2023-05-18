@@ -282,7 +282,6 @@ def convert_table_dict_to_table(
             if adaptation_name not in failure_modes.keys():
                 new_row.append("")
             else:
-                print(f"appending:{failure_modes[adaptation_name]}END")
                 new_row.append(failure_modes[adaptation_name])
         rows.append(new_row)
     return rows
