@@ -129,8 +129,9 @@ def dict_to_run_config(*, some_dict: Dict) -> Run_config:
 
 
 @typechecked
-def run_config_to_dict(*, run_config: Run_config) -> Dict:
+def print_run_config_dict(*, run_config: Run_config) -> Dict:
     """Converts a run_config to a human readable dict."""
     run_config_dict: Dict = copy.deepcopy(run_config.__dict__)
     run_config_dict["radiation"] = run_config.radiation.__dict__
+    run_config_dict["adaptation"] = run_config.adaptation.__dict__
     return run_config_dict

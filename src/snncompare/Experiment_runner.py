@@ -71,7 +71,7 @@ from snncompare.progress_report.has_completed_stage2_or_4 import (
     assert_has_outputted_stage_2_or_4,
     has_outputted_stage_2_or_4,
 )
-from snncompare.run_config.Run_config import Run_config, run_config_to_dict
+from snncompare.run_config.Run_config import Run_config, print_run_config_dict
 from snncompare.simulation.add_radiation_graphs import (
     ensure_empty_rad_snns_exist,
 )
@@ -165,7 +165,7 @@ class Experiment_runner:
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
             print(f"\n{i+1}/{len(run_configs)} [runs]")
-            pprint(run_config_to_dict(run_config=run_config))
+            pprint(print_run_config_dict(run_config=run_config))
             results_nx_graphs = self.perform_run_stage_1(
                 exp_config=exp_config,
                 output_config=output_config,
