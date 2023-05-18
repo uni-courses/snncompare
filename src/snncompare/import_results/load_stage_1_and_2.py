@@ -360,7 +360,6 @@ def load_snn_graph_stage_2(
         )
 
     loaded_snn: Dict = load_json_file_into_dict(json_filepath=output_filepath)
-
     for key, value in loaded_snn.items():
         loaded_snn[key] = np.array(value)
         if key == "spikes":
@@ -406,9 +405,6 @@ def add_stage7_failure_data_from_file_to_snn(
     loaded_failure_dict: Dict = load_json_file_into_dict(
         json_filepath=output_filepath
     )
-    for failure_mode, failure_dict in loaded_failure_dict.items():
-        stage_1_simsnn_simulator.network.graph.graph[failure_mode] = {}
-        for time_step, neuron_names in failure_dict.items():
-            stage_1_simsnn_simulator.network.graph.graph[failure_mode][
-                time_step
-            ] = neuron_names
+    stage_1_simsnn_simulator.network.graph.graph[
+        "failure_modes"
+    ] = loaded_failure_dict

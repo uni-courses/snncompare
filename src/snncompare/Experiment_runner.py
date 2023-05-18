@@ -417,7 +417,8 @@ class Experiment_runner:
 
                 # Set failure modes.
                 add_failure_modes_to_graph(
-                    snn_graphs=results_nx_graphs["graphs_dict"]
+                    snn_graphs=results_nx_graphs["graphs_dict"],
+                    run_config=run_config,
                 )
 
             for output_data_type in output_data_types:
