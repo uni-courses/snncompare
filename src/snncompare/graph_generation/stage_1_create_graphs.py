@@ -312,6 +312,9 @@ def get_new_radiation_graph(
     radiation_graph: Simulator = copy.deepcopy(snn_graph)
     # TODO: include ignored neuron names per algorithm.
     apply_rad_to_simsnn(
-        rad=run_config.radiation, snn=radiation_graph, ignored_neuron_names=[]
+        rad=run_config.radiation,
+        seed=run_config.seed,
+        snn=radiation_graph,
+        ignored_neuron_names=[],
     )
     return radiation_graph
