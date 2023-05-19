@@ -17,6 +17,7 @@ from snncompare.graph_generation.stage_1_create_graphs import (
     load_input_graph_from_file_with_init_props,
 )
 from snncompare.helper import get_snn_graph_name
+from snncompare.import_results.load_stage4 import load_stage4_results
 from snncompare.import_results.load_stage_1_and_2 import load_simsnn_graphs
 from snncompare.run_config.Run_config import Run_config
 
@@ -214,10 +215,7 @@ def convert_failure_modes_to_table_dict(
 
     # Create the list of neuron_name lists per adaptation type.
     for failure_mode in failure_mode_entries:
-        # TODO: make more advanced, e.g. bold/italic,red,green etc.
-        # cell_list_element: List[str] = failure_mode.neuron_names
-
-        # TODO: apply cell formatting.
+        # Apply cell formatting.
         cell_element: str = apply_cell_formatting(failure_mode=failure_mode)
 
         table[failure_mode.timestep][failure_mode.adaptation_name].append(
@@ -243,11 +241,7 @@ def apply_cell_formatting(
     - If the neurons did not spike when they should, their names are bold.
     """
 
-    # TODO: Remove list formatting.
-
-    # TODO: determine whether run passed or not.
-
-    # TODO: determine failure mode.
+    # Determine failure mode formatting.
     if failure_mode.incorrectly_spikes:
         separator_name = "u"
     else:
@@ -262,6 +256,19 @@ def apply_cell_formatting(
         + f"</{separator_name}>"
         + "<br></br>"
     )
+
+    # TODO: determine whether run passed or not.
+    stage_4_results_dict = load_stage4_results(
+        run_config=failure_mode.run_config,
+        stage_4_results_dict=None,
+    )
+    results_dict: Dict[str, Union[float, bool]] = stage_4_results_dict[
+        "rad_adapted_snn_graph"
+    ].network.graph.graph["results"]
+    if results_dict["passed"]:
+        cell_element = f'<FONT COLOR="#008000">{cell_element}</FONT>'  # green
+    else:
+        cell_element = f'<FONT COLOR="#FF0000">{cell_element}</FONT>'  # red
 
     return cell_element
 
