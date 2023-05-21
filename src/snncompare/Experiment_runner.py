@@ -6,7 +6,6 @@ setting of the experiment configuration settings.
 
 import copy
 import multiprocessing
-from pprint import pprint
 from typing import Dict, List, Optional, Union
 
 import customshowme
@@ -71,7 +70,7 @@ from snncompare.progress_report.has_completed_stage2_or_4 import (
     assert_has_outputted_stage_2_or_4,
     has_outputted_stage_2_or_4,
 )
-from snncompare.run_config.Run_config import Run_config, print_run_config_dict
+from snncompare.run_config.Run_config import Run_config
 from snncompare.simulation.add_radiation_graphs import (
     ensure_empty_rad_snns_exist,
 )
@@ -165,7 +164,7 @@ class Experiment_runner:
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
             print(f"\n{i+1}/{len(run_configs)} [runs]")
-            pprint(print_run_config_dict(run_config=run_config))
+            run_config.print_run_config_dict()
             results_nx_graphs = self.perform_run_stage_1(
                 exp_config=exp_config,
                 output_config=output_config,

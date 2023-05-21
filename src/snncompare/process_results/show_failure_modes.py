@@ -5,6 +5,7 @@ from collections import OrderedDict
 from typing import Dict, List, Tuple, Union
 
 import dash
+import dash_daq as daq
 import networkx as nx
 import pandas as pd
 from dash import Input, Output, dcc, html
@@ -195,6 +196,7 @@ def get_adaptation_names(
 def convert_failure_modes_to_table_dict(
     *,
     failure_mode_entries: List[Failure_mode_entry],
+    show_run_configs: bool,
 ) -> Dict[int, Dict[str, List[str]]]:
     """Converts the failure mode dicts into a table.
 
@@ -216,7 +218,9 @@ def convert_failure_modes_to_table_dict(
     # Create the list of neuron_name lists per adaptation type.
     for failure_mode in failure_mode_entries:
         # Apply cell formatting.
-        cell_element: str = apply_cell_formatting(failure_mode=failure_mode)
+        cell_element: str = apply_cell_formatting(
+            failure_mode=failure_mode, show_run_configs=show_run_configs
+        )
 
         table[failure_mode.timestep][failure_mode.adaptation_name].append(
             cell_element
@@ -228,6 +232,7 @@ def convert_failure_modes_to_table_dict(
 def apply_cell_formatting(
     *,
     failure_mode: Failure_mode_entry,
+    show_run_configs: bool,
 ) -> str:
     """Formats the incoming list of neuron names based on the run properties
     and failure mode.
@@ -241,21 +246,24 @@ def apply_cell_formatting(
     - If the neurons did not spike when they should, their names are bold.
     """
 
-    # Determine failure mode formatting.
-    if failure_mode.incorrectly_spikes:
-        separator_name = "u"
-    else:
-        separator_name = "b"
-    separator = f"</{separator_name}> <br></br> <{separator_name}>"
+    if not show_run_configs:
+        # Determine failure mode formatting.
+        if failure_mode.incorrectly_spikes:
+            separator_name = "u"
+        else:
+            separator_name = "b"
+        separator = f"</{separator_name}> <br></br> <{separator_name}>"
 
-    # Format the list of strings into an underlined or bold list of names,
-    # separated by the newline character in html (<br>).
-    cell_element: str = (
-        f"<{separator_name}>"
-        + separator.join(str(x) for x in failure_mode.neuron_names)
-        + f"</{separator_name}>"
-        + "<br></br>"
-    )
+        # Format the list of strings into an underlined or bold list of names,
+        # separated by the newline character in html (<br>).
+        cell_element: str = (
+            f"<{separator_name}>"
+            + separator.join(str(x) for x in failure_mode.neuron_names)
+            + f"</{separator_name}>"
+            + "<br></br>"
+        )
+    else:
+        cell_element = failure_mode.run_config.unique_id
 
     # TODO: determine whether run passed or not.
     stage_4_results_dict = load_stage4_results(
@@ -335,39 +343,6 @@ def show_failures(
     app.scripts.config.serve_locally = True
 
     @typechecked
-    def update_table(seed: int, graph_size: int) -> DataFrame:
-        """Updates the displayed table."""
-        adaptation_names: List[str] = get_adaptation_names(
-            run_configs=run_configs
-        )
-
-        failure_mode_entries: List[
-            Failure_mode_entry
-        ] = table_settings.get_failure_mode_entries(
-            seed=seed,
-            graph_size=graph_size,
-            algorithm_setting="MDSA_0",
-        )
-        table_dict: Dict[
-            int, Dict[str, List[str]]
-        ] = convert_failure_modes_to_table_dict(
-            failure_mode_entries=failure_mode_entries,
-        )
-
-        table: List[List[str]] = convert_table_dict_to_table(
-            adaptation_names=adaptation_names,
-            table=table_dict,
-        )
-
-        # Convert the ordered dict into a pandas dataframe
-        ordered_dict: OrderedDict = convert_table_to_ordered_dict(
-            adaptation_names=table_settings.adaptation_names, table=table
-        )
-        updated_df = pd.DataFrame(ordered_dict)
-
-        return updated_df
-
-    @typechecked
     def convert_table_to_ordered_dict(
         adaptation_names: List[str], table: List[List[str]]
     ) -> OrderedDict:
@@ -401,9 +376,45 @@ def show_failures(
         data = OrderedDict(ordered_dict_list)
         return data
 
+    @typechecked
+    def update_table(
+        seed: int, graph_size: int, show_run_configs: bool
+    ) -> DataFrame:
+        """Updates the displayed table."""
+        adaptation_names: List[str] = get_adaptation_names(
+            run_configs=run_configs
+        )
+
+        failure_mode_entries: List[
+            Failure_mode_entry
+        ] = table_settings.get_failure_mode_entries(
+            seed=seed,
+            graph_size=graph_size,
+            algorithm_setting="MDSA_0",
+        )
+        table_dict: Dict[
+            int, Dict[str, List[str]]
+        ] = convert_failure_modes_to_table_dict(
+            failure_mode_entries=failure_mode_entries,
+            show_run_configs=show_run_configs,
+        )
+
+        table: List[List[str]] = convert_table_dict_to_table(
+            adaptation_names=adaptation_names,
+            table=table_dict,
+        )
+
+        # Convert the ordered dict into a pandas dataframe
+        ordered_dict: OrderedDict = convert_table_to_ordered_dict(
+            adaptation_names=table_settings.adaptation_names, table=table
+        )
+        updated_df = pd.DataFrame(ordered_dict)
+
+        return updated_df
+
     # table,columns=update_table(seed=8,graph_size=3)
     # df,columns=update_table(seed=8,graph_size=3)
-    initial_df = update_table(graph_size=3, seed=8)
+    initial_df = update_table(graph_size=3, seed=8, show_run_configs=False)
     app.layout = html.Div(
         [
             # Include dropdown
@@ -417,6 +428,13 @@ def show_failures(
                 table_settings.graph_sizes,
                 table_settings.graph_sizes[0],
                 id="graph_size_selector_id",
+            ),
+            html.Div(
+                [
+                    # pylint: disable=E1102
+                    daq.BooleanSwitch(id="show_run_configs", on=True),
+                    html.Div(id="show_run_configs_div"),
+                ]
             ),
             html.Div(id="graph-size-selector"),
             html.Br(),
@@ -433,23 +451,35 @@ def show_failures(
     )
 
     @app.callback(
-        [Output("table", "children")],
+        [
+            Output("table", "children"),
+            Output("show_run_configs_div", "children"),
+        ],
         # [Output("table", "data")],
         [
             Input("seed_selector_id", "value"),
             Input("graph_size_selector_id", "value"),
+            Input("show_run_configs", "on"),
         ],
     )
     @typechecked
-    def update_output(seed: int, graph_size: int) -> List[Markdown]:
-        print(f"seed={seed}, graph_size={graph_size}")
+    def update_output(
+        seed: int, graph_size: int, show_run_configs: bool
+    ) -> List[Markdown]:
+        print(
+            f"seed={seed}, graph_size={graph_size}, show_run_configs="
+            + f"{show_run_configs}"
+        )
 
-        new_df = update_table(graph_size=graph_size, seed=seed)
+        new_df = update_table(
+            graph_size=graph_size, seed=seed, show_run_configs=show_run_configs
+        )
         return [
             dcc.Markdown(
                 dangerously_allow_html=True,
                 children=new_df.to_html(escape=False),
-            )
+            ),
+            show_run_configs,
         ]
 
     app.run_server(port=8053)

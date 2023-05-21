@@ -176,6 +176,24 @@ python -m src.snncompare -e test_population -j1 -j2 -j4 -j5 -s2 -rev -dr
 python -m src.snncompare -e complexity -j1 -j2 -j4 -j5 -s2 -rev
 python -m src.snncompare -e complexity -j5
 python -m src.snncompare -e change_u -j5
+
+```
+
+Debugging:
+
+```bash
+
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -j5 --export-failure-modes \
+--show-failure-modes -rev -dr
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt adapted_snn_graph \
+-p 8060 -rui d11d6bf6aafb936bb0c04d92aab146fce993b136b2e55abb88d36471e045d54f
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt rad_adapted_snn_graph \
+-p 8060 -rui d11d6bf6aafb936bb0c04d92aab146fce993b136b2e55abb88d36471e045d54f
+
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt adapted_snn_graph -p \
+8060 -rui db2aaeda8a45710d0bbba18efeedfaf983e21111aa362cf7d1c77716cd882056
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt rad_adapted_snn_graph \
+-p 8060 -rui db2aaeda8a45710d0bbba18efeedfaf983e21111aa362cf7d1c77716cd882056
 ```
 
 ## Demo

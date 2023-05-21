@@ -16,6 +16,7 @@ from snncompare.optional_config.Output_config import (
     Output_config,
     Zoom,
 )
+from snncompare.run_config.helper import get_run_config_filepath
 from snncompare.run_config.Run_config import Run_config
 
 from ..json_configurations.algo_test import (
@@ -39,12 +40,25 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
         filename=args.experiment_settings_name,
     )
 
+    # If a specific run_config id is given, get the filepath that contains the
+    # run_config dict, and then use run_config_path to execute only that single
+    # run_config.
+
+    if args.run_config_unique_id is not None:
+        args.run_config_path = get_run_config_filepath(
+            run_config_unique_id=args.run_config_unique_id
+        )
+        from_unique_id: bool = True
+    else:
+        from_unique_id = False
+
     if args.run_config_path is not None:
         specific_run_config: Union[
             None, Run_config
         ] = load_run_config_from_file(
             custom_config_path=custom_config_path,
             filename=f"{args.run_config_path}",
+            from_unique_id=from_unique_id,
         )
     else:
         specific_run_config = None

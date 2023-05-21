@@ -24,8 +24,8 @@ def get_adaptations_from_exp_config_dict(
             for redundancy in redundancies:
                 adaptation_objs.append(
                     Adaptation(
-                        adaptation_type=adaptation_type,
-                        redundancy=redundancy,
+                        adaptation_type=str(adaptation_type),
+                        redundancy=int(redundancy),
                     )
                 )
     return adaptation_objs

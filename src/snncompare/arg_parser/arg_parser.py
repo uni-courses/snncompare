@@ -178,6 +178,18 @@ def parse_cli_args(
         ),
     )
 
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-rui",
+        "--run-config-unique-id",
+        action="store",
+        type=str,
+        help=(
+            "Give the unique id of the run the run_config (within the "
+            + "experiment settings) that you want to run."
+        ),
+    )
+
     parser.add_argument(
         "-r1",
         "--recreate-stage-1",

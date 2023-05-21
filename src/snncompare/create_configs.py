@@ -1,5 +1,4 @@
 """Contains helper functions that are used throughout this repository."""
-from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
 import customshowme
@@ -10,8 +9,7 @@ from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.helper import dicts_are_equal
-from snncompare.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config, run_configs_are_equal
 
 # if TYPE_CHECKING:
 # from snncompare.exp_config.Exp_config import Exp_config
@@ -38,10 +36,8 @@ def generate_run_configs(
     # run_configs = run_configs[:3]  # TODO: comment out.
     if specific_run_config is not None:
         for gen_run_config in run_configs:
-            if dicts_are_equal(
-                left=gen_run_config.__dict__,
-                right=specific_run_config.__dict__,
-                without_unique_id=True,
+            if run_configs_are_equal(
+                left=specific_run_config, right=gen_run_config
             ):
                 found_run_config = True
                 if gen_run_config.unique_id != specific_run_config.unique_id:
@@ -51,11 +47,13 @@ def generate_run_configs(
                 break
 
         if not found_run_config:
-            pprint(run_configs)
-            raise ValueError(
-                f"The expected run config:{specific_run_config} was not"
-                "found."
-            )
+            print("specific_run_config=")
+            specific_run_config.print_run_config_dict()
+            print("FOUND run configs:")
+            for run_config in run_configs:
+                if run_config.seed == specific_run_config.seed:
+                    run_config.print_run_config_dict()
+            raise ValueError("The expected run config was not found.")
         run_configs = [specific_run_config]
 
     return run_configs

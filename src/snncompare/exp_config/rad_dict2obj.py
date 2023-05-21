@@ -25,12 +25,12 @@ def get_radiations_from_exp_config_dict(
         if effect_type == "neuron_death":
             for probability_per_t in rad_settings["probability_per_t"]:
                 rad_damage = Rad_damage(
-                    amplitude=-(10**10),
+                    amplitude=float(-(10**10)),
                     # amplitude=-inf,
                     effect_type=effect_type,
                     excitatory=False,
                     inhibitory=True,
-                    probability_per_t=probability_per_t,
+                    probability_per_t=float(probability_per_t),
                 )
                 radiation_objs.append(rad_damage)
         else:
@@ -60,10 +60,10 @@ def add_generic_exp_config_rad_dict(
                 if excitatory or inhibitory:
                     for probability_per_t in rad_settings["probability_per_t"]:
                         rad_damage = Rad_damage(
-                            amplitude=amplitude,
-                            effect_type=effect_type,
+                            amplitude=float(amplitude),
+                            effect_type=str(effect_type),
                             excitatory=excitatory,
                             inhibitory=inhibitory,
-                            probability_per_t=probability_per_t,
+                            probability_per_t=float(probability_per_t),
                         )
                         radiation_objs.append(rad_damage)

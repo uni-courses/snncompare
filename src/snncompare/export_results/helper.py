@@ -165,7 +165,7 @@ def get_unique_run_config_id(  # type:ignore[misc]
             json.dumps(key_sorted_value_list).encode("utf-8")
         ).hexdigest()
     )
-    print(f"unique_id={unique_id}")
+    print(f"run_config unique_id=  {unique_id}")
     return unique_id
 
 

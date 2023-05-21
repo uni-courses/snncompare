@@ -368,7 +368,6 @@ def output_unique_list_int_or_dict(
     target_file_exists: bool,
 ) -> None:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
-
     if not target_file_exists:
         write_to_json(
             output_filepath=output_filepath,

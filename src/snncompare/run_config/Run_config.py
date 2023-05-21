@@ -1,7 +1,8 @@
 """"Stores the run config Dict type."""
 import copy
 import sys
-from typing import Dict, Optional, Tuple, Union
+from pprint import pprint
+from typing import Dict, Optional, Union
 
 from snnadaptation.Adaptation import Adaptation
 from snnradiation.Rad_damage import Rad_damage
@@ -37,36 +38,6 @@ class Neuron_death:
                 "Error, neuron death probability should be 1 or smaller."
             )
         self.probability = probability
-
-
-class Radiation(TypedDict):
-    """Example typed dict to make the property types explicit."""
-
-    # Permanent effects
-    permanent_neuron_death: float
-    permanent_synapse_death: float
-
-    # Neuron property changes
-    permanent_bias_change: float
-    permanent_du_change: float
-    permanent_dv_change: float
-    permanent_vth_change: float
-
-    # Synaptic property changes.
-    permanent_weight_change: float
-
-    # Transient effects [duration, absolute change in value]
-    temp_neuron_death: Tuple[int, float]
-    temp_synapse_death: Tuple[int, float]
-
-    # Neuron property changes
-    temp_bias_change: Tuple[int, float]
-    temp_du_change: Tuple[int, float]
-    temp_dv_change: Tuple[int, float]
-    temp_vth_change: Tuple[int, float]
-
-    # Synaptic property changes.
-    temp_weight_change: Tuple[float]
 
 
 # pylint: disable=R0902
@@ -108,6 +79,33 @@ class Run_config:
 
         # TODO: Verify run config object.
 
+    @typechecked
+    def print_run_config_dict(self) -> None:
+        """Converts a run_config to a human readable dict and prints it."""
+        run_config_dict: Dict = copy.deepcopy(self.__dict__)
+        run_config_dict["radiation"] = self.radiation.__dict__
+        run_config_dict["adaptation"] = self.adaptation.__dict__
+        pprint(run_config_dict)
+
+
+@typechecked
+def run_configs_are_equal(*, left: Run_config, right: Run_config) -> bool:
+    """Returns True if the left and right Run_config objects are equal. Returns
+    False otherwise.
+
+    TODO: Test function
+    """
+    if sorted(left.__dict__.keys()) != sorted(right.__dict__.keys()):
+        return False
+    for key, left_value in left.__dict__.items():
+        if key in ["adaptation", "radiation"]:
+            if left_value.get_hash() != right.__dict__[key].get_hash():
+                return False
+        elif key != "unique_id":
+            if left_value != right.__dict__[key]:
+                return False
+    return True
+
 
 @typechecked
 def dict_to_run_config(*, some_dict: Dict) -> Run_config:
@@ -126,12 +124,3 @@ def dict_to_run_config(*, some_dict: Dict) -> Run_config:
     for key, val in some_dict.items():
         setattr(run_config, key, val)
     return run_config
-
-
-@typechecked
-def print_run_config_dict(*, run_config: Run_config) -> Dict:
-    """Converts a run_config to a human readable dict."""
-    run_config_dict: Dict = copy.deepcopy(run_config.__dict__)
-    run_config_dict["radiation"] = run_config.radiation.__dict__
-    run_config_dict["adaptation"] = run_config.adaptation.__dict__
-    return run_config_dict
