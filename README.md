@@ -190,7 +190,7 @@ python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt snn_algo_graph \
 -p 8060 -rui 8c8518173c3fecc6d495b9f7ecc83d5d8516cab2c1bfa388eee5c7770798b7ee
 
 python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt adapted_snn_graph \
--p 8060 -rui 8c8518173c3fecc6d495b9f7ecc83d5d8516cab2c1bfa388eee5c7770798b7ee
+-p 8060 -rui d11d6bf6aafb936bb0c04d92aab146fce993b136b2e55abb88d36471e045d54f
 python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt rad_adapted_snn_graph \
 -p 8060 -rui 8c8518173c3fecc6d495b9f7ecc83d5d8516cab2c1bfa388eee5c7770798b7ee
 
