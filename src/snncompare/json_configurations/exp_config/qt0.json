@@ -42,7 +42,7 @@
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [3, 1]}"
+    "{\"__tuple__\": true, \"items\": [5, 1]}"
   ],
   "synaptic_models": [
     "LIF"

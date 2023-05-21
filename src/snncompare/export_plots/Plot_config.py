@@ -41,7 +41,7 @@ class Plot_config:
         update_edge_opacity: bool,
         x_node_spacer_factor: float,
         x_tick_size_factor: float,
-        y_node_spacer_factor: float,
+        y_degree_receiver_spacing: float,
         y_tick_size_factor: float,
     ) -> None:
         """Creates the plot configuration to generate the svg files."""
@@ -62,7 +62,9 @@ class Plot_config:
         self.dx_redundant: float = dx_redundant_factor * node_size
         self.dy_redundant: float = dy_redundant_factor * node_size
         self.x_node_spacer: float = x_node_spacer_factor * node_size
-        self.y_node_spacer: float = y_node_spacer_factor * node_size
+        self.y_degree_receiver_spacing: float = (
+            y_degree_receiver_spacing * node_size
+        )
         self.neuron_text_size: float = neuron_text_size_factor * node_size
         if self.neuron_text_size < 1:
             raise ValueError(
@@ -122,7 +124,7 @@ def get_default_plot_config() -> Plot_config:
         dy_redundant_factor=0.05,
         redundant_curve_factor=0.2,
         x_node_spacer_factor=0.15,
-        y_node_spacer_factor=0.15,
+        y_degree_receiver_spacing=0.15,
         neuron_text_size_factor=0.8,
         edge_label_size_factor=0.8,
         x_tick_size_factor=15,
