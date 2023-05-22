@@ -25,6 +25,7 @@ from snncompare.run_config.Run_config import Run_config
 # from dash.dependencies import Input, Output
 
 
+# pylint: disable=R0902
 class Failure_mode_entry:
     """Contains a list of neuron names."""
 
@@ -35,6 +36,9 @@ class Failure_mode_entry:
         self,
         adaptation_name: str,
         incorrectly_spikes: bool,
+        incorrectly_silent: bool,
+        incorrect_u_increase: bool,
+        incorrect_u_decrease: bool,
         neuron_names: List[str],
         run_config: Run_config,
         timestep: int,
@@ -51,6 +55,9 @@ class Failure_mode_entry:
         """
         self.adaptation_name: str = adaptation_name
         self.incorrectly_spikes: bool = incorrectly_spikes
+        self.incorrectly_silent: bool = incorrectly_silent
+        self.incorrect_u_increase: bool = incorrect_u_increase
+        self.incorrect_u_decrease: bool = incorrect_u_decrease
         self.neuron_names: List = neuron_names
         self.run_config: Run_config = run_config
         self.timestep: int = timestep
@@ -135,13 +142,15 @@ class Table_settings:
             run_config_and_snns.append((run_config, snn_graphs))
         return run_config_and_snns
 
+    # pylint: disable=R0912
+    # pylint: disable=R0914
     @typechecked
     def get_failure_mode_entries(
         self,
         seed: int,
         graph_size: int,
         algorithm_setting: str,
-        # ) -> List[Dict]:
+        show_spike_failures: bool,
     ) -> List[Failure_mode_entry]:
         """Returns the failure mode data for the selected settings.
 
@@ -182,30 +191,68 @@ class Table_settings:
                 and run_config.graph_size == graph_size
                 and f"{alg_name}_{alg_param}" == algorithm_setting
             ):
-                if "incorrectly_silent" in failure_mode.keys():
-                    for timestep, neuron_list in failure_mode[
-                        "incorrectly_silent"
-                    ].items():
-                        failure_mode_entry = Failure_mode_entry(
-                            adaptation_name=adaptation_name,
-                            incorrectly_spikes=False,
-                            neuron_names=neuron_list,
-                            run_config=run_config,
-                            timestep=int(timestep),
-                        )
-                        failure_mode_entries.append(failure_mode_entry)
-                if "incorrectly_spikes" in failure_mode.keys():
-                    for timestep, neuron_list in failure_mode[
-                        "incorrectly_spikes"
-                    ].items():
-                        failure_mode_entry = Failure_mode_entry(
-                            adaptation_name=adaptation_name,
-                            incorrectly_spikes=True,
-                            neuron_names=neuron_list,
-                            run_config=run_config,
-                            timestep=int(timestep),
-                        )
-                        failure_mode_entries.append(failure_mode_entry)
+                if show_spike_failures:
+                    if "incorrectly_silent" in failure_mode.keys():
+                        for timestep, neuron_list in failure_mode[
+                            "incorrectly_silent"
+                        ].items():
+                            failure_mode_entry = Failure_mode_entry(
+                                adaptation_name=adaptation_name,
+                                incorrectly_spikes=False,
+                                incorrectly_silent=True,
+                                incorrect_u_increase=False,
+                                incorrect_u_decrease=False,
+                                neuron_names=neuron_list,
+                                run_config=run_config,
+                                timestep=int(timestep),
+                            )
+                            failure_mode_entries.append(failure_mode_entry)
+                    if "incorrectly_spikes" in failure_mode.keys():
+                        for timestep, neuron_list in failure_mode[
+                            "incorrectly_spikes"
+                        ].items():
+                            failure_mode_entry = Failure_mode_entry(
+                                adaptation_name=adaptation_name,
+                                incorrectly_spikes=True,
+                                incorrectly_silent=False,
+                                incorrect_u_increase=False,
+                                incorrect_u_decrease=False,
+                                neuron_names=neuron_list,
+                                run_config=run_config,
+                                timestep=int(timestep),
+                            )
+                            failure_mode_entries.append(failure_mode_entry)
+                else:
+                    if "inhibitory_delta_u" in failure_mode.keys():
+                        for timestep, neuron_list in failure_mode[
+                            "inhibitory_delta_u"
+                        ].items():
+                            failure_mode_entry = Failure_mode_entry(
+                                adaptation_name=adaptation_name,
+                                incorrectly_spikes=False,
+                                incorrectly_silent=False,
+                                incorrect_u_increase=False,
+                                incorrect_u_decrease=True,
+                                neuron_names=neuron_list,
+                                run_config=run_config,
+                                timestep=int(timestep),
+                            )
+                            failure_mode_entries.append(failure_mode_entry)
+                    if "excitatory_delta_u" in failure_mode.keys():
+                        for timestep, neuron_list in failure_mode[
+                            "excitatory_delta_u"
+                        ].items():
+                            failure_mode_entry = Failure_mode_entry(
+                                adaptation_name=adaptation_name,
+                                incorrectly_spikes=False,
+                                incorrectly_silent=False,
+                                incorrect_u_increase=True,
+                                incorrect_u_decrease=False,
+                                neuron_names=neuron_list,
+                                run_config=run_config,
+                                timestep=int(timestep),
+                            )
+                            failure_mode_entries.append(failure_mode_entry)
 
         return failure_mode_entries
 
@@ -284,10 +331,19 @@ def apply_cell_formatting(
 
     if not show_run_configs:
         # Determine failure mode formatting.
-        if failure_mode.incorrectly_spikes:
+        if (
+            failure_mode.incorrectly_spikes
+            or failure_mode.incorrect_u_increase
+        ):
             separator_name = "u"
-        else:
+
+        elif (
+            failure_mode.incorrectly_silent
+            or failure_mode.incorrect_u_decrease
+        ):
             separator_name = "b"
+        else:
+            raise ValueError("Error, some incorrect behaviour expected.")
         separator = f"</{separator_name}> <br></br> <{separator_name}>"
 
         # Format the list of strings into an underlined or bold list of names,
@@ -414,7 +470,10 @@ def show_failures(
 
     @typechecked
     def update_table(
-        seed: int, graph_size: int, show_run_configs: bool
+        seed: int,
+        graph_size: int,
+        show_run_configs: bool,
+        show_spike_failures: bool,
     ) -> DataFrame:
         """Updates the displayed table."""
         adaptation_names: List[str] = get_adaptation_names(
@@ -427,6 +486,7 @@ def show_failures(
             seed=seed,
             graph_size=graph_size,
             algorithm_setting="MDSA_0",
+            show_spike_failures=show_spike_failures,
         )
         table_dict: Dict[
             int, Dict[str, List[str]]
@@ -450,29 +510,48 @@ def show_failures(
 
     # table,columns=update_table(seed=8,graph_size=3)
     # df,columns=update_table(seed=8,graph_size=3)
-    initial_df = update_table(graph_size=3, seed=8, show_run_configs=False)
+    initial_df = update_table(
+        graph_size=3, seed=8, show_run_configs=False, show_spike_failures=False
+    )
     app.layout = html.Div(
         [
             # Include dropdown
+            "Pseudo-random seed:",
             dcc.Dropdown(
                 table_settings.seeds,
                 table_settings.seeds[0],
                 id="seed_selector_id",
             ),
             html.Div(id="seed-selector"),
+            "Graph size:",
             dcc.Dropdown(
                 table_settings.graph_sizes,
                 table_settings.graph_sizes[0],
                 id="graph_size_selector_id",
             ),
+            html.Div(id="graph-size-selector"),
             html.Div(
                 [
                     # pylint: disable=E1102
-                    daq.BooleanSwitch(id="show_run_configs", on=True),
+                    daq.BooleanSwitch(
+                        id="show_run_configs",
+                        label="Show run_config unique_id's",
+                        on=True,
+                    ),
                     html.Div(id="show_run_configs_div"),
                 ]
             ),
-            html.Div(id="graph-size-selector"),
+            html.Div(
+                [
+                    # pylint: disable=E1102
+                    daq.BooleanSwitch(
+                        id="show_spike_failures",
+                        label="Show neurons with spike (or u) failures",
+                        on=False,
+                    ),
+                    html.Div(id="show_spike_failures_div"),
+                ]
+            ),
             html.Br(),
             html.Div(
                 id="table",
@@ -496,20 +575,27 @@ def show_failures(
             Input("seed_selector_id", "value"),
             Input("graph_size_selector_id", "value"),
             Input("show_run_configs", "on"),
+            Input("show_spike_failures", "on"),
         ],
     )
     @typechecked
     def update_output(
-        seed: int, graph_size: int, show_run_configs: bool
+        seed: int,
+        graph_size: int,
+        show_run_configs: bool,
+        show_spike_failures: bool,
     ) -> List[Markdown]:
         """Updates the table with failure modes based on the user settings."""
         print(
             f"seed={seed}, graph_size={graph_size}, show_run_configs="
-            + f"{show_run_configs}"
+            + f"{show_run_configs}, show_spike_failures={show_spike_failures}"
         )
 
         new_df = update_table(
-            graph_size=graph_size, seed=seed, show_run_configs=show_run_configs
+            graph_size=graph_size,
+            seed=seed,
+            show_run_configs=show_run_configs,
+            show_spike_failures=show_spike_failures,
         )
         return [
             dcc.Markdown(

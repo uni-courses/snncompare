@@ -39,7 +39,12 @@ def add_failure_modes_to_graph(
         snn_graphs=snn_graphs,
     )
 
-    incorrectly_spikes, incorrectly_silent = get_incorrect_spikes(
+    (
+        incorrectly_spikes,
+        incorrectly_silent,
+        excitatory_delta_u,
+        inhibitory_delta_u,
+    ) = get_incorrect_spikes(
         adapted_unradiated_snn=adapted_unradiated_snn,
         snn_graphs=snn_graphs,
         unradiated_I=unradiated_I,
@@ -52,6 +57,8 @@ def add_failure_modes_to_graph(
                 snn_graphs[graph_name].network.graph.graph["failure_modes"] = {
                     "incorrectly_spikes": incorrectly_spikes,
                     "incorrectly_silent": incorrectly_silent,
+                    "excitatory_delta_u": excitatory_delta_u,
+                    "inhibitory_delta_u": inhibitory_delta_u,
                 }
             else:
                 snn_graphs[graph_name].network.graph.graph[
@@ -139,7 +146,12 @@ def get_incorrect_spikes(
     snn_graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     unradiated_I: List[List[float]],
     unradiated_spikes: List[List[bool]],
-) -> Tuple[Dict[int, List[str]], Dict[int, List[str]]]:
+) -> Tuple[
+    Dict[int, List[str]],
+    Dict[int, List[str]],
+    Dict[int, List[str]],
+    Dict[int, List[str]],
+]:
     """Creates dictionaries with the times at which neuron(s) of the radiated
     adapted SNN shows a different spike behaviour than the unradiated adapted
     SNN."""
@@ -190,10 +202,14 @@ def get_incorrect_spikes(
                 neuron_name=neuron_name,
                 radiated_I=radiated_I,
                 t=t,
-                unradiated_I=unradiated_I,
                 unradiated_I_at_t=unradiated_I_at_t,
             )
-    return incorrectly_spikes, incorrectly_silent
+    return (
+        incorrectly_spikes,
+        incorrectly_silent,
+        excitatory_delta_u,
+        inhibitory_delta_u,
+    )
 
 
 @typechecked
@@ -230,6 +246,8 @@ def add_neurons_with_spike_difference(
                     neuron_name=neuron_name,
                     t=t,
                 )
+    sort_lists_in_dict_values(some_dict=incorrectly_silent)
+    sort_lists_in_dict_values(some_dict=incorrectly_spikes)
 
 
 @typechecked
@@ -241,7 +259,6 @@ def add_neurons_with_u_difference(
     neuron_name: str,
     radiated_I: List[List[float]],
     t: int,
-    unradiated_I: List[List[float]],
     unradiated_I_at_t: List[float],
 ) -> None:
     """Stores the neurons that show alternative spike behaviour."""
@@ -249,17 +266,27 @@ def add_neurons_with_u_difference(
     if t < len(radiated_I):
         # Check if the unradiated neuron behaves different than the
         # radiated neuron.
-        if unradiated_I_at_t[neuron_index] != radiated_I[t][neuron_index]:
-            # pylint: disable=R1736
-            if unradiated_I[t][neuron_index]:
-                store_incorrect_spike(
-                    failures=inhibitory_delta_u,
-                    neuron_name=neuron_name,
-                    t=t,
-                )
-            else:
-                store_incorrect_spike(
-                    failures=excitatory_delta_u,
-                    neuron_name=neuron_name,
-                    t=t,
-                )
+        if unradiated_I_at_t[neuron_index] < radiated_I[t][neuron_index]:
+            store_incorrect_spike(
+                failures=excitatory_delta_u,
+                neuron_name=neuron_name,
+                t=t,
+            )
+        elif unradiated_I_at_t[neuron_index] > radiated_I[t][neuron_index]:
+            store_incorrect_spike(
+                failures=inhibitory_delta_u,
+                neuron_name=neuron_name,
+                t=t,
+            )
+    sort_lists_in_dict_values(some_dict=excitatory_delta_u)
+    sort_lists_in_dict_values(some_dict=inhibitory_delta_u)
+
+
+@typechecked
+def sort_lists_in_dict_values(
+    *,
+    some_dict: Dict[int, List[str]],
+) -> None:
+    """Sorts each list in this dictionary."""
+    for key, some_list in some_dict.items():
+        some_dict[key] = sorted(some_list)
