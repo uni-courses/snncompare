@@ -187,10 +187,10 @@ python -m src.snncompare -e qt0 -j1 -j2 -j4 -j5 --export-failure-modes \
 --show-failure-modes -rev -dr
 
 python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt snn_algo_graph \
--p 8060 -rui 8c8518173c3fecc6d495b9f7ecc83d5d8516cab2c1bfa388eee5c7770798b7ee
+-p 8060 -rui 05592d66394f93e51f1aec5d02ff6f8bd33f46c374101cb1c2c28eba5f4463c9
 
 python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt adapted_snn_graph \
--p 8060 -rui d11d6bf6aafb936bb0c04d92aab146fce993b136b2e55abb88d36471e045d54f
+-p 8060 -rui 05592d66394f93e51f1aec5d02ff6f8bd33f46c374101cb1c2c28eba5f4463c9
 python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt rad_adapted_snn_graph \
 -p 8060 -rui 8c8518173c3fecc6d495b9f7ecc83d5d8516cab2c1bfa388eee5c7770798b7ee
 
