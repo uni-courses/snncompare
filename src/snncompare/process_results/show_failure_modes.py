@@ -2,6 +2,7 @@
 graphs."""
 import itertools
 from collections import OrderedDict
+from pprint import pprint
 from typing import Dict, List, Tuple, Union
 
 import dash
@@ -143,10 +144,12 @@ class Table_settings:
         return run_config_and_snns
 
     # pylint: disable=R0912
+    # pylint: disable=R0913
     # pylint: disable=R0914
     @typechecked
     def get_failure_mode_entries(
         self,
+        first_timestep_only: bool,
         seed: int,
         graph_size: int,
         algorithm_setting: str,
@@ -196,17 +199,23 @@ class Table_settings:
                         for timestep, neuron_list in failure_mode[
                             "incorrectly_silent"
                         ].items():
-                            failure_mode_entry = Failure_mode_entry(
-                                adaptation_name=adaptation_name,
-                                incorrectly_spikes=False,
-                                incorrectly_silent=True,
-                                incorrect_u_increase=False,
-                                incorrect_u_decrease=False,
-                                neuron_names=neuron_list,
-                                run_config=run_config,
-                                timestep=int(timestep),
+                            failure_mode_entry: Failure_mode_entry = (
+                                Failure_mode_entry(
+                                    adaptation_name=adaptation_name,
+                                    incorrectly_spikes=False,
+                                    incorrectly_silent=True,
+                                    incorrect_u_increase=False,
+                                    incorrect_u_decrease=False,
+                                    neuron_names=neuron_list,
+                                    run_config=run_config,
+                                    timestep=int(timestep),
+                                )
                             )
-                            failure_mode_entries.append(failure_mode_entry)
+                            append_failure_mode(
+                                first_timestep_only=first_timestep_only,
+                                failure_mode_entry=failure_mode_entry,
+                                failure_mode_entries=failure_mode_entries,
+                            )
                     if "incorrectly_spikes" in failure_mode.keys():
                         for timestep, neuron_list in failure_mode[
                             "incorrectly_spikes"
@@ -221,7 +230,11 @@ class Table_settings:
                                 run_config=run_config,
                                 timestep=int(timestep),
                             )
-                            failure_mode_entries.append(failure_mode_entry)
+                            append_failure_mode(
+                                first_timestep_only=first_timestep_only,
+                                failure_mode_entry=failure_mode_entry,
+                                failure_mode_entries=failure_mode_entries,
+                            )
                 else:
                     if "inhibitory_delta_u" in failure_mode.keys():
                         for timestep, neuron_list in failure_mode[
@@ -237,7 +250,11 @@ class Table_settings:
                                 run_config=run_config,
                                 timestep=int(timestep),
                             )
-                            failure_mode_entries.append(failure_mode_entry)
+                            append_failure_mode(
+                                first_timestep_only=first_timestep_only,
+                                failure_mode_entry=failure_mode_entry,
+                                failure_mode_entries=failure_mode_entries,
+                            )
                     if "excitatory_delta_u" in failure_mode.keys():
                         for timestep, neuron_list in failure_mode[
                             "excitatory_delta_u"
@@ -252,9 +269,41 @@ class Table_settings:
                                 run_config=run_config,
                                 timestep=int(timestep),
                             )
-                            failure_mode_entries.append(failure_mode_entry)
+                            append_failure_mode(
+                                first_timestep_only=first_timestep_only,
+                                failure_mode_entry=failure_mode_entry,
+                                failure_mode_entries=failure_mode_entries,
+                            )
 
         return failure_mode_entries
+
+
+@typechecked
+def append_failure_mode(
+    first_timestep_only: bool,
+    failure_mode_entry: Failure_mode_entry,
+    failure_mode_entries: List[Failure_mode_entry],
+) -> None:
+    """If first_timestep only, this function checks whether this timestep
+    already contains a failure mode for the run_config within the failure mode.
+
+    If yes, it does not add anything, otherwise it adds the failure mode
+    to the list of failure modes.
+    """
+    if first_timestep_only:
+        found_entry: bool = False
+        for found_failure_mode in failure_mode_entries:
+            if (
+                failure_mode_entry.run_config.unique_id
+                == found_failure_mode.run_config.unique_id
+            ):
+                found_entry = True
+                break
+        if not found_entry:
+            print(f"add:{failure_mode_entry.run_config.adaptation.__dict__}")
+            failure_mode_entries.append(failure_mode_entry)
+    else:
+        failure_mode_entries.append(failure_mode_entry)
 
 
 @typechecked
@@ -305,6 +354,11 @@ def convert_failure_modes_to_table_dict(
             failure_mode=failure_mode, show_run_configs=show_run_configs
         )
 
+        print(
+            f"t={failure_mode.timestep}, "
+            + f"failure_mode.adaptation_name={failure_mode.adaptation_name}"
+        )
+        print(f"cell_element={cell_element}")
         table[failure_mode.timestep][failure_mode.adaptation_name].append(
             cell_element
         )
@@ -379,8 +433,12 @@ def convert_table_dict_to_table(
     adaptation_names: List[str],
     table: Dict[int, Dict[str, List[str]]],
 ) -> List[List[Union[List[str], str]]]:
-    """Converts a table dict to a table of lists of lists."""
+    """Converts a table dict to a table in format: lists of lists.
 
+    TODO: fix this.
+    """
+    print("incoming table=")
+    pprint(table)
     # Create 2d matrix.
     rows: List[List[Union[List[str], str]]] = []
     for timestep, failure_modes in table.items():
@@ -391,6 +449,8 @@ def convert_table_dict_to_table(
             else:
                 new_row.append(failure_modes[adaptation_name])
         rows.append(new_row)
+    print("outgoing rows=")
+    pprint(rows)
     return rows
 
 
@@ -470,6 +530,8 @@ def show_failures(
 
     @typechecked
     def update_table(
+        *,
+        first_timestep_only: bool,
         seed: int,
         graph_size: int,
         show_run_configs: bool,
@@ -483,6 +545,7 @@ def show_failures(
         failure_mode_entries: List[
             Failure_mode_entry
         ] = table_settings.get_failure_mode_entries(
+            first_timestep_only,
             seed=seed,
             graph_size=graph_size,
             algorithm_setting="MDSA_0",
@@ -511,7 +574,11 @@ def show_failures(
     # table,columns=update_table(seed=8,graph_size=3)
     # df,columns=update_table(seed=8,graph_size=3)
     initial_df = update_table(
-        graph_size=3, seed=8, show_run_configs=False, show_spike_failures=False
+        first_timestep_only=True,
+        graph_size=3,
+        seed=8,
+        show_run_configs=True,
+        show_spike_failures=False,
     )
     app.layout = html.Div(
         [
@@ -552,6 +619,17 @@ def show_failures(
                     html.Div(id="show_spike_failures_div"),
                 ]
             ),
+            html.Div(
+                [
+                    # pylint: disable=E1102
+                    daq.BooleanSwitch(
+                        id="first_timestep_only",
+                        label="Show deviation of first timestep only",
+                        on=True,
+                    ),
+                    html.Div(id="first_timestep_only_div"),
+                ]
+            ),
             html.Br(),
             html.Div(
                 id="table",
@@ -576,6 +654,7 @@ def show_failures(
             Input("graph_size_selector_id", "value"),
             Input("show_run_configs", "on"),
             Input("show_spike_failures", "on"),
+            Input("first_timestep_only", "on"),
         ],
     )
     @typechecked
@@ -584,14 +663,17 @@ def show_failures(
         graph_size: int,
         show_run_configs: bool,
         show_spike_failures: bool,
+        first_timestep_only: bool,
     ) -> List[Markdown]:
         """Updates the table with failure modes based on the user settings."""
         print(
             f"seed={seed}, graph_size={graph_size}, show_run_configs="
             + f"{show_run_configs}, show_spike_failures={show_spike_failures}"
+            + f"first_timestep_only={first_timestep_only}"
         )
 
         new_df = update_table(
+            first_timestep_only=first_timestep_only,
             graph_size=graph_size,
             seed=seed,
             show_run_configs=show_run_configs,
