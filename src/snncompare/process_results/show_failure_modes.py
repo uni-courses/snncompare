@@ -39,7 +39,16 @@ class Failure_mode_entry:
         run_config: Run_config,
         timestep: int,
     ) -> None:
-        """Stores a failure mode entry."""
+        """Stores a failure mode entry.
+
+        Args:
+            adaptation_name (str): The name of the adaptation.
+            incorrectly_spikes (bool): Indicates if the neurons spiked
+            incorrectly.
+            neuron_names (List[str]): List of neuron names.
+            run_config (Run_config): The run configuration.
+            timestep (int): The timestep at which the failure mode occurred.
+        """
         self.adaptation_name: str = adaptation_name
         self.incorrectly_spikes: bool = incorrectly_spikes
         self.neuron_names: List = neuron_names
@@ -58,6 +67,13 @@ class Table_settings:
         exp_config: Exp_config,
         run_configs: List[Run_config],
     ) -> None:
+        """Stores the Dash failure-mode plot settings.
+
+        Args:
+            exp_config (Exp_config): The experiment configuration.
+            run_configs (List[Run_config]): List of run configurations.
+        """
+
         self.exp_config: Exp_config = exp_config
         self.run_configs: List[Run_config] = run_configs
         # Dropdown options.
@@ -90,7 +106,12 @@ class Table_settings:
     def create_failure_mode_tables(
         self,
     ) -> List[Tuple[Run_config, Dict]]:
-        """Returns the failure mode data for the selected settings."""
+        """Returns the failure mode data for the selected settings.
+
+        Returns:
+            A list of tuples containing the run configuration and the failure
+            mode data.
+        """
         run_config_and_snns: List[Tuple[Run_config, Dict]] = []
         for run_config in self.run_configs:
             snn_graphs: Dict = {}
@@ -122,9 +143,24 @@ class Table_settings:
         algorithm_setting: str,
         # ) -> List[Dict]:
     ) -> List[Failure_mode_entry]:
-        """Returns the failure mode data for the selected settings."""
+        """Returns the failure mode data for the selected settings.
+
+        Args:
+            seed: The seed value.
+            graph_size: The size of the graph.
+            algorithm_setting: The algorithm setting.
+
+        Returns:
+            A list of failure mode entries.
+
+        Raises:
+            ValueError: If the run configurations are not equal.
+        """
         failure_mode_entries: List[Failure_mode_entry] = []
+
+        # Loop over the combination of run_config and accompanying snn graphs.
         for run_config, snn_graphs in self.run_config_and_snns:
+            # Read the failure modes from the graph object.
             failure_run_config, failure_mode = (
                 run_config,
                 snn_graphs["rad_adapted_snn_graph"].network.graph.graph[
@@ -466,6 +502,7 @@ def show_failures(
     def update_output(
         seed: int, graph_size: int, show_run_configs: bool
     ) -> List[Markdown]:
+        """Updates the table with failure modes based on the user settings."""
         print(
             f"seed={seed}, graph_size={graph_size}, show_run_configs="
             + f"{show_run_configs}"

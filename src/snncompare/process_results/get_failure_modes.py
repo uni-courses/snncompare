@@ -1,6 +1,6 @@
 """Computes what the failure modes were, and then stores this data in the
 graphs."""
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 
 import networkx as nx
 from simsnn.core.simulators import Simulator
@@ -30,14 +30,71 @@ def add_failure_modes_to_graph(
      - the neuron names and timesteps at which the behaviour differs.
     """
 
-    incorrectly_spikes: Dict[int, List[str]] = {}
-    incorrectly_silent: Dict[int, List[str]] = {}
-
     # Get adapted unradiated SNN.
     adapted_unradiated_snn: Simulator = snn_graphs["adapted_snn_graph"]
+
+    unradiated_spikes: List[List[bool]] = get_unradiated_spike_list(
+        adapted_unradiated_snn=adapted_unradiated_snn,
+        run_config=run_config,
+        snn_graphs=snn_graphs,
+    )
+
+    incorrectly_spikes, incorrectly_silent = get_incorrect_spikes(
+        adapted_unradiated_snn=adapted_unradiated_snn,
+        snn_graphs=snn_graphs,
+        unradiated_spikes=unradiated_spikes,
+    )
+
+    for graph_name in snn_graphs.keys():
+        if graph_name != "input_graph":
+            if graph_name == "rad_adapted_snn_graph":
+                snn_graphs[graph_name].network.graph.graph["failure_modes"] = {
+                    "incorrectly_spikes": incorrectly_spikes,
+                    "incorrectly_silent": incorrectly_silent,
+                }
+            else:
+                snn_graphs[graph_name].network.graph.graph[
+                    "failure_modes"
+                ] = {}
+
+
+@typechecked
+def store_incorrect_spike(
+    *,
+    failures: Dict[int, List[str]],
+    neuron_name: str,
+    t: int,
+) -> None:
+    """Stores the time and adds the neuron name to the list.
+
+    TODO: rename for its dual use case.
+    """
+    if t not in failures.keys():
+        failures[t] = []
+    failures[t].append(neuron_name)
+
+
+@typechecked
+def get_unradiated_spike_list(
+    *,
+    adapted_unradiated_snn: Simulator,
+    run_config: Run_config,
+    snn_graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+) -> List[List[bool]]:
+    """Get the boolean list of spikes for the unradiated snn.
+
+    This function may be called directly after simulating the SNNs, or
+    after their behaviour has been stored to a file. That is why it
+    first checks if the spikes are still in the incoming snn. Otherwise,
+    it loads the spike behaviour from file.
+    """
     if "spikes" in adapted_unradiated_snn.raster.__dict__.keys():
-        unradiated_spikes: List = adapted_unradiated_snn.raster.spikes.tolist()
-    else:
+        # If spikes are (still) stored in incoming object, load them directly.
+        unradiated_spikes: List[
+            List[bool]
+        ] = adapted_unradiated_snn.raster.spikes.tolist()
+    else:  # Load the data from the snn behaviour file.
+        # Get boilerplate data to receive the snn behaviour.
         _, rand_nrs_hash = get_rand_nrs_and_hash(
             input_graph=snn_graphs["input_graph"]
         )
@@ -61,11 +118,36 @@ def add_failure_modes_to_graph(
                 "Error, was not able to find the SNN propagation results"
                 + f" at:{simsnn_filepath}."
             )
+        # Store the boolean spike list for the unradiated snn.
         unradiated_spikes = adapted_unradiated_snn.raster.spikes.tolist()
+    return unradiated_spikes
+
+
+@typechecked
+def get_incorrect_spikes(
+    *,
+    adapted_unradiated_snn: Simulator,
+    snn_graphs: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    unradiated_spikes: List[List[bool]],
+) -> Tuple[Dict[int, List[str]], Dict[int, List[str]]]:
+    """Creates dictionaries with the times at which neuron(s) of the radiated
+    adapted SNN shows a different spike behaviour than the unradiated adapted
+    SNN."""
+
+    # Create the dictionaries with timestep and neuron names for the neurons
+    # in the radiated SNN that behave different from those in the unadapted
+    # snn.
+    incorrectly_spikes: Dict[int, List[str]] = {}
+    incorrectly_silent: Dict[int, List[str]] = {}
+
+    # excitatory_delta_u: Dict[int, List[str]] = {}
+    # inhibitory_delta_u: Dict[int, List[str]] = {}
 
     # Get adapted radiated SNN.
     adapted_radiated_snn: Simulator = snn_graphs["rad_adapted_snn_graph"]
-    radiated_spikes: List = adapted_radiated_snn.raster.spikes.tolist()
+    radiated_spikes: List[
+        List[bool]
+    ] = adapted_radiated_snn.raster.spikes.tolist()
 
     # Loop over timesteps
     for t, unradiated_spikes_at_t in enumerate(unradiated_spikes):
@@ -78,46 +160,98 @@ def add_failure_modes_to_graph(
                 )
             )
         ):
-            if t < len(radiated_spikes):
-                if (
-                    unradiated_spikes_at_t[neuron_index]
-                    != radiated_spikes[t][neuron_index]
-                ):
-                    # pylint: disable=R1736
-                    if unradiated_spikes[t][neuron_index]:
-                        store_incorrect_spike(
-                            failures=incorrectly_silent,
-                            neuron_name=neuron_name,
-                            t=t,
-                        )
-                    else:
-                        store_incorrect_spike(
-                            failures=incorrectly_spikes,
-                            neuron_name=neuron_name,
-                            t=t,
-                        )
+            add_neurons_with_spike_difference(
+                incorrectly_spikes=incorrectly_spikes,
+                incorrectly_silent=incorrectly_silent,
+                neuron_index=neuron_index,
+                neuron_name=neuron_name,
+                radiated_spikes=radiated_spikes,
+                t=t,
+                unradiated_spikes=unradiated_spikes,
+                unradiated_spikes_at_t=unradiated_spikes_at_t,
+            )
 
-    for graph_name in snn_graphs.keys():
-        if graph_name != "input_graph":
-            if graph_name == "rad_adapted_snn_graph":
-                snn_graphs[graph_name].network.graph.graph["failure_modes"] = {
-                    "incorrectly_spikes": incorrectly_spikes,
-                    "incorrectly_silent": incorrectly_silent,
-                }
-            else:
-                snn_graphs[graph_name].network.graph.graph[
-                    "failure_modes"
-                ] = {}
+            # TODO: get u values.
+            # add_neurons_with_u_difference(
+            # excitatory_delta_u=excitatory_delta_u,
+            # inhibitory_delta_u=inhibitory_delta_u,
+            # neuron_index=neuron_index,
+            # neuron_name=neuron_name,
+            # radiated_spikes=radiated_spikes,
+            # t=t,
+            # unradiated_spikes=unradiated_spikes,
+            # unradiated_spikes_at_t=unradiated_spikes_at_t,
+            # )
+    return incorrectly_spikes, incorrectly_silent
 
 
 @typechecked
-def store_incorrect_spike(
+def add_neurons_with_spike_difference(
     *,
-    failures: Dict[int, List[str]],
+    incorrectly_spikes: Dict[int, List[str]],
+    incorrectly_silent: Dict[int, List[str]],
+    neuron_index: int,
     neuron_name: str,
+    radiated_spikes: List[List[bool]],
     t: int,
+    unradiated_spikes: List[List[bool]],
+    unradiated_spikes_at_t: List[bool],
 ) -> None:
-    """Stores the time and adds the neuron name to the list."""
-    if t not in failures.keys():
-        failures[t] = []
-    failures[t].append(neuron_name)
+    """Stores the neurons that show alternative spike behaviour."""
+    # Check if a spike boolean is stored for each timestep.
+    if t < len(radiated_spikes):
+        # Check if the unradiated neuron behaves different than the
+        # radiated neuron.
+        if (
+            unradiated_spikes_at_t[neuron_index]
+            != radiated_spikes[t][neuron_index]
+        ):
+            # pylint: disable=R1736
+            if unradiated_spikes[t][neuron_index]:
+                store_incorrect_spike(
+                    failures=incorrectly_silent,
+                    neuron_name=neuron_name,
+                    t=t,
+                )
+            else:
+                store_incorrect_spike(
+                    failures=incorrectly_spikes,
+                    neuron_name=neuron_name,
+                    t=t,
+                )
+
+
+@typechecked
+def add_neurons_with_u_difference(
+    *,
+    excitatory_delta_u: Dict[int, List[str]],
+    inhibitory_delta_u: Dict[int, List[str]],
+    neuron_index: int,
+    neuron_name: str,
+    radiated_spikes: List[List[bool]],
+    t: int,
+    unradiated_spikes: List[List[bool]],
+    unradiated_spikes_at_t: List[bool],
+) -> None:
+    """Stores the neurons that show alternative spike behaviour."""
+    # Check if a spike boolean is stored for each timestep.
+    if t < len(radiated_spikes):
+        # Check if the unradiated neuron behaves different than the
+        # radiated neuron.
+        if (
+            unradiated_spikes_at_t[neuron_index]
+            != radiated_spikes[t][neuron_index]
+        ):
+            # pylint: disable=R1736
+            if unradiated_spikes[t][neuron_index]:
+                store_incorrect_spike(
+                    failures=inhibitory_delta_u,
+                    neuron_name=neuron_name,
+                    t=t,
+                )
+            else:
+                store_incorrect_spike(
+                    failures=excitatory_delta_u,
+                    neuron_name=neuron_name,
+                    t=t,
+                )
