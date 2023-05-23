@@ -1,8 +1,5 @@
 """Computes what the failure modes were, and then stores this data in the
 graphs."""
-import itertools
-from collections import OrderedDict
-from pprint import pprint
 from typing import Dict, List, Tuple, Union
 
 import dash
@@ -300,7 +297,6 @@ def append_failure_mode(
                 found_entry = True
                 break
         if not found_entry:
-            print(f"add:{failure_mode_entry.run_config.adaptation.__dict__}")
             failure_mode_entries.append(failure_mode_entry)
     else:
         failure_mode_entries.append(failure_mode_entry)
@@ -354,11 +350,6 @@ def convert_failure_modes_to_table_dict(
             failure_mode=failure_mode, show_run_configs=show_run_configs
         )
 
-        print(
-            f"t={failure_mode.timestep}, "
-            + f"failure_mode.adaptation_name={failure_mode.adaptation_name}"
-        )
-        print(f"cell_element={cell_element}")
         table[failure_mode.timestep][failure_mode.adaptation_name].append(
             cell_element
         )
@@ -433,12 +424,7 @@ def convert_table_dict_to_table(
     adaptation_names: List[str],
     table: Dict[int, Dict[str, List[str]]],
 ) -> List[List[Union[List[str], str]]]:
-    """Converts a table dict to a table in format: lists of lists.
-
-    TODO: fix this.
-    """
-    print("incoming table=")
-    pprint(table)
+    """Converts a table dict to a table in format: lists of lists."""
     # Create 2d matrix.
     rows: List[List[Union[List[str], str]]] = []
     for timestep, failure_modes in table.items():
@@ -449,8 +435,6 @@ def convert_table_dict_to_table(
             else:
                 new_row.append(failure_modes[adaptation_name])
         rows.append(new_row)
-    print("outgoing rows=")
-    pprint(rows)
     return rows
 
 
@@ -495,40 +479,6 @@ def show_failures(
     app.scripts.config.serve_locally = True
 
     @typechecked
-    def convert_table_to_ordered_dict(
-        adaptation_names: List[str], table: List[List[str]]
-    ) -> OrderedDict:
-        """Converts the table with rows of: (row header, and a list of row
-        data), into an OrderedDict with format:
-
-        List of Tuples[column header, List of column values]
-        """
-        headers: List[str] = ["t"] + adaptation_names
-
-        # Get remainder of columns.
-        columns: Dict[int, List[str]] = {}
-        for i in range(0, len(headers)):
-            columns[i] = []
-        merged_rows = []
-        for row in table:
-            merged_row = list(itertools.chain.from_iterable(row))
-            merged_rows.append(merged_row)
-
-        for row in merged_rows:
-            for column_index in range(0, len(headers)):
-                if len(row) > column_index:
-                    element: str = row[column_index]
-                else:
-                    element = ""
-                columns[column_index].append(element)
-
-        ordered_dict_list = []
-        for column_index, header in enumerate(headers):
-            ordered_dict_list.append((header, columns[column_index]))
-        data = OrderedDict(ordered_dict_list)
-        return data
-
-    @typechecked
     def update_table(
         *,
         first_timestep_only: bool,
@@ -562,13 +512,7 @@ def show_failures(
             adaptation_names=adaptation_names,
             table=table_dict,
         )
-
-        # Convert the ordered dict into a pandas dataframe
-        ordered_dict: OrderedDict = convert_table_to_ordered_dict(
-            adaptation_names=table_settings.adaptation_names, table=table
-        )
-        updated_df = pd.DataFrame(ordered_dict)
-
+        updated_df = pd.DataFrame.from_records(table)
         return updated_df
 
     # table,columns=update_table(seed=8,graph_size=3)
