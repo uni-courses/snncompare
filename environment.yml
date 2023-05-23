@@ -95,6 +95,8 @@ dependencies:
     - https://github.com/a-t-0/lava/archive/refs/tags/v0.5.1.tar.gz
     # Show table with radiated neuron failure modes.
     - dash-bootstrap-components
+    # Install visualisation tool.
+    - dash-daq
     # Support parsing Json files.
     - jsons
     # Visualise dash plots.
