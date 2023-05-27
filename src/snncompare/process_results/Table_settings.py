@@ -12,7 +12,7 @@ from snncompare.graph_generation.stage_1_create_graphs import (
 )
 from snncompare.helper import get_snn_graph_name
 from snncompare.import_results.load_stage_1_and_2 import load_simsnn_graphs
-from snncompare.process_results.helper import append_failure_mode
+from snncompare.process_results.helper import graph_of_run_config_passed
 from snncompare.run_config.Run_config import Run_config
 
 # from dash.dependencies import Input, Output
@@ -194,86 +194,99 @@ class Table_settings:
                 run_config.seed == seed
                 and run_config.graph_size == graph_size
                 and run_config_algorithm_name == algorithm_setting
+                and not graph_of_run_config_passed(
+                    graph_name="rad_adapted_snn_graph",
+                    run_config=run_config,
+                )
             ):
-                if show_spike_failures:
-                    if "incorrectly_silent" in failure_mode.keys():
-                        for timestep, neuron_list in failure_mode[
-                            "incorrectly_silent"
-                        ].items():
-                            failure_mode_entry: Failure_mode_entry = (
-                                Failure_mode_entry(
-                                    adaptation_name=adaptation_name,
-                                    incorrectly_spikes=False,
-                                    incorrectly_silent=True,
-                                    incorrect_u_increase=False,
-                                    incorrect_u_decrease=False,
-                                    neuron_names=neuron_list,
-                                    run_config=run_config,
-                                    timestep=int(timestep),
-                                )
-                            )
-                            append_failure_mode(
-                                first_timestep_only=first_timestep_only,
-                                failure_mode_entry=failure_mode_entry,
-                                failure_mode_entries=failure_mode_entries,
-                            )
-                    if "incorrectly_spikes" in failure_mode.keys():
-                        for timestep, neuron_list in failure_mode[
-                            "incorrectly_spikes"
-                        ].items():
-                            failure_mode_entry = Failure_mode_entry(
-                                adaptation_name=adaptation_name,
-                                incorrectly_spikes=True,
-                                incorrectly_silent=False,
-                                incorrect_u_increase=False,
-                                incorrect_u_decrease=False,
-                                neuron_names=neuron_list,
-                                run_config=run_config,
-                                timestep=int(timestep),
-                            )
-                            append_failure_mode(
-                                first_timestep_only=first_timestep_only,
-                                failure_mode_entry=failure_mode_entry,
-                                failure_mode_entries=failure_mode_entries,
-                            )
-                else:
-                    if "inhibitory_delta_u" in failure_mode.keys():
-                        for timestep, neuron_list in failure_mode[
-                            "inhibitory_delta_u"
-                        ].items():
-                            failure_mode_entry = Failure_mode_entry(
-                                adaptation_name=adaptation_name,
-                                incorrectly_spikes=False,
-                                incorrectly_silent=False,
-                                incorrect_u_increase=False,
-                                incorrect_u_decrease=True,
-                                neuron_names=neuron_list,
-                                run_config=run_config,
-                                timestep=int(timestep),
-                            )
-                            append_failure_mode(
-                                first_timestep_only=first_timestep_only,
-                                failure_mode_entry=failure_mode_entry,
-                                failure_mode_entries=failure_mode_entries,
-                            )
-                    if "excitatory_delta_u" in failure_mode.keys():
-                        for timestep, neuron_list in failure_mode[
-                            "excitatory_delta_u"
-                        ].items():
-                            failure_mode_entry = Failure_mode_entry(
-                                adaptation_name=adaptation_name,
-                                incorrectly_spikes=False,
-                                incorrectly_silent=False,
-                                incorrect_u_increase=True,
-                                incorrect_u_decrease=False,
-                                neuron_names=neuron_list,
-                                run_config=run_config,
-                                timestep=int(timestep),
-                            )
-                            append_failure_mode(
-                                first_timestep_only=first_timestep_only,
-                                failure_mode_entry=failure_mode_entry,
-                                failure_mode_entries=failure_mode_entries,
-                            )
+                get_failure_mode_obj(
+                    adaptation_name=adaptation_name,
+                    failure_mode=failure_mode,
+                    failure_mode_entries=failure_mode_entries,
+                    first_timestep_only=first_timestep_only,
+                    run_config=run_config,
+                    show_spike_failures=show_spike_failures,
+                )
 
         return failure_mode_entries
+
+
+@typechecked
+def get_failure_mode_obj(
+    *,
+    adaptation_name: str,
+    failure_mode: Dict,
+    failure_mode_entries: List[Failure_mode_entry],
+    first_timestep_only: bool,
+    run_config: Run_config,
+    show_spike_failures: bool,
+) -> None:
+    """Parses input data to return a Failure mode object, containing the
+    difference between the radiated and unradiated SNN."""
+
+    @typechecked
+    def create_failure_mode_entry(
+        incorrectly_spikes: bool,
+        incorrectly_silent: bool,
+        incorrect_u_increase: bool,
+        incorrect_u_decrease: bool,
+        neuron_list: List[str],
+    ) -> Failure_mode_entry:
+        """Returns a Failure mode object, containing the difference between the
+        radiated and unradiated SNN."""
+        return Failure_mode_entry(
+            adaptation_name=adaptation_name,
+            incorrectly_spikes=incorrectly_spikes,
+            incorrectly_silent=incorrectly_silent,
+            incorrect_u_increase=incorrect_u_increase,
+            incorrect_u_decrease=incorrect_u_decrease,
+            neuron_names=neuron_list,
+            run_config=run_config,
+            timestep=int(timestep),
+        )
+
+    @typechecked
+    def append_failure_mode_entry(
+        failure_mode_entry: Failure_mode_entry,
+    ) -> None:
+        if first_timestep_only:
+            failure_mode_entries.append(failure_mode_entry)
+        else:
+            # Optionally handle first timestep only logic here
+            print("passing")
+
+    if show_spike_failures:
+        if "incorrectly_silent" in failure_mode:
+            for timestep, neuron_list in failure_mode[
+                "incorrectly_silent"
+            ].items():
+                failure_mode_entry = create_failure_mode_entry(
+                    False, True, False, False, neuron_list
+                )
+                append_failure_mode_entry(failure_mode_entry)
+
+        if "incorrectly_spikes" in failure_mode:
+            for timestep, neuron_list in failure_mode[
+                "incorrectly_spikes"
+            ].items():
+                failure_mode_entry = create_failure_mode_entry(
+                    True, False, False, False, neuron_list
+                )
+                append_failure_mode_entry(failure_mode_entry)
+    else:
+        if "inhibitory_delta_u" in failure_mode:
+            for timestep, neuron_list in failure_mode[
+                "inhibitory_delta_u"
+            ].items():
+                failure_mode_entry = create_failure_mode_entry(
+                    False, False, False, True, neuron_list
+                )
+                append_failure_mode_entry(failure_mode_entry)
+
+        if "excitatory_delta_u" in failure_mode:
+            for timestep, neuron_list in failure_mode[
+                "excitatory_delta_u"
+            ].items():
+                failure_mode_entry = create_failure_mode_entry(
+                    False, False, True, False, neuron_list
+                )

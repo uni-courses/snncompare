@@ -139,15 +139,10 @@ def apply_cell_formatting(
     else:
         cell_element = failure_mode.run_config.unique_id
 
-    # TODO: determine whether run passed or not.
-    stage_4_results_dict = load_stage4_results(
+    if graph_of_run_config_passed(
+        graph_name="rad_adapted_snn_graph",
         run_config=failure_mode.run_config,
-        stage_4_results_dict=None,
-    )
-    results_dict: Dict[str, Union[float, bool]] = stage_4_results_dict[
-        "rad_adapted_snn_graph"
-    ].network.graph.graph["results"]
-    if results_dict["passed"]:
+    ):
         cell_element = f'<FONT COLOR="#008000">{cell_element}</FONT>'  # green
     else:
         cell_element = f'<FONT COLOR="#FF0000">{cell_element}</FONT>'  # red
@@ -195,3 +190,29 @@ def get_table_columns(
     for i, column_head in enumerate(header):
         column_header.append({"id": i, "name": column_head})
     return column_header
+
+
+@typechecked
+def graph_of_run_config_passed(
+    *,
+    graph_name: str,
+    run_config: Run_config,
+) -> bool:
+    """Returns True if the snn graph of the run config fails, True if it
+    passes."""
+    # TODO: determine whether run passed or not.
+
+    stage_4_results_dict = load_stage4_results(
+        run_config=run_config,
+        stage_4_results_dict=None,
+    )
+
+    results_dict: Dict[str, Union[float, bool]] = stage_4_results_dict[
+        graph_name
+    ].network.graph.graph["results"]
+
+    print(results_dict)
+    if not isinstance(results_dict["passed"], bool):
+        raise ValueError("Error, pass/fail was expected to be True or False.")
+
+    return bool(results_dict["passed"])
