@@ -9,6 +9,7 @@ import pandas as pd
 from dash import Input, Output, dcc, html
 from dash.dcc.Markdown import Markdown
 from pandas import DataFrame
+from snnalgorithms.sparse.MDSA.alg_params import get_algorithm_setting_name
 from typeguard import typechecked
 
 from snncompare.exp_config import Exp_config
@@ -92,10 +93,14 @@ class Table_settings:
         )
 
         self.algorithm_setts = []
+
         for algorithm_name, algo_specs in exp_config.algorithms.items():
             for algo_config in algo_specs:
-                algorithm = {algorithm_name: algo_config}
-                self.algorithm_setts.append(algorithm)
+                self.algorithm_setts.append(
+                    get_algorithm_setting_name(
+                        algorithm_setting={algorithm_name: algo_config}
+                    )
+                )
 
         self.adaptation_names = []
         for adaptation in exp_config.adaptations:
@@ -118,10 +123,13 @@ class Table_settings:
             mode data.
         """
         run_config_and_snns: List[Tuple[Run_config, Dict]] = []
-        for run_config in self.run_configs:
+        for i, run_config in enumerate(self.run_configs):
             snn_graphs: Dict = {}
             input_graph: nx.Graph = load_input_graph_from_file_with_init_props(
                 run_config=run_config
+            )
+            print(
+                f"{i}/{len(self.run_configs)},{run_config.adaptation.__dict__}"
             )
 
             for with_adaptation in [False, True]:
@@ -180,16 +188,18 @@ class Table_settings:
                 raise ValueError("Error, run configs not equal.")
 
             # Check if the run config settings are desired.
-            alg_name: str = list(run_config.algorithm.keys())[0]
-            alg_param: int = list(run_config.algorithm.values())[0]["m_val"]
+            run_config_algorithm_name: str = get_algorithm_setting_name(
+                algorithm_setting=run_config.algorithm
+            )
             adaptation_name: str = (
                 f"{run_config.adaptation.adaptation_type}_"
                 + f"{run_config.adaptation.redundancy}"
             )
+
             if (
                 run_config.seed == seed
                 and run_config.graph_size == graph_size
-                and f"{alg_name}_{alg_param}" == algorithm_setting
+                and run_config_algorithm_name == algorithm_setting
             ):
                 if show_spike_failures:
                     if "incorrectly_silent" in failure_mode.keys():
@@ -427,6 +437,13 @@ def convert_table_dict_to_table(
     """Converts a table dict to a table in format: lists of lists."""
     # Create 2d matrix.
     rows: List[List[Union[List[str], str]]] = []
+
+    # Create the header. Assume adapted only.
+    # TODO: build support for unadapted failure modes.
+    header: List = ["Timestep"] + adaptation_names
+    rows.append(header)
+
+    # Fill the remaining set of the columns.
     for timestep, failure_modes in table.items():
         new_row: List[Union[List[str], str]] = [str(timestep)]
         for adaptation_name in adaptation_names:
@@ -468,22 +485,17 @@ def show_failures(
         run_configs=run_configs,
     )
 
-    # TODO: get the pass/fail data per run config.
-    # Make the text red if the SNN failed.
-    # Make the text green if the SNN passed.
-
-    # TODO: Make the text bold if the neuron spiked when it should not.
-    # TODO: Make the text italic if the neuron did not spike when it should.
-
     app = dash.Dash(__name__)
     app.scripts.config.serve_locally = True
 
     @typechecked
     def update_table(
         *,
+        algorithm_setting: str,
         first_timestep_only: bool,
         seed: int,
         graph_size: int,
+        table_settings: Table_settings,
         show_run_configs: bool,
         show_spike_failures: bool,
     ) -> DataFrame:
@@ -498,9 +510,10 @@ def show_failures(
             first_timestep_only,
             seed=seed,
             graph_size=graph_size,
-            algorithm_setting="MDSA_0",
+            algorithm_setting=algorithm_setting,
             show_spike_failures=show_spike_failures,
         )
+
         table_dict: Dict[
             int, Dict[str, List[str]]
         ] = convert_failure_modes_to_table_dict(
@@ -518,15 +531,25 @@ def show_failures(
     # table,columns=update_table(seed=8,graph_size=3)
     # df,columns=update_table(seed=8,graph_size=3)
     initial_df = update_table(
+        algorithm_setting=get_algorithm_setting_name(
+            algorithm_setting=run_configs[0].algorithm
+        ),
         first_timestep_only=True,
-        graph_size=3,
-        seed=8,
-        show_run_configs=True,
-        show_spike_failures=False,
+        graph_size=run_configs[0].graph_size,
+        table_settings=table_settings,
+        seed=run_configs[0].seed,
+        show_run_configs=False,
+        show_spike_failures=True,
     )
     app.layout = html.Div(
         [
             # Include dropdown
+            "Algorithm setting:",
+            dcc.Dropdown(
+                table_settings.algorithm_setts,
+                table_settings.algorithm_setts[0],
+                id="alg_setting_selector_id",
+            ),
             "Pseudo-random seed:",
             dcc.Dropdown(
                 table_settings.seeds,
@@ -543,11 +566,43 @@ def show_failures(
             html.Div(id="graph-size-selector"),
             html.Div(
                 [
+                    html.Div(
+                        [
+                            html.P(
+                                children=[
+                                    html.Strong("Missing spike/u"),
+                                    html.Span(
+                                        " -   (w.r.t unradiated adapted snn)",
+                                    ),
+                                    html.Br(),
+                                    html.U("Extra spike/u"),
+                                    html.Span(
+                                        " - (w.r.t unradiated adapted snn)",
+                                    ),
+                                    html.Br(),
+                                    html.Span(
+                                        "Radiated adaptation failed",
+                                        style={"color": "red"},
+                                    ),
+                                    html.Br(),
+                                    html.Span(
+                                        "Radiated adaptation passed",
+                                        style={"color": "green"},
+                                    ),
+                                    html.Br(),
+                                ]
+                            ),
+                        ]
+                    )
+                ]
+            ),
+            html.Div(
+                [
                     # pylint: disable=E1102
                     daq.BooleanSwitch(
                         id="show_run_configs",
                         label="Show run_config unique_id's",
-                        on=True,
+                        on=False,
                     ),
                     html.Div(id="show_run_configs_div"),
                 ]
@@ -558,7 +613,7 @@ def show_failures(
                     daq.BooleanSwitch(
                         id="show_spike_failures",
                         label="Show neurons with spike (or u) failures",
-                        on=False,
+                        on=True,
                     ),
                     html.Div(id="show_spike_failures_div"),
                 ]
@@ -594,6 +649,7 @@ def show_failures(
         ],
         # [Output("table", "data")],
         [
+            Input("alg_setting_selector_id", "value"),
             Input("seed_selector_id", "value"),
             Input("graph_size_selector_id", "value"),
             Input("show_run_configs", "on"),
@@ -602,7 +658,9 @@ def show_failures(
         ],
     )
     @typechecked
+    # pylint: disable=R0913
     def update_output(
+        algorithm_setting: str,
         seed: int,
         graph_size: int,
         show_run_configs: bool,
@@ -611,14 +669,17 @@ def show_failures(
     ) -> List[Markdown]:
         """Updates the table with failure modes based on the user settings."""
         print(
-            f"seed={seed}, graph_size={graph_size}, show_run_configs="
+            f"algorithm_setting={algorithm_setting}"
+            + f"seed={seed}, graph_size={graph_size}, show_run_configs="
             + f"{show_run_configs}, show_spike_failures={show_spike_failures}"
             + f"first_timestep_only={first_timestep_only}"
         )
 
         new_df = update_table(
+            algorithm_setting=algorithm_setting,
             first_timestep_only=first_timestep_only,
             graph_size=graph_size,
+            table_settings=table_settings,
             seed=seed,
             show_run_configs=show_run_configs,
             show_spike_failures=show_spike_failures,

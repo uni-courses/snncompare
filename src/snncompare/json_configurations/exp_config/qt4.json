@@ -3,12 +3,16 @@
     "population": [
       2,
       4
+    ],
+    "redundancy": [
+      2,
+      4
     ]
   },
   "algorithms": {
     "MDSA": [
       {
-        "m_val": 1
+        "m_val": 0
       }
     ]
   },
@@ -36,13 +40,26 @@
     }
   },
   "seeds": [
-    10
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
   ],
   "simulators": [
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [3, 1]}"
+    "{\"__tuple__\": true, \"items\": [3, 1]}",
+    "{\"__tuple__\": true, \"items\": [4, 2]}",
+    "{\"__tuple__\": true, \"items\": [10, 5]}",
+    "{\"__tuple__\": true, \"items\": [15, 5]}"
   ],
   "synaptic_models": [
     "LIF"

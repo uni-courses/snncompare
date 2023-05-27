@@ -183,9 +183,19 @@ Debugging:
 
 ```bash
 
+python -m src.snncompare -e qt0 --export-failure-modes --show-failure-modes -rev
 python -m src.snncompare -e qt0 -j1 -j2 -j4 -j5 --export-failure-modes \
---show-failure-modes -rev -dr
+--show-failure-modes -rev
+python -m src.snncompare -e qt5 -j1 -j2 -j4 -j5 --export-failure-modes \
+--show-failure-modes -rev
 
+
+python -m src.snncompare -e qt3 -j1 -j2 -j4 -j5 --export-failure-modes \
+--show-failure-modes -rev
+python -m src.snncompare -e qt3 -j5 --export-failure-modes \
+--show-failure-modes -rev
+python -m src.snncompare -e qt3 --export-failure-modes \
+--show-failure-modes -rev
 python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt snn_algo_graph \
 -p 8060 -rui 05592d66394f93e51f1aec5d02ff6f8bd33f46c374101cb1c2c28eba5f4463c9
 
