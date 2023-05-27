@@ -155,7 +155,10 @@ def show_failures(
                     # pylint: disable=E1102
                     daq.BooleanSwitch(
                         id="show_run_configs",
-                        label="Show run_config unique_id's",
+                        label=(
+                            "Show: run_config unique_id's (On) / neuron "
+                            + "names (Off),"
+                        ),
                         on=False,
                     ),
                     html.Div(id="show_run_configs_div"),
@@ -166,7 +169,10 @@ def show_failures(
                     # pylint: disable=E1102
                     daq.BooleanSwitch(
                         id="show_spike_failures",
-                        label="Show neurons with spike (or u) failures",
+                        label=(
+                            "Show neurons with: spike (on) / u (off) "
+                            + "differences"
+                        ),
                         on=True,
                     ),
                     html.Div(id="show_spike_failures_div"),

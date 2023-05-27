@@ -117,7 +117,6 @@ def compute_marks_for_m_larger_than_one(
             input_graph=input_graph, rand_ceil=rand_ceil
         )
 
-        print("")
         if show or export:
             plot_alipour(
                 configuration="0rand_mark",
