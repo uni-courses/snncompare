@@ -117,6 +117,7 @@ class Table_settings:
             mode data.
         """
         run_config_and_snns: List[Tuple[Run_config, Dict]] = []
+        print("Creating failure mode table.")
         for i, run_config in enumerate(self.run_configs):
             snn_graphs: Dict = {}
             input_graph: nx.Graph = load_input_graph_from_file_with_init_props(

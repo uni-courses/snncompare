@@ -94,46 +94,47 @@ def create_performance_plots(
             Get the result of a run config and store it in the boxplot data.
     """
 
-    count: int = 0
-    for rad_setting in reversed(exp_config.radiations):
-        print(f"rad_setting={rad_setting.__dict__}")
+    robustness_plot_data: Dict[str, Dict[str, List[float]]] = {}
     for rad_setting in reversed(exp_config.radiations):
         # TODO: separate per radiation_name (type).
         print(f"rad_setting={rad_setting.__dict__}")
         # for radiation_value in radiation_values:
-        count += 1  # Keep track of counter for boxplot filenames.
-        for adaptation in exp_config.adaptations:
-            print(
-                "Loading stage 4 results to create boxplot with:"
-                # + f"{radiation_name}:{radiation_value}, adaptation type"
-                + f":{adaptation.__dict__}"
-            )
 
-            # Get run configs belonging to this radiation type/level.
-            wanted_run_configs: List[Run_config] = []
-            for run_config in completed_run_configs:
-                if run_config.radiation == rad_setting:
-                    wanted_run_configs.append(run_config)
+        print(
+            "Loading stage 4 results to create boxplot with:"
+            # + f"{radiation_name}:{radiation_value}, adaptation type"
+            + f":{exp_config.adaptations:}"
+        )
 
-            # Get results per line.
-            boxplot_data: Dict[
-                str, Dict[int, Boxplot_x_val]
-            ] = get_boxplot_datapoints(
-                adaptations=exp_config.adaptations,
-                wanted_run_configs=wanted_run_configs,
-                seeds=exp_config.seeds,
-            )
+        # Get run configs belonging to this radiation type/level.
+        wanted_run_configs: List[Run_config] = []
+        for run_config in completed_run_configs:
+            if run_config.radiation == rad_setting:
+                wanted_run_configs.append(run_config)
 
-            print("\nConverting stage 4 results into boxplot.")
-            y_series = boxplot_data_to_y_series(boxplot_data=boxplot_data)
+        # Get results per line.
+        boxplot_data: Dict[
+            str, Dict[int, Boxplot_x_val]
+        ] = get_boxplot_datapoints(
+            adaptations=exp_config.adaptations,
+            wanted_run_configs=wanted_run_configs,
+            seeds=exp_config.seeds,
+        )
 
-            filename: str = get_image_name(count=count, rad_setts=rad_setting)
-            create_dotted_boxplot(
-                y_series=y_series,
-                filename=filename,
-                title=f"SNN MDSA algorithm with simulated {filename}",
-                # + f"={100}[%]",
-            )
+        print("\nConverting stage 4 results into boxplot.")
+        y_series: Dict[str, List[float]] = boxplot_data_to_y_series(
+            boxplot_data=boxplot_data
+        )
+        robustness_plot_data[rad_setting.get_filename()] = y_series
+
+    # .keys() is superfluous because sorted only sorts on dict keys)
+    for i, filename in enumerate(sorted(robustness_plot_data.keys())):
+        # filename: str = get_image_name(count=count, rad_setts=rad_setting)
+        create_dotted_boxplot(
+            y_series=robustness_plot_data[filename],
+            filename=f"{i}_{filename}",
+            title="Simulated radiation Robustness of MDSA SNN",
+        )
 
 
 @typechecked
@@ -213,6 +214,7 @@ def get_boxplot_datapoints(
         graph_names=get_snn_graph_names(),
         seeds=seeds,
     )
+
     for wanted_run_config in track(
         wanted_run_configs, total=len(wanted_run_configs)
     ):
@@ -228,10 +230,11 @@ def get_boxplot_datapoints(
                 )
 
                 # Get the graphs names that were used in the run.
-                graph_names = get_snn_graph_names()
+                graph_names: List[str] = get_snn_graph_names()
 
                 # Specify the x-axis labels and get snn result dicts.
                 x_labels, results = get_x_labels(
+                    run_config_adaptation=wanted_run_config.adaptation,
                     adaptations=adaptations,
                     graphs_dict=stage_4_results_dict,
                     graph_names=graph_names,
@@ -241,25 +244,27 @@ def get_boxplot_datapoints(
                 # Per column, compute the graph scores, and store them into the
                 # boxplot_data.
                 for x_label in x_labels:
-                    add_graph_scores(
-                        boxplot_data=boxplot_data,
-                        x_label=x_label,
-                        result=results[x_label],
-                        seed=wanted_run_config.seed,
-                    )
-
+                    # TODO: verify this check is correct.
+                    # pylint: disable=C0201
+                    if x_label in results.keys():
+                        add_graph_scores(
+                            boxplot_data=boxplot_data,
+                            x_label=x_label,
+                            result=results[x_label],
+                            seed=wanted_run_config.seed,
+                        )
                 # TODO: export boxplot data as pickle per run config.
             else:
                 raise NotImplementedError(
                     f"Error, {algo_name} is not yet supported."
                 )
-
     return boxplot_data
 
 
 @typechecked
 def get_x_labels(
     *,
+    run_config_adaptation: Adaptation,
     adaptations: List[Adaptation],
     graphs_dict: Dict,
     graph_names: List[str],
@@ -275,17 +280,19 @@ def get_x_labels(
             for adaptation in adaptations:
                 # Create a new column and xlabel in the results dict, and
                 # store the snn graph results in there.
-                x_labels.append(
-                    f"{adaptation.adaptation_type}:{adaptation.redundancy}"
-                )
-                if simulator == "simsnn":
-                    results[x_labels[-1]] = graphs_dict[
-                        graph_name
-                    ].network.graph.graph["results"]
-                elif simulator == "nx":
-                    results[x_labels[-1]] = graphs_dict[graph_name]["graph"][
-                        "results"
-                    ]
+                x_labels.append(adaptation.get_name())
+                # Only add the results of the run_config adaptation graph if
+                # the (generic) adaptation name is the same as that of the
+                # run_config adaptation type and redundancy value.
+                if run_config_adaptation.get_name() == adaptation.get_name():
+                    if simulator == "simsnn":
+                        results[adaptation.get_name()] = graphs_dict[
+                            graph_name
+                        ].network.graph.graph["results"]
+                    elif simulator == "nx":
+                        results[adaptation.get_name()] = graphs_dict[
+                            graph_name
+                        ]["graph"]["results"]
         elif graph_name != "input_graph":
             # This are:
             # - snn_algo_graphs: 100% score
@@ -294,8 +301,6 @@ def get_x_labels(
             # category are put into 1 column, because there aren't any
             # different types of adaptation.
             x_labels.append(graph_name)
-            # print("graphs_dict[graph_name].network.graph=")
-            # pprint(graphs_dict[graph_name].network.graph.graph)
             results[x_labels[-1]] = graphs_dict[
                 graph_name
             ].network.graph.graph["results"]
@@ -354,9 +359,9 @@ def get_mdsa_boxplot_data(
                 # Create multiple columns in boxplot, to show the
                 # adaptation effectivity, show 1 column with score per
                 # adaptation type.
-                boxplot_data[
-                    f"{adaptation.adaptation_type}:{adaptation.redundancy}"
-                ] = copy.deepcopy(x_series_data)
+                boxplot_data[adaptation.get_name()] = copy.deepcopy(
+                    x_series_data
+                )
         elif graph_name != "input_graph":
             # Just post all scores on a single column; the avg score per snn
             # graph. For snn_algo and adapted_snn_algo graph they should both
@@ -393,6 +398,7 @@ def boxplot_data_to_y_series(
     return columns
 
 
+# TODO: fix.
 def create_dotted_boxplot(
     filename: str, y_series: Dict[str, List[float]], title: str
 ) -> None:
