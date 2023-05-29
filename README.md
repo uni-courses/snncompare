@@ -233,6 +233,12 @@ And run tests with:
 python -m pytest
 ```
 
+Run specific test:
+
+```bash
+python -m pytest tests/synapse_excitation/test_synapse_exitation.py
+```
+
 or to see live output, on any tests filenames containing substring: `results`:
 
 ```bash
