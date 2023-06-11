@@ -197,8 +197,10 @@ def get_input_graph_of_run_config(
     run_config: Run_config,
 ) -> nx.Graph:
     """TODO: support retrieving graph sizes larger than size 5.
+
     TODO: ensure those graphs have valid properties, e.g. triangle-free and
-    non-planar."""
+    non-planar.
+    """
 
     # Get the graph of the right size.
     # TODO: Pass random seed.
