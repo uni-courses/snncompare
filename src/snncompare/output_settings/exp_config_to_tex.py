@@ -3,7 +3,7 @@ from typing import List
 
 from typeguard import typechecked
 
-from snncompare.src.snncompare.exp_config.Exp_config import Exp_config
+from snncompare.exp_config.Exp_config import Exp_config
 
 
 @typechecked

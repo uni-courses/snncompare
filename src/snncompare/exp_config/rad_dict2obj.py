@@ -54,17 +54,35 @@ def add_generic_exp_config_rad_dict(
 
     Each Rad_damage object contains the settings for 1 run_config.
     """
-
+    # pylint: disable=R1702
     for amplitude in rad_settings["amplitude"]:
         for excitatory in rad_settings["excitatory"]:
             for inhibitory in rad_settings["inhibitory"]:
                 if excitatory or inhibitory:
                     for probability_per_t in rad_settings["probability_per_t"]:
-                        rad_damage = Rad_damage(
-                            amplitude=amplitude,
-                            effect_type=effect_type,
-                            excitatory=excitatory,
-                            inhibitory=inhibitory,
-                            probability_per_t=probability_per_t,
-                        )
+                        if (
+                            "nr_of_synaptic_weight_increases"
+                            in rad_settings.keys()
+                        ):
+                            for nswi in rad_settings[
+                                "nr_of_synaptic_weight_increases"
+                            ]:
+                                rad_damage = Rad_damage(
+                                    amplitude=amplitude,
+                                    effect_type=effect_type,
+                                    excitatory=excitatory,
+                                    inhibitory=inhibitory,
+                                    probability_per_t=probability_per_t,
+                                    nr_of_synaptic_weight_increases=nswi,
+                                )
+                        else:
+                            rad_damage = Rad_damage(
+                                amplitude=amplitude,
+                                effect_type=effect_type,
+                                excitatory=excitatory,
+                                inhibitory=inhibitory,
+                                probability_per_t=probability_per_t,
+                                nr_of_synaptic_weight_increases=None,
+                            )
+
                     radiation_objs.append(rad_damage)
