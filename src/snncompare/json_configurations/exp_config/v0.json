@@ -21,7 +21,7 @@
   "radiations": {
     "change_synaptic_weight": {
       "amplitude": [
-        0.2
+        0.01
       ],
       "excitatory": [
         true
@@ -30,7 +30,7 @@
         false
       ],
       "probability_per_t": [
-        0.1
+        0.005
       ]
     }
   },
@@ -41,7 +41,7 @@
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [3, 1]}"
+    "{\"__tuple__\": true, \"items\": [5, 1]}"
   ],
   "synaptic_models": [
     "LIF"

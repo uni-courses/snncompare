@@ -76,7 +76,6 @@ def sim_graphs(
                         seed=run_config.seed,
                         snn=snn,
                     )
-                print(f"rad={snn.network.synapses[0].radiation}")
                 sim_snn(
                     input_graph=stage_1_graphs["input_graph"],
                     snn=snn,
