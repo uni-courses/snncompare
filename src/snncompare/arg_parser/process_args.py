@@ -113,6 +113,7 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
         show_graph_name not in get_snn_graph_names()
         for show_graph_name in optional_config_args_dict["graph_types"]
     ):
+        print(f"optional_config_args_dict={optional_config_args_dict}")
         raise ValueError(
             "show_graph_type values:"
             + f'{optional_config_args_dict["show_graph_type"]}'

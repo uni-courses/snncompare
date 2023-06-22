@@ -343,9 +343,7 @@ class Experiment_runner:
             jobs = []
             for i, graph_name in enumerate(get_snn_graph_names()):
                 if output_config.dash_port is None:
-                    dash_port: int = 8050 + i
-                else:
-                    dash_port = output_config.dash_port + i
+                    output_config.dash_port = 8050 + i
                 if graph_name in output_config.graph_types:
                     p = multiprocessing.Process(
                         target=create_svg_plot,
@@ -353,9 +351,9 @@ class Experiment_runner:
                             [graph_name],
                             results_nx_graphs["graphs_dict"],
                             output_config,
-                            dash_port,
+                            # dash_port,
                             run_config,
-                            run_config.unique_id,
+                            # run_config.unique_id,
                             None,
                         ),
                     )

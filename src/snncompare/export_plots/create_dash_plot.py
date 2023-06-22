@@ -45,6 +45,7 @@ def create_svg_plot(
     single_timestep: Optional[int] = None,
 ) -> None:
     """Creates the svg plots."""
+    print("INSIDE")
     plot_config: Plot_config = get_default_plot_config()
 
     app = dash.Dash(__name__)
