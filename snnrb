@@ -3,7 +3,7 @@
 # export PATH="$PWD:$PATH"
 
 ## declare the list of github repositories in an array.
-declare -a arr=("snnadaptation" "snnalgorithms" "snnbackends" "snncompare" "snnradiation" "simsnn")
+declare -a arr=("snnadaptation" "snnalgorithms" "snnbackends" "snncompare" "snnradiation") #"simsnn")
 # Specify global variables.
 # DIR_WITH_REPOS="/home/$(echo $(whoami))/git/snn/"
 DIR_WITH_REPOS="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"

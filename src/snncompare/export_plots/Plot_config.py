@@ -16,8 +16,7 @@ class Plot_config:
         self,
         base_pixel_width: int,
         base_pixel_height: int,
-        dx_redundant_factor: float,
-        dy_redundant_factor: float,
+        redundancy_radius: float,
         edge_width_factor: float,
         edge_label_size_factor: float,
         neuron_text_size_factor: float,
@@ -41,7 +40,7 @@ class Plot_config:
         update_edge_opacity: bool,
         x_node_spacer_factor: float,
         x_tick_size_factor: float,
-        y_node_spacer_factor: float,
+        y_degree_receiver_spacing: float,
         y_tick_size_factor: float,
     ) -> None:
         """Creates the plot configuration to generate the svg files."""
@@ -59,10 +58,11 @@ class Plot_config:
         self.recursive_edge_radius: float = (
             recursive_edge_radius_factor * node_size
         )
-        self.dx_redundant: float = dx_redundant_factor * node_size
-        self.dy_redundant: float = dy_redundant_factor * node_size
+        self.redundancy_radius: float = redundancy_radius * node_size
         self.x_node_spacer: float = x_node_spacer_factor * node_size
-        self.y_node_spacer: float = y_node_spacer_factor * node_size
+        self.y_degree_receiver_spacing: float = (
+            y_degree_receiver_spacing * node_size
+        )
         self.neuron_text_size: float = neuron_text_size_factor * node_size
         if self.neuron_text_size < 1:
             raise ValueError(
@@ -110,19 +110,18 @@ def get_default_plot_config() -> Plot_config:
         show_edge_colours=True,
         show_edge_labels=False,
         show_edge_opacity=True,
-        show_x_ticks=False,
-        show_y_ticks=False,
+        show_x_ticks=True,
+        show_y_ticks=True,
         update_node_colours=False,
         update_node_labels=True,
         update_node_opacity=False,
         update_edge_colours=True,
         update_edge_labels=False,
         update_edge_opacity=True,
-        dx_redundant_factor=0.05,
-        dy_redundant_factor=0.05,
+        redundancy_radius=0.05,
         redundant_curve_factor=0.2,
         x_node_spacer_factor=0.15,
-        y_node_spacer_factor=0.15,
+        y_degree_receiver_spacing=0.15,
         neuron_text_size_factor=0.8,
         edge_label_size_factor=0.8,
         x_tick_size_factor=15,

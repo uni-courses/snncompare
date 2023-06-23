@@ -1,6 +1,5 @@
 """Converts radiation damage dicts from Exp_config dict, into a list Rad_damage
 objects."""
-from math import inf
 from typing import Dict, List, Union
 
 from snnradiation.Rad_damage import Rad_damage
@@ -26,13 +25,14 @@ def get_radiations_from_exp_config_dict(
         if effect_type == "neuron_death":
             for probability_per_t in rad_settings["probability_per_t"]:
                 rad_damage = Rad_damage(
-                    amplitude=inf,
+                    amplitude=float(-(10**10)),
+                    # amplitude=-inf,
                     effect_type=effect_type,
                     excitatory=False,
                     inhibitory=True,
-                    probability_per_t=probability_per_t,
+                    probability_per_t=float(probability_per_t),
                 )
-            radiation_objs.append(rad_damage)
+                radiation_objs.append(rad_damage)
         else:
             add_generic_exp_config_rad_dict(
                 effect_type=effect_type,

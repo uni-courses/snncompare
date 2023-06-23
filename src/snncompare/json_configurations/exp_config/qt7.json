@@ -1,7 +1,8 @@
 {
   "adaptations": {
     "redundancy": [
-      2
+      2,
+      4
     ]
   },
   "algorithms": {
@@ -11,9 +12,9 @@
       }
     ]
   },
-  "max_graph_size": 3,
+  "max_graph_size": 20,
   "max_max_graphs": 4,
-  "min_graph_size": 3,
+  "min_graph_size": 20,
   "min_max_graphs": 4,
   "neuron_models": [
     "LIF"
@@ -21,8 +22,7 @@
   "radiations": {
     "change_u": {
       "amplitude": [
-        1,
-        10
+        1
       ],
       "excitatory": [
         true
@@ -31,18 +31,33 @@
         false
       ],
       "probability_per_t": [
-        0.05
+        0.0005,
+        0.001,
+        0.0025,
+        0.005,
+        0.01,
+        0.025
       ]
     }
   },
   "seeds": [
-    8
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
   ],
   "simulators": [
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [3, 1]}"
+    "{\"__tuple__\": true, \"items\": [7, 5]}"
   ],
   "synaptic_models": [
     "LIF"

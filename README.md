@@ -167,16 +167,57 @@ python -m src.snncompare -e mdsa_long_no_overwrite -j1 -j2 -j4 -r run_config_fil
 Typical run (deletes pre-existing results):
 
 ```bash
+python -m src.snncompare -e neuron_death -j1 -j2 -j4 -j5 -s2 -rev
 python -m src.snncompare -e quicktest -j1 -j2 -j4 -j5 -s2 -rev -dr
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -j5 -s2 -rev
 python -m src.snncompare -e basic_results -j1 -j2 -j4 -j5 -s2 -rev -dr
+python -m src.snncompare -e minimal_results -j1 -j2 -j4 -j5 -s2 -rev -dr
+python -m src.snncompare -e test_population -j1 -j2 -j4 -j5 -s2 -rev -dr
+python -m src.snncompare -e complexity -j1 -j2 -j4 -j5 -s2 -rev
+python -m src.snncompare -e complexity -j5
+python -m src.snncompare -e change_u -j5
+
 ```
+
+Debugging:
+
+```bash
+
+python -m src.snncompare -e qt0 --export-failure-modes --show-failure-modes -rev
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -j5 --export-failure-modes \
+--show-failure-modes -rev
+python -m src.snncompare -e qt5 -j1 -j2 -j4 -j5 --export-failure-modes \
+--show-failure-modes -rev
+
+
+python -m src.snncompare -e qt3 -j1 -j2 -j4 -j5 --export-failure-modes \
+--show-failure-modes -rev
+python -m src.snncompare -e qt3 -j5 --export-failure-modes \
+--show-failure-modes -rev
+python -m src.snncompare -e qt3 --export-failure-modes \
+--show-failure-modes -rev
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt snn_algo_graph \
+-p 8060 -rui 24ccfad34b33e780304bf588bdc6cb4e1a093b94e8b9f4c98a272b96cf5b20c8
+
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt adapted_snn_graph \
+-p 8060 -rui 05592d66394f93e51f1aec5d02ff6f8bd33f46c374101cb1c2c28eba5f4463c9
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt rad_adapted_snn_graph \
+-p 8060 -rui 8c8518173c3fecc6d495b9f7ecc83d5d8516cab2c1bfa388eee5c7770798b7ee
+
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt adapted_snn_graph -p \
+8060 -rui db2aaeda8a45710d0bbba18efeedfaf983e21111aa362cf7d1c77716cd882056
+python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt rad_adapted_snn_graph \
+-p 8060 -rui db2aaeda8a45710d0bbba18efeedfaf983e21111aa362cf7d1c77716cd882056
+```
+
+## Demo
 
 Debug 2 runs, in separate console:
 
 ```bash
-python -m src.snncompare -e debug0 -j1 -j2 -j4 -j5 -rev  -si -sgt \
- rad_adapted_snn_graph -p 8000
-python -m src.snncompare -e debug1 -j1 -j2 -j4 -j5 -rev  -si -sgt \
+python -m src.snncompare -e live_demo_adaptation -j1 -j2 -j4 -j5 -rev  -si -sgt \
+ snn_algo_graph -p 8000
+python -m src.snncompare -e live_demo_adaptation -j1 -j2 -j4 -j5 -rev  -si -sgt \
  rad_adapted_snn_graph -p 8003
 ```
 
@@ -199,6 +240,12 @@ And run tests with:
 
 ```bash
 python -m pytest
+```
+
+Run specific test:
+
+```bash
+python -m pytest tests/synapse_excitation/test_synapse_exitation.py
 ```
 
 or to see live output, on any tests filenames containing substring: `results`:

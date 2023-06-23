@@ -8,7 +8,7 @@ from typing import Dict, Optional
 from typeguard import typechecked
 
 from snncompare.graph_generation.stage_1_create_graphs import (
-    get_input_graph_of_run_config,
+    load_input_graph_from_file_with_init_props,
 )
 from snncompare.helper import get_snn_graph_name
 from snncompare.import_results.load_stage_1_and_2 import load_simsnn_graphs
@@ -24,9 +24,9 @@ def load_stage4_results(
     """Loads stage1 simsnn graphs and input graph."""
     if stage_4_results_dict is None:
         stage_4_results_dict = {}
-        stage_4_results_dict["input_graph"] = get_input_graph_of_run_config(
-            run_config=run_config
-        )
+        stage_4_results_dict[
+            "input_graph"
+        ] = load_input_graph_from_file_with_init_props(run_config=run_config)
 
     for with_adaptation in [False, True]:
         for with_radiation in [False, True]:
@@ -40,4 +40,5 @@ def load_stage4_results(
                 with_radiation=with_radiation,
                 stage_index=4,
             )
+
     return stage_4_results_dict

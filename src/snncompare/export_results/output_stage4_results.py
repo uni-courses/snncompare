@@ -26,10 +26,12 @@ from snncompare.run_config.Run_config import Run_config
 
 
 @typechecked
-def output_stage_4_results(
+def output_snn_results(
     *,
+    output_data_type: str,
     run_config: Run_config,
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
+    stage_index: int,
 ) -> None:
     """Exports results dict to a json file.
 
@@ -73,12 +75,13 @@ def output_stage_4_results(
                 input_graph=graphs_dict["input_graph"],
                 run_config=run_config,
                 with_adaptation=with_adaptation,
-                stage_index=4,
+                stage_index=stage_index,
                 rad_affected_neurons_hash=rad_affected_neurons_hash,
                 rand_nrs_hash=rand_nrs_hash,
             )
             if not simsnn_exists:
-                output_results(
+                output_some_graph_property_dict(
+                    dict_name=output_data_type,
                     output_filepath=simsnn_filepath,
                     snn_graph=get_desired_snn_graph(
                         graphs_dict=graphs_dict,
@@ -90,18 +93,26 @@ def output_stage_4_results(
 
 
 @typechecked
-def output_results(
+def output_some_graph_property_dict(
     *,
+    dict_name: str,
     simulator: str,
     output_filepath: str,
     snn_graph: Union[nx.DiGraph, Simulator],
 ) -> None:
     """Outputs the stage 4 snn results to json."""
+    if dict_name not in [
+        "results",
+        "failure_modes",
+    ]:
+        raise ValueError(
+            f"Error, {dict_name} is not a supported graph property."
+        )
 
     if simulator == "simsnn":
-        results = snn_graph.network.graph.graph["results"]
+        dict_content = snn_graph.network.graph.graph[dict_name]
     elif simulator == "nx":
-        results = snn_graph.graph["results"]
+        dict_content = snn_graph.graph[dict_name]
     else:
         raise NotImplementedError(
             f"Error, simulator:{simulator} not implemented."
@@ -109,7 +120,7 @@ def output_results(
 
     with open(output_filepath, "w", encoding="utf-8") as fp:
         json.dump(
-            results,
+            dict_content,
             fp,
             indent=4,
             sort_keys=True,

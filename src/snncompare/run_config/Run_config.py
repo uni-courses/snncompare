@@ -1,8 +1,10 @@
 """"Stores the run config Dict type."""
 import copy
 import sys
-from typing import Dict, Optional, Tuple, Union
+from pprint import pprint
+from typing import Dict, Optional, Union
 
+from snnadaptation.Adaptation import Adaptation
 from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
@@ -22,36 +24,6 @@ class Algorithm(TypedDict):
 
 
 # pylint: disable=R0903
-class Adaptation:
-    """Adaptations."""
-
-    @typechecked
-    def __init__(
-        self,
-        name: str,
-        int_param: Optional[int],
-    ):
-        if name == "Redundancy":
-            self.name = name
-            self.adaptation = Redundancy(int_param)
-        else:
-            raise TypeError("Error, adaptation:{name} not yet supported.")
-
-
-# pylint: disable=R0903
-class Redundancy:
-    """Adaptation example."""
-
-    @typechecked
-    def __init__(self, redundancy: int):
-        if redundancy < 2:
-            raise ValueError("Error, redundancy should be 2 or larger.")
-        if redundancy % 2 == 1:
-            raise ValueError("Error, redundancy should be even integer.")
-        self.redundancy = redundancy
-
-
-# pylint: disable=R0903
 class Neuron_death:
     """Adaptation example."""
 
@@ -68,36 +40,6 @@ class Neuron_death:
         self.probability = probability
 
 
-class Radiation(TypedDict):
-    """Example typed dict to make the property types explicit."""
-
-    # Permanent effects
-    permanent_neuron_death: float
-    permanent_synapse_death: float
-
-    # Neuron property changes
-    permanent_bias_change: float
-    permanent_du_change: float
-    permanent_dv_change: float
-    permanent_vth_change: float
-
-    # Synaptic property changes.
-    permanent_weight_change: float
-
-    # Transient effects [duration, absolute change in value]
-    temp_neuron_death: Tuple[int, float]
-    temp_synapse_death: Tuple[int, float]
-
-    # Neuron property changes
-    temp_bias_change: Tuple[int, float]
-    temp_du_change: Tuple[int, float]
-    temp_dv_change: Tuple[int, float]
-    temp_vth_change: Tuple[int, float]
-
-    # Synaptic property changes.
-    temp_weight_change: Tuple[float]
-
-
 # pylint: disable=R0902
 # pylint: disable=R0903
 class Run_config:
@@ -108,7 +50,7 @@ class Run_config:
     @typechecked
     def __init__(
         self,
-        adaptation: Union[None, Dict[str, int]],
+        adaptation: Adaptation,
         algorithm: Dict[str, Dict[str, int]],
         graph_size: int,
         graph_nr: int,
@@ -120,7 +62,7 @@ class Run_config:
         """Stores run configuration settings for the experiment."""
 
         # Required properties
-        self.adaptation: Union[None, Dict[str, int]] = adaptation
+        self.adaptation: Union[None, Adaptation] = adaptation
         self.algorithm: Dict[str, Dict[str, int]] = algorithm
 
         self.graph_size: int = graph_size
@@ -136,6 +78,33 @@ class Run_config:
         self.unique_id: str = get_unique_run_config_id(run_config=self)
 
         # TODO: Verify run config object.
+
+    @typechecked
+    def print_run_config_dict(self) -> None:
+        """Converts a run_config to a human readable dict and prints it."""
+        run_config_dict: Dict = copy.deepcopy(self.__dict__)
+        run_config_dict["radiation"] = self.radiation.__dict__
+        run_config_dict["adaptation"] = self.adaptation.__dict__
+        pprint(run_config_dict)
+
+
+@typechecked
+def run_configs_are_equal(*, left: Run_config, right: Run_config) -> bool:
+    """Returns True if the left and right Run_config objects are equal. Returns
+    False otherwise.
+
+    TODO: Test function
+    """
+    if sorted(left.__dict__.keys()) != sorted(right.__dict__.keys()):
+        return False
+    for key, left_value in left.__dict__.items():
+        if key in ["adaptation", "radiation"]:
+            if left_value.get_hash() != right.__dict__[key].get_hash():
+                return False
+        elif key != "unique_id":
+            if left_value != right.__dict__[key]:
+                return False
+    return True
 
 
 @typechecked
@@ -155,11 +124,3 @@ def dict_to_run_config(*, some_dict: Dict) -> Run_config:
     for key, val in some_dict.items():
         setattr(run_config, key, val)
     return run_config
-
-
-@typechecked
-def run_config_to_dict(*, run_config: Run_config) -> Dict:
-    """Converts a run_config to a human readable dict."""
-    run_config_dict: Dict = copy.deepcopy(run_config.__dict__)
-    run_config_dict["radiation"] = run_config.radiation.__dict__
-    return run_config_dict

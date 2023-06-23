@@ -16,6 +16,7 @@ from snncompare.optional_config.Output_config import (
     Output_config,
     Zoom,
 )
+from snncompare.run_config.helper import get_run_config_filepath
 from snncompare.run_config.Run_config import Run_config
 
 from ..json_configurations.algo_test import (
@@ -39,12 +40,25 @@ def process_args(*, args: argparse.Namespace, custom_config_path: str) -> None:
         filename=args.experiment_settings_name,
     )
 
+    # If a specific run_config id is given, get the filepath that contains the
+    # run_config dict, and then use run_config_path to execute only that single
+    # run_config.
+
+    if args.run_config_unique_id is not None:
+        args.run_config_path = get_run_config_filepath(
+            run_config_unique_id=args.run_config_unique_id
+        )
+        from_unique_id: bool = True
+    else:
+        from_unique_id = False
+
     if args.run_config_path is not None:
         specific_run_config: Union[
             None, Run_config
         ] = load_run_config_from_file(
             custom_config_path=custom_config_path,
             filename=f"{args.run_config_path}",
+            from_unique_id=from_unique_id,
         )
     else:
         specific_run_config = None
@@ -120,7 +134,11 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
             + " not in supported"
             + f"graph_names:{get_snn_graph_names()}"
         )
-    optional_config_args_dict["dash_port"] = args.dash_port
+
+    if args.dash_port is None:
+        optional_config_args_dict["dash_port"] = 8000
+    else:
+        optional_config_args_dict["dash_port"] = args.dash_port
     if args.dash_port and args.dash_port < 8000:
         raise ValueError(
             "Error, port nr should be >8000. Not necessarily over 9000."
@@ -139,6 +157,10 @@ def manage_export_parsing(*, args: argparse.Namespace) -> Output_config:
     extra_storing_config_dict["skip_stage_2_output"] = args.skip_stage_2_output
     extra_storing_config_dict["show_images"] = args.show_images
     extra_storing_config_dict["store_died_neurons"] = args.store_died_neurons
+    extra_storing_config_dict[
+        "export_failure_modes"
+    ] = args.export_failure_modes
+    extra_storing_config_dict["show_failure_modes"] = args.show_failure_modes
     optional_config_args_dict["extra_storing_config"] = Extra_storing_config(
         **extra_storing_config_dict
     )
@@ -206,4 +228,6 @@ def parse_output_json_stages(
         output_json_stages.append(4)
     if args.output_json_stage_5:
         output_json_stages.append(5)
+    if args.output_json_stage_6:
+        output_json_stages.append(6)
     return output_json_stages

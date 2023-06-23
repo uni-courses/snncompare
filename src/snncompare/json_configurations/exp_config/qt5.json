@@ -8,7 +8,7 @@
   "algorithms": {
     "MDSA": [
       {
-        "m_val": 0
+        "m_val": 1
       }
     ]
   },
@@ -31,20 +31,28 @@
         false
       ],
       "probability_per_t": [
-        0.0001
+        0.05
       ]
     }
   },
   "seeds": [
-    8
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
   ],
   "simulators": [
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [3, 1]}",
-    "{\"__tuple__\": true, \"items\": [4, 1]}",
-    "{\"__tuple__\": true, \"items\": [5, 1]}"
+    "{\"__tuple__\": true, \"items\": [3, 1]}"
   ],
   "synaptic_models": [
     "LIF"

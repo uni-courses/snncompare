@@ -13,13 +13,10 @@ Output in separate folders:
 """
 import hashlib
 import json
-from pathlib import Path
-from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
 import jsons
 import networkx as nx
-from networkx.readwrite import json_graph
 from simsnn.core.nodes import LIF
 from simsnn.core.simulators import Simulator
 from typeguard import typechecked
@@ -31,11 +28,13 @@ from snncompare.export_results.export_json_results import (
     write_to_json,
 )
 from snncompare.export_results.helper import exp_config_to_filename
+from snncompare.graph_generation.export_input_graphs import (
+    output_input_graph_if_not_exist,
+)
 from snncompare.helper import get_snn_graph_from_graphs_dict
 from snncompare.import_results.helper import (
     create_relative_path,
     file_contains_line,
-    get_isomorphic_graph_hash,
     seed_rad_neurons_hash_file_exists,
     seed_rand_nrs_hash_file_exists,
     simsnn_files_exists_and_get_path,
@@ -105,7 +104,7 @@ def output_stage_1_configs_and_input_graphs(
     """Exports results dict to a json file."""
     output_simsnn_stage1_exp_config(exp_config=exp_config, stage_index=1)
     output_simsnn_stage1_run_config(run_config=run_config, stage_index=1)
-    output_input_graph(
+    output_input_graph_if_not_exist(
         input_graph=graphs_dict["input_graph"],
     )
     output_mdsa_rand_nrs(
@@ -178,41 +177,6 @@ def output_simsnn_stage1_run_config(
 
 
 @typechecked
-def get_input_graph_output_dir(*, input_graph: nx.Graph) -> str:
-    """Returns the dir in which the input graph as it will be outputted."""
-    output_dir: str = f"results/stage1/input_graphs/{len(input_graph)}/"
-    return output_dir
-
-
-@typechecked
-def get_input_graph_output_filepath(*, input_graph: nx.Graph) -> str:
-    """Returns the path towards the input graph as it will be outputted."""
-    isomorphic_hash: str = get_isomorphic_graph_hash(some_graph=input_graph)
-    output_dir: str = get_input_graph_output_dir(input_graph=input_graph)
-    output_filepath: str = f"{output_dir}{isomorphic_hash}.json"
-    return output_filepath
-
-
-@typechecked
-def output_input_graph(
-    *,
-    input_graph: nx.Graph,
-) -> None:
-    """Outputs input graph it is not yet outputted."""
-    output_dir: str = get_input_graph_output_dir(input_graph=input_graph)
-    output_filepath: str = get_input_graph_output_filepath(
-        input_graph=input_graph
-    )
-    if not Path(output_filepath).is_file():
-        create_relative_path(some_path=output_dir)
-
-        # Write undirected graph to json file.
-        write_undirected_graph_to_json(
-            output_filepath=output_filepath, the_graph=input_graph
-        )
-
-
-@typechecked
 def json_undirected_graph_into_nx_graph(*, input_graph: Dict) -> nx.graph:
     """Converts undirected graph into nx graph.
 
@@ -225,41 +189,6 @@ def json_undirected_graph_into_nx_graph(*, input_graph: Dict) -> nx.graph:
     output_graph: nx.Graph = nx.Graph()
     output_graph.add_edges_from(edges)
     return output_graph
-
-
-@typechecked
-def write_undirected_graph_to_json(
-    *, output_filepath: str, the_graph: nx.Graph
-) -> None:
-    """Writes an undirected graph to json and verifies it can be loaded back
-    into the graph."""
-    with open(output_filepath, "w", encoding="utf-8") as fp:
-        # json.dump(the_graph.__dict__, fp, indent=4, sort_keys=True)
-        some_json_graph: Dict = json_graph.node_link_data(the_graph)
-        json.dump(some_json_graph, fp, indent=4, sort_keys=True)
-        fp.close()
-
-    # Verify the file exists.
-    if not Path(output_filepath).is_file():
-        raise FileExistsError(
-            f"Error, filepath:{output_filepath} was not created."
-        )
-
-    # Load graph from file and verify it results in the same graph.
-    with open(output_filepath, encoding="utf-8") as json_file:
-        some_json_graph = json.load(json_file)
-        json_file.close()
-    loaded_graph = nx.node_link_graph(some_json_graph)
-
-    # loaded_graph: nx.Graph = nx.Graph(**the_dict)
-    if not nx.utils.misc.graphs_equal(the_graph, loaded_graph):
-        print("Outputting graph:")
-        pprint(the_graph.__dict__)
-        print("Loaded graph:")
-        pprint(loaded_graph.__dict__)
-        raise ValueError(
-            "Error, the outputted graph is not equal to the loaded graph."
-        )
 
 
 @typechecked
@@ -439,7 +368,6 @@ def output_unique_list_int_or_dict(
     target_file_exists: bool,
 ) -> None:
     """Stores the random numbers chosen for the original MDSA snn algorithm."""
-
     if not target_file_exists:
         write_to_json(
             output_filepath=output_filepath,

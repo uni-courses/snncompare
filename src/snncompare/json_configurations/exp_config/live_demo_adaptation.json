@@ -1,13 +1,13 @@
 {
   "adaptations": {
-    "redundancy": [
+    "population": [
       2
     ]
   },
   "algorithms": {
     "MDSA": [
       {
-        "m_val": 2
+        "m_val": 1
       }
     ]
   },
@@ -19,18 +19,29 @@
     "LIF"
   ],
   "radiations": {
-    "neuron_death": [
-      0.25
-    ]
+    "change_u": {
+      "amplitude": [
+        1
+      ],
+      "excitatory": [
+        true
+      ],
+      "inhibitory": [
+        false
+      ],
+      "probability_per_t": [
+        0.01
+      ]
+    }
   },
   "seeds": [
-    24
+    8
   ],
   "simulators": [
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [10, 20]}"
+    "{\"__tuple__\": true, \"items\": [4, 1]}"
   ],
   "synaptic_models": [
     "LIF"

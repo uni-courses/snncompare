@@ -220,7 +220,7 @@ def get_edges_of_node(
     outgoing: bool,
     t: int,
 ) -> str:
-    """Returns (the other) nodenames of the edges of a node."""
+    """Returns (the other) node_names of the edges of a node."""
     node_edges: List[str] = ["<br />"]
     if outgoing:
         node_edges.append("outgoing:<br />")

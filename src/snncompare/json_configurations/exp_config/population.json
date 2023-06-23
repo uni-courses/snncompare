@@ -2,11 +2,7 @@
   "adaptations": {
     "population": [
       2,
-      4
-    ],
-    "redundancy": [
-      2,
-      4
+      5
     ]
   },
   "algorithms": {
@@ -16,9 +12,6 @@
       },
       {
         "m_val": 1
-      },
-      {
-        "m_val": 2
       }
     ]
   },
@@ -32,8 +25,7 @@
   "radiations": {
     "change_u": {
       "amplitude": [
-        1,
-        10
+        1
       ],
       "excitatory": [
         false,
@@ -44,8 +36,7 @@
         true
       ],
       "probability_per_t": [
-        1e-06,
-        1e-05
+        0.0001
       ]
     },
     "neuron_death": {
@@ -58,8 +49,7 @@
         true
       ],
       "probability_per_t": [
-        1e-06,
-        1e-05
+        0.0001
       ]
     },
     "rand_neuron_spike": {
@@ -75,8 +65,7 @@
         true
       ],
       "probability_per_t": [
-        1e-06,
-        1e-05
+        0.0001
       ]
     },
     "rand_synapse_spike": {
@@ -92,34 +81,20 @@
         true
       ],
       "probability_per_t": [
-        1e-06,
-        1e-05
+        0.0001
       ]
     }
   },
   "seeds": [
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    22,
-    23,
-    24
+    8
   ],
   "simulators": [
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [7, 5]}",
-    "{\"__tuple__\": true, \"items\": [8, 5]}",
-    "{\"__tuple__\": true, \"items\": [9, 5]}",
-    "{\"__tuple__\": true, \"items\": [15, 5]}",
-    "{\"__tuple__\": true, \"items\": [16, 5]}",
-    "{\"__tuple__\": true, \"items\": [20, 5]}"
+    "{\"__tuple__\": true, \"items\": [3, 1]}",
+    "{\"__tuple__\": true, \"items\": [6, 3]}",
+    "{\"__tuple__\": true, \"items\": [10, 10]}"
   ],
   "synaptic_models": [
     "LIF"

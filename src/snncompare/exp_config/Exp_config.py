@@ -4,17 +4,18 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-from typing import Any, Dict
+from typing import Any
 
-from snnadaptation.redundancy.verify_redundancy_settings import (
-    verify_redundancy_settings_for_exp_config,
-)
+from snnadaptation.Adaptation import Adaptation
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
 from snnalgorithms.verify_algos import verify_algos_in_exp_config
 from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
+from snncompare.exp_config.adap_dict2obj import (
+    get_adaptations_from_exp_config_dict,
+)
 from snncompare.exp_config.rad_dict2obj import (
     get_radiations_from_exp_config_dict,
 )
@@ -46,7 +47,9 @@ class Exp_config:
         """Stores run configuration settings for the exp_configriment."""
 
         # Required properties
-        self.adaptations: None | dict[str, int] = adaptations
+        self.adaptations: list[
+            Adaptation
+        ] = get_adaptations_from_exp_config_dict(adaptations=adaptations)
         self.algorithms: dict[str, list[dict[str, int]]] = algorithms
         self.max_graph_size: int = max_graph_size
         self.max_max_graphs: int = max_max_graphs
@@ -76,17 +79,52 @@ class Exp_config:
     ) -> str:
         """Returns a unique hash for the exp_config object."""
         some_exp_config: Exp_config = copy.deepcopy(self)
-        rad_hashes: list[str] = []
-        for rad_obj in self.radiations:
-            rad_hashes.append(rad_obj.get_rad_settings_hash())
-        del some_exp_config.radiations
-        some_exp_config.radiations = sorted(rad_hashes)
+        # rad_hashes: list[str] = []
+        # for rad_obj in self.radiations:
+        # rad_hashes.append(rad_obj.get_hash())
+        # del some_exp_config.radiations
+        # some_exp_config.radiations = sorted(rad_hashes)
+
+        self.convert_exp_config_attributes_into_hashes(
+            some_exp_config=some_exp_config.__dict__
+        )
+
+        # sorted(__dict__) returns a list of the sorted dictionary keys ONLY.
+        key_sorted_value_list: list = []
+        # .keys() is not needed in next line:
+        for sorted_key in sorted(some_exp_config.__dict__.keys()):
+            key_sorted_value_list.append(some_exp_config.__dict__[sorted_key])
+
         unique_id = str(
             hashlib.sha256(
-                json.dumps(sorted(some_exp_config.__dict__)).encode("utf-8")
+                json.dumps(key_sorted_value_list).encode("utf-8")
             ).hexdigest()
         )
         return unique_id
+
+    def convert_exp_config_attributes_into_hashes(
+        self, some_exp_config: dict
+    ) -> None:
+        """Converts the run_config dictionary into a dictionary with keys and
+        hashes as values.
+
+        TODO: remove duplicate code with:
+        convert_run_config_attributes_into_hashes
+        """
+        # sorted(__dict__) returns a list of the sorted dictionary keys ONLY.
+        for sorted_key in sorted(some_exp_config.keys()):
+            if sorted_key == "adaptations":
+                adaptation_hashes: list[str] = []
+                for adaptation in some_exp_config[sorted_key]:
+                    adaptation_hash: str = adaptation.get_hash()
+                    adaptation_hashes.append(adaptation_hash)
+                some_exp_config[sorted_key] = adaptation_hashes
+            if sorted_key == "radiations":
+                radiation_hashes: list[str] = []
+                for radiation in some_exp_config[sorted_key]:
+                    radiation_hash: str = radiation.get_hash()
+                    radiation_hashes.append(radiation_hash)
+                some_exp_config[sorted_key] = radiation_hashes
 
 
 # pylint: disable=R0902
@@ -494,120 +532,3 @@ def verify_object_type(
                 f"Error, obj={obj}, its type is:{list(map(type, obj))},"
                 + f" expected type:{element_type}"
             )
-
-
-def verify_adap_and_rad_settings(
-    *,
-    supp_exp_config: Supported_experiment_settings,
-    some_dict: dict | str | None,
-    check_type: str,
-) -> dict:
-    """Verifies the settings of adaptations or radiations property are valid.
-    Returns a dictionary with the adaptations setting if the settngs are valid.
-
-    :param some_dict: param check_type:
-    :param check_type: param supp_exp_config:
-    :param supp_exp_config:
-    """
-
-    # Load the example settings from the Supported_experiment_settings object.
-    if check_type == "adaptations":
-        reference_object: dict[  # type:ignore[misc]
-            str, Any
-        ] = supp_exp_config.adaptations
-    elif check_type == "radiations":
-        reference_object = supp_exp_config.radiations
-    else:
-        raise TypeError(f"Check type:{check_type} not supported.")
-
-    # Verify object is a dictionary.
-    if isinstance(some_dict, Dict):
-        if some_dict == {}:
-            raise TypeError(f"Error, property Dict: {check_type} was empty.")
-        for key in some_dict:
-            # Verify the keys are within the supported dictionary keys.
-            if key not in reference_object:
-                raise TypeError(
-                    f"Error, property.key:{key} is not in the supported "
-                    + f"property keys:{reference_object.keys()}."
-                )
-            # Check if values belonging to key are within supported range.
-            if check_type == "adaptations":
-                verify_redundancy_settings_for_exp_config(
-                    adaptation=some_dict[key]
-                )
-            elif check_type == "radiations":
-                verify_radiations_values(
-                    supp_exp_config=supp_exp_config,
-                    radiations=some_dict,
-                    key=key,
-                )
-        return some_dict
-    raise TypeError(
-        "Error, property is expected to be a Dict, yet"
-        + f" it was of type: {type(some_dict)}."
-    )
-
-
-def verify_radiations_values(
-    *,
-    supp_exp_config: Supported_experiment_settings,
-    radiations: dict,
-    key: str,
-) -> None:
-    """The configuration settings contain key named: radiations. The value of
-    belonging to this key is a dictionary, which also has several keys.
-
-    This method checks whether these radiations dictionary keys, are within
-    the supported range of adaptations setting keys. These adaptations
-    dictionary keys should each have values of the type list. These list
-    elements should have the type float, tuple(float, float) or be empty lists.
-    The empty list represents: no radiations is used, signified by the key
-    name: "None".
-
-    This method verifies the keys in the adaptations dictionary are within the
-    supported range. It also checks if the values of the adaptations dictionary
-    keys are a list, and whether all elements in those lists are of type float
-    or tuple. If the types are tuple, it also checks whether the values within
-    those tuples are of type float.
-
-    :param radiations: Dict:
-    :param key: str:
-    :param supp_exp_config:
-    """
-    if not isinstance(
-        radiations[key], type(supp_exp_config.radiations[key])
-    ) or (not isinstance(radiations[key], list)):
-        raise TypeError(
-            "Error, the radiations value is of type:"
-            + f"{type(radiations[key])}, yet it was expected to be"
-            + " float or dict."
-        )
-
-    # Verify radiations setting types.
-    if isinstance(radiations[key], list):
-        for setting in radiations[key]:
-            # Verify radiations setting can be of type float.
-            if isinstance(setting, float):
-                # TODO: superfluous check.
-                verify_object_type(
-                    obj=setting, expected_type=float, element_type=None
-                )
-            # Verify radiations setting can be of type tuple.
-            elif isinstance(setting, tuple):
-                # Verify the radiations setting tuple is of type float,
-                # float.
-                # TODO: change type((1.0, 2.0)) to the type it is.
-                verify_object_type(
-                    obj=setting,
-                    expected_type=tuple,
-                    element_type=type((1.0, 2.0)),
-                )
-
-            else:
-                # Throw error if the radiations setting is something other
-                # than a float or tuple of floats.
-                raise TypeError(
-                    f"Unexpected setting type:{type(setting)} for:"
-                    + f" {setting}."
-                )
