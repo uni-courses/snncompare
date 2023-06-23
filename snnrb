@@ -3,7 +3,7 @@
 # export PATH="$PWD:$PATH"
 
 ## declare the list of github repositories in an array.
-declare -a arr=("snnadaptation" "snnalgorithms" "snnbackends" "snncompare" "snnradiation" "simsnn")
+declare -a arr=("snnadaptation" "snnalgorithms" "snnbackends" "snncompare" "snnradiation") #"simsnn")
 # Specify global variables.
 # DIR_WITH_REPOS="/home/$(echo $(whoami))/git/snn/"
 DIR_WITH_REPOS="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
@@ -14,14 +14,14 @@ CONDA_ENVIRONMENT_NAME="snncompare"
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -b|--branch)
-		    branch=1;
+		    CHECKOUT_BRANCH=1;
 			BRANCH_NAME="$2"
       		shift # past argument
       		shift # past value
       		;;
 		-nb|--new-branch)
-			new_branch=1;
-			NEW_BRANCH_NAME="$2"
+			CHECKOUT_NEW_BRANCH=1;
+			BRANCH_NAME="$2"
       		shift # past argument
       		shift # past value
       		;;
@@ -244,8 +244,8 @@ do
    		install_pip_package "$DIR_WITH_REPOS$reponame"
 	fi
 
-	if [ "$branch" == 1 ] || [ "$new_branch" == 1 ]; then
-		checkout_new_branch "$DIR_WITH_REPOS$reponame" "$BRANCH_NAME" "$new_branch"
+	if [ "$CHECKOUT_BRANCH" == 1 ] || [ "$CHECKOUT_NEW_BRANCH" == 1 ]; then
+		checkout_new_branch "$DIR_WITH_REPOS$reponame" "$BRANCH_NAME" "$CHECKOUT_NEW_BRANCH"
 	fi
 
 	if [ "$precommit" == 1 ]; then

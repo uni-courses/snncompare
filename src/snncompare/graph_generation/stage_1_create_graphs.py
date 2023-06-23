@@ -3,18 +3,25 @@
 Takes run config of an experiment config as input, and returns a
 networkx Graph.
 """
-
 import copy
 from math import inf
-from typing import Dict, List, Union
+from typing import Dict, Union
 
 import networkx as nx
 from simsnn.core.networks import Network
 from simsnn.core.nodes import LIF
 from simsnn.core.simulators import Simulator
-from snnadaptation.redundancy.redundancy import apply_redundancy
+from snnadaptation.population.apply_population_coding import (
+    apply_population_coding,
+)
+from snnadaptation.redundancy.apply_sparse_redundancy import (
+    apply_sparse_redundancy,
+)
 from snnadaptation.redundancy.verify_redundancy_settings import (
     verify_redundancy_settings_for_run_config,
+)
+from snnalgorithms.get_input_graphs import (
+    add_mdsa_initialisation_properties_to_input_graph,
 )
 from snnalgorithms.sparse.MDSA.create_MDSA_snn_neurons import (
     get_new_mdsa_graph,
@@ -22,13 +29,15 @@ from snnalgorithms.sparse.MDSA.create_MDSA_snn_neurons import (
 from snnalgorithms.sparse.MDSA.SNN_initialisation_properties import (
     SNN_initialisation_properties,
 )
-from snnalgorithms.Used_graphs import Used_graphs
 from snnbackends.networkx.LIF_neuron import LIF_neuron
 from snnbackends.simsnn.simsnn_to_nx_lif import simsnn_graph_to_nx_lif_graph
 from snnradiation.apply_rad_to_simsnn import apply_rad_to_simsnn
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
+from snncompare.graph_generation.export_input_graphs import (
+    load_input_graph_based_on_nr,
+)
 from snncompare.run_config.Run_config import Run_config
 
 
@@ -172,7 +181,7 @@ def get_nx_lif_graphs(
     """
     # TODO: move to central place in MDSA algo spec.
     graphs = {}
-    graphs["input_graph"] = get_input_graph_of_run_config(
+    graphs["input_graph"] = load_input_graph_from_file_with_init_props(
         run_config=run_config
     )
 
@@ -192,57 +201,31 @@ def get_nx_lif_graphs(
 
 
 @typechecked
-def get_input_graph_of_run_config(
+def load_input_graph_from_file(
     *,
     run_config: Run_config,
 ) -> nx.Graph:
-    """TODO: support retrieving graph sizes larger than size 5.
-    TODO: ensure those graphs have valid properties, e.g. triangle-free and
-    non-planar."""
-
-    # Get the graph of the right size.
-    # TODO: Pass random seed.
-    input_graphs: Dict[str, nx.Graph] = get_input_graphs(run_config=run_config)
-    sorted_hashes: List[str] = sorted(input_graphs.keys())
-    run_config.isomorphic_hash_input = sorted_hashes[run_config.graph_nr]
-    input_graph: nx.Graph = input_graphs[run_config.isomorphic_hash_input]
+    """If the input graphs already exist for this run_config, it loads them
+    from file, otherwise, it generates them, exports them, and then returns
+    them."""
+    input_graph: nx.Graph = load_input_graph_based_on_nr(
+        graph_size=run_config.graph_size, graph_nr=run_config.graph_nr
+    )
     return input_graph
 
 
 @typechecked
-def get_input_graphs(
+def load_input_graph_from_file_with_init_props(
     *,
     run_config: Run_config,
-) -> Dict[str, nx.Graph]:
-    """Removes graphs that are not used, because of a maximum nr of graphs that
-    is to be evaluated."""
-    used_graphs = Used_graphs()
-    input_graphs: Dict[str, nx.Graph] = used_graphs.get_graphs(
-        max_nr_of_graphs=run_config.graph_nr + 1,
-        seed=run_config.seed,
-        size=run_config.graph_size,
+) -> nx.Graph:
+    """Loads an input graph from file, and then adds the initialisation
+    properties to it."""
+    input_graph: nx.Graph = load_input_graph_from_file(run_config=run_config)
+    add_mdsa_initialisation_properties_to_input_graph(
+        input_graph=input_graph, seed=run_config.seed
     )
-    if len(input_graphs.values()) > run_config.graph_nr:
-        for input_graph in input_graphs.values():
-            # TODO: set alg_props:
-            if "alg_props" not in input_graph.graph.keys():
-                input_graph.graph["alg_props"] = SNN_initialisation_properties(
-                    input_graph, run_config.seed
-                ).__dict__
-
-            if not isinstance(input_graph, nx.Graph):
-                raise TypeError(
-                    "Error, the input graph is not a networkx graph:"
-                    + f"{type(input_graph)}"
-                )
-
-        return input_graphs
-    raise ValueError(
-        f"For input_graph of size:{run_config.graph_size}, I found:"
-        + f"{len(input_graphs)} graphs, yet expected graph_nr:"
-        + f"{run_config.graph_nr}. Please lower the max_graphs setting in:"
-        + "size_and_max_graphs in the experiment configuration."
-    )
+    return input_graph
 
 
 @typechecked
@@ -255,25 +238,34 @@ def get_adapted_graph(
     """Converts an input graph of stage 1 and applies a form of brain-inspired
     adaptation to it."""
 
-    for adaptation_name, adaptation_setting in run_config.adaptation.items():
-        if adaptation_name is None:
-            raise ValueError(
-                "Error, if no adaptation is selected, this method should not"
-                + " be reached."
-            )
-        if adaptation_name == "redundancy":
-            verify_redundancy_settings_for_run_config(
-                adaptation=run_config.adaptation
-            )
-            adaptation_graph: nx.DiGraph = get_redundant_graph(
-                snn_algo_graph=snn_algo_graph,
-                plot_config=plot_config,
-                red_lev=adaptation_setting,
-            )
-            return adaptation_graph
-        raise NotImplementedError(
-            f"Error, adaptation_name:{adaptation_name} is not" + " supported."
+    if run_config.adaptation is None:
+        raise ValueError(
+            "Error, if no adaptation is selected, this method should not"
+            + " be reached."
         )
+    if run_config.adaptation.adaptation_type == "redundancy":
+        verify_redundancy_settings_for_run_config(
+            adaptation=run_config.adaptation
+        )
+        adaptation_graph: nx.DiGraph = apply_sparse_redundancy(
+            adaptation_graph=copy.deepcopy(snn_algo_graph),
+            plot_config=plot_config,
+            redundancy=run_config.adaptation.redundancy,
+        )
+
+    elif run_config.adaptation.adaptation_type == "population":
+        adaptation_graph = apply_population_coding(
+            adaptation_graph=copy.deepcopy(snn_algo_graph),
+            plot_config=plot_config,
+            redundancy=run_config.adaptation.redundancy,
+        )
+    else:
+        raise NotImplementedError(
+            f"Error, {run_config.adaptation.adaptation_type} is not"
+            + " supported."
+        )
+
+    return adaptation_graph
 
 
 @typechecked
@@ -289,10 +281,7 @@ def has_adaptation(
     """
     if run_config.adaptation is None:
         return False
-    for adaptation_name in run_config.adaptation.keys():
-        if adaptation_name is not None:
-            return True
-    return False
+    return True
 
 
 @typechecked
@@ -301,7 +290,7 @@ def get_redundant_graph(
 ) -> nx.DiGraph:
     """Returns a networkx graph that has a form of adaptation added."""
     adaptation_graph = copy.deepcopy(snn_algo_graph)
-    apply_redundancy(
+    apply_sparse_redundancy(
         adaptation_graph=adaptation_graph,
         plot_config=plot_config,
         redundancy=red_lev,
@@ -323,6 +312,9 @@ def get_new_radiation_graph(
     radiation_graph: Simulator = copy.deepcopy(snn_graph)
     # TODO: include ignored neuron names per algorithm.
     apply_rad_to_simsnn(
-        rad=run_config.radiation, snn=radiation_graph, ignored_neuron_names=[]
+        rad=run_config.radiation,
+        seed=run_config.seed,
+        snn=radiation_graph,
+        ignored_neuron_names=[],
     )
     return radiation_graph

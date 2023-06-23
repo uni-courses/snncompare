@@ -1,20 +1,21 @@
 """Contains helper functions that are used throughout this repository."""
-from pprint import pprint
 from typing import Dict, List, Optional, Tuple, Union
 
+import customshowme
+from snnadaptation.Adaptation import Adaptation
 from snnradiation.Rad_damage import Rad_damage
 
 # from snncompare.export_results.load_json_to_nx_graph import dicts_are_equal
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
-from snncompare.helper import dicts_are_equal
-from snncompare.run_config.Run_config import Run_config
+from snncompare.run_config.Run_config import Run_config, run_configs_are_equal
 
 # if TYPE_CHECKING:
 # from snncompare.exp_config.Exp_config import Exp_config
 
 
+@customshowme.time
 @typechecked
 def generate_run_configs(
     *,
@@ -35,10 +36,8 @@ def generate_run_configs(
     # run_configs = run_configs[:3]  # TODO: comment out.
     if specific_run_config is not None:
         for gen_run_config in run_configs:
-            if dicts_are_equal(
-                left=gen_run_config.__dict__,
-                right=specific_run_config.__dict__,
-                without_unique_id=True,
+            if run_configs_are_equal(
+                left=specific_run_config, right=gen_run_config
             ):
                 found_run_config = True
                 if gen_run_config.unique_id != specific_run_config.unique_id:
@@ -48,11 +47,13 @@ def generate_run_configs(
                 break
 
         if not found_run_config:
-            pprint(run_configs)
-            raise ValueError(
-                f"The expected run config:{specific_run_config} was not"
-                "found."
-            )
+            print("specific_run_config=")
+            specific_run_config.print_run_config_dict()
+            print("FOUND run configs:")
+            for run_config in run_configs:
+                if run_config.seed == specific_run_config.seed:
+                    run_config.print_run_config_dict()
+            raise ValueError("The expected run config was not found.")
         run_configs = [specific_run_config]
 
     return run_configs
@@ -71,16 +72,13 @@ def exp_config_to_run_configs(
     # pylint: disable=R0914
 
     run_configs: List[Run_config] = []
-
     # pylint: disable=R1702
     # TODO: make it loop through a list of keys.
     # for algorithm in exp_config.algorithms:
     for algorithm_name, algo_specs in exp_config.algorithms.items():
         for algo_config in algo_specs:
             algorithm = {algorithm_name: algo_config}
-            for run_config_adaptation in get_adaptations(
-                adaptations_or_radiations=exp_config.adaptations,
-            ):
+            for run_config_adaptation in exp_config.adaptations:
                 for run_config_radiation in exp_config.radiations:
                     fill_remaining_run_config_settings(
                         adaptation=run_config_adaptation,
@@ -95,7 +93,7 @@ def exp_config_to_run_configs(
 @typechecked
 def fill_remaining_run_config_settings(
     *,
-    adaptation: Union[None, Dict],
+    adaptation: Union[None, Adaptation],
     algorithm: Dict,
     exp_config: "Exp_config",
     radiation: Rad_damage,
@@ -122,7 +120,7 @@ def fill_remaining_run_config_settings(
 @typechecked
 def run_parameters_to_dict(
     *,
-    adaptation: Union[None, Dict[str, int]],
+    adaptation: Union[None, Adaptation],
     algorithm: Dict[str, Dict[str, int]],
     seed: int,
     size_and_max_graph: Tuple[int, int],
@@ -146,21 +144,3 @@ def run_parameters_to_dict(
     )
 
     return run_config
-
-
-@typechecked
-def get_adaptations(
-    *,
-    adaptations_or_radiations: Dict[str, List[Union[float, int]]],
-) -> List:
-    """Returns the adaptations of the experiment config."""
-    adaptation_list: List = []
-    if adaptations_or_radiations == {}:
-        return [None]
-    for (
-        adaptation_name,
-        adaptation_values,
-    ) in adaptations_or_radiations.items():
-        for adaptation_value in adaptation_values:
-            adaptation_list.append({adaptation_name: adaptation_value})
-    return adaptation_list

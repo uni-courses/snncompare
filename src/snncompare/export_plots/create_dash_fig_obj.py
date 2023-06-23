@@ -1,7 +1,7 @@
 """Generates a graph in dash."""
 
 
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
 import numpy as np
@@ -82,11 +82,16 @@ def create_svg_with_dash(
         plot_config=plot_config,
         recursive_edge_radius=plot_config.recursive_edge_radius,
     )
+    add_ticks_to_snn_graph(
+        is_x_tick=plot_config.show_x_ticks,
+        is_y_tick=plot_config.show_y_ticks,
+        mdsa_snn=graph,
+    )
     if plot_config.show_x_ticks:
         x_axis = go.layout.XAxis(
             tickmode="array",
-            tickvals=list(graph.graph["x_tics"].keys()),
-            ticktext=list(graph.graph["x_tics"].values()),
+            tickvals=list(graph.graph["x_ticks"].keys()),
+            ticktext=list(graph.graph["x_ticks"].values()),
             tickfont={"size": plot_config.x_tick_size},
             tickangle=-45,
         )
@@ -95,8 +100,8 @@ def create_svg_with_dash(
     if plot_config.show_y_ticks:
         y_axis = go.layout.YAxis(
             tickmode="array",
-            tickvals=list(graph.graph["y_tics"].keys()),
-            ticktext=list(graph.graph["y_tics"].values()),
+            tickvals=list(graph.graph["y_ticks"].keys()),
+            ticktext=list(graph.graph["y_ticks"].values()),
             tickfont={"size": plot_config.y_tick_size},
             tickangle=0,
         )
@@ -365,3 +370,58 @@ def get_pure_edge_angle(
     angle = np.arctan2(dy, dx)
     # return -np.rad2deg((angle) % (2 * np.pi))
     return -np.rad2deg(angle)
+
+
+@typechecked
+def add_ticks_to_snn_graph(
+    *,
+    is_x_tick: bool,
+    is_y_tick: bool,
+    mdsa_snn: nx.DiGraph,
+) -> None:
+    """Adds the x-ticks dict to the snn graph.
+
+    Assumes none of the different neuron types are located on the same
+    x-position. Does not add ticks if ticks are not desired. x/y-tick
+    coordinates are in the dict keys, and the neuron names as dict
+    values.
+    """
+
+    x_ticks: Dict[float, str] = {}
+    y_ticks: Dict[float, str] = {}
+    for node_name in mdsa_snn.nodes:
+        if is_x_tick:
+            x_tick_label: str = split_until_no_letters(node_name=node_name)
+            if x_tick_label != "r":
+                x_ticks[
+                    mdsa_snn.nodes[node_name]["pos"][0]
+                ] = split_until_no_letters(node_name=node_name)
+        if is_y_tick:
+            # do not add y-value for r_x_spike_once neurons.
+            if "spike_once" in node_name and node_name[11:].isdigit():
+                y_ticks[mdsa_snn.nodes[node_name]["pos"][1]] = node_name[11:]
+    if is_x_tick:
+        mdsa_snn.graph["x_ticks"] = x_ticks
+    if is_y_tick:
+        mdsa_snn.graph["y_ticks"] = y_ticks
+
+
+@typechecked
+def split_until_no_letters(*, node_name: str) -> str:
+    """Split the input string on underscores and return the left-hand segments
+    (excluding the underscore) until they don't contain any letters anymore.
+
+    Args:
+        string (str): The input string to be split.
+
+    Returns:
+        list: A list of left-hand segments until they don't contain any
+        letters anymore.
+    """
+    segments = []
+    for segment in node_name.split("_"):
+        if not any(c.isalpha() for c in segment):
+            break
+        segments.append(segment)
+
+    return "_".join(segments)

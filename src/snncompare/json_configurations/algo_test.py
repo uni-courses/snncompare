@@ -2,8 +2,10 @@
 import json
 from typing import Dict
 
+from snnadaptation.Adaptation import Adaptation
 from snnalgorithms.get_alg_configs import get_algo_configs
 from snnalgorithms.sparse.MDSA.alg_params import MDSA
+from snnradiation.Rad_damage import Rad_damage
 from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
@@ -36,27 +38,38 @@ def load_exp_config_from_file(
 
 @typechecked
 def load_run_config_from_file(
-    *, custom_config_path: str, filename: str
+    *, custom_config_path: str, filename: str, from_unique_id: bool
 ) -> "Run_config":
     """Loads a run config from file, then verifies and returns it.
 
     TODO: Remove duplicate code with load_exp_config_from_file().
+    TODO: Allow for calling with run_config file from results/stage1.
     """
-    filepath = f"{custom_config_path}run_configs/{filename}.json"
-    if file_exists(filepath=filepath):
-        with open(filepath, encoding="utf-8") as json_file:
-            encoded_exp_config = json.load(json_file)
-            run_config_dict = encode_tuples(
-                some_dict=encoded_exp_config, decode=True
-            )
-            json_file.close()
+    if not from_unique_id:
+        filepath = f"{custom_config_path}run_configs/{filename}.json"
+        if not file_exists(filepath=filepath):
+            raise FileNotFoundError(f"Error, {filepath} was not found.")
+    else:
+        filepath = f"{filename}.json"
+        if not file_exists(filepath=filepath):
+            raise FileNotFoundError(f"Error, file:{filepath} not found")
 
-        # The ** loads the dict into the object.
-        if "unique_id" in run_config_dict:
-            run_config_dict.pop("unique_id")
-        exp_config = Run_config(**run_config_dict)
-        return exp_config
-    raise FileNotFoundError(f"Error, {filepath} was not found.")
+    with open(filepath, encoding="utf-8") as json_file:
+        encoded_exp_config = json.load(json_file)
+        run_config_dict = encode_tuples(
+            some_dict=encoded_exp_config, decode=True
+        )
+        json_file.close()
+
+    # Convert adaptation_dict into adaptation_object.
+    run_config_dict["adaptation"] = Adaptation(**run_config_dict["adaptation"])
+    run_config_dict["radiation"] = Rad_damage(**run_config_dict["radiation"])
+
+    # The ** loads the dict into the object.
+    if "unique_id" in run_config_dict:
+        run_config_dict.pop("unique_id")
+    exp_config = Run_config(**run_config_dict)
+    return exp_config
 
 
 @typechecked

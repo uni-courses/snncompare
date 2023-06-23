@@ -2,14 +2,13 @@
 
 import os
 from pathlib import Path
-from pprint import pprint
 from typing import List, Optional, Tuple, Union
 
 import networkx as nx
 from typeguard import typechecked
 
 # if TYPE_CHECKING:
-from snncompare.run_config.Run_config import Run_config, run_config_to_dict
+from snncompare.run_config.Run_config import Run_config
 
 
 @typechecked
@@ -112,13 +111,10 @@ def seed_rad_neurons_hash_file_exists(
     )
 
     if with_adaptation:
-        adaptation_name, adaptation_parameter = get_adaptation_description(
-            run_config=run_config
-        )
         output_path: str = (
             f"results/stage1/{algorithm_name}_"
-            + f"{algorithm_parameter}/{adaptation_name}_"
-            + f"{adaptation_parameter}/{output_category}/"
+            + f"{algorithm_parameter}/{run_config.adaptation.adaptation_type}_"
+            + f"{run_config.adaptation.redundancy}/{output_category}/"
             + f"{run_config.seed}.txt"
         )
     else:
@@ -151,16 +147,14 @@ def simsnn_files_exists_and_get_path(
         run_config=run_config
     )
 
-    adaptation_name, adaptation_parameter = get_adaptation_description(
-        run_config=run_config
-    )
     if algorithm_name == "MDSA":
         if with_adaptation:
             # Import adapted snn.
             output_dir: str = (
                 f"results/stage{stage_index}/{algorithm_name}_"
-                + f"{algorithm_parameter}/{adaptation_name}_"
-                + f"{adaptation_parameter}/{output_category}/"
+                + f"{algorithm_parameter}/"
+                + f"{run_config.adaptation.adaptation_type}_"
+                + f"{run_config.adaptation.redundancy}/{output_category}/"
             )
             (
                 snn_algo_graph_exists,
@@ -208,23 +202,6 @@ def get_algorithm_description(*, run_config: Run_config) -> Tuple[str, int]:
         some_list=list(run_config.algorithm[algorithm_name].values())
     )
     return algorithm_name, algorithm_parameter
-
-
-@typechecked
-def get_adaptation_description(*, run_config: Run_config) -> Tuple[str, int]:
-    """Returns the adaptation name and value as a single string."""
-    adaptation_name: str = get_single_element(
-        some_list=list(run_config.adaptation.keys())
-    )
-
-    adaptation_parameter: int = run_config.adaptation[adaptation_name]
-
-    if adaptation_parameter == 0:
-        pprint(run_config_to_dict(run_config=run_config))
-        raise ValueError(
-            "Error, redundancy=0 is a duplicate of original graph."
-        )
-    return adaptation_name, adaptation_parameter
 
 
 @typechecked

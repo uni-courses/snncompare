@@ -50,11 +50,7 @@ def generate_list_of_n_random_nrs(
 # checks if file exists
 @typechecked
 def file_exists(*, filepath: str) -> bool:
-    """
-
-    :param string:
-
-    """
+    """:param string:"""
     # TODO: Execute Path(string).is_file() directly instead of calling this
     # function.
     my_file = Path(filepath)

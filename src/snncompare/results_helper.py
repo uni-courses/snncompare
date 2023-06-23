@@ -22,9 +22,8 @@ def plot_alipour(
     export: bool = True,
     show: bool = False,
 ) -> None:
-    """
+    """:param configuration:
 
-    :param configuration:
     param iteration: The initialisation iteration that is used.
     :param seed: The value of the random seed used for this test.
     :param size: Nr of nodes in the original graph on which test is ran.
@@ -33,7 +32,6 @@ def plot_alipour(
     :param G: The original graph on which the MDSA algorithm is ran.
     :param export:  (Default value = True)
     :param show:  (Default value = False)
-
     """
     # pylint: disable=R0913
     # TODO: reduce 8/5 input arguments to at most 5/5.
@@ -60,11 +58,9 @@ def plot_alipour(
 
 @typechecked
 def get_alipour_labels(*, G: nx.DiGraph, configuration: str) -> Dict[str, str]:
-    """
+    """:param G: The original graph on which the MDSA algorithm is ran.
 
-    :param G: The original graph on which the MDSA algorithm is ran.
     :param configuration:
-
     """
     labels = {}
     for node_name in G.nodes:
@@ -117,7 +113,6 @@ def compute_marks_for_m_larger_than_one(
             input_graph=input_graph, rand_ceil=rand_ceil
         )
 
-        print("")
         if show or export:
             plot_alipour(
                 configuration="0rand_mark",

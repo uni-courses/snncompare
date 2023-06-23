@@ -1,7 +1,7 @@
 {
   "adaptations": {
     "redundancy": [
-      4
+      2
     ]
   },
   "algorithms": {
@@ -11,17 +11,28 @@
       }
     ]
   },
-  "max_graph_size": 5,
-  "max_max_graphs": 1,
-  "min_graph_size": 5,
-  "min_max_graphs": 1,
+  "max_graph_size": 20,
+  "max_max_graphs": 4,
+  "min_graph_size": 20,
+  "min_max_graphs": 4,
   "neuron_models": [
     "LIF"
   ],
   "radiations": {
-    "neuron_death": [
-      0.05
-    ]
+    "change_synaptic_weight": {
+      "amplitude": [
+        0.01
+      ],
+      "excitatory": [
+        true
+      ],
+      "inhibitory": [
+        false
+      ],
+      "probability_per_t": [
+        0.005
+      ]
+    }
   },
   "seeds": [
     8

@@ -6,6 +6,7 @@ import networkx as nx
 from simsnn.core.simulators import Simulator
 from snnbackends.networkx.run_on_networkx import run_snn_on_networkx
 from snnbackends.simsnn.run_on_simsnn import run_snn_on_simsnn
+from snnradiation.apply_rad_to_simsnn import apply_synapse_weight_increase_rad
 from typeguard import typechecked
 
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
@@ -40,6 +41,7 @@ def sim_graphs(
     :param stage_1_graphs: Dict:
     """
 
+    # TODO: ensure order unradiated first.
     for graph_name, snn in stage_1_graphs.items():
         # Derive the adaptation setting for this graph.
 
@@ -60,6 +62,20 @@ def sim_graphs(
             )
             if next_action == "Simulate":
                 print(f"graph_name={graph_name} - simulating.")
+
+                if graph_name[:4] == "rad_":
+                    unradiated_graph: Simulator = stage_1_graphs[
+                        graph_name[4:]
+                    ]
+                    apply_synapse_weight_increase_rad(
+                        est_sim_duration=unradiated_graph.network.graph.graph[
+                            "actual_duration"
+                        ],
+                        ignored_neuron_names=[],
+                        rad=run_config.radiation,
+                        seed=run_config.seed,
+                        snn=snn,
+                    )
                 sim_snn(
                     input_graph=stage_1_graphs["input_graph"],
                     snn=snn,
@@ -182,6 +198,7 @@ def stage_2_or_4_graph_exists_already(
         stage_index=1,
     )
 
+    # pylint: disable=R0801
     simsnn_exists, _ = simsnn_files_exists_and_get_path(
         output_category=output_category,
         input_graph=stage_1_graphs["input_graph"],
@@ -191,6 +208,7 @@ def stage_2_or_4_graph_exists_already(
         rad_affected_neurons_hash=rad_affected_neurons_hash,
         rand_nrs_hash=rand_nrs_hash,
     )
+    # input(f"simsnn_filepath={simsnn_filepath}")
     return simsnn_exists
 
 

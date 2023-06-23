@@ -90,6 +90,17 @@ def parse_cli_args(
         ),
     )
 
+    parser.add_argument(
+        "-efm",
+        "--export-failure-modes",
+        action="store_true",
+        default=False,
+        help=(
+            "Store per timestep in the snn which radiated neurons spiked/didn"
+            "'t spike when the unradiated counterparts didn't/did spike."
+        ),
+    )
+
     # Create argument parsers to allow user to specify what to run.
     # Allow user run the experiment on a graph from file.
     parser.add_argument(
@@ -145,6 +156,17 @@ def parse_cli_args(
         help=("Store a compact json output with the boxplot data."),
     )
 
+    parser.add_argument(
+        "-j6",
+        "--output-json-stage-6",
+        action="store_true",
+        default=False,
+        help=(
+            "Store a adaptation costs in terms of neuronal-, synaptic- and "
+            + "energy complexity."
+        ),
+    )
+
     # Run run on a particular run_settings json file.
     parser.add_argument(
         "-r",
@@ -153,6 +175,18 @@ def parse_cli_args(
         type=str,
         help=(
             "Give filepath to run settings json on which to run " + "the run."
+        ),
+    )
+
+    # Run run on a particular run_settings json file.
+    parser.add_argument(
+        "-rui",
+        "--run-config-unique-id",
+        action="store",
+        type=str,
+        help=(
+            "Give the unique id of the run the run_config (within the "
+            + "experiment settings) that you want to run."
         ),
     )
 
@@ -235,6 +269,17 @@ def parse_cli_args(
             "Skips outputting the simulation data of stage 2 for the snns."
             + "Also skips the simulation if the results from that simulation"
             + "already exist in stage 4."
+        ),
+    )
+
+    parser.add_argument(
+        "-sfm",
+        "--show-failure-modes",
+        action="store_true",
+        default=False,
+        help=(
+            "Shows a table with per radiated snn, which neuron(s) was/were"
+            "the first to differ in spike behaviour from the unradiated SNN."
         ),
     )
 

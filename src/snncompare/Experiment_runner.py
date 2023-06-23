@@ -6,12 +6,14 @@ setting of the experiment configuration settings.
 
 import copy
 import multiprocessing
-from pprint import pprint
 from typing import Dict, List, Optional, Union
 
 import customshowme
 import networkx as nx
 from simsnn.core.simulators import Simulator
+from snnalgorithms.get_input_graphs import (
+    create_mdsa_input_graphs_from_exp_config,
+)
 from snnbackends.verify_nx_graphs import verify_results_nx_graphs
 from typeguard import typechecked
 
@@ -30,10 +32,12 @@ from snncompare.export_plots.temp_default_output_creation import (
     create_default_hover_info,
     create_default_output_config,
 )
+from snncompare.export_results.analysis.create_adaptation_cost_plot import (
+    plot_raw_adap_cost_datas,
+)
 from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
     get_completed_and_missing_run_configs,
-    store_pickle,
 )
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     output_stage_1_configs_and_input_graphs,
@@ -42,9 +46,8 @@ from snncompare.export_results.output_stage1_snn_graphs import (
     output_stage_1_snns,
 )
 from snncompare.export_results.output_stage2_snns import output_stage_2_snns
-from snncompare.export_results.output_stage4_results import (
-    output_stage_4_results,
-)
+from snncompare.export_results.output_stage4_results import output_snn_results
+from snncompare.graph_generation.export_input_graphs import store_pickle
 from snncompare.helper import (
     add_stage_completion_to_graph,
     get_snn_graph_names,
@@ -59,18 +62,22 @@ from snncompare.optional_config.Output_config import (
     Output_config,
     Zoom,
 )
+from snncompare.process_results.get_failure_modes import (
+    add_failure_modes_to_graph,
+)
+from snncompare.process_results.show_failure_modes import show_failures
 from snncompare.progress_report.has_completed_stage2_or_4 import (
     assert_has_outputted_stage_2_or_4,
     has_outputted_stage_2_or_4,
 )
-from snncompare.run_config.Run_config import Run_config, run_config_to_dict
+from snncompare.run_config.Run_config import Run_config
 from snncompare.simulation.add_radiation_graphs import (
     ensure_empty_rad_snns_exist,
 )
 
 from .graph_generation.stage_1_create_graphs import (
     get_graphs_stage_1,
-    get_input_graph_of_run_config,
+    load_input_graph_from_file_with_init_props,
 )
 
 # from .import_results.load_stage1_results import load_results_stage_1
@@ -109,7 +116,7 @@ class Experiment_runner:
 
         # Load the ranges of supported settings.
         self.supp_exp_config = Supported_experiment_settings()
-
+        create_mdsa_input_graphs_from_exp_config(exp_config=exp_config)
         self.run_configs = generate_run_configs(
             exp_config=exp_config, specific_run_config=specific_run_config
         )
@@ -118,6 +125,7 @@ class Experiment_runner:
             self.run_configs.reverse()
 
         if perform_run:  # Used to get quick Experiment_runner for testing.
+            print("Performing run.\n\n")
             self.__perform_run(
                 exp_config=self.exp_config,
                 output_config=output_config,
@@ -125,9 +133,18 @@ class Experiment_runner:
             )
 
         if 5 in output_config.output_json_stages:
+            print("Generating boxplot results.\n\n")
             create_performance_plots(
                 completed_run_configs=self.run_configs,
                 exp_config=exp_config,
+            )
+
+        if 6 in output_config.output_json_stages:
+            plot_raw_adap_cost_datas(exp_config=self.exp_config)
+
+        if output_config.extra_storing_config.show_failure_modes:
+            show_failures(
+                exp_config=self.exp_config, run_configs=self.run_configs
             )
 
     # pylint: disable=W0238
@@ -146,9 +163,8 @@ class Experiment_runner:
         plot_config = get_default_plot_config()
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
-            # shutil.rmtree("results")
             print(f"\n{i+1}/{len(run_configs)} [runs]")
-            pprint(run_config_to_dict(run_config=run_config))
+            run_config.print_run_config_dict()
             results_nx_graphs = self.perform_run_stage_1(
                 exp_config=exp_config,
                 output_config=output_config,
@@ -197,7 +213,7 @@ class Experiment_runner:
         generating an SNN (graph) that runs the intended algorithm.
         """
 
-        input_graph: nx.Graph = get_input_graph_of_run_config(
+        input_graph: nx.Graph = load_input_graph_from_file_with_init_props(
             run_config=run_config
         )
 
@@ -298,7 +314,6 @@ class Experiment_runner:
         )
         return results_nx_graphs
 
-    @customshowme.time
     @typechecked
     def __perform_run_stage_3(
         self,
@@ -343,9 +358,10 @@ class Experiment_runner:
             jobs = []
             for i, graph_name in enumerate(get_snn_graph_names()):
                 if output_config.dash_port is None:
-                    dash_port: int = 8050 + i
+                    output_config.dash_port = 8050 + i
                 else:
-                    dash_port = output_config.dash_port + i
+                    output_config.dash_port += i
+
                 if graph_name in output_config.graph_types:
                     p = multiprocessing.Process(
                         target=create_svg_plot,
@@ -353,10 +369,7 @@ class Experiment_runner:
                             [graph_name],
                             results_nx_graphs["graphs_dict"],
                             output_config,
-                            dash_port,
                             run_config,
-                            run_config.unique_id,
-                            None,
                         ),
                     )
                     jobs.append(p)
@@ -396,10 +409,30 @@ class Experiment_runner:
                 stage_2_graphs=results_nx_graphs["graphs_dict"],
             )
 
-            output_stage_4_results(
-                run_config=run_config,
-                graphs_dict=results_nx_graphs["graphs_dict"],
-            )
+            output_data_types = ["results"]
+            if output_config.extra_storing_config.export_failure_modes:
+                output_data_types += [
+                    "failure_modes",
+                ]
+
+                # Set failure modes.
+                add_failure_modes_to_graph(
+                    snn_graphs=results_nx_graphs["graphs_dict"],
+                    run_config=run_config,
+                )
+
+            for output_data_type in output_data_types:
+                if output_data_type == "results":
+                    stage_index: int = 4
+                else:
+                    stage_index = 7
+                output_snn_results(
+                    output_data_type=output_data_type,
+                    run_config=run_config,
+                    graphs_dict=results_nx_graphs["graphs_dict"],
+                    stage_index=stage_index,
+                )
+
             assert_has_outputted_stage_2_or_4(
                 graphs_dict=results_nx_graphs["graphs_dict"],
                 run_config=run_config,

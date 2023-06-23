@@ -53,7 +53,9 @@ def load_json_file_into_dict(
     json_filepath: str,
 ) -> Dict:
     """TODO: Include expected type upon loading, or not.
-    Loads a json file into dict from a filepath."""
+
+    Loads a json file into dict from a filepath.
+    """
     if not Path(json_filepath).is_file():
         raise FileNotFoundError(
             f"Error, filepath does not exist:{json_filepath}"

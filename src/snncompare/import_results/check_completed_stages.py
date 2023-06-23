@@ -12,23 +12,6 @@ from ..export_results.verify_stage_1_graphs import (
 
 
 @typechecked
-def has_outputted_stage_jsons(
-    *,
-    expected_stages: List[int],
-    run_config: Run_config,
-    stage_index: int,
-) -> bool:
-    """Checks if a stage has been outputted or not.
-
-    TODO: delete?
-    """
-    print(expected_stages)
-    print(run_config)
-    print(stage_index)
-    return True
-
-
-@typechecked
 def nx_graphs_have_completed_stage(
     *,
     run_config: Run_config,

@@ -21,13 +21,16 @@ from typeguard import typechecked
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
     Radiation_data,
     Rand_nrs_data,
-    get_input_graph_output_filepath,
     get_rad_name_filepath_and_exists,
     get_rand_nrs_and_hash,
     get_rand_nrs_data,
 )
+from snncompare.graph_generation.export_input_graphs import (
+    get_input_graph_output_filepath,
+)
 from snncompare.graph_generation.stage_1_create_graphs import (
-    get_input_graph_of_run_config,
+    load_input_graph_from_file,
+    load_input_graph_from_file_with_init_props,
 )
 from snncompare.helper import add_stage_completion_to_graph
 from snncompare.import_results.helper import simsnn_files_exists_and_get_path
@@ -60,17 +63,14 @@ def has_outputted_stage_1(
             with_adaptation=with_adaptation,
             stage_index=1,
         ):
-            print(f"with_adaptation={with_adaptation} did not find snn_graph.")
             return False
         if not has_outputted_input_graph(
             input_graph=input_graph,
         ):
-            print("no input")
             return False
 
         json_filepath: str = get_run_config_filepath(run_config=run_config)
         if not Path(json_filepath).is_file():
-            print(f"no json={json_filepath}")
             return False
     return True
 
@@ -163,7 +163,9 @@ def has_outputted_rand_nrs(
 def assert_has_outputted_stage_1(run_config: Run_config) -> None:
     """Throws error if stage 1 is not outputted."""
     if not has_outputted_stage_1(
-        input_graph=get_input_graph_of_run_config(run_config=run_config),
+        input_graph=load_input_graph_from_file_with_init_props(
+            run_config=run_config
+        ),
         run_config=run_config,
     ):
         raise ValueError("Error, stage 1 was not completed.")
@@ -178,7 +180,7 @@ def load_stage1_simsnn_graphs(
     """Loads stage1 simsnn graphs and input graph."""
     if stage_1_graphs_dict is None:
         stage_1_graphs_dict = {}
-        stage_1_graphs_dict["input_graph"] = get_input_graph_of_run_config(
+        stage_1_graphs_dict["input_graph"] = load_input_graph_from_file(
             run_config=run_config
         )
 
@@ -268,7 +270,7 @@ def load_simsnn_graph_from_file(
         output_category = "snns"
         rad_affected_neurons_hash = None
 
-    if stage_index in [2, 4]:
+    if stage_index in [2, 4, 7]:
         simsnn_exists, simsnn_filepath = simsnn_files_exists_and_get_path(
             output_category=output_category,
             input_graph=input_graph,
@@ -286,6 +288,11 @@ def load_simsnn_graph_from_file(
                 )
             elif stage_index == 4:
                 add_stage4_results_from_file_to_snn(
+                    output_filepath=simsnn_filepath,
+                    stage_1_simsnn_simulator=stage1_simsnn,
+                )
+            elif stage_index == 7:
+                add_stage7_failure_data_from_file_to_snn(
                     output_filepath=simsnn_filepath,
                     stage_1_simsnn_simulator=stage1_simsnn,
                 )
@@ -353,7 +360,6 @@ def load_snn_graph_stage_2(
         )
 
     loaded_snn: Dict = load_json_file_into_dict(json_filepath=output_filepath)
-
     for key, value in loaded_snn.items():
         loaded_snn[key] = np.array(value)
         if key == "spikes":
@@ -382,3 +388,23 @@ def add_stage4_results_from_file_to_snn(
     stage_1_simsnn_simulator.network.graph.graph["results"] = {}
     for key, value in loaded_snn.items():
         stage_1_simsnn_simulator.network.graph.graph["results"][key] = value
+
+
+@typechecked
+def add_stage7_failure_data_from_file_to_snn(
+    *,
+    output_filepath: str,
+    stage_1_simsnn_simulator: Simulator,
+) -> None:
+    """Adds the spikes, I and V of an snn into a simsnn Simulator object."""
+    # Verify the file exists.
+    if not Path(output_filepath).is_file():
+        raise FileExistsError(
+            f"Error, filepath:{output_filepath} was not created."
+        )
+    loaded_failure_dict: Dict = load_json_file_into_dict(
+        json_filepath=output_filepath
+    )
+    stage_1_simsnn_simulator.network.graph.graph[
+        "failure_modes"
+    ] = loaded_failure_dict
