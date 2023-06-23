@@ -25,7 +25,7 @@ def plot_circular_graph(
 
     :param density: param G:
     :param seed: The value of the random seed used for this test.
-    :param export:  (Default value = True)
+    :param export: (Default value = True)
     :param show: Default value = True)
     :param G: The original graph on which the MDSA algorithm is ran.
     :param recurrent_edge_density:
@@ -54,11 +54,7 @@ def plot_circular_graph(
 
 @typechecked
 def create_root_dir_if_not_exists(*, root_dir_name: str) -> None:
-    """
-
-    :param root_dir_name:
-
-    """
+    """:param root_dir_name:"""
     if not os.path.exists(root_dir_name):
         os.makedirs(f"{root_dir_name}")
     if not os.path.exists(root_dir_name):
@@ -89,8 +85,8 @@ def export_plot(  # type:ignore[misc]
     filename: str,
     extensions: list[str],
 ) -> None:
-    """
-    :param plt:
+    """:param plt:
+
     :param filename:
     """
     create_target_dir_if_not_exists(some_path="latex/Images/graphs")

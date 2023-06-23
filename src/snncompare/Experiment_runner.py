@@ -361,6 +361,7 @@ class Experiment_runner:
                     output_config.dash_port = 8050 + i
                 else:
                     output_config.dash_port += i
+
                 if graph_name in output_config.graph_types:
                     p = multiprocessing.Process(
                         target=create_svg_plot,

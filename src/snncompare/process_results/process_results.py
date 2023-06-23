@@ -11,6 +11,7 @@ from typing import Dict
 
 from simsnn.core.simulators import Simulator
 from snnalgorithms.sparse.MDSA.apply_results_to_graphs import (
+    print_mdsa_snn_results,
     set_mdsa_snn_results,
 )
 from snnbackends.verify_nx_graphs import verify_snn_contains_correct_stages
@@ -83,6 +84,7 @@ def perform_mdsa_results_computation_if_needed(
             graph = snn.network.graph
         else:
             graph = snn
+        # pylint: disable=R0801
         if graph_name != "input_graph":
             with_adaptation: bool = get_with_adaptation_bool(
                 graph_name=graph_name
@@ -112,13 +114,12 @@ def perform_mdsa_results_computation_if_needed(
                         stage_2_graphs=stage_2_graphs,
                     )
 
-                    # Print run_config results.
-                    if isinstance(snn, Simulator):
-                        graph_attributes = snn.network.graph.graph
-                    else:
-                        graph_attributes = snn.graph
-                    print(f"graph_name={graph_name}")
-                    pprint(graph_attributes["results"])
+                    print_mdsa_snn_results(
+                        stage_2_graphs=stage_2_graphs,
+                        desired_graph_name=graph_name,
+                        verbose=True,
+                    )
+
 
         # Indicate the graphs have completed stage 1.
         add_stage_completion_to_graph(snn=graph, stage_index=4)

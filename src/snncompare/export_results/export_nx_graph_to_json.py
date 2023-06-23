@@ -8,11 +8,9 @@ from typeguard import typechecked
 
 @typechecked
 def digraph_to_json(*, G: nx.Graph) -> Dict:
-    """
+    """:param G: The original graph on which the MDSA algorithm is ran.
 
-    :param G: The original graph on which the MDSA algorithm is ran.
     TODO: remove if not used.
-
     """
     if G is not None:
         some_json_graph: Dict = json_graph.node_link_data(G)

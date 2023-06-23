@@ -171,7 +171,7 @@ repos:
 #     args: ['--never', '--application-directories', 'src']
 
  - repo: https://github.com/myint/docformatter
-   rev: v1.6.5
+   rev: v1.7.1
    hooks:
    - id: docformatter
 

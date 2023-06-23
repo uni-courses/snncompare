@@ -221,6 +221,15 @@ python -m src.snncompare -e live_demo_adaptation -j1 -j2 -j4 -j5 -rev  -si -sgt 
  rad_adapted_snn_graph -p 8003
 ```
 
+Full visualisation:
+
+```bash
+python -m src.snncompare -e v0 -j1 -j2 -j4 -j5 -rev -dr -di -si -sgt \
+ rad_adapted_snn_graph -p 8000
+python -m src.snncompare -e v0 -j1 -j2 -j4 -j5 -rev -dr -di -si -sgt \
+ rad_snn_graph -p 8000
+```
+
 For more info, run:
 
 ```bash
