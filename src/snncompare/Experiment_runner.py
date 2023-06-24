@@ -23,6 +23,7 @@ from snncompare.exp_config.Exp_config import (
     Supported_experiment_settings,
 )
 from snncompare.export_plots.create_dash_plot import create_svg_plot
+from snncompare.export_plots.export_input_graph import output_input_graph
 from snncompare.export_plots.Plot_config import (
     Plot_config,
     get_default_plot_config,
@@ -353,6 +354,13 @@ class Experiment_runner:
                 "v",
                 "vth",
             ]
+
+            # Output the input graph.
+            output_input_graph(
+                input_graph=results_nx_graphs["graphs_dict"]["input_graph"],
+                output_config=output_config,
+                run_config=run_config,
+            )
 
             # Generate Dash plots using multiprocessing.
             jobs = []

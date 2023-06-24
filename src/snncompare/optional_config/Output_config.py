@@ -58,6 +58,7 @@ class Output_config:
         self.extra_storing_config: Extra_storing_config = extra_storing_config
         self.graph_types: None | list[str] = graph_types
         self.dash_port: None | int = dash_port
+        self.input_graph_dir: str = "latex/Images/graphs/input_graphs"
 
     @typechecked
     def verify_int_list_values(
