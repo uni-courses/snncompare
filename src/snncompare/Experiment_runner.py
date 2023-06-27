@@ -361,7 +361,6 @@ class Experiment_runner:
                 output_config=output_config,
                 run_config=run_config,
             )
-
             # Generate Dash plots using multiprocessing.
             jobs = []
             for i, graph_name in enumerate(get_snn_graph_names()):
