@@ -104,7 +104,7 @@ def get_default_plot_config() -> Plot_config:
         edge_width_factor=0.2,
         recursive_edge_radius_factor=0.02,
         show_nodes=True,
-        show_node_colours=False,
+        show_node_colours=True,
         show_node_labels=False,
         show_node_opacity=False,
         show_edge_colours=True,

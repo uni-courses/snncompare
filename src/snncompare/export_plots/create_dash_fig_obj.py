@@ -64,7 +64,6 @@ def create_svg_with_dash(
             for i, n in enumerate(graph.nodes())
         ),
         hoverinfo="text",
-        # hoverinfo="name+x+text",
         marker={
             "size": plot_config.node_size,
             "color": list(graph.nodes[n]["colour"] for n in graph.nodes())

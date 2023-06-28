@@ -148,8 +148,8 @@ def store_node_colours_and_opacity(
 ) -> None:
     """Creates/copies the nodes and edges into the plotted graph."""
 
-    colour_dict = get_nx_node_colours(G=snn_graph, t=t)
-    for node_name, colour in colour_dict.items():
+    node_colour_dict = get_nx_node_colours(G=snn_graph, t=t)
+    for node_name, node_colour in node_colour_dict.items():
         if "connector" not in node_name:
             # Store colours over time.
             if "temporal_colour" not in plotted_graph.nodes[node_name].keys():
@@ -157,8 +157,10 @@ def store_node_colours_and_opacity(
             if "temporal_opacity" not in plotted_graph.nodes[node_name].keys():
                 plotted_graph.nodes[node_name]["temporal_opacity"] = []
 
-            plotted_graph.nodes[node_name]["colour"] = colour
-            plotted_graph.nodes[node_name]["temporal_colour"].append(colour)
+            plotted_graph.nodes[node_name]["colour"] = node_colour
+            plotted_graph.nodes[node_name]["temporal_colour"].append(
+                node_colour
+            )
 
             if snn_graph.nodes[node_name]["nx_lif"][t].spikes:
                 plotted_graph.nodes[node_name]["opacity"] = 0.8
@@ -176,14 +178,35 @@ def store_edge_colour_and_opacity(
 ) -> None:
     """Copies the node_colours and opacity into the edge_colours and
     opacity."""
+    rgb_colours: Dict[str, str] = {
+        "black": "rgb(0, 0, 0)",
+        "dark_red": "rgb(139, 0, 0)",
+        "red": "rgb(255, 0, 0)",
+        "yellow": "rgb(255, 0, 0)",
+        "purple": "rgb(139, 0, 139)",
+        "olive": "rgb(128, 128, 0)",
+        "green": "rgb(0, 255, 0)",
+        "blue": "rgb(0, 0, 255)",
+        "gray": "rgb(128, 128, 128)",
+    }
     for edge in plotted_graph.edges():
+        # If either of the nodes of the edge is redundant, make it purple.
         if "connector" not in edge[0] and "connector" not in edge[1]:
-            plotted_graph.edges[edge]["colour"] = plotted_graph.nodes[edge[0]][
-                "colour"
-            ]
-            plotted_graph.edges[edge]["opacity"] = plotted_graph.nodes[
-                edge[0]
-            ]["opacity"]
+            if edge[0][:2] == "r_" or edge[1][:2] == "r_":
+                plotted_graph.edges[edge]["colour"] = rgb_colours["purple"]
+                plotted_graph.edges[edge]["opacity"] = plotted_graph.nodes[
+                    edge[0]
+                ]["opacity"]
+            # TODO: If radiation occurs.
+
+            # Otherwise, take over node colour.
+            else:
+                plotted_graph.edges[edge]["colour"] = plotted_graph.nodes[
+                    edge[0]
+                ]["colour"]
+                plotted_graph.edges[edge]["opacity"] = plotted_graph.nodes[
+                    edge[0]
+                ]["opacity"]
 
 
 @typechecked

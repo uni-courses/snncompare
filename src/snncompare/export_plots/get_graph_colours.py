@@ -9,10 +9,14 @@ from typeguard import typechecked
 def get_nx_node_colours(*, G: nx.DiGraph, t: int) -> Dict[str, str]:
     """Returns a list of node colours in order of G.nodes."""
     rgb_colours: Dict[str, str] = {
+        "black": "rgb(0, 0, 0)",
+        "dark_red": "rgb(139, 0, 0)",
         "red": "rgb(255, 0, 0)",
         "yellow": "rgb(255, 0, 0)",
+        "purple": "rgb(139, 0, 139)",
         "olive": "rgb(128, 128, 0)",
         "green": "rgb(0, 255, 0)",
+        "blue": "rgb(0, 0, 255)",
         "gray": "rgb(128, 128, 128)",
     }
     colour_dict: Dict[str, str] = {}
@@ -38,8 +42,7 @@ def get_nx_node_colours(*, G: nx.DiGraph, t: int) -> Dict[str, str]:
                 rgb_colours=rgb_colours,
             )
         else:
-            colour_dict[node_name] = "rgb(255, 255, 0)"
-
+            raise ValueError("Error, unexpected node condition occurred.")
     return colour_dict
 
 
@@ -53,6 +56,8 @@ def set_radiation_death_colour(
     t: int,
 ) -> None:
     """Adds the radiation death colour into the colour dict for the nodes."""
+    # print("TODO: GET NEURON DEATHS.")
+    # exit()
     if "rad_death" in G.nodes[node_name].keys():
         if G.nodes[node_name]["rad_death"]:
             colour_dict[node_name] = rgb_colours["red"]
@@ -91,6 +96,6 @@ def set_remaining_node_colours(
     """
     if node_name not in colour_dict:
         if node_name[:2] == "r_":
-            colour_dict[node_name] = rgb_colours["olive"]
+            colour_dict[node_name] = rgb_colours["purple"]
         else:
-            colour_dict[node_name] = rgb_colours["yellow"]
+            colour_dict[node_name] = rgb_colours["blue"]

@@ -42,7 +42,6 @@ def output_input_graph(
         output_filename,
         dpi=200,
     )
-    plt.show()
     plt.clf()
     plt.close()
 
