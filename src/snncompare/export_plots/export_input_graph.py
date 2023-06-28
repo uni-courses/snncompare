@@ -79,8 +79,10 @@ def draw_bend_input_graph_edges(
     # turn the axis on
     ax.set_axis_on()
     ax.tick_params(left=True, bottom=False, labelleft=True, labelbottom=False)
-    ax.set_yticks([0, 1, 2, 3, 4])
-    ax.set_yticklabels([0, 1, 2, 3, 4], color="k", size=20)
+    ax.set_yticks(list(range(0, len(input_graph.nodes))))
+    ax.set_yticklabels(
+        list(range(0, len(input_graph.nodes))), color="k", size=20
+    )
 
     # plt.xlabel(x_axis_label)
     plt.ylabel("node number [-]")
