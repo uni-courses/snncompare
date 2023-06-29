@@ -44,7 +44,7 @@ def show_dash_figures(
     """Shows a figure in dash using browser."""
     dash_figures: Dict[str, go.Figure] = {}
     identified_annotations_dict: Dict[str, List] = {}
-    temporal_node_colours_dict: Dict[str, List] = {}
+    temporal_node_colours_dict: Dict[str, Dict[str, List]] = {}
     temporal_node_opacity_dict: Dict[str, List] = {}
     for graph_name, plotted_graph in plotted_graphs.items():
         # Start Dash app.
@@ -56,10 +56,14 @@ def show_dash_figures(
             plot_config=plot_config,
         )
 
-        temporal_node_colours_dict[graph_name] = list(
-            plotted_graph.nodes[n]["temporal_colour"]
-            for n in plotted_graph.nodes()
-        )
+        # Specify dict with node colours.
+        temp_node_colours: Dict[str, List] = {}
+        for node_name in plotted_graph.nodes():
+            temp_node_colours[node_name] = plotted_graph.nodes[node_name][
+                "temporal_colour"
+            ]
+        temporal_node_colours_dict[graph_name] = temp_node_colours
+
         temporal_node_opacity_dict[graph_name] = list(
             plotted_graph.nodes[n]["temporal_opacity"]
             for n in plotted_graph.nodes()

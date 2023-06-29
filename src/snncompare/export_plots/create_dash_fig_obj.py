@@ -51,9 +51,6 @@ def create_svg_with_dash(
     pixel_height: int = int(plot_config.base_pixel_height * xy_max(G=graph)[1])
     recursive_edge_radius = plot_config.recursive_edge_radius
 
-    for n in graph.nodes():
-        print(f'n={n}: {graph.nodes[n]["colour"]}')
-
     # Create nodes
     node_trace = go.Scatter(
         x=list(graph.nodes[n]["pos"][0] for n in graph.nodes()),
