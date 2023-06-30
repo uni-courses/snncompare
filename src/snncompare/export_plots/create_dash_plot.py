@@ -1,10 +1,13 @@
 """Generates interactive view of graph."""
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import dash
 import networkx as nx
 import plotly.graph_objs as go
+from simsnn.core.connections import (
+    indices_to_edge_names_in_mapped_see_amplitudes,
+)
 from simsnn.core.simulators import Simulator
 from snnbackends.simsnn.simsnn_to_nx_lif import (
     add_simsnn_simulation_data_to_reconstructed_nx_lif,
@@ -66,7 +69,21 @@ def create_svg_plot(
             )
 
             print(f"Creating:graph_name={graph_name}")
+            print(f"type={type(snn_graph)}")
 
+            # Extract synaptic radiation effects.
+            if graph_name[:4] == "rad_":
+                synaptic_rad_map: Dict[
+                    int, Dict[Tuple[str, str], float]
+                ] = indices_to_edge_names_in_mapped_see_amplitudes(
+                    synapses=snn_graph.network.synapses,
+                    mapped_see_amplitudes=snn_graph.network.synapses[
+                        0
+                    ].mapped_see_amplitudes,
+                )
+
+            else:
+                synaptic_rad_map = {}
             # Convert simsnn to nx_LIF
             if (
                 run_config.simulator == "simsnn"
@@ -92,6 +109,7 @@ def create_svg_plot(
                 sim_duration=sim_duration,
                 snn_graph=nx_snn,
                 single_timestep=single_timestep,
+                synaptic_rad_map=synaptic_rad_map,
                 dash_figures=dash_figures,
                 plotted_graphs=plotted_graphs,
             )
@@ -117,12 +135,14 @@ def create_figures(
     sim_duration: int,
     snn_graph: nx.DiGraph,
     single_timestep: Optional[bool],
+    synaptic_rad_map: Dict[int, Dict[Tuple[str, str], float]],
     dash_figures: Dict[str, List[go.Figure]],
     plotted_graphs: Dict[str, nx.DiGraph],
 ) -> None:
     """Creates the dash figures."""
     dash_screens: List[go.Figure] = []
     plotted_graph: nx.DiGraph = nx.DiGraph()
+    plotted_graph.graph["mapped_see_amplitudes"] = synaptic_rad_map
     for t in range(
         0,
         sim_duration,
@@ -201,7 +221,6 @@ def create_dash_figure(
         snn_graph=snn_graph,
         t=t,
     )
-
     # TODO: determine whether identified_annotations are needed lateron.
     dash_figure, _ = create_svg_with_dash(
         graph=plotted_graph,
