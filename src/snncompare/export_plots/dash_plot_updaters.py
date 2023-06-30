@@ -9,7 +9,10 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 from typeguard import typechecked
 
-from snncompare.export_plots.create_dash_fig_obj import NamedAnnotation
+from snncompare.export_plots.create_dash_fig_obj import (
+    NamedAnnotation,
+    add_custom_title,
+)
 from snncompare.export_plots.Plot_config import Plot_config
 
 
@@ -399,6 +402,12 @@ def support_updates(
                 plotted_graph=plotted_graphs[graph_name_one],
                 t=t,
             )
+            add_custom_title(
+                fig=dash_figures[graph_name_one],
+                graph_name=graph_name_one,
+                sim_duration=sim_duration,
+                t=t,
+            )
             return dash_figures[graph_name_one]
 
         update_color_one(
@@ -457,6 +466,12 @@ def support_updates(
                 dash_figure=dash_figures[graph_name_two],
                 plot_config=plot_config,
                 plotted_graph=plotted_graphs[graph_name_two],
+                t=t,
+            )
+            add_custom_title(
+                fig=dash_figures[graph_name_two],
+                graph_name=graph_name_two,
+                sim_duration=sim_duration,
                 t=t,
             )
             return dash_figures[graph_name_two]
@@ -518,6 +533,12 @@ def support_updates(
                 dash_figure=dash_figures[graph_name_four],
                 plot_config=plot_config,
                 plotted_graph=plotted_graphs[graph_name_four],
+                t=t,
+            )
+            add_custom_title(
+                fig=dash_figures[graph_name_four],
+                graph_name=graph_name_four,
+                sim_duration=sim_duration,
                 t=t,
             )
             return dash_figures[graph_name_four]

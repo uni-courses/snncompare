@@ -10,6 +10,7 @@ from plotly.graph_objs.layout import Annotation
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
+from snncompare.helper import get_with_adaptation_bool, get_with_radiation_bool
 
 
 # pylint: disable=R0903
@@ -71,6 +72,7 @@ def create_svg_with_dash(
             else None,
         },
         textfont={"size": plot_config.neuron_text_size},
+        showlegend=False,
     )
 
     # Create figure
@@ -125,7 +127,127 @@ def create_svg_with_dash(
         plot_config=plot_config,
         radius=recursive_edge_radius,
     )
+
+    # Custom Legend
+    add_custom_legend(fig=fig)
+
     return fig, identified_annotations
+
+
+@typechecked
+def add_custom_title(
+    *,
+    fig: go.Figure,
+    graph_name: str,
+    sim_duration: int,
+    t: int,
+) -> None:
+    """Adds the title and radiation type."""
+    with_adaptation: bool = get_with_adaptation_bool(graph_name=graph_name)
+    with_radiation: bool = get_with_radiation_bool(graph_name=graph_name)
+    title: str = "         SNN MDSA "
+    if with_adaptation:
+        title += "with adaptation,"
+    else:
+        title += "without adaptation,"
+    if with_radiation:
+        title += "with radiation"
+    else:
+        title += "without radiation"
+    title += f" (t={t+1}/{sim_duration})"
+    fig.update_layout(
+        title={
+            "text": title,
+            "font": {"size": 12},
+            "automargin": True,
+            "yref": "paper",
+            "x": 0.101,
+        }
+    )
+
+
+@typechecked
+def add_custom_legend(
+    *,
+    fig: go.Figure,
+) -> None:
+    """Returns the annotations for this graph."""
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            name="Original neuron",
+            marker={"size": 5, "color": "blue", "symbol": "circle"},
+            showlegend=True,
+        ),
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            name="Redundant neuron",
+            marker={
+                "size": 5,
+                "color": "rgb(139, 0, 139)",
+                "symbol": "circle",
+            },
+            showlegend=True,
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            name="Spike",
+            marker={"size": 5, "color": "green", "symbol": "line-ew-open"},
+            showlegend=True,
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            name="Rad: synapse excitation",
+            marker={"size": 5, "color": "yellow", "symbol": "line-ew-open"},
+            showlegend=True,
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            name="Rad: neuron death",
+            marker={"size": 5, "color": "red", "symbol": "line-ew-open"},
+            showlegend=True,
+        )
+    )
+    # fig.update_layout(title="Try Clicking on the Legend Items!")
+    fig.update_layout(
+        legend={
+            "x": 0.78,
+            "y": 1,
+            "font": {"size": 8, "color": "black"},
+            "bgcolor": "rgba(0,0,0,0)",
+            # bordercolor:'black',
+            # borderwidth:1,
+            "itemsizing": "constant",
+            "tracegroupgap": 0,
+            # itemwidth=30,
+        }
+    )
+    fig.update_layout(
+        showlegend=True,
+    )
+    # fig.update_layout(showlegend=True )
 
 
 @typechecked
