@@ -1,8 +1,7 @@
 {
   "adaptations": {
-    "population": [
-      2,
-      4
+    "redundancy": [
+      2
     ]
   },
   "algorithms": {
@@ -20,23 +19,19 @@
     "LIF"
   ],
   "radiations": {
-    "change_u": {
-      "amplitude": [
-        1
-      ],
+    "neuron_death": {
       "excitatory": [
-        true
-      ],
-      "inhibitory": [
         false
       ],
+      "inhibitory": [
+        true
+      ],
       "probability_per_t": [
-        0.1
+        1e-05
       ]
     }
   },
   "seeds": [
-    8,
     10
   ],
   "simulators": [
