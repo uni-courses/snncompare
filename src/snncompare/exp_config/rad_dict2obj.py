@@ -21,18 +21,21 @@ def get_radiations_from_exp_config_dict(
     Each Rad_damage object contains the settings for 1 run_config.
     """
     radiation_objs: List[Rad_damage] = []
+    # pylint: disable=R1702
     for effect_type, rad_settings in radiations.items():
         if effect_type == "neuron_death":
             for probability_per_t in rad_settings["probability_per_t"]:
-                rad_damage = Rad_damage(
-                    amplitude=float(-(10**10)),
-                    # amplitude=-inf,
-                    effect_type=effect_type,
-                    excitatory=False,
-                    inhibitory=True,
-                    probability_per_t=float(probability_per_t),
-                )
-                radiation_objs.append(rad_damage)
+                for amplitude in rad_settings["amplitude"]:
+                    for excitatory in rad_settings["excitatory"]:
+                        for inhibitory in rad_settings["inhibitory"]:
+                            rad_damage = Rad_damage(
+                                amplitude=amplitude,
+                                effect_type=effect_type,
+                                excitatory=excitatory,
+                                inhibitory=inhibitory,
+                                probability_per_t=float(probability_per_t),
+                            )
+                            radiation_objs.append(rad_damage)
         else:
             add_generic_exp_config_rad_dict(
                 effect_type=effect_type,

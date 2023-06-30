@@ -1,6 +1,6 @@
 """Updates dash plots."""
 import os
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import dash
 import networkx as nx
@@ -88,12 +88,14 @@ def get_edge_colour(
     for node_name in list(
         some_node_name for some_node_name in plotted_graph.nodes()
     ):
-        # Check if synaptic radiation is included and if yes, return that.
-        if t in plotted_graph.graph["synaptic_rad_map"].keys():
-            if edge in plotted_graph.graph["synaptic_rad_map"][t].keys():
-                # TODO: do not hardcode yellow as synaptic rad colour here
-                # but in plot_config.
-                return "rgb(255, 255, 0)"
+        rad_color: str = get_radiation_colour(
+            plotted_graph=plotted_graph,
+            left_node_name=edge[0],
+            right_node_name=edge[1],
+            t=t,
+        )
+        if rad_color != "":
+            return rad_color
 
         if node_name == edge[0]:
             return temporal_node_colours[node_name][t]
@@ -149,9 +151,19 @@ def update_node_colour(
                 t=t,
                 temporal_node_opacity=temporal_node_opacity,
             )
-            l_col: str = (
-                f'{plotted_graph.nodes[node_name]["temporal_colour"][t]}'
+
+            l_col: str = get_radiation_colour(
+                plotted_graph=plotted_graph,
+                left_node_name=node_name,
+                right_node_name=node_name,
+                t=t,
+                left_only=True,
             )
+            if l_col == "":
+                l_col = (
+                    f'{plotted_graph.nodes[node_name]["temporal_colour"][t]}'
+                )
+
             dash_figure.layout.shapes[i].update(
                 line_color=l_col,
                 opacity=edge_opacity,
@@ -159,6 +171,55 @@ def update_node_colour(
 
     else:
         print("Did not update node colours.")
+
+
+@typechecked
+def get_radiation_colour(
+    *,
+    plotted_graph: nx.DiGraph,
+    left_node_name: str,
+    right_node_name: str,
+    t: int,
+    left_only: Optional[bool] = False,
+) -> str:
+    """Returns first <limit> lines of a string. Assumes new line character is:
+
+     \n
+    .
+    """
+    # TODO: inspect why not all recursive nodes of radiated neuron become red.
+    if plotted_graph.graph["radiation"].effect_type == "neuron_death":
+        if t in plotted_graph.graph["synaptic_rad_map"].keys():
+            if left_only:
+                left_synapses: List[str] = list(
+                    map(
+                        lambda edge: edge[0],
+                        plotted_graph.graph["synaptic_rad_map"][t].keys(),
+                    )
+                )
+                if left_node_name in left_synapses:
+                    return "rgb(255, 0, 0)"
+            else:
+                if (left_node_name, right_node_name) in plotted_graph.graph[
+                    "synaptic_rad_map"
+                ][t].keys():
+                    # TODO: do not hardcode red as synaptic rad colour here
+                    # but in plot_config.
+                    return "rgb(255, 0, 0)"
+
+    elif (
+        plotted_graph.graph["radiation"].effect_type
+        == "change_synaptic_weight"
+    ):
+        # Check if synaptic radiation is included and if yes, return that.
+        if t in plotted_graph.graph["synaptic_rad_map"].keys():
+            if (left_node_name, right_node_name) in plotted_graph.graph[
+                "synaptic_rad_map"
+            ][t].keys():
+                # TODO: do not hardcode yellow as synaptic rad colour here
+                # but in plot_config.
+                return "rgb(255, 255, 0)"
+    return ""
 
 
 @typechecked

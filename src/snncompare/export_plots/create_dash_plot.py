@@ -13,6 +13,7 @@ from snnbackends.simsnn.simsnn_to_nx_lif import (
     add_simsnn_simulation_data_to_reconstructed_nx_lif,
     simsnn_graph_to_nx_lif_graph,
 )
+from snnradiation import Rad_damage
 from typeguard import typechecked
 
 from snncompare.export_plots.create_dash_fig_obj import create_svg_with_dash
@@ -69,13 +70,14 @@ def create_svg_plot(
             )
 
             print(f"Creating:graph_name={graph_name}")
-            print(f"type={type(snn_graph)}")
 
             # Extract synaptic radiation effects.
             if graph_name[:4] == "rad_":
                 synaptic_rad_map: Dict[
                     int, Dict[Tuple[str, str], float]
                 ] = indices_to_edge_names_in_mapped_see_amplitudes(
+                    radiation=run_config.radiation,
+                    neurons=snn_graph.network.nodes,
                     synapses=snn_graph.network.synapses,
                     mapped_see_amplitudes=snn_graph.network.synapses[
                         0
@@ -104,6 +106,7 @@ def create_svg_plot(
             create_figures(
                 graph_name=graph_name,
                 run_config_filename=run_config.unique_id,
+                radiation=run_config.radiation,
                 output_config=output_config,
                 plot_config=plot_config,
                 sim_duration=sim_duration,
@@ -137,12 +140,14 @@ def create_figures(
     single_timestep: Optional[bool],
     synaptic_rad_map: Dict[int, Dict[Tuple[str, str], float]],
     dash_figures: Dict[str, List[go.Figure]],
+    radiation: Rad_damage,
     plotted_graphs: Dict[str, nx.DiGraph],
 ) -> None:
     """Creates the dash figures."""
     dash_screens: List[go.Figure] = []
     plotted_graph: nx.DiGraph = nx.DiGraph()
     plotted_graph.graph["synaptic_rad_map"] = synaptic_rad_map
+    plotted_graph.graph["radiation"] = radiation
     for t in range(
         0,
         sim_duration,

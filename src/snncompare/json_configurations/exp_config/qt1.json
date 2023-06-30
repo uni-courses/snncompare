@@ -20,6 +20,9 @@
   ],
   "radiations": {
     "neuron_death": {
+      "amplitude": [
+        0.0
+      ],
       "excitatory": [
         false
       ],
@@ -27,7 +30,7 @@
         true
       ],
       "probability_per_t": [
-        1e-05
+        0.01
       ]
     }
   },
