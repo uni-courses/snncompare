@@ -142,7 +142,7 @@ def create_figures(
     """Creates the dash figures."""
     dash_screens: List[go.Figure] = []
     plotted_graph: nx.DiGraph = nx.DiGraph()
-    plotted_graph.graph["mapped_see_amplitudes"] = synaptic_rad_map
+    plotted_graph.graph["synaptic_rad_map"] = synaptic_rad_map
     for t in range(
         0,
         sim_duration,

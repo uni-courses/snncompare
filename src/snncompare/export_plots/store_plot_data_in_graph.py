@@ -162,6 +162,7 @@ def store_node_colours_and_opacity(
                 node_colour
             )
 
+            # TODO: do not hardcode opacity levels here but in plot_config.
             if snn_graph.nodes[node_name]["nx_lif"][t].spikes:
                 plotted_graph.nodes[node_name]["opacity"] = 0.8
             else:

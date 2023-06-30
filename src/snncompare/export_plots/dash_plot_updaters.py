@@ -88,6 +88,13 @@ def get_edge_colour(
     for node_name in list(
         some_node_name for some_node_name in plotted_graph.nodes()
     ):
+        # Check if synaptic radiation is included and if yes, return that.
+        if t in plotted_graph.graph["synaptic_rad_map"].keys():
+            if edge in plotted_graph.graph["synaptic_rad_map"][t].keys():
+                # TODO: do not hardcode yellow as synaptic rad colour here
+                # but in plot_config.
+                return "rgb(255, 255, 0)"
+
         if node_name == edge[0]:
             return temporal_node_colours[node_name][t]
     # pylint: disable=W0631
@@ -106,6 +113,13 @@ def get_edge_opacity(
     for i, node_name in enumerate(
         list(some_node_name for some_node_name in plotted_graph.nodes())
     ):
+        # Check if synaptic radiation is included and if yes, return that.
+        if t in plotted_graph.graph["synaptic_rad_map"].keys():
+            if edge in plotted_graph.graph["synaptic_rad_map"][t].keys():
+                # TODO: do not hardcode synaptic rad opacity here but in
+                # plot_config.
+                return 0.8
+
         if node_name == edge[0]:
             return temporal_node_opacity[i][t]
     # pylint: disable=W0631
