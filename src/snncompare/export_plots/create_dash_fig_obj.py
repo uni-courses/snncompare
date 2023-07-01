@@ -1,6 +1,8 @@
 """Generates a graph in dash."""
 
 
+from pathlib import Path
+from pprint import pprint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
@@ -10,6 +12,7 @@ from plotly.graph_objs.layout import Annotation
 from typeguard import typechecked
 
 from snncompare.export_plots.Plot_config import Plot_config
+from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.helper import get_with_adaptation_bool, get_with_radiation_bool
 
 
@@ -129,7 +132,7 @@ def create_svg_with_dash(
     )
 
     # Custom Legend
-    add_custom_legend(fig=fig)
+    add_custom_legend(fig=fig, graph=graph)
 
     return fig, identified_annotations
 
@@ -140,6 +143,7 @@ def add_custom_title(
     fig: go.Figure,
     graph_name: str,
     sim_duration: int,
+    svg_filepath: str,
     t: int,
 ) -> None:
     """Adds the title and radiation type."""
@@ -159,17 +163,26 @@ def add_custom_title(
         title={
             "text": title,
             "font": {"size": 12},
-            "automargin": True,
             "yref": "paper",
             "x": 0.101,
         }
     )
+    if not Path(svg_filepath).is_file():
+        # TODO move storing into separate function.
+        create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
+        fig.write_image(
+            svg_filepath,
+            format="pdf",
+            engine="kaleido",
+        )
+        print("WROTE IMAGE")
 
 
 @typechecked
 def add_custom_legend(
     *,
     fig: go.Figure,
+    graph: nx.DiGraph,
 ) -> None:
     """Returns the annotations for this graph."""
     fig.add_trace(
@@ -231,17 +244,23 @@ def add_custom_legend(
         )
     )
     # fig.update_layout(title="Try Clicking on the Legend Items!")
+    pprint(graph.nodes["counter_0"]["pos"][0])
+    pprint(graph.nodes["terminator_node"]["pos"][0])
+    x_counter: float = graph.nodes["counter_0"]["pos"][0]
+    x_terminator: float = graph.nodes["terminator_node"]["pos"][0]
+
     fig.update_layout(
         legend={
-            "x": 0.78,
-            "y": 1,
-            "font": {"size": 8, "color": "black"},
-            "bgcolor": "rgba(0,0,0,0)",
-            # bordercolor:'black',
-            # borderwidth:1,
+            "x": x_counter / x_terminator,
+            "y": 2,
+            "font": {"size": 6, "color": "black"},
+            # "bgcolor": "rgba(0,0,0,0)",
+            "bgcolor": "white",
+            "bordercolor": "black",
+            "borderwidth": 1,
+            # "itemwidth": 30,
             "itemsizing": "constant",
             "tracegroupgap": 0,
-            # itemwidth=30,
         }
     )
     fig.update_layout(
@@ -277,7 +296,6 @@ def get_annotations(
             radius=recursive_edge_radius,
         )
     )
-
     return annotations
 
 

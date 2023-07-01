@@ -40,6 +40,7 @@ def show_dash_figures(
     plot_config: Plot_config,
     plotted_graphs: Dict[str, nx.DiGraph],
     port: int,
+    run_config_filename: str,
 ) -> None:
     """Shows a figure in dash using browser."""
     dash_figures: Dict[str, go.Figure] = {}
@@ -82,6 +83,7 @@ def show_dash_figures(
         identified_annotations_dict=identified_annotations_dict,
         plot_config=plot_config,
         plotted_graphs=plotted_graphs,
+        run_config_filename=run_config_filename,
         temporal_node_colours_dict=temporal_node_colours_dict,
         temporal_node_opacity_dict=temporal_node_opacity_dict,
     )

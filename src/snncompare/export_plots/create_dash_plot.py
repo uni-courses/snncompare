@@ -21,7 +21,6 @@ from snncompare.export_plots.Plot_config import (
     Plot_config,
     get_default_plot_config,
 )
-from snncompare.export_plots.plot_graphs import create_root_dir_if_not_exists
 from snncompare.export_plots.show_dash_plot import (
     show_dash_figures,
     show_fig_in_dash,
@@ -123,6 +122,7 @@ def create_svg_plot(
         output_config=output_config,
         plot_config=plot_config,
         plotted_graphs=plotted_graphs,
+        run_config_filename=run_config.unique_id,
         single_timestep=single_timestep,
         port=output_config.dash_port,
     )
@@ -157,7 +157,8 @@ def create_figures(
 
         # Create and store the svg images per timestep.
         filename: str = f"{graph_name}_{run_config_filename}_{t}"
-        svg_filepath: str = f"latex/Images/graphs/{filename}.svg"
+        # svg_filepath: str = f"latex/Images/graphs/{filename}.svg"
+        svg_filepath: str = f"latex/Images/graphs/{filename}.pdf"
         if not Path(svg_filepath).is_file() or (
             output_config.extra_storing_config.show_images
             and single_timestep is None
@@ -170,18 +171,16 @@ def create_figures(
                 t=t,
             )
             dash_screens.append(dash_figure)
-        if not Path(svg_filepath).is_file():
-            # TODO move storing into separate function.
-            create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
-            # dash_figure.write_image(svg_filepath)
-            dash_figure.write_image(
-                svg_filepath,
-                format="svg",
-                engine="kaleido",
-                # include_plotlyjs='cdn',
-                # include_mathjax='cdn',
-                # title='Your Title')
-            )
+        # if not Path(svg_filepath).is_file():
+        #     # TODO move storing into separate function.
+        #     create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
+        #     # dash_figure.write_image(svg_filepath)
+        #     dash_figure.write_image(
+        #         svg_filepath,
+        #         format="pdf",
+        #         engine="kaleido",
+        #     )
+        #     print("WROTE IMAGE")
     dash_figures[graph_name] = dash_screens
     plotted_graphs[graph_name] = plotted_graph
 
@@ -195,6 +194,7 @@ def show_figures(
     plot_config: Plot_config,
     plotted_graphs: Dict[str, nx.DiGraph],
     port: int,
+    run_config_filename: str,
     single_timestep: Optional[bool],
 ) -> None:
     """Shows the dash figures."""
@@ -217,6 +217,7 @@ def show_figures(
                     plot_config=plot_config,
                     plotted_graphs=plotted_graphs,
                     port=port,
+                    run_config_filename=run_config_filename,
                 )
 
 
@@ -231,6 +232,7 @@ def create_dash_figure(
     store_plot_params_in_graph(
         hover_info=output_config.hover_info,
         plotted_graph=plotted_graph,
+        plot_config=plot_config,
         snn_graph=snn_graph,
         t=t,
     )

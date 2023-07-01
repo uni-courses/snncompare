@@ -6,6 +6,7 @@ from snnbackends.networkx.LIF_neuron import LIF_neuron
 from typeguard import typechecked
 
 from snncompare.export_plots.get_graph_colours import get_nx_node_colours
+from snncompare.export_plots.Plot_config import Plot_config
 from snncompare.optional_config.Output_config import Hover_info
 
 
@@ -30,6 +31,7 @@ def get_neurons_in_graph(
 def store_plot_params_in_graph(
     hover_info: Hover_info,
     plotted_graph: nx.DiGraph,
+    plot_config: Plot_config,
     snn_graph: nx.DiGraph,
     t: int,
 ) -> None:
@@ -56,7 +58,10 @@ def store_plot_params_in_graph(
         t=t,
     )
     store_node_colours_and_opacity(
-        plotted_graph=plotted_graph, snn_graph=snn_graph, t=t
+        plot_config=plot_config,
+        plotted_graph=plotted_graph,
+        snn_graph=snn_graph,
+        t=t,
     )
     store_edge_colour_and_opacity(plotted_graph=plotted_graph)
 
@@ -144,7 +149,10 @@ def store_node_labels(
 # pylint: disable=R0912
 @typechecked
 def store_node_colours_and_opacity(
-    plotted_graph: nx.DiGraph, snn_graph: nx.DiGraph, t: int
+    plot_config: Plot_config,
+    plotted_graph: nx.DiGraph,
+    snn_graph: nx.DiGraph,
+    t: int,
 ) -> None:
     """Creates/copies the nodes and edges into the plotted graph."""
 
@@ -164,9 +172,13 @@ def store_node_colours_and_opacity(
 
             # TODO: do not hardcode opacity levels here but in plot_config.
             if snn_graph.nodes[node_name]["nx_lif"][t].spikes:
-                plotted_graph.nodes[node_name]["opacity"] = 0.8
+                plotted_graph.nodes[node_name][
+                    "opacity"
+                ] = plot_config.spike_opacity
             else:
-                plotted_graph.nodes[node_name]["opacity"] = 0.1
+                plotted_graph.nodes[node_name][
+                    "opacity"
+                ] = plot_config.non_spike_opacity
             plotted_graph.nodes[node_name]["temporal_opacity"].append(
                 plotted_graph.nodes[node_name]["opacity"]
             )

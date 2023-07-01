@@ -45,6 +45,9 @@ class Plot_config:
     ) -> None:
         """Creates the plot configuration to generate the svg files."""
 
+        self.svg_dir: str = "latex/Images/graphs/"
+        self.spike_opacity: float = 0.9
+        self.non_spike_opacity: float = 0.1
         self.base_pixel_width: int = base_pixel_width
         self.base_pixel_height: int = base_pixel_height
         self.node_size: float = node_size

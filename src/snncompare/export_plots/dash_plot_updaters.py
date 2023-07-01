@@ -39,6 +39,7 @@ def update_edge_colour_and_opacity(
             )
             edge_opacity: float = get_edge_opacity(
                 edge=edge,
+                plot_config=plot_config,
                 plotted_graph=plotted_graph,
                 t=t,
                 temporal_node_opacity=temporal_node_opacity,
@@ -110,6 +111,7 @@ def get_edge_colour(
 def get_edge_opacity(
     *,
     edge: Tuple[str, str],
+    plot_config: Plot_config,
     plotted_graph: nx.DiGraph,
     t: int,
     temporal_node_opacity: List,
@@ -121,9 +123,7 @@ def get_edge_opacity(
         # Check if synaptic radiation is included and if yes, return that.
         if t in plotted_graph.graph["synaptic_rad_map"].keys():
             if edge in plotted_graph.graph["synaptic_rad_map"][t].keys():
-                # TODO: do not hardcode synaptic rad opacity here but in
-                # plot_config.
-                return 0.8
+                return plot_config.spike_opacity
 
         if node_name == edge[0]:
             return temporal_node_opacity[i][t]
@@ -150,6 +150,7 @@ def update_node_colour(
         for i, node_name in enumerate(plotted_graph.nodes()):
             edge_opacity: float = get_edge_opacity(
                 edge=(node_name, node_name),
+                plot_config=plot_config,
                 plotted_graph=plotted_graph,
                 t=t,
                 temporal_node_opacity=temporal_node_opacity,
@@ -341,6 +342,7 @@ def support_updates(
     identified_annotations_dict: Dict[str, List[NamedAnnotation]],
     plot_config: Plot_config,
     plotted_graphs: Dict[str, nx.DiGraph],
+    run_config_filename: str,
     temporal_node_colours_dict: Dict[str, Dict[str, List]],
     temporal_node_opacity_dict: Dict[str, List],
 ) -> None:
@@ -402,10 +404,12 @@ def support_updates(
                 plotted_graph=plotted_graphs[graph_name_one],
                 t=t,
             )
+            img_filename: str = f"{graph_name_one}_{run_config_filename}_{t}"
             add_custom_title(
                 fig=dash_figures[graph_name_one],
                 graph_name=graph_name_one,
                 sim_duration=sim_duration,
+                svg_filepath=f"{plot_config.svg_dir}{img_filename}",
                 t=t,
             )
             return dash_figures[graph_name_one]
@@ -468,10 +472,12 @@ def support_updates(
                 plotted_graph=plotted_graphs[graph_name_two],
                 t=t,
             )
+            img_filename: str = f"{graph_name_two}_{run_config_filename}_{t}"
             add_custom_title(
                 fig=dash_figures[graph_name_two],
                 graph_name=graph_name_two,
                 sim_duration=sim_duration,
+                svg_filepath=f"{plot_config.svg_dir}{img_filename}",
                 t=t,
             )
             return dash_figures[graph_name_two]
@@ -535,10 +541,12 @@ def support_updates(
                 plotted_graph=plotted_graphs[graph_name_four],
                 t=t,
             )
+            img_filename: str = f"{graph_name_four}_{run_config_filename}_{t}"
             add_custom_title(
                 fig=dash_figures[graph_name_four],
                 graph_name=graph_name_four,
                 sim_duration=sim_duration,
+                svg_filepath=f"{plot_config.svg_dir}{img_filename}",
                 t=t,
             )
             return dash_figures[graph_name_four]

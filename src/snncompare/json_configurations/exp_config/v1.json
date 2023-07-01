@@ -1,13 +1,13 @@
 {
   "adaptations": {
-    "redundancy": [
+    "population": [
       4
     ]
   },
   "algorithms": {
     "MDSA": [
       {
-        "m_val": 1
+        "m_val": 0
       }
     ]
   },
@@ -21,7 +21,7 @@
   "radiations": {
     "change_synaptic_weight": {
       "amplitude": [
-        0.01
+        1
       ],
       "excitatory": [
         true
@@ -30,12 +30,12 @@
         false
       ],
       "probability_per_t": [
-        0.005
+        0.02
       ]
     }
   },
   "seeds": [
-    8
+    10
   ],
   "simulators": [
     "simsnn"
