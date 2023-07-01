@@ -173,7 +173,15 @@ def create_figures(
         if not Path(svg_filepath).is_file():
             # TODO move storing into separate function.
             create_root_dir_if_not_exists(root_dir_name="latex/Images/graphs")
-            dash_figure.write_image(svg_filepath)
+            # dash_figure.write_image(svg_filepath)
+            dash_figure.write_image(
+                svg_filepath,
+                format="svg",
+                engine="kaleido",
+                # include_plotlyjs='cdn',
+                # include_mathjax='cdn',
+                # title='Your Title')
+            )
     dash_figures[graph_name] = dash_screens
     plotted_graphs[graph_name] = plotted_graph
 

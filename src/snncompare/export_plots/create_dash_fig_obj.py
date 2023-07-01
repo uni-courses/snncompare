@@ -247,6 +247,13 @@ def add_custom_legend(
     fig.update_layout(
         showlegend=True,
     )
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor="black")
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor="black")
+    fig.update_layout(
+        # template='plotly_dark',
+        plot_bgcolor="rgba(0, 0, 0, 0)",
+        paper_bgcolor="rgba(0, 0, 0, 0)",
+    )
     # fig.update_layout(showlegend=True )
 
 
