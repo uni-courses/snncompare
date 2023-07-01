@@ -224,11 +224,11 @@ python -m src.snncompare -e live_demo_adaptation -j1 -j2 -j4 -j5 -rev  -si -sgt 
 Full visualisation:
 
 ```bash
-python -m src.snncompare -e v0 -j1 -j2 -j4 -j5 -s2 -rev -dr -di -si -sgt \
+python -m src.snncompare -e v0 -j1 -j2 -j4 -j5 -s2 -rev -dr -si -sgt \
  snn_algo_graph
-python -m src.snncompare -e v1 -j1 -j2 -j4 -j5 -s2 -rev -dr -di -si -sgt \
+python -m src.snncompare -e v1 -j1 -j2 -j4 -j5 -s2 -rev -dr -si -sgt \
  rad_adapted_snn_graph
-python -m src.snncompare -e v2 -j1 -j2 -j4 -j5 -s2 -rev -dr -di -si -sgt \
+python -m src.snncompare -e v2 -j1 -j2 -j4 -j5 -s2 -rev -dr -si -sgt \
  rad_adapted_snn_graph
 ```
 

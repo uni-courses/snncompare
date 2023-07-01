@@ -2,7 +2,6 @@
 
 
 from pathlib import Path
-from pprint import pprint
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import networkx as nx
@@ -244,8 +243,6 @@ def add_custom_legend(
         )
     )
     # fig.update_layout(title="Try Clicking on the Legend Items!")
-    pprint(graph.nodes["counter_0"]["pos"][0])
-    pprint(graph.nodes["terminator_node"]["pos"][0])
     x_counter: float = graph.nodes["counter_0"]["pos"][0]
     x_terminator: float = graph.nodes["terminator_node"]["pos"][0]
 
@@ -253,7 +250,7 @@ def add_custom_legend(
         legend={
             "x": x_counter / x_terminator,
             "y": 2,
-            "font": {"size": 6, "color": "black"},
+            "font": {"size": 8, "color": "black"},
             # "bgcolor": "rgba(0,0,0,0)",
             "bgcolor": "white",
             "bordercolor": "black",

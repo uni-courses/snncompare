@@ -404,7 +404,9 @@ def support_updates(
                 plotted_graph=plotted_graphs[graph_name_one],
                 t=t,
             )
-            img_filename: str = f"{graph_name_one}_{run_config_filename}_{t}"
+            img_filename: str = (
+                f"{graph_name_one}_{run_config_filename}_{t}.pdf"
+            )
             add_custom_title(
                 fig=dash_figures[graph_name_one],
                 graph_name=graph_name_one,
@@ -472,7 +474,9 @@ def support_updates(
                 plotted_graph=plotted_graphs[graph_name_two],
                 t=t,
             )
-            img_filename: str = f"{graph_name_two}_{run_config_filename}_{t}"
+            img_filename: str = (
+                f"{graph_name_two}_{run_config_filename}_{t}.pdf"
+            )
             add_custom_title(
                 fig=dash_figures[graph_name_two],
                 graph_name=graph_name_two,
@@ -541,7 +545,9 @@ def support_updates(
                 plotted_graph=plotted_graphs[graph_name_four],
                 t=t,
             )
-            img_filename: str = f"{graph_name_four}_{run_config_filename}_{t}"
+            img_filename: str = (
+                f"{graph_name_four}_{run_config_filename}_{t}.pdf"
+            )
             add_custom_title(
                 fig=dash_figures[graph_name_four],
                 graph_name=graph_name_four,
