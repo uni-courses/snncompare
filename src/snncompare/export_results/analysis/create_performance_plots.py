@@ -19,6 +19,9 @@ from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_plots.plot_graphs import export_plot
+from snncompare.export_results.analysis.create_p_plots import (
+    create_p_values_plot,
+)
 from snncompare.graph_generation.stage_1_create_graphs import (
     load_input_graph_from_file_with_init_props,
 )
@@ -134,6 +137,12 @@ def create_performance_plots(
             y_series=robustness_plot_data[filename],
             filename=f"{i}_{filename}",
             title="Simulated radiation Robustness of MDSA SNN",
+        )
+        create_p_values_plot(
+            exp_config=exp_config,
+            y_series=robustness_plot_data[filename],
+            filename=f"p_vals_{i}_{filename}",
+            title="P-values of adapatation mechanisms.",
         )
 
 
