@@ -67,7 +67,6 @@ def sim_graphs(
                     unradiated_graph: Simulator = stage_1_graphs[
                         graph_name[4:]
                     ]
-                    print(unradiated_graph.network.graph.graph)
                     apply_synapse_weight_increase_rad(
                         est_sim_duration=unradiated_graph.network.graph.graph[
                             "actual_duration"

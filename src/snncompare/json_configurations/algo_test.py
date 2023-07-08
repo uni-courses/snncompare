@@ -27,7 +27,6 @@ def load_exp_config_from_file(
                 some_dict=encoded_exp_config, decode=True
             )
             json_file.close()
-
         # The ** loads the dict into the object.
         if "unique_id" in exp_config_dict:
             exp_config_dict.pop("unique_id")

@@ -1,52 +1,155 @@
 """Creates plots with the p-values."""
 from pprint import pprint
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+from simplt.export_plot import create_target_dir_if_not_exists
+from simplt.line_plot.line_plot import plot_multiple_lines
+from snnradiation import Rad_damage
 from typeguard import typechecked
 
 from snncompare.exp_config import Exp_config
 
 
 @typechecked
-def create_p_values_plot(
+def create_stat_sign_plot(
     *,
+    create_p_values: bool,
     exp_config: Exp_config,
-    filename: str,
     y_series: Dict[str, List[float]],
-    title: str,
 ) -> None:
     """Creates the P-values for a logistic regression with various degrees of
     redundancy.."""
-    print(f"filename={filename}")
-    print(f"title={title}")
-    adaptation_scores: Dict[
-        str, Dict[int, List[float]]
-    ] = get_adapatation_data(
-        exp_config=exp_config,
-        y_series=y_series,
+    default_p_value: float = 0.05
+    output_dir: str = "latex/Images/p_values"
+    create_target_dir_if_not_exists(some_path=output_dir)
+
+    for algorithm_name, algo_specs in exp_config.algorithms.items():
+        for algo_config in algo_specs:
+            for run_config_radiation in exp_config.radiations:
+                title = (
+                    "Statistical Significance - "
+                    + f"{algorithm_name}:{algo_config}\n "
+                    + f"{run_config_radiation.effect_type}, "
+                    + f"probability: {run_config_radiation.probability_per_t}"
+                    + " [%/neuron per timestep]"
+                )
+                adaptation_scores: Dict[
+                    str, Dict[int, List[float]]
+                ] = get_adapatation_data(
+                    exp_config=exp_config,
+                    y_series=y_series,
+                )
+
+                (
+                    adap_coefficients,
+                    adap_p_values,
+                ) = compute_p_values_per_adaptation_type(
+                    adaptation_scores=adaptation_scores
+                )
+                pprint("adap_p_values")
+                pprint(adap_p_values)
+
+                multiple_y_series: List[List[float]] = []
+                lineLabels: List[str] = []
+
+                output_p_val_plot(
+                    adap_p_values=adap_p_values,
+                    adap_coefficients=adap_coefficients,
+                    output_dir=output_dir,
+                    create_p_values=create_p_values,
+                    default_p_value=default_p_value,
+                    lineLabels=lineLabels,
+                    multiple_y_series=multiple_y_series,
+                    run_config_radiation=run_config_radiation,
+                    title=title,
+                )
+
+
+@typechecked
+def output_p_val_plot(
+    *,
+    adap_p_values: Dict[str, Dict[int, float]],
+    adap_coefficients: Dict[str, Dict[int, float]],
+    output_dir: str,
+    create_p_values: bool,
+    default_p_value: float,
+    lineLabels: List[str],
+    multiple_y_series: List[List[float]],
+    run_config_radiation: Rad_damage,
+    title: str,
+) -> None:
+    """Computes the p-values per adaptation type."""
+    if create_p_values:
+        filename: str = f"p_val_{run_config_radiation.get_filename()[:-1]}"
+        y_axis_label: str = "Probability [-]"
+        for adaptation_name in list(adap_p_values.keys()):
+            multiple_y_series.append(
+                list(adap_p_values[adaptation_name].values())
+            )
+            lineLabels.append(
+                f"p_val:{adaptation_name}"
+            )  # add a label for each dataseries
+            single_x_series = list(adap_p_values[adaptation_name].keys())
+        multiple_y_series.append(
+            [default_p_value] * len(multiple_y_series[-1])
+        )
+        lineLabels.append(
+            "Significance Threshold"
+        )  # add a label for each dataseries
+
+    else:
+        filename = f"coef_{run_config_radiation.get_filename()}"
+        y_axis_label = "Effect size [-]"
+        for adaptation_name in list(adap_coefficients.keys()):
+            multiple_y_series.append(
+                list(adap_coefficients[adaptation_name].values())
+            )
+            lineLabels.append(
+                f"coef:{adaptation_name}"
+            )  # add a label for each dataseries
+            single_x_series = list(adap_coefficients[adaptation_name].keys())
+
+    some_list = np.array(multiple_y_series, dtype=float)
+
+    plot_multiple_lines(
+        extensions=[".svg"],
+        filename=filename,
+        label=lineLabels,
+        legendPosition=0,
+        output_dir=output_dir,
+        x=single_x_series,
+        x_axis_label="redundancy [Backup Neurons]",
+        y_axis_label=y_axis_label,
+        y_series=some_list,
+        title=title,
+        x_ticks=single_x_series,
     )
-    compute_p_values_per_adaptation_type(adaptation_scores=adaptation_scores)
 
 
 @typechecked
 def compute_p_values_per_adaptation_type(
     *,
     adaptation_scores: Dict[str, Dict[int, List[float]]],
-) -> None:
+) -> Tuple[Dict[str, Dict[int, float]], Dict[str, Dict[int, float]]]:
     """Computes the p-values per adaptation type."""
+    adap_coefficients: Dict[str, Dict[int, float]] = {}
+    adap_p_values: Dict[str, Dict[int, float]] = {}
     for (
         adaptation_type,
         combined_redundancy_scores,
     ) in adaptation_scores.items():
-        print(f"adaptation_type={adaptation_type}")
+        adap_coefficients[adaptation_type] = {}
+        adap_p_values[adaptation_type] = {}
+
+        # print(f"adaptation_type={adaptation_type}")
         for redundancy_scores in build_consecutive_dicts(
             input_dict=combined_redundancy_scores
         ):
-            pprint("redundancy_scores=")
-            pprint(redundancy_scores)
+            # pprint("redundancy_scores=")
+            # pprint(redundancy_scores)
 
             # Combine the scores and create the target variable
             combined_scores = np.concatenate(list(redundancy_scores.values()))
@@ -74,6 +177,15 @@ def compute_p_values_per_adaptation_type(
             p_value: float = result._results._cache["pvalues"][1]
             print(f"coefficient={coefficient}")
             print(f"p_value={p_value}")
+
+            adap_p_values[adaptation_type][
+                max(redundancy_scores.keys())
+            ] = p_value
+            adap_coefficients[adaptation_type][
+                max(redundancy_scores.keys())
+            ] = coefficient
+
+    return adap_coefficients, adap_p_values
 
 
 @typechecked

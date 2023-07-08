@@ -63,6 +63,7 @@ def add_generic_exp_config_rad_dict(
             for inhibitory in rad_settings["inhibitory"]:
                 if excitatory or inhibitory:
                     for probability_per_t in rad_settings["probability_per_t"]:
+                        print(f"probability_per_t={probability_per_t}")
                         if (
                             "nr_of_synaptic_weight_increases"
                             in rad_settings.keys()
@@ -88,4 +89,4 @@ def add_generic_exp_config_rad_dict(
                                 nr_of_synaptic_weight_increases=None,
                             )
 
-                    radiation_objs.append(rad_damage)
+                        radiation_objs.append(rad_damage)
