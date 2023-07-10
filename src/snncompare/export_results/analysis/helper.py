@@ -80,8 +80,8 @@ def get_boxplot_title(*, img_index: int, exp_config: Exp_config) -> str:
         str(element) for element in algorithm_names
     )
     title: str = (
-        f"Simulated radiation Robustness of {str_algorithm_names} SNN "
-        + f"adaptations - \n{str_parameter_names}:{str_parameter_values}, "
+        f"{str_algorithm_names} SNN "
+        + f"adaptations -\n {str_parameter_names}:{str_parameter_values}, "
         + f"radiation type:{exp_config.radiations[img_index].effect_type},\n "
         + f"probability: {exp_config.radiations[img_index].probability_per_t} "
         + f"{units}"

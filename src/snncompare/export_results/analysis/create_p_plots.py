@@ -7,7 +7,6 @@ import pandas as pd
 import statsmodels.api as sm
 from simplt.export_plot import create_target_dir_if_not_exists
 from simplt.line_plot.line_plot import plot_multiple_lines
-from snnradiation import Rad_damage
 from typeguard import typechecked
 
 from snncompare.exp_config import Exp_config
@@ -18,6 +17,8 @@ from snncompare.exp_config import Exp_config
 def create_stat_sign_plot(
     *,
     create_p_values: bool,
+    img_index: int,
+    title: str,
     exp_config: Exp_config,
     y_series: Dict[str, List[float]],
 ) -> None:
@@ -27,51 +28,37 @@ def create_stat_sign_plot(
     output_dir: str = "latex/Images/p_values"
     create_target_dir_if_not_exists(some_path=output_dir)
 
-    for algorithm_name, algo_specs in exp_config.algorithms.items():
-        for algo_config in algo_specs:
-            for img_index, run_config_radiation in enumerate(
-                exp_config.radiations
-            ):
-                title = (
-                    "Statistical Significance - "
-                    + f"{algorithm_name}:{algo_config}\n "
-                    + f"{run_config_radiation.effect_type}, "
-                    + f"probability: {run_config_radiation.probability_per_t}"
-                    + " [%/neuron per timestep]"
-                )
-                adaptation_scores: Dict[
-                    str, Dict[int, List[float]]
-                ] = get_adapatation_data(
-                    exp_config=exp_config,
-                    y_series=y_series,
-                )
+    adaptation_scores: Dict[
+        str, Dict[int, List[float]]
+    ] = get_adapatation_data(
+        exp_config=exp_config,
+        y_series=y_series,
+    )
 
-                (
-                    adap_coefficients,
-                    adap_p_values,
-                ) = compute_p_values_per_adaptation_type(
-                    adaptation_scores=adaptation_scores
-                )
-                pprint("adap_p_values")
-                pprint(adap_p_values)
+    (
+        adap_coefficients,
+        adap_p_values,
+    ) = compute_p_values_per_adaptation_type(
+        adaptation_scores=adaptation_scores
+    )
+    pprint("adap_p_values")
+    pprint(adap_p_values)
 
-                multiple_y_series: List[List[float]] = []
-                lineLabels: List[str] = []
+    multiple_y_series: List[List[float]] = []
+    lineLabels: List[str] = []
 
-                output_p_val_plot(
-                    adap_p_values=adap_p_values,
-                    adap_coefficients=adap_coefficients,
-                    algo_config=f"{algorithm_name}:{algo_config}",
-                    output_dir=output_dir,
-                    create_p_values=create_p_values,
-                    default_p_value=default_p_value,
-                    img_index=img_index,
-                    lineLabels=lineLabels,
-                    multiple_y_series=multiple_y_series,
-                    run_config_radiation=run_config_radiation,
-                    title=title,
-                    unique_id_exp=exp_config.unique_id,
-                )
+    output_p_val_plot(
+        adap_p_values=adap_p_values,
+        adap_coefficients=adap_coefficients,
+        output_dir=output_dir,
+        create_p_values=create_p_values,
+        default_p_value=default_p_value,
+        img_index=img_index,
+        lineLabels=lineLabels,
+        multiple_y_series=multiple_y_series,
+        title=title,
+        unique_id_exp=exp_config.unique_id,
+    )
 
 
 # pylint: disable=R0914
@@ -80,23 +67,18 @@ def output_p_val_plot(
     *,
     adap_p_values: Dict[str, Dict[int, float]],
     adap_coefficients: Dict[str, Dict[int, float]],
-    algo_config: str,
     output_dir: str,
     create_p_values: bool,
     default_p_value: float,
     img_index: int,
     lineLabels: List[str],
     multiple_y_series: List[List[float]],
-    run_config_radiation: Rad_damage,
     title: str,
     unique_id_exp: str,
 ) -> None:
     """Computes the p-values per adaptation type."""
     if create_p_values:
-        filename: str = (
-            f"{unique_id_exp}_"
-            + f"{algo_config}_p_val_{run_config_radiation.get_filename()}"
-        )
+        filename: str = f"{unique_id_exp}_p_val_{img_index}"
         y_axis_label: str = "Probability [-]"
         for adaptation_name in list(adap_p_values.keys()):
             multiple_y_series.append(
@@ -114,10 +96,7 @@ def output_p_val_plot(
         )  # add a label for each dataseries
 
     else:
-        filename = (
-            f"{unique_id_exp}_{algo_config}_coef_"
-            + f"{run_config_radiation.get_filename()}"
-        )
+        filename = f"{unique_id_exp}_coeff_{img_index}"
         y_axis_label = "Effect size [-]"
         for adaptation_name in list(adap_coefficients.keys()):
             multiple_y_series.append(
@@ -132,7 +111,7 @@ def output_p_val_plot(
 
     plot_multiple_lines(
         extensions=[".svg"],
-        filename=f"{filename}{img_index}",
+        filename=filename,
         label=lineLabels,
         legendPosition=0,
         output_dir=output_dir,

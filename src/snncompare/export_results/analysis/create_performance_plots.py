@@ -89,7 +89,6 @@ def create_performance_plots(
             seeds=exp_config.seeds,
         )
 
-        print("\nConverting stage 4 results into boxplot.")
         y_series: Dict[str, List[float]] = boxplot_data_to_y_series(
             boxplot_data=boxplot_data
         )
@@ -98,14 +97,18 @@ def create_performance_plots(
     # .keys() is superfluous because sorted only sorts on dict keys)
     for i, filename in enumerate(sorted(robustness_plot_data.keys())):
         # filename: str = get_image_name(count=count, rad_setts=rad_setting)
-
+        title: str = get_boxplot_title(img_index=i, exp_config=exp_config)
         create_stat_sign_plot(
             exp_config=exp_config,
+            img_index=i,
+            title=f"Statistical significance of {title}",
             y_series=robustness_plot_data[filename],
             create_p_values=True,
         )
         create_stat_sign_plot(
             exp_config=exp_config,
+            img_index=i,
+            title=f"Adaptation impact coefficient of {title}",
             y_series=robustness_plot_data[filename],
             create_p_values=False,
         )
@@ -117,11 +120,10 @@ def create_performance_plots(
         delete_non_radiation_data(
             y_series=adaptation_only_data,
         )
-        title: str = get_boxplot_title(img_index=i, exp_config=exp_config)
         create_dotted_boxplot(
             y_series=adaptation_only_data,
-            filename=f"{exp_config.unique_id}_{i}_{filename}",
-            title=title,
+            filename=f"{exp_config.unique_id}_{i}",
+            title=f"Simulated radiation robustness of {title}",
         )
 
 
