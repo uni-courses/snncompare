@@ -5,7 +5,7 @@ import copy
 
 # Take in exp_config or run_configs
 # If exp_config, get run_configs
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -72,6 +72,7 @@ def create_performance_plots(
     *,
     completed_run_configs: List[Run_config],
     exp_config: Exp_config,
+    adaptation_only: Optional[bool] = True,
 ) -> None:
     """Ensures all performance boxplots are created.
 
@@ -133,21 +134,42 @@ def create_performance_plots(
     # .keys() is superfluous because sorted only sorts on dict keys)
     for i, filename in enumerate(sorted(robustness_plot_data.keys())):
         # filename: str = get_image_name(count=count, rad_setts=rad_setting)
+
+        if not adaptation_only:
+            create_stat_sign_plot(
+                exp_config=exp_config,
+                y_series=robustness_plot_data[filename],
+                create_p_values=True,
+            )
+            create_stat_sign_plot(
+                exp_config=exp_config,
+                y_series=robustness_plot_data[filename],
+                create_p_values=False,
+            )
+
+        delete_non_adaptation_data(
+            y_series=robustness_plot_data[filename],
+        )
         create_dotted_boxplot(
             y_series=robustness_plot_data[filename],
-            filename=f"{i}_{filename}",
-            title="Simulated radiation Robustness of MDSA SNN",
+            filename=f"{exp_config.unique_id}_{i}_{filename}",
+            title=(
+                "Simulated radiation Robustness of MDSA SNN - "
+                + f"{exp_config.algorithms.items()}\n "
+                + f"{exp_config.radiations}, "
+                + f"probability: {filename}"
+                + " [%/neuron per timestep]"
+            ),
         )
-        create_stat_sign_plot(
-            exp_config=exp_config,
-            y_series=robustness_plot_data[filename],
-            create_p_values=True,
-        )
-        create_stat_sign_plot(
-            exp_config=exp_config,
-            y_series=robustness_plot_data[filename],
-            create_p_values=False,
-        )
+
+
+@typechecked
+def delete_non_adaptation_data(*, y_series: Dict[str, List[float]]) -> None:
+    """Removes the non-adaptation data from the y-series."""
+    graph_names = list(y_series.keys())
+    for graph_name in graph_names:
+        if graph_name in ["snn_algo_graph", "adapted_snn_graph"]:
+            y_series.pop(graph_name)
 
 
 @typechecked
@@ -260,17 +282,20 @@ def get_boxplot_datapoints(
                     # TODO: verify this check is correct.
                     # pylint: disable=C0201
                     if x_label in results.keys():
+                        # TODO: p_values plot only if adaptation only is False.
                         add_graph_scores(
                             boxplot_data=boxplot_data,
                             x_label=x_label,
                             result=results[x_label],
                             seed=wanted_run_config.seed,
                         )
+
                 # TODO: export boxplot data as pickle per run config.
             else:
                 raise NotImplementedError(
                     f"Error, {algo_name} is not yet supported."
                 )
+
     return boxplot_data
 
 
@@ -399,15 +424,13 @@ def boxplot_data_to_y_series(
         columns[name] = []
 
     for name, seed_and_y_vals in boxplot_data.items():
-        for seed, y_score in seed_and_y_vals.items():
-            print(f"{name},  seed={seed},  {y_score.__dict__}")
+        for y_score in seed_and_y_vals.values():
             columns[name].append(
                 # Compute the score in range [0,1] and add it to the column
                 # score list.
                 float(y_score.correct_results)
                 / float(y_score.correct_results + y_score.wrong_results)
             )
-    print("")
     return columns
 
 

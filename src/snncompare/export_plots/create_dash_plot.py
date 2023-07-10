@@ -48,7 +48,6 @@ def create_svg_plot(
     single_timestep: Optional[int] = None,
 ) -> None:
     """Creates the svg plots."""
-    print("INSIDE")
     plot_config: Plot_config = get_default_plot_config()
 
     app = dash.Dash(__name__)
@@ -80,7 +79,7 @@ def create_svg_plot(
                     synapses=snn_graph.network.synapses,
                     mapped_see_amplitudes=snn_graph.network.synapses[
                         0
-                    ].mapped_see_amplitudes,
+                    ].radiation.mapped_see_amplitudes,
                 )
 
             else:

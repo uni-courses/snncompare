@@ -212,7 +212,9 @@ python -m src.snncompare -e qt0 -j1 -j2 -j4 -si -sgt rad_adapted_snn_graph \
 
 ## Demo
 
-Debug 2 runs, in separate console:
+Debug 2 runs, in separate console: **To get the visualisation with radiation,
+you need to run the simulation again. To do that, you can delete the results by
+including `-dr`**
 
 ```bash
 python -m src.snncompare -e live_demo_adaptation -j1 -j2 -j4 -j5 -rev  -si -sgt \

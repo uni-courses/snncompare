@@ -13,6 +13,7 @@ from typeguard import typechecked
 from snncompare.exp_config import Exp_config
 
 
+# pylint: disable=R0914
 @typechecked
 def create_stat_sign_plot(
     *,
@@ -28,7 +29,9 @@ def create_stat_sign_plot(
 
     for algorithm_name, algo_specs in exp_config.algorithms.items():
         for algo_config in algo_specs:
-            for run_config_radiation in exp_config.radiations:
+            for img_index, run_config_radiation in enumerate(
+                exp_config.radiations
+            ):
                 title = (
                     "Statistical Significance - "
                     + f"{algorithm_name}:{algo_config}\n "
@@ -58,32 +61,42 @@ def create_stat_sign_plot(
                 output_p_val_plot(
                     adap_p_values=adap_p_values,
                     adap_coefficients=adap_coefficients,
+                    algo_config=f"{algorithm_name}:{algo_config}",
                     output_dir=output_dir,
                     create_p_values=create_p_values,
                     default_p_value=default_p_value,
+                    img_index=img_index,
                     lineLabels=lineLabels,
                     multiple_y_series=multiple_y_series,
                     run_config_radiation=run_config_radiation,
                     title=title,
+                    unique_id_exp=exp_config.unique_id,
                 )
 
 
+# pylint: disable=R0914
 @typechecked
 def output_p_val_plot(
     *,
     adap_p_values: Dict[str, Dict[int, float]],
     adap_coefficients: Dict[str, Dict[int, float]],
+    algo_config: str,
     output_dir: str,
     create_p_values: bool,
     default_p_value: float,
+    img_index: int,
     lineLabels: List[str],
     multiple_y_series: List[List[float]],
     run_config_radiation: Rad_damage,
     title: str,
+    unique_id_exp: str,
 ) -> None:
     """Computes the p-values per adaptation type."""
     if create_p_values:
-        filename: str = f"p_val_{run_config_radiation.get_filename()[:-1]}"
+        filename: str = (
+            f"{unique_id_exp}_"
+            + f"{algo_config}_p_val_{run_config_radiation.get_filename()}"
+        )
         y_axis_label: str = "Probability [-]"
         for adaptation_name in list(adap_p_values.keys()):
             multiple_y_series.append(
@@ -101,7 +114,10 @@ def output_p_val_plot(
         )  # add a label for each dataseries
 
     else:
-        filename = f"coef_{run_config_radiation.get_filename()}"
+        filename = (
+            f"{unique_id_exp}_{algo_config}_coef_"
+            + f"{run_config_radiation.get_filename()}"
+        )
         y_axis_label = "Effect size [-]"
         for adaptation_name in list(adap_coefficients.keys()):
             multiple_y_series.append(
@@ -116,7 +132,7 @@ def output_p_val_plot(
 
     plot_multiple_lines(
         extensions=[".svg"],
-        filename=filename,
+        filename=f"{filename}{img_index}",
         label=lineLabels,
         legendPosition=0,
         output_dir=output_dir,
@@ -159,7 +175,6 @@ def compute_p_values_per_adaptation_type(
                 fertilizer_amounts += [redundancy] * len(score_per_redundancy)
             # Create a pandas DataFrame
             data = pd.DataFrame(
-                # {"Scores": scores, "Fertilizer": fertilizer_amounts}
                 {"Scores": combined_scores, "Fertilizer": fertilizer_amounts}
             )
 
