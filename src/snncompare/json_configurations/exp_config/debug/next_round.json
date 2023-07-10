@@ -1,0 +1,49 @@
+{
+  "adaptations": {
+    "population": [
+      2
+    ]
+  },
+  "algorithms": {
+    "MDSA": [
+      {
+        "m_val": 1
+      }
+    ]
+  },
+  "max_graph_size": 20,
+  "max_max_graphs": 4,
+  "min_graph_size": 20,
+  "min_max_graphs": 4,
+  "neuron_models": [
+    "LIF"
+  ],
+  "radiations": {
+    "change_synaptic_weight": {
+      "amplitude": [
+        1
+      ],
+      "excitatory": [
+        true
+      ],
+      "inhibitory": [
+        false
+      ],
+      "probability_per_t": [
+        0.0001
+      ]
+    }
+  },
+  "seeds": [
+    1
+  ],
+  "simulators": [
+    "simsnn"
+  ],
+  "size_and_max_graphs": [
+    "{\"__tuple__\": true, \"items\": [3, 1]}"
+  ],
+  "synaptic_models": [
+    "LIF"
+  ]
+}

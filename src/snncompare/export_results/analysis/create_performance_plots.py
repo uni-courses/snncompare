@@ -18,14 +18,12 @@ from snncompare.export_plots.plot_graphs import export_plot
 from snncompare.export_results.analysis.create_p_plots import (
     create_stat_sign_plot,
 )
-from snncompare.export_results.analysis.data_filtering import (
-    Boxplot_x_val,
-    boxplot_data_to_y_series,
-    get_boxplot_datapoints,
-)
 from snncompare.export_results.analysis.helper import (
     delete_non_radiation_data,
     get_boxplot_title,
+)
+from snncompare.export_results.analysis.load_plot_data_from_file import (
+    load_boxplot_data,
 )
 from snncompare.run_config.Run_config import Run_config
 
@@ -61,38 +59,11 @@ def create_performance_plots(
           - per column
             Get the result of a run config and store it in the boxplot data.
     """
-
-    robustness_plot_data: Dict[str, Dict[str, List[float]]] = {}
-    for rad_setting in reversed(exp_config.radiations):
-        # TODO: separate per radiation_name (type).
-        print(f"rad_setting={rad_setting.__dict__}")
-        # for radiation_value in radiation_values:
-
-        print(
-            "Loading stage 4 results to create boxplot with:"
-            # + f"{radiation_name}:{radiation_value}, adaptation type"
-            + f":{exp_config.adaptations:}"
-        )
-
-        # Get run configs belonging to this radiation type/level.
-        wanted_run_configs: List[Run_config] = []
-        for run_config in completed_run_configs:
-            if run_config.radiation == rad_setting:
-                wanted_run_configs.append(run_config)
-
-        # Get results per line.
-        boxplot_data: Dict[
-            str, Dict[int, Boxplot_x_val]
-        ] = get_boxplot_datapoints(
-            adaptations=exp_config.adaptations,
-            wanted_run_configs=wanted_run_configs,
-            seeds=exp_config.seeds,
-        )
-
-        y_series: Dict[str, List[float]] = boxplot_data_to_y_series(
-            boxplot_data=boxplot_data
-        )
-        robustness_plot_data[rad_setting.get_filename()] = y_series
+    robustness_plot_data: Dict[
+        str, Dict[str, List[float]]
+    ] = load_boxplot_data(
+        completed_run_configs=completed_run_configs, exp_config=exp_config
+    )
 
     # .keys() is superfluous because sorted only sorts on dict keys)
     for i, filename in enumerate(sorted(robustness_plot_data.keys())):
