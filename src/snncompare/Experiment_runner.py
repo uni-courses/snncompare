@@ -38,6 +38,8 @@ from snncompare.export_results.analysis.create_adaptation_cost_plot import (
 )
 from snncompare.export_results.analysis.create_performance_plots import (
     create_performance_plots,
+)
+from snncompare.export_results.analysis.helper import (
     get_completed_and_missing_run_configs,
 )
 from snncompare.export_results.output_stage1_configs_and_input_graph import (
@@ -105,6 +107,7 @@ class Experiment_runner:
         perform_run: Optional[bool] = True,
         specific_run_config: Optional[Run_config] = None,
     ) -> None:
+        print(exp_config.unique_id)
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists(root_dir_name="results")
 

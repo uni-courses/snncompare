@@ -2,14 +2,16 @@
   "adaptations": {
     "population": [
       2,
-      4,
-      6
+      4
     ]
   },
   "algorithms": {
     "MDSA": [
       {
         "m_val": 0
+      },
+      {
+        "m_val": 1
       }
     ]
   },
@@ -33,23 +35,23 @@
       ],
       "probability_per_t": [
         0.001,
-        0.01,
-        0.05,
-        0.1,
-        0.25
+        0.01
       ]
     }
   },
   "seeds": [
     1,
     2,
-    3
+    3,
+    4,
+    5
   ],
   "simulators": [
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [6, 1]}"
+    "{\"__tuple__\": true, \"items\": [3, 1]}",
+    "{\"__tuple__\": true, \"items\": [4, 2]}"
   ],
   "synaptic_models": [
     "LIF"
