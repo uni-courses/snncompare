@@ -110,7 +110,7 @@ def output_p_val_plot(
     some_list = np.array(multiple_y_series, dtype=float)
 
     plot_multiple_lines(
-        extensions=[".svg"],
+        extensions=[".png"],
         filename=filename,
         label=lineLabels,
         legendPosition=0,
