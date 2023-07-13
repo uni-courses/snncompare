@@ -60,15 +60,6 @@ def get_boxplot_title(*, img_index: int, exp_config: Exp_config) -> str:
     if len(rad_types) > 1:
         raise ValueError("Error, multiple radiation types not yet supported.")
 
-    if exp_config.radiations[img_index].effect_type == "neuron_death":
-        units: str = "[% per neuron per timestep]"
-    elif (
-        exp_config.radiations[img_index].effect_type
-        == "change_synaptic_weight"
-    ):
-        units = "[% per synapse per timestep]"
-    else:
-        raise ValueError("Error, radiation type not yet supported.")
     # Drop the set accolades {}.
     str_parameter_names: str = "".join(
         str(element) for element in parameter_names
@@ -82,9 +73,10 @@ def get_boxplot_title(*, img_index: int, exp_config: Exp_config) -> str:
     title: str = (
         f"{str_algorithm_names} SNN "
         + f"adaptations -\n {str_parameter_names}:{str_parameter_values}, "
-        + f"radiation type:{exp_config.radiations[img_index].effect_type},\n "
-        + f"probability: {exp_config.radiations[img_index].probability_per_t} "
-        + f"{units}"
+        + f"radiation type:{exp_config.radiations[img_index].effect_type}"
+        # + "probability: "
+        # + f"{exp_config.radiations[img_index].probability_per_t*100}"
+        # + f"{units}"
     )
     return title
 

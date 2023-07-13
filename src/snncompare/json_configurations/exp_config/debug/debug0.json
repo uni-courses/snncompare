@@ -43,13 +43,14 @@
   "seeds": [
     1,
     2,
-    3
+    3,
+    10
   ],
   "simulators": [
     "simsnn"
   ],
   "size_and_max_graphs": [
-    "{\"__tuple__\": true, \"items\": [3, 1]}"
+    "{\"__tuple__\": true, \"items\": [5, 3]}"
   ],
   "synaptic_models": [
     "LIF"

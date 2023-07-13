@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+from scipy import stats
 from simplt.export_plot import create_target_dir_if_not_exists
 from simplt.line_plot.line_plot import plot_multiple_lines
 from typeguard import typechecked
@@ -14,17 +15,69 @@ from snncompare.exp_config import Exp_config
 
 # pylint: disable=R0914
 @typechecked
-def create_stat_sign_plot(
+def create_annova_plot(
     *,
     create_p_values: bool,
-    img_index: int,
+    exp_config: Exp_config,
+    lines: Dict[float, Dict[str, Dict[float, float]]],
     title: str,
+) -> None:
+    """Creates plot for annova."""
+    multiple_y_series: List[List[float]] = []
+    lineLabels: List[str] = []
+    default_p_value: float = 0.05
+    output_dir: str = "latex/Images/p_values"
+    create_target_dir_if_not_exists(some_path=output_dir)
+
+    for rad_probability in list(lines.keys()):
+        for adaptation_mechanism, xy_values in lines[rad_probability].items():
+            multiple_y_series.append(list(xy_values.values()))
+            lineLabels.append(
+                f"rad:{rad_probability*100} [%], {adaptation_mechanism}"
+            )  # add a label for each dataseries
+            single_x_series = list(xy_values.keys())
+
+    if create_p_values:
+        filename: str = f"{exp_config.unique_id}_p_vals"
+        y_axis_label: str = "Probability [-]"
+        multiple_y_series.append(
+            [default_p_value] * len(multiple_y_series[-1])
+        )
+        lineLabels.append(
+            "Significance Threshold"
+        )  # add a label for each dataseries
+
+    else:
+        filename = f"{exp_config.unique_id}_f_vals"
+        y_axis_label = "Effect size [-]"
+    some_list = np.array(multiple_y_series, dtype=float)
+    pprint("some_list")
+    pprint(some_list)
+
+    plot_multiple_lines(
+        extensions=[".png"],
+        filename=filename,
+        label=lineLabels,
+        legendPosition=0,
+        output_dir=output_dir,
+        x=single_x_series,
+        x_axis_label="redundancy [Backup Neurons]",
+        y_axis_label=y_axis_label,
+        y_series=some_list,
+        title=title,
+        x_ticks=single_x_series,
+    )
+
+
+# pylint: disable=R0914
+@typechecked
+def create_stat_sign_plot(
+    *,
     exp_config: Exp_config,
     y_series: Dict[str, List[float]],
-) -> None:
+) -> Tuple[Dict[str, Dict[int, float]], Dict[str, Dict[int, float]]]:
     """Creates the P-values for a logistic regression with various degrees of
     redundancy.."""
-    default_p_value: float = 0.05
     output_dir: str = "latex/Images/p_values"
     create_target_dir_if_not_exists(some_path=output_dir)
 
@@ -38,27 +91,10 @@ def create_stat_sign_plot(
     (
         adap_coefficients,
         adap_p_values,
-    ) = compute_p_values_per_adaptation_type(
+    ) = annova_compute_p_values_per_adaptation_type(
         adaptation_scores=adaptation_scores
     )
-    pprint("adap_p_values")
-    pprint(adap_p_values)
-
-    multiple_y_series: List[List[float]] = []
-    lineLabels: List[str] = []
-
-    output_p_val_plot(
-        adap_p_values=adap_p_values,
-        adap_coefficients=adap_coefficients,
-        output_dir=output_dir,
-        create_p_values=create_p_values,
-        default_p_value=default_p_value,
-        img_index=img_index,
-        lineLabels=lineLabels,
-        multiple_y_series=multiple_y_series,
-        title=title,
-        unique_id_exp=exp_config.unique_id,
-    )
+    return adap_coefficients, adap_p_values
 
 
 # pylint: disable=R0914
@@ -139,13 +175,9 @@ def compute_p_values_per_adaptation_type(
         adap_coefficients[adaptation_type] = {}
         adap_p_values[adaptation_type] = {}
 
-        # print(f"adaptation_type={adaptation_type}")
         for redundancy_scores in build_consecutive_dicts(
             input_dict=combined_redundancy_scores
         ):
-            # pprint("redundancy_scores=")
-            # pprint(redundancy_scores)
-
             # Combine the scores and create the target variable
             combined_scores = np.concatenate(list(redundancy_scores.values()))
 
@@ -169,8 +201,6 @@ def compute_p_values_per_adaptation_type(
             coefficient: float = result._results.params[1]
             result.summary()
             p_value: float = result._results._cache["pvalues"][1]
-            print(f"coefficient={coefficient}")
-            print(f"p_value={p_value}")
 
             adap_p_values[adaptation_type][
                 max(redundancy_scores.keys())
@@ -213,20 +243,16 @@ def get_adapatation_data(
     *, exp_config: Exp_config, y_series: Dict[str, List[float]]
 ) -> Dict[str, Dict[int, List[float]]]:
     """Gets the adaptation scores for the experiment configuration."""
-    for run_config_adaptation in exp_config.adaptations:
-        print(f"run_config_adaptation={run_config_adaptation.__dict__}")
-
     adaptation_types: Dict[str, List[int]] = get_sorted_adaptation_types(
         exp_config=exp_config
     )
-    pprint(adaptation_types)
+
     adaptation_scores: Dict[
         str, Dict[int, List[float]]
     ] = get_adaptation_scores(
         adaptation_types=adaptation_types,
         y_series=y_series,
     )
-    pprint(adaptation_scores)
     return adaptation_scores
 
 
@@ -260,7 +286,6 @@ def get_snn_performance(
     """Returns the y-values for a given adaptation type."""
     for col_name, y_vals in y_series.items():
         if col_name == adaptation_name:
-            print(f"col_name={col_name}:{y_vals}")
             return y_vals
     raise ValueError("Error, expected to find adaptation name.")
 
@@ -287,3 +312,35 @@ def get_sorted_adaptation_types(
         # Sort the list from small to large.
         redundancies.sort()
     return adaptation_types
+
+
+@typechecked
+def annova_compute_p_values_per_adaptation_type(
+    *,
+    adaptation_scores: Dict[str, Dict[int, List[float]]],
+) -> Tuple[Dict[str, Dict[int, float]], Dict[str, Dict[int, float]]]:
+    """Computes the p-values per adaptation type."""
+    adap_coefficients: Dict[str, Dict[int, float]] = {}
+    adap_p_values: Dict[str, Dict[int, float]] = {}
+    for (
+        adaptation_type,
+        combined_redundancy_scores,
+    ) in adaptation_scores.items():
+        adap_coefficients[adaptation_type] = {}
+        adap_p_values[adaptation_type] = {}
+
+        for redundancy_scores in build_consecutive_dicts(
+            input_dict=combined_redundancy_scores
+        ):
+            f_statistic, p_value = stats.f_oneway(
+                *list(redundancy_scores.values())
+            )
+
+            adap_p_values[adaptation_type][
+                max(redundancy_scores.keys())
+            ] = p_value
+            adap_coefficients[adaptation_type][
+                max(redundancy_scores.keys())
+            ] = f_statistic
+
+    return adap_coefficients, adap_p_values

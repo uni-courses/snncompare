@@ -25,27 +25,17 @@ from snncompare.run_config.Run_config import Run_config
 def load_boxplot_data(
     exp_config: Exp_config,
     completed_run_configs: List[Run_config],
-) -> Dict[str, Dict[str, List[float]]]:
+) -> Dict[float, Dict[str, List[float]]]:
     """Creates a dotted boxplot."""
     pickle_path: str = "results/pickles"
     if not Path(pickle_path):
         os.mkdir(pickle_path)
-    robustness_plot_data: Dict[str, Dict[str, List[float]]] = {}
+    robustness_plot_data: Dict[float, Dict[str, List[float]]] = {}
     filepath: str = f"{pickle_path}/{exp_config.unique_id}.pkl"
     if file_exists(filepath=filepath):
         robustness_plot_data = load_pickle_boxplot(filepath=filepath)
     else:
         for rad_setting in reversed(exp_config.radiations):
-            # TODO: separate per radiation_name (type).
-            print(f"rad_setting={rad_setting.__dict__}")
-            # for radiation_value in radiation_values:
-
-            print(
-                "Loading stage 4 results to create boxplot with:"
-                # + f"{radiation_name}:{radiation_value}, adaptation type"
-                + f":{exp_config.adaptations:}"
-            )
-
             # Get run configs belonging to this radiation type/level.
             wanted_run_configs: List[Run_config] = []
             for run_config in completed_run_configs:
@@ -64,7 +54,7 @@ def load_boxplot_data(
             y_series: Dict[str, List[float]] = boxplot_data_to_y_series(
                 boxplot_data=boxplot_data
             )
-            robustness_plot_data[rad_setting.get_filename()] = y_series
+            robustness_plot_data[rad_setting.probability_per_t] = y_series
         store_pickle_boxplot(
             filepath=filepath, robustness_plot_data=robustness_plot_data
         )
@@ -74,7 +64,7 @@ def load_boxplot_data(
 
 @typechecked
 def store_pickle_boxplot(
-    *, filepath: str, robustness_plot_data: Dict[str, Dict[str, List[float]]]
+    *, filepath: str, robustness_plot_data: Dict[float, Dict[str, List[float]]]
 ) -> None:
     """Stores run_config list into pickle file."""
     with open(filepath, "wb") as handle:
@@ -84,10 +74,14 @@ def store_pickle_boxplot(
 
 
 @typechecked
-def load_pickle_boxplot(*, filepath: str) -> Dict[str, Dict[str, List[float]]]:
+def load_pickle_boxplot(
+    *, filepath: str
+) -> Dict[float, Dict[str, List[float]]]:
     """Stores run_config list into pickle file."""
     with open(filepath, "rb") as handle:
-        robustness_plot_data: Dict[str, Dict[str, List[float]]] = pickle.load(
+        robustness_plot_data: Dict[
+            float, Dict[str, List[float]]
+        ] = pickle.load(
             handle
         )  # nosec
     return robustness_plot_data

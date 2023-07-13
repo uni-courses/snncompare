@@ -5,6 +5,7 @@ the performance of the SNNs."""
 # Take in exp_config or run_configs
 # If exp_config, get run_configs
 import copy
+from pprint import pprint
 from typing import Dict, List
 
 import matplotlib.pyplot as plt
@@ -15,7 +16,8 @@ from typeguard import typechecked
 
 from snncompare.exp_config.Exp_config import Exp_config
 from snncompare.export_plots.plot_graphs import export_plot
-from snncompare.export_results.analysis.create_p_plots import (
+from snncompare.export_results.analysis.annova_p_plot import (
+    create_annova_plot,
     create_stat_sign_plot,
 )
 from snncompare.export_results.analysis.helper import (
@@ -60,33 +62,41 @@ def create_performance_plots(
             Get the result of a run config and store it in the boxplot data.
     """
     robustness_plot_data: Dict[
-        str, Dict[str, List[float]]
+        float, Dict[str, List[float]]
     ] = load_boxplot_data(
         completed_run_configs=completed_run_configs, exp_config=exp_config
     )
 
-    # .keys() is superfluous because sorted only sorts on dict keys)
-    for i, filename in enumerate(sorted(robustness_plot_data.keys())):
-        # filename: str = get_image_name(count=count, rad_setts=rad_setting)
+    p_lines: Dict[float, Dict[str, Dict[float, float]]] = {}
+    f_lines: Dict[float, Dict[str, Dict[float, float]]] = {}
+    for i, rad_probability in enumerate(sorted(robustness_plot_data.keys())):
         title: str = get_boxplot_title(img_index=i, exp_config=exp_config)
-        create_stat_sign_plot(
+        print(f"\nrad_probability={rad_probability}")
+        print(f"title={title}")
+        adap_coefficients, adap_p_values = create_stat_sign_plot(
             exp_config=exp_config,
-            img_index=i,
-            title=f"Statistical significance of {title}",
-            y_series=robustness_plot_data[filename],
-            create_p_values=True,
+            y_series=robustness_plot_data[rad_probability],
         )
-        create_stat_sign_plot(
-            exp_config=exp_config,
-            img_index=i,
-            title=f"Adaptation impact coefficient of {title}",
-            y_series=robustness_plot_data[filename],
-            create_p_values=False,
-        )
+        p_lines[rad_probability] = adap_p_values
+        f_lines[rad_probability] = adap_coefficients
 
+    pprint(p_lines)
+    # TODO: get title that does not depend on img id.
+    create_annova_plot(
+        create_p_values=True, exp_config=exp_config, lines=p_lines, title=title
+    )
+    create_annova_plot(
+        create_p_values=False,
+        exp_config=exp_config,
+        lines=p_lines,
+        title=f_lines,
+    )
+
+    # Create boxplot
+    for i, rad_probability in enumerate(sorted(robustness_plot_data.keys())):
         # Do not plot the unradiated data in boxplot, as that is trivial 100%.
         adaptation_only_data: Dict[str, List[float]] = copy.deepcopy(
-            robustness_plot_data[filename]
+            robustness_plot_data[rad_probability]
         )
         delete_non_radiation_data(
             y_series=adaptation_only_data,
