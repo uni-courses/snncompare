@@ -5,7 +5,6 @@ the performance of the SNNs."""
 # Take in exp_config or run_configs
 # If exp_config, get run_configs
 import copy
-from pprint import pprint
 from typing import Dict, List
 
 import matplotlib.pyplot as plt
@@ -69,10 +68,10 @@ def create_performance_plots(
 
     p_lines: Dict[float, Dict[str, Dict[float, float]]] = {}
     f_lines: Dict[float, Dict[str, Dict[float, float]]] = {}
+    titles: List[str] = []
     for i, rad_probability in enumerate(sorted(robustness_plot_data.keys())):
         title: str = get_boxplot_title(img_index=i, exp_config=exp_config)
-        print(f"\nrad_probability={rad_probability}")
-        print(f"title={title}")
+        titles.append(title)
         adap_coefficients, adap_p_values = create_stat_sign_plot(
             exp_config=exp_config,
             y_series=robustness_plot_data[rad_probability],
@@ -80,16 +79,18 @@ def create_performance_plots(
         p_lines[rad_probability] = adap_p_values
         f_lines[rad_probability] = adap_coefficients
 
-    pprint(p_lines)
     # TODO: get title that does not depend on img id.
     create_annova_plot(
-        create_p_values=True, exp_config=exp_config, lines=p_lines, title=title
+        create_p_values=True,
+        exp_config=exp_config,
+        data=p_lines,
+        titles=titles,
     )
     create_annova_plot(
         create_p_values=False,
         exp_config=exp_config,
-        lines=p_lines,
-        title=f_lines,
+        data=f_lines,
+        titles=titles,
     )
 
     # Create boxplot
@@ -104,7 +105,7 @@ def create_performance_plots(
         create_dotted_boxplot(
             y_series=adaptation_only_data,
             filename=f"{exp_config.unique_id}_{i}",
-            title=f"Simulated radiation robustness of {title}",
+            title=f"Simulated radiation robustness of {titles[i]}",
         )
 
 

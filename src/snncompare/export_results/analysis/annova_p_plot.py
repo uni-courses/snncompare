@@ -7,7 +7,12 @@ import pandas as pd
 import statsmodels.api as sm
 from scipy import stats
 from simplt.export_plot import create_target_dir_if_not_exists
-from simplt.line_plot.line_plot import plot_multiple_lines
+from simplt.line_plot.line_plot import (
+    Line,
+    Window_lim,
+    X_tick,
+    plot_multiple_lines,
+)
 from typeguard import typechecked
 
 from snncompare.exp_config import Exp_config
@@ -19,54 +24,101 @@ def create_annova_plot(
     *,
     create_p_values: bool,
     exp_config: Exp_config,
-    lines: Dict[float, Dict[str, Dict[float, float]]],
-    title: str,
+    data: Dict[float, Dict[str, Dict[float, float]]],
+    titles: List[str],
 ) -> None:
     """Creates plot for annova."""
-    multiple_y_series: List[List[float]] = []
-    lineLabels: List[str] = []
+
     default_p_value: float = 0.05
     output_dir: str = "latex/Images/p_values"
     create_target_dir_if_not_exists(some_path=output_dir)
+    for i, rad_probability in enumerate(list(data.keys())):
+        plot_lines: List[Line] = []
+        x_ticks: List[X_tick] = []
+        for adaptation_mechanism, xy_values in data[rad_probability].items():
+            if not x_ticks:
+                for x_pos in xy_values.keys():
+                    x_ticks.append(X_tick(x_pos=x_pos, x_pos_label=x_pos))
 
-    for rad_probability in list(lines.keys()):
-        for adaptation_mechanism, xy_values in lines[rad_probability].items():
-            multiple_y_series.append(list(xy_values.values()))
-            lineLabels.append(
-                f"rad:{rad_probability*100} [%], {adaptation_mechanism}"
-            )  # add a label for each dataseries
-            single_x_series = list(xy_values.keys())
+            plot_lines.append(
+                Line(
+                    x_series=xy_values.keys(),
+                    y_series=xy_values.values(),
+                    label=f"{adaptation_mechanism}",
+                )
+            )
 
-    if create_p_values:
-        filename: str = f"{exp_config.unique_id}_p_vals"
-        y_axis_label: str = "Probability [-]"
-        multiple_y_series.append(
-            [default_p_value] * len(multiple_y_series[-1])
+        if create_p_values:
+            filename: str = f"{exp_config.unique_id}_p_vals_{i}"
+            y_axis_label: str = "Probability [-]"
+
+            plot_lines.append(
+                Line(
+                    x_series=get_min_max_x_coords(plot_lines=plot_lines),
+                    y_series=[default_p_value]
+                    * 2,  # 2 for min and max xcoord.
+                    label="Significance Threshold",
+                )
+            )
+
+        else:
+            filename = f"{exp_config.unique_id}_f_vals_{i}"
+            y_axis_label = "Effect size [-]"
+
+        # pprint("x_ticks")
+        # pprint(x_ticks)
+        if create_p_values:
+            window_lim: Window_lim = Window_lim(
+                x_min=get_min_max_x_coords(plot_lines=plot_lines)[0],
+                x_max=get_min_max_x_coords(plot_lines=plot_lines)[1],
+                y_min=0,
+                y_max=1,
+            )
+        else:
+            window_lim = Window_lim(
+                x_min=get_min_max_x_coords(plot_lines=plot_lines)[0],
+                x_max=get_min_max_x_coords(plot_lines=plot_lines)[1],
+                y_min=0,
+                y_max=200,
+            )
+        plot_multiple_lines(
+            extensions=[".png"],
+            filename=filename,
+            lines=plot_lines,
+            legendPosition=0,
+            output_dir=output_dir,
+            # x=single_x_series,
+            x_axis_label="redundancy [Backup Neurons]",
+            y_axis_label=y_axis_label,
+            # y_series=some_list,
+            title=titles[i],
+            x_ticks=x_ticks,
+            window_lim=window_lim,
         )
-        lineLabels.append(
-            "Significance Threshold"
-        )  # add a label for each dataseries
 
-    else:
-        filename = f"{exp_config.unique_id}_f_vals"
-        y_axis_label = "Effect size [-]"
-    some_list = np.array(multiple_y_series, dtype=float)
-    pprint("some_list")
-    pprint(some_list)
 
-    plot_multiple_lines(
-        extensions=[".png"],
-        filename=filename,
-        label=lineLabels,
-        legendPosition=0,
-        output_dir=output_dir,
-        x=single_x_series,
-        x_axis_label="redundancy [Backup Neurons]",
-        y_axis_label=y_axis_label,
-        y_series=some_list,
-        title=title,
-        x_ticks=single_x_series,
-    )
+# pylint: disable=R0914
+@typechecked
+def get_min_max_x_coords(
+    *,
+    plot_lines: List[Line],
+) -> Tuple[float, float]:
+    """Return the minimum and maximum values."""
+    x_min: float = min(list(map(lambda line: min(line.x_series), plot_lines)))
+    x_max: float = max(list(map(lambda line: max(line.x_series), plot_lines)))
+    return x_min, x_max
+
+
+# pylint: disable=R0914
+@typechecked
+def get_min_max_y_coords(
+    *,
+    plot_lines: List[Line],
+) -> Tuple[float, float]:
+    """Return the minimum and mayimum values."""
+    y_min: float = min(list(map(lambda line: min(line.y_series), plot_lines)))
+    y_may: float = max(list(map(lambda line: max(line.y_series), plot_lines)))
+    return y_min, y_may
 
 
 # pylint: disable=R0914
@@ -95,69 +147,6 @@ def create_stat_sign_plot(
         adaptation_scores=adaptation_scores
     )
     return adap_coefficients, adap_p_values
-
-
-# pylint: disable=R0914
-@typechecked
-def output_p_val_plot(
-    *,
-    adap_p_values: Dict[str, Dict[int, float]],
-    adap_coefficients: Dict[str, Dict[int, float]],
-    output_dir: str,
-    create_p_values: bool,
-    default_p_value: float,
-    img_index: int,
-    lineLabels: List[str],
-    multiple_y_series: List[List[float]],
-    title: str,
-    unique_id_exp: str,
-) -> None:
-    """Computes the p-values per adaptation type."""
-    if create_p_values:
-        filename: str = f"{unique_id_exp}_p_val_{img_index}"
-        y_axis_label: str = "Probability [-]"
-        for adaptation_name in list(adap_p_values.keys()):
-            multiple_y_series.append(
-                list(adap_p_values[adaptation_name].values())
-            )
-            lineLabels.append(
-                f"p_val:{adaptation_name}"
-            )  # add a label for each dataseries
-            single_x_series = list(adap_p_values[adaptation_name].keys())
-        multiple_y_series.append(
-            [default_p_value] * len(multiple_y_series[-1])
-        )
-        lineLabels.append(
-            "Significance Threshold"
-        )  # add a label for each dataseries
-
-    else:
-        filename = f"{unique_id_exp}_coeff_{img_index}"
-        y_axis_label = "Effect size [-]"
-        for adaptation_name in list(adap_coefficients.keys()):
-            multiple_y_series.append(
-                list(adap_coefficients[adaptation_name].values())
-            )
-            lineLabels.append(
-                f"coef:{adaptation_name}"
-            )  # add a label for each dataseries
-            single_x_series = list(adap_coefficients[adaptation_name].keys())
-
-    some_list = np.array(multiple_y_series, dtype=float)
-
-    plot_multiple_lines(
-        extensions=[".png"],
-        filename=filename,
-        label=lineLabels,
-        legendPosition=0,
-        output_dir=output_dir,
-        x=single_x_series,
-        x_axis_label="redundancy [Backup Neurons]",
-        y_axis_label=y_axis_label,
-        y_series=some_list,
-        title=title,
-        x_ticks=single_x_series,
-    )
 
 
 @typechecked
@@ -342,5 +331,6 @@ def annova_compute_p_values_per_adaptation_type(
             adap_coefficients[adaptation_type][
                 max(redundancy_scores.keys())
             ] = f_statistic
-
+    print("adap_p_values")
+    pprint(adap_p_values)
     return adap_coefficients, adap_p_values

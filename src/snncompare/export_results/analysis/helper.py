@@ -74,8 +74,8 @@ def get_boxplot_title(*, img_index: int, exp_config: Exp_config) -> str:
         f"{str_algorithm_names} SNN "
         + f"adaptations -\n {str_parameter_names}:{str_parameter_values}, "
         + f"radiation type:{exp_config.radiations[img_index].effect_type}"
-        # + "probability: "
-        # + f"{exp_config.radiations[img_index].probability_per_t*100}"
+        + " probability: "
+        + f"{exp_config.radiations[img_index].probability_per_t*100} [%]"
         # + f"{units}"
     )
     return title
