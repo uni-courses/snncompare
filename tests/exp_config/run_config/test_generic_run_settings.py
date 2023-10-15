@@ -101,7 +101,7 @@ def verify_invalid_config_sett_val_throws_error(  # type:ignore[misc]
 ) -> None:
     """Verifies an error is thrown on an invalid configuration setting value.
 
-    This method is called by other test files and is genereric for most
+    This method is called by other test files and is generic for most
     configuration setting parameters.
     """
     actual_type = type(invalid_config_setting_value)

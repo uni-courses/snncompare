@@ -12,7 +12,7 @@ default_language_version:
 repos:
 # Test if the python code is formatted according to the Black standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-black
-   rev: 23.3.0
+   rev: 23.9.1
    hooks:
      - id: black-conda
        args:
@@ -21,7 +21,7 @@ repos:
 
 # Test if the python code is formatted according to the flake8 standard.
  - repo: https://github.com/Quantco/pre-commit-mirrors-flake8
-   rev: 6.0.0
+   rev: 6.1.0
    hooks:
     - id: flake8-conda
       args:
@@ -40,7 +40,7 @@ repos:
 # - repo: https://github.com/python/mypy
  - repo: https://github.com/pre-commit/mirrors-mypy
 ### - repo: https://github.com/a-t-0/mypy
-   rev: v1.3.0
+   rev: v1.6.0
    hooks:
     - id: mypy
       args: ["--disallow-untyped-calls", "--disallow-untyped-defs", "--disallow-incomplete-defs", "--disallow-any-explicit"]
@@ -57,7 +57,7 @@ repos:
 
 # Tests if there are spelling errors in the code.
  - repo: https://github.com/codespell-project/codespell
-   rev: v2.2.4
+   rev: v2.2.6
    hooks:
     - id: codespell
 
@@ -77,7 +77,7 @@ repos:
 
 # Runs additional tests that are created by the pre-commit software itself.
  - repo: https://github.com/pre-commit/pre-commit-hooks
-   rev: v4.4.0
+   rev: v4.5.0
    hooks:
     # Check user did not add large files.
     - id: check-added-large-files
@@ -137,7 +137,7 @@ repos:
 
 
  - repo: https://github.com/PyCQA/autoflake
-   rev: v2.1.1
+   rev: v2.2.1
    hooks:
     - id: autoflake
       args: ["--in-place", "--remove-unused-variables", "--remove-all-unused-imports", "--recursive"]
@@ -154,7 +154,7 @@ repos:
 
 # Enforces formatting style in Markdown (.md) files.
  - repo: https://github.com/executablebooks/mdformat
-   rev: 0.7.16
+   rev: 0.7.17
    hooks:
    - id: mdformat
      #args: ["-r ~MD013"]
@@ -171,7 +171,7 @@ repos:
 #     args: ['--never', '--application-directories', 'src']
 
  - repo: https://github.com/myint/docformatter
-   rev: v1.7.1
+   rev: v1.7.5
    hooks:
    - id: docformatter
 
@@ -185,14 +185,14 @@ repos:
 # Updates the syntax of `.py` files to the specified python version.
 # It is not compatible with: pre-commit hook: fix-encoding-pragma
  - repo: https://github.com/asottile/pyupgrade
-   rev: v3.4.0
+   rev: v3.15.0
    hooks:
      - id: pyupgrade
        args: [--py38-plus]
 
 
  - repo: https://github.com/igorshubovych/markdownlint-cli
-   rev: v0.34.0
+   rev: v0.37.0
    hooks:
      - id: markdownlint
        args: ["--fix"]

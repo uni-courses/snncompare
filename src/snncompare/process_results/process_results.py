@@ -6,7 +6,6 @@ The MDSA algorithm results will consist of a list of nodes per used
 graph that have been selected according to Alipour, and according to the
 respective SNN graph.
 """
-from pprint import pprint
 from typing import Dict
 
 from simsnn.core.simulators import Simulator
@@ -119,7 +118,6 @@ def perform_mdsa_results_computation_if_needed(
                         desired_graph_name=graph_name,
                         verbose=True,
                     )
-
 
         # Indicate the graphs have completed stage 1.
         add_stage_completion_to_graph(snn=graph, stage_index=4)

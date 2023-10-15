@@ -74,7 +74,6 @@ def get_labels(*, G: nx.DiGraph, configuration: str) -> dict[int, str]:
     for node_name in G.nodes:
         if configuration == "du":
             labels[node_name] = f"{node_name}"
-            # ] = f'{node_name},R:{G.nodes[node_name]["lava_LIF"].du.get()}'
     return labels
 
 
