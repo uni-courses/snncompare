@@ -162,7 +162,7 @@ def run_simulation_for_t_steps(
         # Run the simulation on lava.
         simulate_snn_on_lava(G=G, starter_node_name=starter_neuron, t=t)
 
-        print(f"After t={t+1} simulation steps.")
+        print(f"After t={t + 1} simulation steps.")
         print_neuron_properties_per_graph(
             G=G, static=False, t=t, neuron_type="lava_LIF"
         )

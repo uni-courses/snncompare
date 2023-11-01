@@ -26,7 +26,13 @@ def load_boxplot_data(
     exp_config: Exp_config,
     completed_run_configs: List[Run_config],
 ) -> Dict[float, Dict[str, List[float]]]:
-    """Creates a dotted boxplot."""
+    """Creates a dotted boxplot.
+
+    :exp_config: (Exp_config),  The experimental configuration,
+    including various settings and parameters. :completed_run_configs:
+    (List[Run_config]),  A list of completed run configurations, each
+    representing a specific run of the experiment.
+    """
     pickle_path: str = "results/pickles"
     if not Path(pickle_path):
         os.mkdir(pickle_path)

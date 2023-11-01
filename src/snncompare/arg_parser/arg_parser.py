@@ -330,7 +330,7 @@ def parse_cli_args(
             "Ensures the SNN behaviour visualisation is exported, as pdf by "
             + "default. Supported are:"
             + f"{supp_setts.export_types.extend(['gif'])}. Usage:"
-            + f'-x {",".join(supp_setts.export_types+["gif"])} '
+            + f'-x {",".join(supp_setts.export_types + ["gif"])} '
             + "or:\n"
             + f"--export_images {supp_setts.export_types[0]}"
         ),

@@ -157,7 +157,7 @@ def add_custom_title(
         title += "with radiation"
     else:
         title += "without radiation"
-    title += f" (t={t+1}/{sim_duration})"
+    title += f" (t={t + 1}/{sim_duration})"
     fig.update_layout(
         title={
             "text": title,

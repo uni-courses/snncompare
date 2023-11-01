@@ -167,7 +167,7 @@ class Experiment_runner:
         plot_config = get_default_plot_config()
         results_nx_graphs: Dict
         for i, run_config in enumerate(run_configs):
-            print(f"\n{i+1}/{len(run_configs)} [runs]")
+            print(f"\n{i + 1}/{len(run_configs)} [runs]")
             run_config.print_run_config_dict()
             results_nx_graphs = self.perform_run_stage_1(
                 exp_config=exp_config,
