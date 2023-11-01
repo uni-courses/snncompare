@@ -1,6 +1,7 @@
 # This file lists which files are automatically excluded when you want to push
 # something to Git(Hub/Lab) using the program GIT.
 
+*__llm_storage__*
 demo/*
 latex/Images/graphs/*
 Images/*
