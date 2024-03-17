@@ -37,6 +37,16 @@ class Cost_plot_group:
         adaptation_type: str,
         xy_coords_per_adaptation_type: Dict[float, List[float]],
     ) -> None:
+        """Defines an adaptation object that stores the coordinates of the
+        adaptations of a tree.
+
+        Args:
+        :adaptation_type: (str), The type of adaptation.
+        :xy_coords_per_adaptation_type: (Dict[float, List[float]]), A
+        dictionary containing the GPS coordinates of the adaptations of
+        a tree.
+        """
+
         self.adaptation_type: str = adaptation_type
         self.xy_coords_per_adaptation_type: Dict[
             float, List[float]
@@ -70,6 +80,30 @@ class Raw_adap_cost_data:
         seed: int,
         snn_graph: Union[nx.DiGraph, Simulator],
     ) -> None:
+        """Initializes the ``NeuralNetwork`` class.
+
+        Args:
+        :adaptation: (Union[None, Adaptation]), The adaptation to apply
+        to the neural network.
+        :algorithm_name: (str), The name of the algorithm to use for
+        training the neural network.
+        :algorithm_parameter: (int), The parameter to use for the
+        training algorithm.
+        :graph_size: (int), The size of the graph to use for training
+        the neural network.
+        :graph_nr: (int), The number of graphs to use for training the
+        neural network.
+        :input_graph: (nx.Graph), The input graph to use for training
+        the neural network.
+        :dummy_run_config: (Run_config), The dummy run configuration to
+        use for training the neural network.
+        :seed: (int), The seed to use for the random number generator.
+        :snn_graph: (Union[nx.DiGraph, Simulator]), The SNN graph to use
+        for training the neural network.
+        Returns:
+        None
+        """
+
         self.adaptation: Union[None, Adaptation] = adaptation
         self.algorithm_name: str = algorithm_name
         self.algorithm_parameter: int = algorithm_parameter

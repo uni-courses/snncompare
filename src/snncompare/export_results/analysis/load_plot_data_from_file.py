@@ -28,10 +28,14 @@ def load_boxplot_data(
 ) -> Dict[float, Dict[str, List[float]]]:
     """Creates a dotted boxplot.
 
-    :exp_config: (Exp_config),  The experimental configuration,
-    including various settings and parameters. :completed_run_configs:
-    (List[Run_config]),  A list of completed run configurations, each
-    representing a specific run of the experiment.
+    Args:
+    :exp_config: (Exp_config), The experimental configuration, including
+    various settings and parameters.
+    :completed_run_configs: (List[Run_config]), A list of completed run
+    configurations, each representing a specific run of the experiment.
+    Returns:
+    A dictionary containing data for a dotted boxplot, with radiation
+    probabilities as keys and corresponding data as values.
     """
     pickle_path: str = "results/pickles"
     if not Path(pickle_path):
@@ -72,7 +76,23 @@ def load_boxplot_data(
 def store_pickle_boxplot(
     *, filepath: str, robustness_plot_data: Dict[float, Dict[str, List[float]]]
 ) -> None:
-    """Stores run_config list into pickle file."""
+    """Stores the data for generating boxplots of robustness measures into a
+    pickle file.
+
+    Args:
+    :filepath: (str), The path to the pickle file where the data will be
+    stored.
+    :robustness_plot_data: (Dict[float, Dict[str, List[float]]]), A
+    dictionary containing data for generating boxplots of robustness
+    measures. The keys are floating-point numbers representing different
+    aspects of the robustness, and the values are dictionaries where the
+    keys are strings representing plot names, and the values are lists of
+    floating-point values representing data points for the corresponding
+    plot.
+    Returns:
+    This function does not return any value; it stores the data in a pickle
+    file specified by the 'filepath' argument.
+    """
     with open(filepath, "wb") as handle:
         pickle.dump(
             robustness_plot_data, handle, protocol=pickle.HIGHEST_PROTOCOL
@@ -83,7 +103,18 @@ def store_pickle_boxplot(
 def load_pickle_boxplot(
     *, filepath: str
 ) -> Dict[float, Dict[str, List[float]]]:
-    """Stores run_config list into pickle file."""
+    """Loads data from a pickle file containing a boxplot representation of
+    robustness values for different configurations.
+
+    Args:
+    :filepath: (str), The path to the pickle file that contains the boxplot
+    data.
+    Returns:
+    A dictionary containing robustness data in the form of a boxplot. The
+    outer dictionary has float keys representing some values, and each
+    associated value is an inner dictionary with string keys and lists of
+    floats as values.
+    """
     with open(filepath, "rb") as handle:
         robustness_plot_data: Dict[
             float, Dict[str, List[float]]

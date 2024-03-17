@@ -14,11 +14,7 @@ def get_all_filepaths_in_dir(*, root_dir: str) -> List[str]:
     subdirectories.
 
     Args:
-        root_dir: The root directory to search for Python files.
-
-    Returns:
-        A list of file paths for all Python files in root_dir and its
-        subdirectories.
+    :root_dir: (str), The root directory to search for Python files.
     """
     filepaths = []
     for dir_name, _, file_list in os.walk(root_dir):
@@ -34,7 +30,14 @@ def get_all_filepaths_in_dir(*, root_dir: str) -> List[str]:
 def get_run_config_filepath(*, run_config_unique_id: str) -> str:
     """Loops over the stage 1 directory that contains the run_config
     dictionaries, checks whether any of them contains the desired run_config
-    unique_id, and if yes, returns the filepath of that file."""
+    unique_id, and if yes, returns the filepath of that file.
+
+    Args:
+    :run_config_unique_id: (str), The unique ID to search for in the
+    run_config dictionaries.
+    Returns:
+    The filepath of the run_config file containing the desired unique ID.
+    """
 
     relative_dir: str = f"results/stage{1}/run_configs"
     if not os.path.exists(relative_dir):

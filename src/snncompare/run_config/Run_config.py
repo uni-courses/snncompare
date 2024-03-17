@@ -29,6 +29,16 @@ class Neuron_death:
 
     @typechecked
     def __init__(self, probability: float):
+        """Creates a new NeuronDeathProbability object, an object that
+        represents a probability of neuron death in a network.
+
+        Args:
+        :probability: (float), The probability of neuron death.
+        Returns:
+        A probability of neuron death object with the specified
+        probability.
+        """
+
         if probability < 0:
             raise ValueError(
                 "Error, neuron death probability should be 0 or larger."

@@ -23,13 +23,11 @@ def plot_circular_graph(
 ) -> None:
     """Generates a circular plot of a (directed) graph.
 
-    :param density: param G:
-    :param seed: The value of the random seed used for this test.
-    :param export: (Default value = True)
-    :param show: Default value = True)
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param recurrent_edge_density:
-    :param test_scope:
+    Args:
+    :density: (float), The density parameter.
+    :G: (nx.DiGraph), The original graph.
+    :recurrent_edge_density: (int | float), Density of recurrent edges.
+    :test_scope: (Long_scope_of_tests), Scope of tests configuration.
     """
     # the_labels = get_alipour_labels(G, configuration=configuration)
     the_labels = get_labels(G=G, configuration="du")
@@ -54,7 +52,14 @@ def plot_circular_graph(
 
 @typechecked
 def create_root_dir_if_not_exists(*, root_dir_name: str) -> None:
-    """:param root_dir_name:"""
+    """Creates a root directory if it doesn't exist.
+
+    Args:
+    :root_dir_name: (str), The name of the root directory to be created.
+    Returns:
+    Does not return anything; creates the root directory if it doesn't exist
+    or raises a FileNotFoundError if unable to create it.
+    """
     if not os.path.exists(root_dir_name):
         os.makedirs(f"{root_dir_name}")
     if not os.path.exists(root_dir_name):
@@ -67,8 +72,11 @@ def create_root_dir_if_not_exists(*, root_dir_name: str) -> None:
 def get_labels(*, G: nx.DiGraph, configuration: str) -> dict[int, str]:
     """Returns the labels for the plot nodes.
 
-    :param G: The original graph on which the MDSA algorithm is ran.
-    :param configuration:
+    Args:
+    :G: (networkx.DiGraph), The original graph on which the MDSA algorithm
+    is run.
+    :configuration: (str), Determines the configuration for label
+    generation.
     """
     labels = {}
     for node_name in G.nodes:
@@ -84,9 +92,14 @@ def export_plot(  # type:ignore[misc]
     filename: str,
     extensions: list[str],
 ) -> None:
-    """:param plt:
+    """Saves a matplotlib plot with various extensions.
 
-    :param filename:
+    Args:
+    :some_plt: (Any), The matplotlib plot to be saved.
+    :filename: (str), The name of the file to be saved.
+    :extensions: (list[str]), List of file extensions to save the plot in.
+    Returns:
+    No return value; saves the plot with specified extensions.
     """
     create_target_dir_if_not_exists(some_path="latex/Images/graphs")
     for extension in extensions:

@@ -28,6 +28,13 @@ class Supported_run_settings:
     def __init__(
         self,
     ) -> None:
+        """Initializes a new GraphEnvironment.
+
+        Args:
+        :parameters: (Dict), Dictionary containing the configuration of
+        the GraphEnvironment.
+        """
+
         # exp_config dictionary keys:
         self.parameters: Dict = {
             "adaptation": Union[None, Dict],

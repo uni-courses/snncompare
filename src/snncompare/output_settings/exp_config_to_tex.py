@@ -11,7 +11,14 @@ def get_min_max_synaptic_excitation_amplitude_lines(
     *, exp_config: Exp_config
 ) -> List[str]:
     """Returns 2 lines with the minimum and maximum synaptic weight increase
-    per simulation, that is found in the used exp_config."""
+    per simulation, that is found in the used exp_config.
+
+    Args:
+    :exp_config: (Exp_config), The experiment configuration to extract the
+    synaptic weight increase from.
+    Returns:
+    2 lines with the minimum and maximum synaptic weight increase.
+    """
     lines: List[str] = []
     if "change_syn" in exp_config.radiations.__dict__.keys():
         if exp_config.radiations.excitatory == [
@@ -40,7 +47,10 @@ def get_min_max_synaptic_excitation_lines(
     weight increase occurring per synapse per timestep, that is found in the
     used exp_config.
 
-    TODO: probability per timestep or per synapse.
+    Args:
+    :exp_config: (Exp_config), The exp_config to be used.
+    Returns:
+    2 lines with the minimum and maximum probability.
     """
     lines: List[str] = []
     if "change_syn" in exp_config.radiations.__dict__.keys():
@@ -73,7 +83,11 @@ def get_min_max_neuron_death_probability_procent(
     """Returns 2 lines with the minimum and maximum probability of a neuron
     death occurring per simulation, that is found in the used exp_config.
 
-    TODO: verify procent is procent.
+    Args:
+    :exp_config: (Exp_config), The experiment configuration object.
+    Returns:
+    A list of 2 strings with the minimum and maximum probability of a neuron
+    death occurring per simulation.
     """
     lines: List[str] = []
     if "neuron_death" in exp_config.radiations.__dict__.keys():
@@ -100,7 +114,14 @@ def get_neuron_death_probabilities_procent(
     *, exp_config: Exp_config
 ) -> List[str]:
     """Returns 1 latex line with the latex code for the neuron death
-    probabilities."""
+    probabilities.
+
+    Args:
+    :exp_config: (Exp_config), The experiment configuration.
+    Returns:
+    A list of 1 latex line with the latex code for the neuron death
+    probabilities.
+    """
     lines: List[str] = []
     if "neuron_death" in exp_config.radiations.__dict__.keys():
         if exp_config.radiations.excitatory == [
@@ -122,7 +143,11 @@ def get_nr_of_synaptic_weight_increases(
     weight increase occurring per synapse per timestep, that is found in the
     used exp_config.
 
-    TODO: probability per timestep or per synapse.
+    Args:
+    :exp_config: (Exp_config), The experiment configuration to use.
+    Returns:
+    A list of 2 strings containing the minimum and maximum probability of a
+    synaptic weight increase occurring per synapse per timestep.
     """
     lines: List[str] = []
     if "change_syn" in exp_config.radiations.__dict__.keys():

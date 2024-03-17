@@ -33,9 +33,16 @@ def output_snn_results(
     graphs_dict: Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]],
     stage_index: int,
 ) -> None:
-    """Exports results dict to a json file.
+    """Exports results dict to a json file. TODO: also output Neumann results.
 
-    TODO: also output Neumann results.
+    Args:
+    :output_data_type: (str), Specifies the type of output data.
+    :run_config: (Run_config), Configuration settings for the run.
+    :graphs_dict: (Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]), A
+    dictionary containing graphs or simulators.
+    :stage_index: (int), Index indicating the stage.
+    Returns:
+    This function does not return anything.
     """
     for with_adaptation in [False, True]:
         _, rand_nrs_hash = get_rand_nrs_and_hash(
@@ -100,7 +107,18 @@ def output_some_graph_property_dict(
     output_filepath: str,
     snn_graph: Union[nx.DiGraph, Simulator],
 ) -> None:
-    """Outputs the stage 4 snn results to json."""
+    """Outputs the stage 4 SNN results to JSON.
+
+    Args:
+    :dict_name: (str), The name of the dictionary property within the graph.
+    :simulator: (str), The type of simulator used, either "simsnn" or "nx".
+    :output_filepath: (str), The file path where the JSON output will be
+    saved.
+    :snn_graph: (Union[nx.DiGraph, Simulator]), The graph object containing
+    SNN results, either a NetworkX DiGraph or a Simulator object.
+    Returns:
+    No return value; writes SNN results to a JSON file.
+    """
     if dict_name not in [
         "results",
         "failure_modes",

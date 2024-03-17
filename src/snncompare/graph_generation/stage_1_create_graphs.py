@@ -47,8 +47,15 @@ def get_graphs_stage_1(
     plot_config: Plot_config,
     run_config: Run_config,
 ) -> Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]:
-    """Returns the initialised graphs for stage 1 for the different
-    simulators."""
+    """Returns the initialised graphs for stage 1 for the different simulators.
+
+    Args:
+    :plot_config: (Plot_config), The configuration for plotting graphs.
+    :run_config: (Run_config), The configuration for running the simulation.
+    Returns:
+    A dictionary containing initialised graphs for stage 1 for different
+    simulators, identified by their names as keys.
+    """
     stage_1_graphs: Dict[
         str, Union[nx.Graph, nx.DiGraph, Simulator]
     ] = get_nx_lif_graphs(
@@ -76,7 +83,18 @@ def nx_lif_graphs_to_simsnn_graphs(
     reverse_conversion: bool,
     run_config: Run_config,
 ) -> Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]:
-    """Converts nx_lif graphs to sim snn graphs."""
+    """Converts nx_lif graphs to sim snn graphs.
+
+    Args:
+    :stage_1_graphs: (Dict), A dictionary containing nx_lif graphs to be
+    converted.
+    :reverse_conversion: (bool), A boolean flag indicating whether to
+    perform a reverse conversion.
+    :run_config: (Run_config), An object representing the run configuration
+    for the conversion process.
+    Returns:
+    A dictionary containing converted graphs or simulators.
+    """
     new_graphs: Dict = {}
     new_graphs["input_graph"] = stage_1_graphs["input_graph"]
     if "alg_props" not in new_graphs["input_graph"].graph.keys():
@@ -114,7 +132,19 @@ def nx_lif_graph_to_simsnn_graph(
     add_to_multimeter: bool,
     add_to_raster: bool,
 ) -> Simulator:
-    """Converts an snn graph of type nx_LIF to sim snn graph."""
+    """Converts an SNN graph of type nx_LIF to a sim SNN graph.
+
+    Args:
+    :snn_graph: (nx.DiGraph), The input NetworkX DiGraph representing the
+    spiking neural network.
+    :add_to_multimeter: (bool), A boolean flag indicating whether to add
+    neurons to the multimeter for monitoring.
+    :add_to_raster: (bool), A boolean flag indicating whether to add neurons
+    to the raster for visualization.
+    Returns:
+    A simulator object representing the converted SNN graph in a
+    sim-compatible format.
+    """
     net = Network()
     sim = Simulator(net, monitor_I=True)
 
@@ -173,11 +203,14 @@ def get_nx_lif_graphs(
     plot_config: Plot_config,
     run_config: Run_config,
 ) -> Dict:
-    """First gets the input graph.
+    """This function first gets the input graph, then creates the SNN graph
+    with (or without) adaptation. Radiation graphs are ignored in stage 1. The
+    input graph, SNN graph, and adapted SNN graph are returned as a dictionary.
 
-    Then creates the snn graph with (or without) adaptation. Radiation
-    graphs are ignored in stage 1. The input graph, snn_graph and
-    adapted_snn_graph are returned as a dict.
+    Args:
+    :plot_config: (Plot_config), A configuration object for plotting.
+    :run_config: (Run_config), A configuration object for running the
+    algorithm.
     """
     # TODO: move to central place in MDSA algo spec.
     graphs = {}
@@ -205,9 +238,15 @@ def load_input_graph_from_file(
     *,
     run_config: Run_config,
 ) -> nx.Graph:
-    """If the input graphs already exist for this run_config, it loads them
-    from file, otherwise, it generates them, exports them, and then returns
-    them."""
+    """Loads an input graph from a file or generates it based on the provided
+    run configuration.
+
+    Args:
+    :run_config: (Run_config), The run configuration specifying the graph
+    size and number to load or generate.
+    Returns:
+    The input graph loaded or generated based on the run configuration.
+    """
     input_graph: nx.Graph = load_input_graph_based_on_nr(
         graph_size=run_config.graph_size, graph_nr=run_config.graph_nr
     )
@@ -219,8 +258,14 @@ def load_input_graph_from_file_with_init_props(
     *,
     run_config: Run_config,
 ) -> nx.Graph:
-    """Loads an input graph from file, and then adds the initialisation
-    properties to it."""
+    """Loads an input graph from file, and then adds the initialization
+    properties to it.
+
+    Args:
+    :run_config: (Run_config), The configuration object for the run.
+    Returns:
+    The initialized input graph.
+    """
     input_graph: nx.Graph = load_input_graph_from_file(run_config=run_config)
     add_mdsa_initialisation_properties_to_input_graph(
         input_graph=input_graph, seed=run_config.seed
@@ -236,7 +281,15 @@ def get_adapted_graph(
     run_config: Run_config,
 ) -> nx.DiGraph:
     """Converts an input graph of stage 1 and applies a form of brain-inspired
-    adaptation to it."""
+    adaptation to it.
+
+    Args:
+    :snn_algo_graph: (nx.DiGraph), The input graph representing stage 1.
+    :plot_config: (Plot_config), Configuration settings for plotting.
+    :run_config: (Run_config), Configuration settings for the run.
+    Returns:
+    The adapted graph after applying brain-inspired adaptation.
+    """
 
     if run_config.adaptation is None:
         raise ValueError(
@@ -273,11 +326,13 @@ def has_adaptation(
     *,
     run_config: Run_config,
 ) -> bool:
-    """Checks if the adaptation contains a None setting.
-
-    TODO: ensure the adaptation only consists of 1 setting per run.
+    """TODO: ensure the adaptation only consists of 1 setting per run.
     TODO: throw an error if the adaptation settings contain multiple
     settings, like "redundancy" and "None" simultaneously.
+
+    Args:
+    :run_config: (Run_config), The configuration object containing
+    adaptation settings.
     """
     if run_config.adaptation is None:
         return False
@@ -288,7 +343,13 @@ def has_adaptation(
 def get_redundant_graph(
     *, snn_algo_graph: nx.DiGraph, plot_config: Plot_config, red_lev: int
 ) -> nx.DiGraph:
-    """Returns a networkx graph that has a form of adaptation added."""
+    """Returns a networkx graph that has a form of adaptation added.
+
+    Args:
+    :snn_algo_graph: (nx.DiGraph), The original directed graph.
+    :plot_config: (Plot_config), Configuration settings for plotting.
+    :red_lev: (int), The level of redundancy to be applied.
+    """
     adaptation_graph = copy.deepcopy(snn_algo_graph)
     apply_sparse_redundancy(
         adaptation_graph=adaptation_graph,
@@ -305,9 +366,14 @@ def get_new_radiation_graph(
     run_config: Run_config,
 ) -> Simulator:
     """Makes a deep copy of the incoming graph and applies radiation to it.
+    Then returns the graph with the radiation, as well as a list of neurons
+    that are dead.
 
-    Then returns the graph with the radiation, as well as a list of
-    neurons that are dead.
+    Args:
+    :snn_graph: (Simulator), The original graph to be copied and have
+    radiation applied.
+    :run_config: (Run_config), Configuration settings for running the
+    simulation, including radiation parameters.
     """
     radiation_graph: Simulator = copy.deepcopy(snn_graph)
     # TODO: include ignored neuron names per algorithm.

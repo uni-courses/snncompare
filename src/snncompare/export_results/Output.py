@@ -73,6 +73,15 @@ class Stage_1_graphs:
         stage_1_graphs: Dict,
         run_config: Run_config,
     ) -> None:
+        """Initializes an object for performing stage 2 computations.
+
+        Args:
+        :exp_config: (Exp_config), The experiment configuration.
+        :stage_1_graphs: (Dict), A dictionary containing the graphs
+        computed in stage 1.
+        :run_config: (Run_config), The run configuration.
+        """
+
         self.exp_config = exp_config
         self.run_config = run_config
         self.stage_1_graphs: Dict = stage_1_graphs
@@ -99,6 +108,15 @@ class Stage_2_graphs:
         graphs_stage_2: Dict,
         run_config: Run_config,
     ) -> None:
+        """Initializes a `ModelTrainer` object.
+
+        Args:
+        :exp_config: (`Exp_config`), The experiment configuration.
+        :graphs_stage_2: (`Dict`), The graphs for the second stage of
+        training.
+        :run_config: (`Run_config`), The run configuration.
+        """
+
         self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_2 = graphs_stage_2
@@ -120,6 +138,16 @@ class Stage_3_graphs:
         graphs_stage_3: Dict,
         run_config: Run_config,
     ) -> None:
+        """Initializes the graphs for stage 3.
+
+        Args:
+        :exp_config: (Exp_config), The experiment configuration.
+        :graphs_stage_3: (Dict), The graphs for stage 3.
+        :run_config: (Run_config), The run configuration.
+        Returns:
+        None.
+        """
+
         self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_3 = graphs_stage_3
@@ -142,6 +170,15 @@ class Stage_4_graphs:
         graphs_stage_4: Dict,
         run_config: Run_config,
     ) -> None:
+        """This class performs the 5th stage of the experiment (training the
+        stage 4 graphs) in the graph based network pipeline.
+
+        Args:
+        :exp_config: (Exp_config), The experiment configurations.
+        :run_config: (Run_config), The run configurations.
+        :graphs_stage_4: (Dict), The graphs of stage 4 of the pipeline.
+        """
+
         self.exp_config = exp_config
         self.run_config = run_config
         self.graphs_stage_4 = graphs_stage_4

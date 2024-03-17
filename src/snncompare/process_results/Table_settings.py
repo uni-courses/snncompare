@@ -250,6 +250,14 @@ def get_failure_mode_obj(
     def append_failure_mode_entry(
         failure_mode_entry: Failure_mode_entry,
     ) -> None:
+        """Appends the given failure mode entry to the list of failure mode
+        entries.
+
+        Args:
+        :failure_mode_entry: (Failure_mode_entry), The failure mode
+        entry to be appended.
+        """
+
         if first_timestep_only:
             failure_mode_entries.append(failure_mode_entry)
         else:

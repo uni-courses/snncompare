@@ -140,6 +140,14 @@ class Supported_experiment_settings:
     def __init__(
         self,
     ) -> None:
+        """Initialise the parameters of the algorithm experiments.
+
+        Args:
+        :self: (None), An instance of the AlgorithmSettings class.
+        Returns:
+        None, initialise the parameters of the instance.
+        """
+
         self.seed = 5
 
         # Create dictionary with algorithm name as key, and algorithm settings

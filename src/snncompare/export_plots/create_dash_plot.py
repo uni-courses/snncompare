@@ -47,9 +47,24 @@ def create_svg_plot(
     run_config: Run_config,
     single_timestep: Optional[int] = None,
 ) -> None:
-    """Creates the svg plots."""
-    plot_config: Plot_config = get_default_plot_config()
+    """Creates SVG plots based on user preferences or defaults.
 
+    Args:
+    :graph_names: (List[str]), List of names specifying which graph(s) the
+    user wants to see. If empty, all 4 graphs will be shown by default.
+    :graphs: (Dict[str, Union[nx.Graph, nx.DiGraph, Simulator]]), A
+    dictionary containing graph objects keyed by their names.
+    :output_config: (Output_config), Configuration settings for the output
+    of the plots.
+    :run_config: (Run_config), Configuration settings for the run.
+    :single_timestep: (Optional[int]), An optional integer specifying a
+    single timestep for which the plot should be created.
+    Returns:
+    This function does not return anything; it generates SVG plots based on
+    the provided configurations.
+    """
+
+    plot_config: Plot_config = get_default_plot_config()
     app = dash.Dash(__name__)
 
     # pylint: disable=R1702
