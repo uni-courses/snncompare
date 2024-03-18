@@ -82,6 +82,17 @@ class MultiDimensionalArrayEncoder(json.JSONEncoder):
             *,
             item: Union[tuple, List, Dict, Any],
         ) -> Any:
+            """Converts any input type to list or tuple with the flag
+            `__tuple__`. It is used to convert a dictionary to a list of
+            tuples.
+
+            Args:
+            :item: (Union[tuple, List, Dict, Any]), The input item
+            to convert.
+            Returns:
+            The converted item.
+            """
+
             if isinstance(item, tuple):
                 return {"__tuple__": True, "items": item}
             if isinstance(item, list):

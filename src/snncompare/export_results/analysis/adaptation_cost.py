@@ -30,6 +30,18 @@ class Adaptation_cost_plot_data:
         algorithm_name: str,
         algorithm_parameter: int,
     ) -> None:
+        """The constructor for the cost plot object.
+
+        Args:
+        :adaptation_costs: (List[Cost_plot_group]), The list of cost
+        plot groups.
+        :cost_type: (str), The type of cost.
+        :title: (str), The title of the plot.
+        :algorithm_name: (str), The name of the algorithm used.
+        :algorithm_parameter: (int), The parameter of the algorithm
+        used.
+        """
+
         self.adaptation_costs: List[Cost_plot_group] = adaptation_costs
         self.cost_type: str = cost_type
         self.title: str = title

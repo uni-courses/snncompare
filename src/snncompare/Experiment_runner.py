@@ -107,6 +107,21 @@ class Experiment_runner:
         perform_run: Optional[bool] = True,
         specific_run_config: Optional[Run_config] = None,
     ) -> None:
+        """Initialize the experiment.
+
+        Args:
+        :exp_config: (Exp_config), The experiment configuration
+        settings.
+        :output_config: (Output_config), The output configuration
+        settings.
+        :reverse: (bool), If true, the run_configs will be performed in
+        reverse order.
+        :perform_run: (Optional[bool]), If true, the experiment will be
+        performed. Defaults to True.
+        :specific_run_config: (Optional[Run_config]), A specific run
+        configuration to perform. Defaults to None.
+        """
+
         print(exp_config.unique_id)
         # Ensure output directories are created for stages 1 to 4.
         create_root_dir_if_not_exists(root_dir_name="results")

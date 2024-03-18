@@ -31,6 +31,16 @@ class Boxplot_x_val:
         correct_results: int,
         wrong_results: int,
     ) -> None:
+        """The accuracy of the object detection algorithm, as determined by the
+        number of correct and incorrect object detections.
+
+        Args:
+        :correct_results: (int), The number of objects detected
+        correctly.
+        :wrong_results: (int), The number of objects detected
+        incorrectly.
+        """
+
         self.correct_results: int = correct_results
         self.wrong_results: int = wrong_results
 
@@ -41,6 +51,14 @@ class Boxplot_data:
 
     @typechecked
     def __init__(self, x_series: List[Boxplot_x_val]) -> None:
+        """Initializes the ``Boxplot_x_series`` class, to create an instance of
+        a box plot x series object.
+
+        Args:
+        :x_series: (List[Boxplot_x_val]), The series of values for
+        making a box plot.
+        """
+
         self.x_series: List[Boxplot_x_val] = x_series
 
 

@@ -59,6 +59,22 @@ class Radiation_data:
         seed_in_seed_hash_file: bool,
         seed_hash_filepath: str,
     ) -> None:
+        """Initializes the Radiation class.
+
+        Args:
+        :rad_affected_neurons_hash: (str), The hash of the neurons
+        affected by radiation.
+        :radiation_file_exists: (bool), Indicates whether the radiation
+        file exists.
+        :radiation_filepath: (str), The path to the radiation file.
+        :radiation_name: (str), The name of the radiation.
+        :seed_hash_file_exists: (bool), Indicates whether the seed hash
+        file exists.
+        :seed_in_seed_hash_file: (bool), Indicates whether the seed is
+        in the seed hash file.
+        :seed_hash_filepath: (str), The path to the seed hash file.
+        """
+
         self.rad_affected_neurons_hash: str = rad_affected_neurons_hash
         self.radiation_file_exists: bool = radiation_file_exists
         self.radiation_filepath: str = radiation_filepath
@@ -85,6 +101,23 @@ class Rand_nrs_data:
         seed_in_seed_hash_file: bool,
         seed_hash_filepath: str,
     ) -> None:
+        """Constructor for RandomNumbers.
+
+        Args:
+        :rand_nrs_file_exists: (bool), Whether the file containing the
+        random numbers exists
+        :rand_nrs_filepath: (str), Path to the file containing the
+        random numbers
+        :rand_nrs: (List[int]), List of random numbers
+        :rand_nrs_hash: (str), Hash of the random numbers
+        :seed_hash_file_exists: (bool), Whether the file containing the
+        seed hash exists
+        :seed_in_seed_hash_file: (bool), Whether the seed is in the seed
+        hash file
+        :seed_hash_filepath: (str), Path to the file containing the seed
+        hash
+        """
+
         self.rand_nrs_file_exists: bool = rand_nrs_file_exists
         self.rand_nrs_filepath: str = rand_nrs_filepath
         self.rand_nrs: List[int] = rand_nrs

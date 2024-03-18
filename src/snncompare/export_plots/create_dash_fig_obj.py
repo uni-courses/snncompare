@@ -26,6 +26,18 @@ class NamedAnnotation:
         node_name: Optional[str] = None,
         **kwargs: Any,
     ):
+        """Creates an annotation using the provided category, which can
+        be any of the following: ["non_recur_edge_label",
+        "non_recur_edge", "recur_edge_label", "recur_edge",
+        "node_label", "node"].
+
+        Args:
+        :category: (str), The annotation category
+        :edge: (Optional[Tuple[str, str]]), Edge in the annotation
+        :node_name: (Optional[str]), Node name for the annotation
+        :**kwargs: (Any), Additional annotation parameters
+        """
+
         self.annotation = Annotation(**kwargs)
         self.edge: Union[Tuple[str, str], None] = edge
         self.node_name: Union[str, None] = node_name

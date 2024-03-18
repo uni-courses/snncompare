@@ -146,6 +146,21 @@ class Zoom_coords:
         y_bottom: float,
         y_top: float,
     ):
+        """Creates a rectangle with given bounds.
+
+        Args:
+        :x_left: (float), The x-coordinate of the left edge of the
+        rectangle.
+        :x_right: (float), The x-coordinate of the right edge of the
+        rectangle.
+        :y_bottom: (float), The y-coordinate of the bottom edge of the
+        rectangle.
+        :y_top: (float), The y-coordinate of the top edge of the
+        rectangle.
+        Returns:
+        A rectangle with the given bounds.
+        """
+
         self.x_left: float = x_left
         self.x_right: float = x_right
         self.y_bottom: float = y_bottom
@@ -168,6 +183,27 @@ class Extra_storing_config:
         export_failure_modes: bool,
         show_failure_modes: bool,
     ):
+        """Initializes the experiment with relevant parameters to count spikes,
+        neurons and synapses, as well as to skip stage 2 output, show images,
+        store died neurons, export failure modes, and show failure modes.
+
+        Args:
+        :count_spikes: (Boolean), Count spikes during the experiment.
+        :count_neurons: (Boolean), Count neurons during the experiment.
+        :count_synapses: (Boolean), Count synapses during the
+        experiment.
+        :skip_stage_2_output: (Boolean), Skip stage 2 output.
+        :show_images: (Boolean), Show images during the experiment.
+        :store_died_neurons: (Boolean), Store died neurons during the
+        experiment.
+        :export_failure_modes: (Boolean), Export failure modes during
+        the experiment.
+        :show_failure_modes: (Boolean), Show failure modes during the
+        experiment.
+        Returns:
+        None
+        """
+
         self.count_spikes: bool = count_spikes
         self.skip_stage_2_output: bool = skip_stage_2_output
         if self.count_spikes:
@@ -210,6 +246,26 @@ class Hover_info:
         synaptic_models: list[str],
         synapse_properties: list[str],
     ):
+        """The constructor of the class that is used to configure the output of
+        the `export_network_to_graphml` function.
+
+        Args:
+        :incoming_synapses: (bool), Determines whether to include the
+        incoming synapses of a neuron
+        :neuron_models: (list[str]), The neuron models whose neuron
+        properties to include in the
+        :neuron_properties: (list[str]), The neuron properties to
+        include in the output file.
+        :node_names: (bool), Determines whether to include the names of
+        the neuron nodes in the
+        :outgoing_synapses: (bool), Determines whether to include the
+        outgoing synapses of a neuron
+        :synaptic_models: (list[str]), The synaptic models whose
+        synaptic properties to include in the
+        :synapse_properties: (list[str]), The synaptic properties to
+        include in the output file.
+        """
+
         self.incoming_synapses: bool = incoming_synapses
         self.node_names: bool = node_names
         self.outgoing_synapses: bool = outgoing_synapses
